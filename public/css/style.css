@@ -1,0 +1,79 @@
+  	html { height: 100% }
+  	body { height: 100%; margin: 0; padding: 0 }
+  	img { -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -o-user-select: none; user-select: none; }
+	#container {position: relative; min-height: 100%; height:auto !important; height:100%; width:100%; }
+	#map_canvas { position: absolute; top: 0px; left: 0px; bottom:43px; right: 0px; background: #ccffcc;
+				border-bottom: 1px solid #000; }
+	#page_canvas { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; background: #ffffff;
+				   visibility:hidden;}
+	#page { position: absolute; top: 43px; left: 0px; bottom: 0px; right:0px; border-top: 1px solid #000; padding: 0px 8px 0px 8px;
+	font-family: Helvetica; font-size: 12px; overflow: scroll;}
+				
+	#messages { position: absolute; top: 0px; width: 100%; height: 0px;}
+	#messagebox {  min-height: 30px; max-height: 100px; position: relative; width: 287px; margin: 0px auto;
+		color: #ffffff; font-family: Helvetica; font-size: 12px;
+		background-image: url(/images/black_50.png); padding: 8px 25px 8px 8px;
+		visibility:hidden; }
+	#messagebox img { float: left; vertical-align:text-top; margin-top: -4px; margin-right: 4px; cursor: pointer;}
+	#messagebox a {color: #ffffff;}
+	#closebutton { position: absolute; top: 10px; right: 6px; width: 18px; height: 18px}
+	#bbar { position: absolute; bottom :0px;  width: 100%;  height: 43px; background: #cccccc;
+			background-image: url(/images/bar_bg.png);}
+	#tbar { position: absolute; top: 0px; left:0px; right: 0px; height: 43px; background-image: url(/images/bar_bg.png);}
+			
+	.btns {position:relative; width:100; height: 43px;}
+	
+	#focus { position: absolute; top: 7px; left: 5px; cursor: pointer;}
+	
+	.all { position: absolute; top: 7px; left: 48px; width: 90px; height: 30px; cursor: pointer;}
+	.visual { position: absolute; top: 7px; left: 138px; width: 90px; height: 30px; cursor: pointer;}
+	
+	#labels { position: absolute; top: 7px; left: 240px; cursor: pointer;}
+	
+	#info { position: absolute; top: 7px; left: 283px; cursor: pointer;}
+	
+	#back { position: absolute; top: 9px; left: 5px; cursor: pointer;}
+	.back { position: absolute; top: 7px; left: 5px; width: 58px; height: 26px; cursor: pointer;}
+	
+	.title {font-weight:bold; }
+	.sum {margin-left: 37px}
+	
+	#titlebox {position: absolute; top:7px; left:64px; right:5px; text-align:center;
+	-webkit-user-select: none; color: white;
+cursor: default;
+font-family: Helvetica;
+font-size: 16px;
+font-weight: bold;
+line-height: 30px;
+margin: 0px;
+overflow-x: hidden;
+overflow-y: hidden;
+text-overflow: clip;
+text-shadow: rgba(0, 0, 0, 0.59375) 0px -1px 0px;
+white-space: nowrap;}
+	
+	.btnfont {
+	-webkit-user-select: none;
+bottom: auto;
+color: white;
+cursor: pointer;
+font-family: Helvetica;
+font-size: 12px;
+font-weight: bold;
+height: 0px;
+left: auto;
+line-height: 30px;
+margin-bottom: 0px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+overflow-x: visible;
+overflow-y: visible;
+position: static;
+right: auto;
+text-align: center;
+text-overflow: clip;
+text-shadow: rgba(0, 0, 0, 0.59375) 0px -1px 0px;
+top: auto;
+white-space: nowrap;
+	}

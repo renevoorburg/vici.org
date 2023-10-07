@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vici.org</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .box {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+        }
+
+        .box .row {
+            xborder: 1px dotted grey;
+        }
+
+        .box .row.header {
+            flex: 0 1 auto;
+            /* The above is shorthand for:
+            flex-grow: 0,
+            flex-shrink: 1,
+            flex-basis: auto
+            */
+        }
+
+        .box .row.content {
+            flex: 1 1 auto;
+        }
+
+        .box .row.footer {
+            flex: 0 1 40px;
+        }
+
+        .focus-location {
+            top: 5em;
+            left: .5em;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
+    <script src="/js/ol/v4.6.5/ol.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/vici.js"></script><script type="text/javascript">
+
+    $(document).ready(function() {
+        var mapObj = new ViciWidget('map',
+            {   defaultMap: "OSM",
+                useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
+                extraMaps: {
+                    DARE: {
+                        name: 'Digital Atlas of the Roman Empire',
+                        url: "https://static.vici.org/tiles/imperium/{z}/{x}/{y}.png",
+                        attributions: '© <a href="http://dare.ht.lu.se/">Johan Åhlfeldt</a>',
+                        maxZoom: 11
+                    },
+                    ESRI: {
+                        name: 'Esri WorldImagery',
+                        url: "https://static.vici.org/tiles/world/{z}/{y}/{x}",
+                        attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                    }
+                },
+                extraOverlays: {
+                    LIMESNL: {
+                        name: 'Limes NL',
+                        url: "https://static.vici.org/tiles/Limes/{z}/{x}/{y}.png",
+                        attributions: '© Olav Odé - CC BY',
+                        opacity: 0.8
+                    }
+                },
+                showFilter: true,
+//                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
+                highlights: 6,
+                lang: "nl",
+                setUrl: true,
+                showScale: "metric",
+                moveHere: true
+            }
+        );
+    });
+
+</script>
+
+</head>
+<body>
+<div class="box">
+    <div class="row header">Vici.org: Archaeological Atlas</div>
+    <div class="row content" id="map"></div>
+    <!--    <div class="row footer">-->
+    <!--        <p><b>footer</b> (fixed height)</p>-->
+    <!--    </div>-->
+</div>
+</body>
+</html>

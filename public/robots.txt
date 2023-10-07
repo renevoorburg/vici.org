@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /images.php
+Disallow: /points.php
+Disallow: /logout.php
+Disallow: /login.php
+Disallow: /upload/form
+Disallow: /edit.php
+Disallow: /search.php
+Disallow: /*/kml
+Disallow: /*/rdf
+Crawl-delay: 20
+
+Sitemap: https://vici.org/sitemap.php

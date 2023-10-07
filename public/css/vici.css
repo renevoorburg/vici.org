@@ -1,0 +1,177 @@
+html{height:100%}
+body{height:100%;margin:0;padding:0; font-family:sans-serif;font-size:90%}
+header,nav,section,article,aside,footer{display:block}
+footer{clear:both;border-top:1px solid #AAA;font-size:0.9em;margin-bottom:18px;margin-top:2px}
+
+h1 {font-size:1.8em;font-weight:normal}
+h2 {font-size:1.4em;font-weight:normal;margin-bottom:4px;border-bottom: 1px solid #AAA}
+h3 {font-size:1.0em;font-weight:bold;margin-top:4px; margin-bottom: 2px}
+
+article{font-size:1.0em;line-height:1.4em;overflow:auto}
+
+img{border:0}
+blockquote{text-transform:uppercase;font-family:Times,'Times New Roman',serif;font-style:normal}
+
+a:link{text-decoration:none}
+a:visited{text-decoration:none}
+a:hover{text-decoration:underline}
+a:active{text-decoration:underline}
+
+.black{color:#000000}
+.darkgrey{color:#4c4c4c}
+.grey{color:#646464}
+
+.label,label{font-weight:bold}
+
+li.selected{font-weight:bold}
+li.disabled{color:grey}
+div.disabled{display:none}
+
+#leftCol {float:left;width:185px}
+#logoImg {margin-top:10px;margin-left:10px}
+#mainMenu {margin-left:19px;margin-top:12px;line-height: 1.5em;font-size:1.0em;}
+#rightCol {position:absolute;left:185px;right:4px;height:100%}
+#pageHead {position:absolute;top:0;height:62px;width:100%}
+#userBox {float:right;margin-top:6px;font-size:0.9em}
+#searchBox {float:right;clear:right}
+#searchField {position:relative;
+    border: 1px solid #AAA;
+    margin-top:12px;background-color:#FAFAFA;width:274px}
+#searchTerms {border-style:none;border-width:0;margin:0;margin-left:4px;background-color:transparent;width:251px}
+#searchButton{position:absolute;right:0;top:0;width:20px;border:none;
+    background: transparent none;
+}
+#header {position:absolute;bottom:1px;left:0;right:0;border-bottom: 1px solid #AAA}
+#header > h1 {margin-right:276px;margin-bottom:0}
+#content {position:absolute;top:62px;bottom:0;width:100%}
+#canvas {position:absolute;top:0;bottom:1px;left:0;right:0;}
+article{position:relative;padding-top:4px}
+#footAnchor {position:absolute;bottom:0;left:0;right:0;height:0}
+#homeFoot {position:absolute;top:1px;left:0;right:0}
+footer > p{margin-top:6px}
+.article > p{margin-right:12px}
+
+#pageCmdBox{position:absolute;bottom:0;right:290px}
+#pageCmdLst{list-style:none;margin-bottom:1px;font-size:1.0em}
+#pageCmdLst > li:first-child {border-left:1px solid #AAA}
+#pageCmdLst > li {display:inline-block;border-right:1px solid #AAA;padding:8px}
+#pageCmdLst > li.selected {border-bottom:1px solid #FFF}
+#pageCmdLst > li.deselected {background-color:#FAFAFA}
+
+#langSelBox{position:absolute;bottom:0;right:8px}
+#langSelLst{list-style:none;margin-bottom:1px;font-size:1.0em}
+#langSelLst > li:first-child {border-left:1px solid #AAA}
+#langSelLst li{display:inline-block;margin-bottom:0;padding-left:4px;padding-right:4px;border-right:1px solid #AAA}
+article > p {margin-top:0}
+.notice{background-color:#FAFAFA;border:1px solid #AAA;padding:4px 8px}
+
+.noimage{width:270px;height:270px;line-height:1.4em;margin-top:1px;margin-bottom:4px}
+
+.nearRow{clear:left;margin:6px 0;width:100%}
+.nearMarkerBox{float:left;width:32px;height:37px;margin-bottom:5px;margin-left:-2px;}
+.nMBItempage{margin-top:-2px;}
+.nearImageBox{float:right;width:60px;height:60px;margin-bottom:5px}
+.nearTextBoxSmall{margin-left:42px;margin-right:65px}
+.nearTextBoxFull{margin-left:42px;margin-right:0;}
+.nearRow p{margin:0}
+.simpleList{list-style:none;margin-top:0}
+
+.itemGallery {margin-top: 1px}
+
+.itemImage{height:268px;width:268px;border:0;object-fit:none;object-position:center;cursor: zoom-in}
+figure.item{margin:0 5px 5px 0;display:inline-block; width:268px; height:268px}
+
+figure.item a {display:block; position: relative;}
+
+figure.item a::before {
+
+    font-family: dripicons-v2;
+    content: "\e068";
+    font-size:1.4em;
+    vertical-align: middle;
+    text-align: center;
+    color: #fff;
+    display: block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background-color: rgba(0,0,0,.3);
+    -webkit-transition: background-color .15s;
+    transition: background-color .15s;
+    cursor: zoom-in
+}
+
+
+#nearby{max-height:530px;overflow:scroll;}
+#nearby img {
+    margin: 0px 3px 0 0;
+    border:1px solid transparent}
+#nearby img:hover {border:1px solid red}
+
+#kop_edit{font-size:1.4em}
+.editcol input{margin:1px 0 1px 0; width:268px}
+.editcol > select{width:274px}
+.editcol > label{display:block;margin-top:8px}
+#short_edit{width:268px}
+input[type="submit"]{margin:8px 0px}
+
+.marker{width:32px;height:37px;display:inline-block}
+.icon1{background:url(/images/markers.png) 0 0}
+.icon2{background:url(/images/markers.png) -32px 0}
+.icon3{background:url(/images/markers.png) -64px 0}
+.icon4{background:url(/images/markers.png) -96px 0}
+.icon5{background:url(/images/markers.png) -128px 0}
+.icon6{background:url(/images/markers.png) -160px 0}
+.icon7{background:url(/images/markers.png) -192px 0}
+.icon8{background:url(/images/markers.png) -224px 0}
+.icon9{background:url(/images/markers.png) -256px 0}
+.icon10{background:url(/images/markers.png) -288px 0}
+.icon11{background:url(/images/markers.png) -320px 0}
+.icon12{background:url(/images/markers.png) -352px 0}
+.icon13{background:url(/images/markers.png) -384px 0}
+.icon14{background:url(/images/markers.png) -416px 0}
+.icon15{background:url(/images/markers.png) -448px 0}
+.icon16{background:url(/images/markers.png) -480px 0}
+.icon17{background:url(/images/markers.png) -512px 0}
+.icon18{background:url(/images/markers.png) -544px 0}
+.icon19{background:url(/images/markers.png) -576px 0}
+.icon20{background:url(/images/markers.png) -608px 0}
+.icon21{background:url(/images/markers.png) -640px 0}
+.icon22{background:url(/images/markers.png) -672px 0}
+.icon23{background:url(/images/markers.png) -704px 0}
+.icon24{background:url(/images/markers.png) -736px 0}
+.icon25{background:url(/images/markers.png) -768px 0}
+
+.errorbox{border:2px solid red;margin:4px 0;padding:4px; line-height: 2; font-size: 1.4em; color:red}
+
+#extids > span {display: block}
+
+
+#messagebox img { float: left; vertical-align:text-top; margin-top: -4px; margin-right: 4px; cursor: pointer;}
+.highlightbox {padding:5px; margin-bottom:0}
+.marker { float: left; vertical-align:text-top; margin-top: -1px; margin-right: 4px; cursor: pointer; border:0}
+.highlightbox a { color: #fff; text-decoration:underline}
+#messagebox a {color: #fff; text-decoration:underline}
+
+#rightcol img {cursor: pointer;}
+
+.title {font-weight:bold; margin-left:37px}
+.sum {margin-left: 37px}
+.rightalign {text-align:right}
+
+ul.icons {list-style-type: none;padding:0;margin:0}
+
+ul.icons li {background-repeat: no-repeat; background-position:0 2px; padding-left: 14px; line-height: 1.4em;}
+
+.code {font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif; font-size: 13px}
+
+th {text-align: left}
+td {vertical-align:top; padding: 3px}
+
+.focus-location {
+    top: 5em;
+    left: .5em;
+}

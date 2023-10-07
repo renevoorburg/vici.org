@@ -1,0 +1,16 @@
+{
+    "require": {
+        "smarty/smarty": "~3.1",
+        "phayes/geophp": "~1.2",
+	    "ckeditor/ckeditor": "~4.5",
+        "easyrdf/easyrdf": "~0.9.1",
+        "ml/json-ld": "~1.0",
+        "solarium/solarium": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "classes",
+            "RDP\\": "classes/rdp/"
+        }
+    }
+}
