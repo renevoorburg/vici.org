@@ -1,7 +1,6 @@
 <?php 
 ini_set("memory_limit","80M");
- 
-# echo "here";
+
  
 # prevent creation of new directories
 $is_locked = false;
