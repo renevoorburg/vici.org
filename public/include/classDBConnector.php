@@ -9,11 +9,11 @@ class DBConnector extends mysqli
     private string $database;
     private array $primaryKeysArr ;
 
-    public function __construct($connectTo = 'main')
+    public function __construct($connectTo = 'MAIN')
     {
 // db settings for testing, main db:
         $datahost = getenv('DB_HOST');
-        $database = getenv('DB_NAME');
+        $database = getenv('DB_'.$connectTo);
         $username = getenv('DB_USER');
         $password = getenv('DB_PASS');
 

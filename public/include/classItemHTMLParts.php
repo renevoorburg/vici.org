@@ -109,7 +109,7 @@ class ItemHTMLParts
     {
         $lf = "\n";
 
-        $geodb = new DBConnector('geo');
+        $geodb = new DBConnector('GEO');
 
         $reverse_geocoder = new GeoCoder\Reverse($geodb, $site->getLat(), $site->getLng() );
         $image = new ImageData($site->getId());
@@ -131,7 +131,7 @@ class ItemHTMLParts
 
         $htmlStr .= '<div style="display:inline-block;vertical-align:top;margin-right:16px;">';
         $htmlStr .= '<h3>' . $lngObj->str('Location') . ':</h3>' . $lf;
-        $htmlStr .= '<ul class="simpleList" style="padding-left:0px;">' . $lf;
+        $htmlStr .= '<ul class="simpleList" style="padding-left:0;">' . $lf;
 
         $htmlStr .= '<li>' . $reverse_geocoder->getCountryName($lngObj->getLang()) . ", " . $reverse_geocoder->getNearbyPlace() . '</li>' . $lf;
 
@@ -148,7 +148,7 @@ class ItemHTMLParts
             if ($periodStr) {
                 $htmlStr .= '<div style="display:inline-block;vertical-align:top;margin-right:16px;">';
                 $htmlStr .= '<h3>' . $lngObj->str('Period or year') . ':</h3>' . $lf;
-                $htmlStr .= '<ul class="simpleList" style="padding-left:0px;">' . $lf;
+                $htmlStr .= '<ul class="simpleList" style="padding-left:0;">' . $lf;
                 $htmlStr .= '<li>' . $periodStr . '</li>' . $lf;
                 $htmlStr .= '</ul>';
                 $htmlStr .= '</div>';
@@ -161,7 +161,7 @@ class ItemHTMLParts
 
         $htmlStr .= '<div style="display:inline-block;vertical-align:top;margin-right:16px;">';
         $htmlStr .= '<h3>' . $lngObj->str('Class') . ':</h3>' . $lf;
-        $htmlStr .= '<ul class="simpleList" style="padding-left:0px;">' . $lf;
+        $htmlStr .= '<ul class="simpleList" style="padding-left:0;">' . $lf;
         $htmlStr .= '<li>' . $lngObj->str($siteKinds->getName($site->getKind())) . '</li>' . $lf;
         if ($site->getIsVisible()) {
             $htmlStr .= '<li>' . $lngObj->str('visible') . '</li>' . $lf;
@@ -176,7 +176,7 @@ class ItemHTMLParts
         $htmlStr .= '<div style="display:inline-block;vertical-align:top;margin-right:16px;">';
         $htmlStr .= '<h3>' . $lngObj->str('Identifiers') . ':</h3>' . $lf;
 
-        $htmlStr .= '<ul class="simpleList" style="padding-left:0px;">' . $lf;
+        $htmlStr .= '<ul class="simpleList" style="padding-left:0;">' . $lf;
         $htmlStr .= '<li>vici:place=' . $site->getId() . '</li>' . $lf;
 
         foreach ($site->getExtIdsObj()->getIdentifierKeys() as $key => $idKey) {
