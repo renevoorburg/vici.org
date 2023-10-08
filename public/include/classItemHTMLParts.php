@@ -6,7 +6,7 @@
  * @author  René Voorburg
  * @version 1.1
  */
-
+ 
 require_once __DIR__ . '/classDBConnector.php';
 require_once __DIR__ . '/classViciCommon.php';
 require_once __DIR__ . '/classImageData.php';
