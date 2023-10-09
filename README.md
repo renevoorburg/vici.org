@@ -1,10 +1,10 @@
 # Vici.org
 
-Codebase for https:/vici.org.
+Codebase for https://vici.org.
 
 ## Installation
 
-To run this on a local machine, you need a database (MariaDB / MySQL) and a webserver (I used nginx) and PHP. See the included nginx config.
+To run this on a local machine, you need a database (MariaDB / MySQL) and a webserver (I use nginx) and PHP. See the included nginx config for details.
 
 In `/db` you'll find sql dumps of two databases:
 * `geo.sql.gz`
@@ -16,8 +16,8 @@ In `/db` you'll find sql dumps of two databases:
 
 Load both into MariaDB / MySQL.
 
-The vici.org PHP codes get the required credentials from environment variables. See `fastcgi_params` in the nginx folder for an example. 
+The vici.org PHP codes gets the required credentials from environment variables. See `fastcgi_params` in the nginx folder for an example. 
 
-If set, the environment variable `VICIBASE`, is passed to the `vici.js` javascript widget. This will use it a the base url for requests it needs to make. So if your local instance runs as http://vici.local, set `VICIBASE` accordingly.
+If set, the environment variable `VICIBASE`, is passed to the `vici.js` javascript widget. This will use it for the base url for data requests it needs to make. So if your local instance runs as http://vici.local, set `VICIBASE` accordingly.
 
 
