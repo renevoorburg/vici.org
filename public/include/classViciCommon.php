@@ -1,25 +1,6 @@
 <?php
 
 /**
-Copyright 2013-2016, René Voorburg, rene@digitopia.nl
-
-This file is part of the Vici.org source.
-
-Vici.org source is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Vici.org  source is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Vici.org source.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
  * Class ViciCommon. Common generic functions for Vici that don't require a db connection.
  */
 
@@ -201,6 +182,16 @@ class ViciCommon
     {
         $host = $_SERVER['HTTP_HOST'];
         return ( $host == '');
+    }
+
+    public static function getBaseUrlDeclaration()
+    {
+        if (getenv('VICIBASE')) {
+            return "
+                baseUrl: '" . getenv('VICIBASE') . "',";
+        } else {
+            return "";
+        }
     }
 
     public static function isTesting() 
