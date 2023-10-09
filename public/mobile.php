@@ -1,10 +1,5 @@
 <?php
 require_once dirname(__FILE__).'/include/classViciCommon.php';
-
-if (! isset($_SERVER['HTTPS']) && ! ViciCommon::isTesting()) {
-    header("Location: https://vici.org/mobile.php", true, 301);
-    exit();
-}
 ?>
 <!doctype html>
 <html>
