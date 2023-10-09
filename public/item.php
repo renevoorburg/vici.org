@@ -63,12 +63,6 @@ try {
     ViciCommon::terminateWith404();
 }
 
-if (! isset($_SERVER['HTTPS']) && ! ViciCommon::isTesting()) {
-    header("Location: https://vici.org/vici/".$site->getId()."/", true, 301);
-    exit();
-}
-
-
 $siteKinds = new SiteKinds($lngObj);
 
 //
