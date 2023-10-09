@@ -194,18 +194,6 @@ class ViciCommon
         }
     }
 
-    public static function isTesting() 
-    {
-        $host = $_SERVER['HTTP_HOST'];
-        $testing = !preg_match("/\.org$/i", $host) || self::fromCLI();
-        return $testing;
-    }
-    
-    public static function isGoogle()
-    {
-        return strpos($_SERVER['HTTP_USER_AGENT'], "Googlebot"); 
-    }    
-
     public static function htmlentitiesVici($str) {
         return htmlentities($str, ENT_QUOTES, "UTF-8");
     }

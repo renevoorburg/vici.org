@@ -1,25 +1,6 @@
 <?php
 
 /**
- * Copyright 2013-4, René Voorburg, rene@digitopia.nl
- *
- * This file is part of the Vici.org source.
- *
- * Vici.org source is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Vici.org  source is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Vici.org source.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
  * Class ViciCommonLogic. Common generic functions for Vici that do require a db connection.
  */
 
@@ -106,7 +87,7 @@ class ViciCommonLogic extends ViciCommon
             $format = self::getAcceptFormat($acceptable);
             $format = ($format == 'html') ? '' : $format;
 
-            $protocol = self::isTesting() ? 'http:' : 'https:';
+            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
 
             header('Location: ' . $protocol . '//' . $_SERVER['SERVER_NAME'] . '/vici/' . $idArr[0] . '/' . $format, true,
                 303);
