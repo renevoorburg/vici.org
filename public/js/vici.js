@@ -34,13 +34,12 @@ function ViciWidget(element, options) {
         }
     }
 
-
     // use the element as an anchor but don't override absolute positioning:
     if ($("#"+element).css("position")  !== "absolute") {
         document.getElementById(element).style.position = "relative";
     }
 
-    let baseUrl = window.location.hostname.match(/\.local$/) == ".local" ? window.location.protocol + "//vici.local" : window.location.protocol + "//vici.org";
+    let baseUrl = (options.baseUrl) ? options.baseUrl : "https://vici.org";
 
     let lang =  (options.lang) ? options.lang : (navigator.language || navigator.userLanguage).substring(0, 2) ;
     if ($.inArray(lang,["de", "en", "fr", "nl"]) < 0) lang = "en";

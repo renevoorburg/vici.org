@@ -71,7 +71,7 @@ $viciCall = "<script type=\"text/javascript\">
                         attributions: '© Olav Odé - CC BY',
                         opacity: 0.8
                     }
-                },
+                },".ViciCommon::getBaseUrlDeclaration()."
                 showFilter: true,
 //                filter: { visibility: \"anyVisibility\", era: \"anyEra\" }, // onlyVisible , contemporaryEra, historicalEra
                 highlights: 6,
