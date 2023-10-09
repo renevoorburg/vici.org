@@ -8,16 +8,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="search" type="application/opensearchdescription+xml" href="http://vici.org/osd.php" title="Vici.org" />
     {$scripts}
-<script type="text/javascript">
-    // need these for html5:
-    document.createElement('header');
-    document.createElement('footer');
-    document.createElement('section');
-    document.createElement('aside');
-    document.createElement('nav');
-    document.createElement('article');
-</script>
-    
+
 </head>
 
 <body onload="initialize();">    
