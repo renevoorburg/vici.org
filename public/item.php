@@ -70,7 +70,7 @@ $extScripts = <<<EOD
 <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
 <script src="/js/ol/v4.6.5/ol.js"></script>
 <script src="/js/jquery-3.3.1.min.js"></script>
-<script src="//vici.org/js/vici.js"></script>
+<script src="/js/vici.js"></script>
 <link rel="stylesheet" href="/js/photoswipe/photoswipe.css">
 <link rel="stylesheet" href="/js/photoswipe/default-skin/default-skin.css">
 <link rel="stylesheet" href="/css/webfont.css">
