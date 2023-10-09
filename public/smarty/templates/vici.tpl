@@ -7,8 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/css/vici.css" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="sitemap" href="/sitemap.php" />
-    <link rel="meta" type="application/rdf+xml" title="OAC" href="http://vici.org/void.rdf" />
-    <link rel="search" type="application/opensearchdescription+xml" href="http://vici.org/osd.php" title="Vici.org" />
+    <link rel="search" type="application/opensearchdescription+xml" href=/osd.php" title="Vici.org" />
     <meta name="viewport" content="width=1140">
 {$headmeta}
 {$scripts}

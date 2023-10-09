@@ -30,11 +30,6 @@ require_once dirname(__FILE__).'/include/classViciCommon.php';
 require_once dirname(__FILE__).'/include/classDBConnector.php';
 require_once dirname(__FILE__).'/include/classPage.php';
 
-if (! isset($_SERVER['HTTPS']) && ! ViciCommon::isTesting()) {
-    header("Location: https://vici.org/login.php", true, 301);
-    exit();
-}
-
 $lng = new Lang();
 $session = new Session($lng->getLang());
 $db = new DBConnector(); // no errorhandling 
@@ -152,4 +147,3 @@ if (isset($_GET['return'])) {
 }
 
 $page->display('content.tpl');
-
