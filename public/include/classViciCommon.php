@@ -171,19 +171,6 @@ class ViciCommon
         return $ret;
     }
 
-    public static function isMobile() 
-    {
-        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
-        $mobile = (stripos($ua,'android') !== false) || (stripos($ua,'iphone') !== false);
-        return $mobile;
-    }
-
-    public static function fromCLI()
-    {
-        $host = $_SERVER['HTTP_HOST'];
-        return ( $host == '');
-    }
-
     public static function getBaseUrlDeclaration()
     {
         if (getenv('VICIBASE')) {
@@ -192,6 +179,15 @@ class ViciCommon
         } else {
             return "";
         }
+    }
+
+    public static function getSiteBase(): string
+    {
+        $site_base = "http://";
+        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === "on") {
+            $site_base = "https://";
+        }
+        return $site_base . $_SERVER["SERVER_NAME"];
     }
 
     public static function htmlentitiesVici($str) {
