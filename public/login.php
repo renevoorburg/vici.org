@@ -1,25 +1,6 @@
 <?php 
 
 /**
-Copyright 2013-6, René Voorburg, rene@digitopia.nl
-
-This file is part of the Vici.org source.
-
-Vici.org source is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Vici.org  source is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Vici.org source.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
 Page with form to login.
 */
 
@@ -40,18 +21,7 @@ $password = isset($_POST['password']) ? trim($_POST['password']) : null;
 
 if (!empty($name) || !empty($password)) {
 
-
-    $response = $_POST["g-recaptcha-response"];
-    $secret = "6LeVUQ4UAAAAAAsbcmAmT4a-yhOlCkMViqSH4KQk";
-    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$_SERVER['REMOTE_ADDR']}");
-    $captcha_success = json_decode($verify);
-
-    if ($captcha_success->success==false) {
-        echo "<p>You are a bot! Go away!</p>";
-        exit;
-    }
-
-
+    viciCommon::captchaCheck();
 
     // form was posted, so try to login
     $sql = "SELECT acc_id, acc_name, acc_realname, acc_level, acc_passwd, acc_email FROM accounts WHERE acc_name='".$db->real_escape_string($name)."'";
@@ -121,12 +91,14 @@ $lng_password = $lng->str('Password');
 $lng_login    = $lng->str('Login');
 $lng_register = $lng->str("Don't have an account? Create one.");
 
+$captcha = viciCommon::captchaDisplay();
+
 $form=<<<EOD
 <div style="margin-top:8px; width:500px">
 <form action="login.php" method="post">
 <label style="display:block; width:160px; float:left">$lng_username:</label><input style="width:200px" type="text" id="frm_name" name="name"  value="$name" /><br />
 <label  style="display:block; width:160px; float:left">$lng_password:</label><input style="width:200px" type="password" id="frm_password" name="password" /><br />
-<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="6LeVUQ4UAAAAAKjv7--1O-LnU6Cp-g1fBJw4ItMv"></div><br />
+$captcha<br />
 <input style="margin-left:160px; margin-top:8px;" type="submit" value="$lng_login">
 </div>
 <p>$lng_register</p>
@@ -136,7 +108,7 @@ EOD;
 $page = new Page();
 
 $page->assign('lang', $lng->getLang());
-$page->assign('scripts', '<script type="text/javascript" src="/js/common.js"></script><script src="https://www.google.com/recaptcha/api.js" async defer></script>');
+$page->assign('scripts', '<script type="text/javascript" src="/js/common.js"></script>' . viciCommon::captchaInclude() );
 $page->assign('content', "<p>".$errorMsg."</p>".$form);
 $page->assign('pagetitle', $lng_login);
 $page->assign('session', ViciCommon::sessionBox($lng, $session));
