@@ -39,17 +39,7 @@ $email = isset($_POST['frm_email']) ? trim((string)$_POST['frm_email']) : '';
 
 if (!empty($email) ) {
 
-    $response = $_POST["g-recaptcha-response"];
-    $secret = "6LeVUQ4UAAAAAAsbcmAmT4a-yhOlCkMViqSH4KQk";
-    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$_SERVER['REMOTE_ADDR']}");
-
-    $captcha_success = json_decode($verify);
-
-    if ($captcha_success->success==false) {
-        echo "<p>Are you a bot?</p>";
-        exit;
-    }
-
+    viciCommon::captchaCheck();
 
     // form was posted, so try to login
     $sql = "SELECT acc_id, acc_name, acc_realname, acc_level FROM accounts WHERE acc_email='".$db->real_escape_string($email)."'";
@@ -64,7 +54,7 @@ if (!empty($email) ) {
         
          // send confirmation message
         $message = sprintf($lng->str('reset password %s %s'), htmlentities($realname),
-            viciCommon:getSiteBase() . "/reset.php?code=" . $uuid);
+            viciCommon::getSiteBase() . "/reset.php?code=" . $uuid);
         $message = wordwrap($message, 70);
         $headers .= 'From: Vici <noreply@vici.org>' . "\r\n";
         mail($email, $lng->str('Reset your password at Vici.org'), $message, $headers);
@@ -82,11 +72,13 @@ if (!isset($message)) {
     $lng_email = $lng->str('Email address');
     $lng_button = $lng->str('Submit');
     $lng_wrong_email = $lng->str('error:wrong_email');
+
+    $captcha = viciCommon::captchaDisplay();
     $html.=<<<EOD
 <div style="margin-top:8px;width:500px">
 <form action="lostpw.php" method="post" onsubmit="return validateEmail()">
 <label style="display:block;width:220px;float:left">$lng_email:</label><input style="width:200px" type="text" id="frm_email" name="frm_email"  value="$email" /><br />
-<div style="margin-left:220px;margin-top:12px;" class="g-recaptcha" data-sitekey="6LeVUQ4UAAAAAKjv7--1O-LnU6Cp-g1fBJw4ItMv"></div>
+$captcha
 <input style="margin-left:220px;margin-top:8px" type="submit" value="$lng_button">
 </div>
 EOD;
@@ -98,15 +90,13 @@ $scripts=<<<EOD
 <script type="text/javascript">
 lng_err_wrong_email="$lng_wrong_email"; 
 </script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 EOD;
-
 
 // display page:
 $page = new Page();
 
 $page->assign('lang', $lng->getLang());
-$page->assign('scripts', $scripts);
+$page->assign('scripts', $scripts . viciCommon::captchaInclude());
 $page->assign('content', $html);
 $page->assign('pagetitle', $lng->str('Reset password'));
 $page->assign('session', ViciCommon::sessionBox($lng, $session));

@@ -48,18 +48,7 @@ $email = isset($postArr["email"]) ? trim($postArr["email"]) : '';
 
 if ( (strlen($name)>3) && (strlen($password)>5) && ($passwordrepeat==$password) && (strlen($realname)>3) && strlen($email)>4  ) {
 
-    $response = $postArr["g-recaptcha-response"];
-    $secret = "6LeVUQ4UAAAAAAsbcmAmT4a-yhOlCkMViqSH4KQk";
-    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$_SERVER['REMOTE_ADDR']}");
-
-    $captcha_success = json_decode($verify);
-
-    if ($captcha_success->success==false) {
-        echo "<p>You are a bot! Go away!</p>";
-        exit;
-    }
-
-
+    viciCommon::captchaCheck();
 
     //we have all required vars
     $nameSafe = $db->real_escape_string($name);
@@ -121,6 +110,8 @@ if (empty($message)) {
     $lng_email = $lng->str('Email address');
     $lng_createacc = $lng->str("Create account");
 
+    $captcha = viciCommon::captchaDisplay();
+
     $content=<<<EOD
 <div style="margin-top:8px; width:500px">
 <form action="register.php" method="post" onsubmit="return validateRegistration()">
@@ -130,7 +121,7 @@ if (empty($message)) {
 
 <div style="margin-top:24px"><label  style="display:block;width:180px;float:left">$lng_name:</label><input style="width:200px" type="text" id="frm_realname" name="realname" value="$realname" /><br />
 <label  style="display:block; width:180px; float:left">$lng_email:</label><input style="width:200px" type="text" id="frm_email" name="email" value="$email" /></div>
-<div style="margin-left:180px;margin-top:16px;" class="g-recaptcha" data-sitekey="6LeVUQ4UAAAAAKjv7--1O-LnU6Cp-g1fBJw4ItMv"></div>
+$captcha
 <input style="margin-left:180px;margin-top:16px" type="submit" value="$lng_createacc">
 </div>
 EOD;
@@ -148,8 +139,7 @@ $scripts.= "lng_err_password_needs_lowercase='".$lng->str('error:password_needs_
 $scripts.= "lng_err_password_needs_special='".$lng->str('error:password_needs_special')."';\n";
 $scripts.= "lng_err_fullname_too_short='".$lng->str('error:fullname_too_short')."';\n";
 $scripts.= "lng_err_wrong_email='".$lng->str('error:wrong_email')."';\n";
-$scripts.= "</script>\n<script src=\"https://www.google.com/recaptcha/api.js\" async defer></script>";
-
+$scripts.= viciCommon::captchaInclude();
 
 $scripts.= '<script type="text/javascript" src="/js/common.js"></script>';
 

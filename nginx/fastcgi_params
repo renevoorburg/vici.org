@@ -3,4 +3,6 @@
     fastcgi_param DB_GEO geo;
     fastcgi_param DB_USER username;
     fastcgi_param DB_PASS password;
-    fastcgi_param VICIBASE http://vici.local; # not requiered in production
+    fastcgi_param VICIBASE http://vici.local; # not required in production
+    fastcgi_param CAPTCHA_SITE WHATEVER-THE-SITE-KEY_IS;
+    fastcgi_param CAPTCHA_SEC WHATEVER-THE-SEC-KEY_IS;

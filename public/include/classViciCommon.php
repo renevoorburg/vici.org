@@ -190,6 +190,39 @@ class ViciCommon
         return $site_base . $_SERVER["SERVER_NAME"];
     }
 
+    public static function captchaCheck() : void
+    {
+        if (getenv('CAPTCHA_SEC')) {
+            $response = $_POST["g-recaptcha-response"];
+            $secret = getenv('CAPTCHA_SEC');
+            $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$_SERVER['REMOTE_ADDR']}");
+            $captcha_success = json_decode($verify);
+
+            if ($captcha_success->success == false) {
+                echo "<p>You are a bot! Go away!</p>";
+                exit;
+            }
+        }
+    }
+
+    public static function captchaInclude() : string
+    {
+        if  (getenv('CAPTCHA_SITE')) {
+            return '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+        } else {
+            return '';
+        }
+    }
+
+    public static function captchaDisplay() : string
+    {
+        if  (getenv('CAPTCHA_SITE')) {
+            return '<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="' . getenv('CAPTCHA_SITE') . '"></div>';
+        } else {
+            return '';
+        }
+    }
+
     public static function htmlentitiesVici($str) {
         return htmlentities($str, ENT_QUOTES, "UTF-8");
     }
