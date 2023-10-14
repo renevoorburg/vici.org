@@ -63,7 +63,8 @@ if (!empty($email) ) {
         $result = $db->query($sql); // error handling ...
         
          // send confirmation message
-        $message = sprintf($lng->str('reset password %s %s'), htmlentities($realname), $uuid);
+        $message = sprintf($lng->str('reset password %s %s'), htmlentities($realname),
+            viciCommon:getSiteBase() . "/reset.php?code=" . $uuid);
         $message = wordwrap($message, 70);
         $headers .= 'From: Vici <noreply@vici.org>' . "\r\n";
         mail($email, $lng->str('Reset your password at Vici.org'), $message, $headers);
