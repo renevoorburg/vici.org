@@ -208,7 +208,7 @@ class ViciCommon
     public static function captchaInclude() : string
     {
         if  (getenv('CAPTCHA_SITE')) {
-            return '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+            return '<script src="https://www.google.com/recaptcha/api.js" async defer></script>'."\n";
         } else {
             return '';
         }
@@ -217,7 +217,7 @@ class ViciCommon
     public static function captchaDisplay() : string
     {
         if  (getenv('CAPTCHA_SITE')) {
-            return '<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="' . getenv('CAPTCHA_SITE') . '"></div>';
+            return '<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="' . getenv('CAPTCHA_SITE') . '"></div>'."\n";
         } else {
             return '';
         }

@@ -139,9 +139,9 @@ $scripts.= "lng_err_password_needs_lowercase='".$lng->str('error:password_needs_
 $scripts.= "lng_err_password_needs_special='".$lng->str('error:password_needs_special')."';\n";
 $scripts.= "lng_err_fullname_too_short='".$lng->str('error:fullname_too_short')."';\n";
 $scripts.= "lng_err_wrong_email='".$lng->str('error:wrong_email')."';\n";
+$scripts.= "</script>\n";
+$scripts.= '<script type="text/javascript" src="/js/common.js"></script>."\n";
 $scripts.= viciCommon::captchaInclude();
-
-$scripts.= '<script type="text/javascript" src="/js/common.js"></script>';
 
 // display page:
 $page = new Page();
