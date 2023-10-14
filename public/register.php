@@ -91,7 +91,8 @@ if ( (strlen($name)>3) && (strlen($password)>5) && ($passwordrepeat==$password) 
         $result = $db->query($sql); // error handling...
 
         // send confirmation message
-        $message = sprintf($lng->str('confirmation mail %s %s'), htmlentities($realname), $uuid);
+        $message = sprintf($lng->str('confirmation mail %s %s'), htmlentities($realname),
+            viciCommon::getSiteBase() . "/confirm.php?code=" .$uuid);
         $message = wordwrap($message, 70);
         $headers = 'From: Vici <noreply@vici.org>' . "\r\n";
         mail($email, $lng->str('Activate your account at Vici.org'), $message, $headers);
