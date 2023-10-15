@@ -53,7 +53,7 @@ function getItemHTML(Lang $lngObj, $itemId, $kindName, $pntId, $itemName, $user,
     }
 
     $ret .= '<div style="margin-left:0">'.$lf;
-    $ret .= '<h3><a class="black" href="' . $lngObj->langURL($lngObj->getLang(), '/vici/' . $pntId) . '">' . $itemName . '</a></h3>'.$lf;
+    $ret .= '<h3><a class="black" href="' . $lngObj->langURL($lngObj->getLang(), '/vici/' . $pntId . '/') . '">' . $itemName . '</a></h3>'.$lf;
     $ret .= '<p style="color:#646464">' . date('j M Y H:i', strtotime($date)) . '<br>'.$user.'</p>' . $lf;
 
 
