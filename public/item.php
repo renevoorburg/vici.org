@@ -18,7 +18,7 @@ require_once __DIR__ . '/include/classRDF.php';
 require_once __DIR__ . '/include/classLineData.php';
 require_once __DIR__ . '/include/classViciKML.php';
 
-$requestKindStr = ViciCommonLogic::getRequestKind($_GET['id']);
+$requestKindStr = ViciCommonLogic::matchRequestedContentType($_GET['id']);
 switch ($requestKindStr) {
     case 'rdf':
         $rdfObj = new RDF('site', $_GET['id']);
