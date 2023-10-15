@@ -82,17 +82,17 @@ class ViciCommonLogic extends ViciCommon
         $acceptable =array('html', 'rdf', 'kml', 'json');
         $idArr = explode("/", $idStr);
 
-        if (!isset($idArr[1]) ) {
-            // do a redirect based on accept headers and force https:
-            $format = self::getAcceptFormat($acceptable);
-            $format = ($format == 'html') ? '' : $format;
-
-            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
-
-            header('Location: ' . $protocol . '//' . $_SERVER['SERVER_NAME'] . '/vici/' . $idArr[0] . '/' . $format, true,
-                303);
-            exit;
-        }
+//        if (!isset($idArr[1]) ) {
+//            // do a redirect based on accept headers
+//            $format = self::getAcceptFormat($acceptable);
+//            $format = ($format == 'html') ? '' : $format;
+//
+//            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+//
+//            header('Location: ' . $protocol . '//' . $_SERVER['SERVER_NAME'] . '/vici/' . $idArr[0] . '/' . $format, true,
+//                303);
+//            exit;
+//        }
 
         $kindStr = in_array($idArr[1], $acceptable) ? $idArr[1] : 'html';
 
