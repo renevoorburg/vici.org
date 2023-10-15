@@ -139,9 +139,15 @@ class ViciCommon
         $ret.= '<p style="margin:0 0 8px 0;padding-top:12px;padding-bottom:0;color:#888">';
         $ret.=  $lngObj->str('Follow Vici.org');
         $ret.= ":</p>\n";
-
         $ret.= '<div style="margin-top:10px">';
         $ret.= "<a href='https://archaeo.social/@vici' rel='me'><img src='/images/mastodon.png' alt='@vici@archaeo.social'></a>";
+        $ret.= '</div>';
+
+        $ret.= '<p style="margin:0 0 8px 0;padding-top:12px;padding-bottom:0;color:#888">';
+        $ret.=  $lngObj->str('Build Vici.org');
+        $ret.= ":</p>\n";
+        $ret.= '<div style="margin-top:10px">';
+        $ret.= "<a href='https://github.com/renevoorburg/vici.org'><img src='/images/github-mark.png' width='50' height='50' alt='github'></a>";
         $ret.= '</div>';
 
 //        $ret.= '<div style="position:relative;left:-10px;width:160px"><a class="twitter-timeline" href="https://twitter.com/OmnesViae" data-widget-id="524469139243417602">Tweets van @OmnesViae</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>';
