@@ -17,37 +17,14 @@ class ViciCommonLogic extends ViciCommon
      * @return int
      * @throws Exception
      */
-    public static function getSiteId(DBConnector $db, $idStr, $lang = 'en')
+    public static function getSiteId(DBConnector $db, $idStr, $lang = 'en') : int
     {
-
         $idArr = explode("/", $idStr);
-
         if ((string)(int)$idArr[0] == (string)$idArr[0]) {
             // identifier is a number
-            $id = (int)$idArr[0];
+           $id = (int)$idArr[0];
         } else {
-            // identifier is a string, now obtain the corresponding pnt_id
-            $name = preg_replace('/_/', ' ', $idArr[0]);
-            $name = preg_replace('/&.*=.*/', '', $name);
-
-            $sql = "SELECT pnt_id FROM points WHERE pnt_name='" . $db->real_escape_string($name) . "'";
-            $result = $db->query($sql);
-            if ($result->num_rows == 1) {
-                // $idStr is the default name
-                list($id) = $result->fetch_row();
-            } else {
-                // maybe $idStr is a localized name?
-                $sql = "SELECT psum_pnt_id FROM psummaries WHERE psum_pnt_name='$name' and psum_lang='" . $lang . "'";
-                $result = $db->query($sql);
-                if ($result->num_rows == 1) {
-                    list($id) = $result->fetch_row();
-                } else {
-                    // stop here -for now-, request not clear
-                    header("HTTP/1.0 400 Bad Request");
-                    echo '<html><head><title>400 Bad Request</title></head><body><h1>Error 400</h1><p>Error 400: bad request</p></body></html>';
-                    exit;
-                }
-            }
+            parent::terminateWith404();
         }
         return $id;
     }
@@ -57,7 +34,7 @@ class ViciCommonLogic extends ViciCommon
      * @param string $default
      * @return string format
      */
-    private static function getAcceptFormat($acceptable, $default = 'html')
+    private static function getAcceptFormat($acceptable, $default = 'html') : string
     {
         $accept = strtolower(str_replace(' ', '', $_SERVER['HTTP_ACCEPT']));
         $last = 99;
@@ -77,26 +54,22 @@ class ViciCommonLogic extends ViciCommon
      * @param $idStr
      * @return string is request plain html or rdf or kml?
      */
-    public static function getRequestKind($idStr)
+    public static function matchRequestedContentType($idStr) : string
     {
         $acceptable =array('html', 'rdf', 'kml', 'json');
         $idArr = explode("/", $idStr);
 
-//        if (!isset($idArr[1]) ) {
-//            // do a redirect based on accept headers
-//            $format = self::getAcceptFormat($acceptable);
-//            $format = ($format == 'html') ? '' : $format;
-//
-//            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
-//
-//            header('Location: ' . $protocol . '//' . $_SERVER['SERVER_NAME'] . '/vici/' . $idArr[0] . '/' . $format, true,
-//                303);
-//            exit;
-//        }
-
-        $kindStr = in_array($idArr[1], $acceptable) ? $idArr[1] : 'html';
-
-        return $kindStr;
+        if (!isset($idArr[1])) {
+            // do a redirect based on accept headers
+            $format = self::getAcceptFormat($acceptable);
+            $format = ($format == 'html') ? '' : $format;
+            header('Location: ' . parent::getSiteBase() . '/vici/' . $idArr[0] . '/' . $format, true, 303);
+            exit;
+        }
+        if (!in_array($idArr[1], $acceptable) && !empty($idArr[1]) ) {
+            parent::terminateWith404();
+        }
+        return in_array($idArr[1], $acceptable) ? $idArr[1] : 'html';
     }
 
     /**
