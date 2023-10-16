@@ -26,7 +26,7 @@ class Reverse
     public function getNearbyPlace() : string
     {
         if (!isset($this->nearby_place)) $this->retrieveNearbyPlace();
-        return $this->nearby_place;
+        return $this->nearby_place ? $this->nearby_place : '';
     }
 
     private function retrieveCountryCode() : void
@@ -43,19 +43,22 @@ class Reverse
             ORDER BY 
                 acos(cos(radians(" . $this->lat . "))*cos(radians(latitude))*cos(radians(longitude)-radians(" . $this->lng . "))+sin(radians(" . $this->lat . "))*sin(radians(latitude)))
             LIMIT 1;";
-
         $result_obj = $this->connector->query($sql)->fetch_object();
         $this->country_code = $result_obj->country;
     }
 
     private function retrieveCountryName(string $lang) : void
     {
-        $sql = "SELECT $lang AS country_intl FROM countries WHERE alpha_2 = '".strtolower($this->country_code)."';";
-        $result_obj = $this->connector->query($sql);
-        if ($result_obj->num_rows > 0) {
-            $this->country_name[$lang] = $result_obj->fetch_object()->country_intl;
+        if ($this->country_code) {
+            $sql = "SELECT $lang AS country_intl FROM countries WHERE alpha_2 = '" . strtolower($this->country_code) . "';";
+            $result_obj = $this->connector->query($sql);
+            if ($result_obj->num_rows > 0) {
+                $this->country_name[$lang] = $result_obj->fetch_object()->country_intl;
+            } else {
+                $this->country_name[$lang] = $this->country_code;
+            }
         } else {
-            $this->country_name[$lang] = $this->country_code;
+            $this->country_name[$lang] = '';
         }
     }
 
@@ -78,7 +81,5 @@ class Reverse
         );
         $this->nearby_place = $result_obj->fetch_object()->name;
     }
-
-
 
 }
