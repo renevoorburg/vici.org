@@ -57,19 +57,20 @@ class ViciCommonLogic extends ViciCommon
     public static function matchRequestedContentType($idStr) : string
     {
         $acceptable =array('html', 'rdf', 'kml', 'json');
+        $default = 'html';
         $idArr = explode("/", $idStr);
+        $accept_format = self::getAcceptFormat($acceptable);
 
-        if (!isset($idArr[1])) {
+        if (!isset($idArr[1]) || ($idArr[1] === $default) ) {
             // do a redirect based on accept headers
-            $format = self::getAcceptFormat($acceptable);
-            $format = ($format == 'html') ? '' : $format;
+            $format = ($accept_format === $default) ? '' : $accept_format;
             header('Location: ' . parent::getSiteBase() . '/vici/' . $idArr[0] . '/' . $format, true, 303);
             exit;
         }
         if (!in_array($idArr[1], $acceptable) && !empty($idArr[1]) ) {
             parent::terminateWith404();
         }
-        return in_array($idArr[1], $acceptable) ? $idArr[1] : 'html';
+        return in_array($idArr[1], $acceptable) ? $idArr[1] : $default;
     }
 
     /**
