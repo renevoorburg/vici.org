@@ -196,15 +196,12 @@ $metalinks .= '    <meta itemprop="dateModified" content="' . $site->getEditDate
 
 foreach ($lngObj->getAvailableLanguages() as $lang) {
     if ($lang == 'en') {
-        $metalinks .= '    <link rel="alternate" hreflang="' . $lang . '" href="https://vici.org/vici/' . $site->getId() . '/"/>' . "\n";
+        $metalinks .= '    <link rel="canonical" hreflang="' . $lang . '" href="https://vici.org/vici/' . $site->getId() . '/"/>' . "\n";
     } else {
         $metalinks .= '    <link rel="alternate" hreflang="' . $lang . '" href="https://vici.org/vici/' . $site->getId() . '/?lang=' . $lang . '"/>' . "\n";
     }
 }
 $metalinks .= '    <link rel="alternate" type="application/rdf+xml" href="http://vici.org/vici/' . $site->getId() . '/rdf" />';
-
-//setcookie('focus', $site->getId(), time() + 2592000, '/', $_SERVER['SERVER_NAME'], TRUE, TRUE);
-//setcookie('minzoom', $siteKinds->getSmallZoom($site->getKind()), time() + 2592000, '/', $_SERVER['SERVER_NAME'], TRUE, TRUE);
 
 // display page:
 $page = new Page();
