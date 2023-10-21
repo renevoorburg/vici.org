@@ -206,12 +206,12 @@ function ViciWidget(element, options) {
     let defaultMaps = {
         OSM: {
             name: 'OpenStreetMap',
-            url: "https://static.vici.org/tiles/osm/{z}/{x}/{y}.png",
+            url: "https://tiles.vici.org/osm/{z}/{x}/{y}.png",
             attributions: '© <a href="https://www.openstreetmap.org/copyright">' + txt["osm_contribs"] + '</a> CC BY-SA'
         },
         AWMC: {
             name: 'Ancient World Mapping Center',
-            url: "https://static.vici.org/tiles/awmc/{z}/{x}/{y}.png",
+            url: "https://tiles.vici.org/awmc/{z}/{x}/{y}.png",
             attributions: '© <a href="http://awmc.unc.edu/">Ancient World Mapping Center</a> CC BY 4.0',
             maxZoom: 13
         }

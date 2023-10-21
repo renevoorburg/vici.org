@@ -71,20 +71,20 @@ $(document).ready(function() {
         extraMaps: {
             DARE: {
                 name: 'Digital Atlas of the Roman Empire',
-                url: \"https://static.vici.org/tiles/imperium/{z}/{x}/{y}.png\",
+                url: \"https://tiles.vici.org/imperium/{z}/{x}/{y}.png\",
                 attributions: '© <a href=\"http://dare.ht.lu.se/\">Johan Åhlfeldt</a>',
                 maxZoom: 11
             },
             ESRI: {
                 name: 'Esri WorldImagery',
-                url: \"https://static.vici.org/tiles/world/{z}/{y}/{x}\",
+                url: \"https://tiles.vici.org/world/{z}/{y}/{x}\",
                 attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             }
         },
         extraOverlays: {
             LIMESNL: {
                 name: 'Limes NL',
-                url: \"https://static.vici.org/tiles/Limes/{z}/{x}/{y}.png\",
+                url: \"https://tiles.vici.org/Limes/{z}/{x}/{y}.png\",
                 attributions: '© Olav Odé - CC BY',
                 opacity: 0.8
             }
