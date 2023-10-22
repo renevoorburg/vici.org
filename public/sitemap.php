@@ -43,7 +43,7 @@ while ($row = $result->fetch_object()) {
     $urlname = "https://vici.org/vici/".$row->pnt_id."/";
     echo "<url>\n";
     echo "  <loc>".$urlname."</loc>\n";
-    echo "  <xhtml:link rel='alternate' hreflang='en' href='".$urlname."' />\n";
+    echo "  <xhtml:link rel='alternate' hreflang='en' href='".$urlname."?lang=en' />\n";
     echo "  <xhtml:link rel='alternate' hreflang='de' href='".$urlname."?lang=de' />\n";
     echo "  <xhtml:link rel='alternate' hreflang='fr' href='".$urlname."?lang=fr' />\n";
     echo "  <xhtml:link rel='alternate' hreflang='nl' href='".$urlname."?lang=nl' />\n";
