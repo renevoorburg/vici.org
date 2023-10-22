@@ -1,6 +1,6 @@
 # Vici.org
 
-Codebase for https://vici.org.
+Codebase for [https://vici.org)](https://vici.org).
 
 ## Installation
 
@@ -20,4 +20,10 @@ The vici.org PHP codes gets the required credentials from environment variables.
 
 If set, the environment variable `VICIBASE`, is passed to the `vici.js` javascript widget. This will use it for the base url for data requests it needs to make. So if your local instance runs as http://vici.local, set `VICIBASE` accordingly.
 
+## Tiles
 
+The tiles used in Vici.org are served by [tileproxy](https://github.com/renevoorburg/tileproxy).
+
+## Images
+
+Vici.org uses a local imageserver for resizing and caching images. After refactoring the code, it will be made available on github.
