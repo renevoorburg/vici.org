@@ -76,12 +76,7 @@ class UploadKML implements Upload
     }  
     
     public function getPageScripts(){
-        if (preg_match("/\.dev$/i", $_SERVER['HTTP_HOST'])) {
-            $requiredLibs = '<script src="/js/jquery-1.8.3.min.js" type="text/javascript"></script>';
-
-        } else {
-            $requiredLibs = '<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" ></script>';
-        }
+        $requiredLibs = viciCommon::jqueryInclude();
         $scripts = <<<HERE
         $requiredLibs
 
