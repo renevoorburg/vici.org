@@ -34,7 +34,7 @@ $libs = "<div style=\"font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'L
 $libs .= htmlspecialchars('<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">').'<br />';
 $libs .= htmlspecialchars('<script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>').'<br />';
 $libs .= htmlspecialchars('<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>').'<br />';
-$libs .= htmlspecialchars('<script src="https://vici.org/js/vici-2.latest.js"></script>').'<br />';
+$libs .= htmlspecialchars('<script src="https://vici.org/js/vici.js"></script>').'<br />';
 $libs .= '</div>';
 
 
