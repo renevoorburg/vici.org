@@ -31,10 +31,10 @@ require_once (dirname(__FILE__).'/include/classPage.php');
 $lng = new Lang();
 $session = new Session($lng->getLang());
 
-$extScripts =<<<EOD
+$extScripts = viciCommon::jqueryInclude();
+$extScripts .=<<<EOD
 <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
 <script src="/js/ol/v4.6.5/ol.js"></script>
-<script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
 <script src="/js/vici.js"></script>
 EOD;
   

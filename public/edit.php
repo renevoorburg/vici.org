@@ -94,11 +94,11 @@ $extIds= $site->getExtIdsObj();
 
 // scripts
 
-$scripts = '
+$scripts = viciCommon::jqueryInclude();
+$scripts .= '
     <script src="/vendor/ckeditor/ckeditor/ckeditor.js"></script>
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
-    <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/edit.js"></script>
     ';
 

@@ -51,10 +51,10 @@ $nearby = ItemHTMLParts::getNearbyHTML_new($db, $site, $lngObj);
 $museums = ItemHTMLParts::getRelevantMuseumsHTML($db, $site, $lngObj);
 $thisPlace = ItemHTMLParts::getMetadataHTML($db, $site, $lngObj);
 
-$extScripts = <<<EOD
+$extScripts = viciCommon::jqueryInclude();
+$extScripts .= <<<EOD
 <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
 <script src="/js/ol/v4.6.5/ol.js"></script>
-<script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/vici.js"></script>
 <link rel="stylesheet" href="/js/photoswipe/photoswipe.css">
 <link rel="stylesheet" href="/js/photoswipe/default-skin/default-skin.css">

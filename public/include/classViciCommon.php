@@ -303,4 +303,9 @@ class ViciCommon
         exit;
     }
 
+    public static function jqueryInclude() : string
+    {
+        return '<script src="/js/jquery-3.3.1.min.js"></script>';
+    }
+
 }
