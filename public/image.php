@@ -53,7 +53,7 @@ $row = $result->fetch_object();
 $path = $row->img_path;
 $title = (isset($row->imgd_title)) ? $row->imgd_title : $lng->str('Untitled');
 
-$html .= '<p><img src=\"//static.vici.org/cache/800x0-3$path\"></p>';
+$html .= '<p><img src="//static.vici.org/cache/800x0-3'.$path.'"></p>';
 
 if (isset($row->imgd_description)) {
     $html .= "<p>" .  preg_replace('@\n@', '<br>', $row->imgd_description) . "</p>";
