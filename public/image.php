@@ -54,12 +54,9 @@ $path = $row->img_path;
 $title = (isset($row->imgd_title)) ? $row->imgd_title : $lng->str('Untitled');
 
 $html .= '<p><a href="/image/' . $row->img_id . '">';
-if (Restricted($row->imgd_creator)) {
-    $html .= "<img src=\"//static.vici.org/cache/600x0-3$path\">";
-} else {
-    $html .= "<img src=\"//static.vici.org/cache/800x0-3$path\">";
-}
+$html .= "<img src=\"//static.vici.org/cache/800x0-3$path\">";
 $html .= '</a></p>';
+
 if (isset($row->imgd_description)) {
     $html .= "<p>" .  preg_replace('@\n@', '<br>', $row->imgd_description) . "</p>";
 }
