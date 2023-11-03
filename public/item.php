@@ -47,7 +47,7 @@ try {
 $siteKinds = new SiteKinds($lngObj);
 
 //
-$nearby = ItemHTMLParts::getNearbyHTML_new($db, $site, $lngObj);
+$nearby = ItemHTMLParts::getNearbyHTML($db, $site, $lngObj);
 $museums = ItemHTMLParts::getRelevantMuseumsHTML($db, $site, $lngObj);
 $thisPlace = ItemHTMLParts::getMetadataHTML($db, $site, $lngObj);
 
@@ -149,7 +149,7 @@ $itemImages = '';
 $itemImages .= ItemHTMLParts::getItemImagesHTML($site, $lngObj) . $lf;
 
 
-$nearbyImages = ItemHTMLParts::getNearbyImages($db, $site->getLat(), $site->getLng(), 'https://static.vici.org/cache/175x175-2', 9, 30, $lngObj, $site->getId());
+$nearbyImages = ItemHTMLParts::getNearbyImages($db, $site->getLat(), $site->getLng(), 'https://images.vici.org/crop/w175xh175', 9, 30, $lngObj, $site->getId());
 if (strlen($nearbyImages) > 1 ) {
     $itemImages .= '<h3>' . $lngObj->str('Surroundings') . ': </h3>' .  $lf;
     $itemImages .= '<div id="nearby">' .$nearbyImages.'</div>';
