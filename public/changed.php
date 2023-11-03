@@ -23,7 +23,7 @@ function getItemHTML(Lang $lngObj, $itemId, $kindName, $pntId, $itemName, $user,
     $ret = '<div style="position:relative; display:inline-block;vertical-align:text-top;width:220px;height:124px;margin:0 4px 4px 0;background-color:rgb(164, 164, 164)">' .$lf;
 
     if ($image) {
-        $ret .= '<img style="position:absolute;top:0;right:0;left:0" src="//static.vici.org/cache/220x124-2' . $image . '">' . $lf;
+        $ret .= '<img style="position:absolute;top:0;right:0;left:0" src="//images.vici.org/crop/w220xh124' . $image . '">' . $lf;
         $ret .= '<a href="' . $lngObj->langURL($lngObj->getLang(), '/vici/' . $pntId.'/') . '"><img title="' . $kindName . '" style="position:absolute;top:4px;left:4px" class="icon' . $itemId . ' marker" src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw=="></a>' . $lf;
         $ret .= '<div style="position:absolute;top:0;left:40px;right:0;bottom:0;margin:0;padding:4px;background-image:url(/images/white_75.png)">'.$lf;
     } else {

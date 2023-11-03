@@ -44,7 +44,7 @@ function getItemHTML(Lang $lngObj, $itemId, $kindName, $pntId, $itemName, $user,
     $ret .= '<div style="position:relative; display:inline-block;vertical-align:text-top;width:220px;height:124px;margin:0 4px 4px 0;background-color:rgb(164, 164, 164)">' .$lf;
 
     if ($image) {
-        $ret .= '<img style="position:absolute;top:0;right:0;left:0" src="//static.vici.org/cache/220x124-2' . $image . '">' . $lf;
+        $ret .= '<img style="position:absolute;top:0;right:0;left:0" src="//images.vici.org/crop/w220xh124' . $image . '">' . $lf;
         $ret .= '<a href="' . $lngObj->langURL($lngObj->getLang(), '/vici/' . $pntId. '/'    ) . '"><img title="' . $kindName . '" style="position:absolute;top:4px;left:4px" class="icon' . $itemId . ' marker" src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw=="></a>' . $lf;
         $ret .= '<div style="position:absolute;top:0;left:40px;right:0;bottom:0;margin:0;padding:4px;background-image:url(/images/white_75.png)">'.$lf;
     } else {
@@ -121,7 +121,7 @@ $result = $db->query("select img_id, img_path, imgd_title, acc_realname, imgd_da
 $imagehtml = '';
 while ($row = $result->fetch_object()) {
 
-    $htmlpart = '<div style="display:inline-block;margin:0 4px 4px 0;vertical-align:text-top;"><a href="'. $lng->langURL($lng->getLang(), '/image.php?id='.$row->img_id).'" title="'.htmlspecialchars($row->imgd_title).'"><img style="float:left" src="//static.vici.org/cache/100x124-4'.$row->img_path.'"></a>';
+    $htmlpart = '<div style="display:inline-block;margin:0 4px 4px 0;vertical-align:text-top;"><a href="'. $lng->langURL($lng->getLang(), '/image.php?id='.$row->img_id).'" title="'.htmlspecialchars($row->imgd_title).'"><img style="float:left" src="//images.vici.org/size/h124'.$row->img_path.'"></a>';
     $htmlpart.= '<div style="display:inline-block;padding:0 4px 0 4px;max-width:180px;background-color: rgb(243, 243, 243);height:124px"><h3 style="padding-top:4px"><a class="black" href="'. $lng->langURL($lng->getLang(),'/image.php?id=' .$row->img_id).'">'.htmlspecialchars($row->imgd_title). '</a></h3><p style="color:#646464">' .date ('j M Y H:i', strtotime($row->imgd_date)).'<br>'.$row->acc_realname.'</p></div></div>';
 
     $htmlpartsArr[strtotime($row->imgd_date)] = $htmlpart;

@@ -47,7 +47,7 @@ function getItemHTML(Lang $lngObj, $itemId, $itemName, $image)
     $ret .= '<div class="nearTextBoxFull">'.$lf;
     $ret .= '<h3><a href="' . $lngObj->langURL($lngObj->getLang(), '/edit.php?new=' . $itemId) . '">' . $siteKind . '</a></h3>';
     $ret .= '<div style="position:relative;width:220px;height:124px">'.$lf;
-    $ret .= '<a href="' . $lngObj->langURL($lngObj->getLang(), '/edit.php?new=' . $itemId) . '"><img style="position:absolute;top:0;right:0;left:0" src="//static.vici.org/cache/220x124-2/'.$image.'"></a>'.$lf;
+    $ret .= '<a href="' . $lngObj->langURL($lngObj->getLang(), '/edit.php?new=' . $itemId) . '"><img style="position:absolute;top:0;right:0;left:0" src="//images.vici.org/crop/w220xh124/'.$image.'"></a>'.$lf;
 
     if ($explain) {
         $ret .= '<p style="position:absolute;left:0;right:0;bottom:0;margin:0;padding:4px;color:black;background-image:url(/images/white_75.png)">' . $explain . '</p>'.$lf;
