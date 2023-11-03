@@ -26,4 +26,6 @@ The tiles used in Vici.org are served by [tileproxy](https://github.com/renevoor
 
 ## Images
 
-Vici.org uses a local imageserver for resizing and caching images. After refactoring the code, it will be made available on github.
+The images served by Vici.org are processed and cached by [imageserver](https://github.com/renevoorburg/imageserver).
+
+
