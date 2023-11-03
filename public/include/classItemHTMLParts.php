@@ -114,71 +114,6 @@ class ItemHTMLParts
      * @param Lang $lngObj
      * @return string $htmlStr formatted html of nearby sites
      */
-    public static function getNearbyHTML(DBConnector $db, Site $site, Lang $lngObj)
-    {
-
-        $sql = "SELECT
-                  pnt_id,
-                  pnt_name,
-                  psum_pnt_name,
-                  pnt_kind,
-                  pnt_dflt_short,
-                  psum_short,
-                  img_id,
-                  img_path,
-                  6371*acos(cos(radians(" . $site->getLat() . "))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(" . $site->getLng() . "))+sin(radians(" . $site->getLat() . "))*sin(radians(pnt_lat)))  As D
-            FROM
-                points
-            LEFT JOIN
-                pmetadata ON pnt_id = pmeta_pnt_id
-            LEFT JOIN
-                ( SELECT * FROM psummaries WHERE psum_lang='" . $lngObj->getLang() . "' ) AS x ON pnt_id = psum_pnt_id
-            LEFT JOIN
-                pkinds ON pkind_id=pnt_kind
-            LEFT JOIN
-                pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1
-            LEFT JOIN
-                images ON pil_img=img_id AND img_hide=0
-            WHERE
-                pnt_hide=0
-                AND NOT pnt_id=" . $site->getId() . "
-                AND 6371*acos(cos(radians(" . $site->getLat() . "))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(" . $site->getLng() . "))+sin(radians(" . $site->getLat() . "))*sin(radians(pnt_lat))) <10
-            ORDER BY
-                D*pkind_low*pkind_high*(12-pkind_zindex)
-            LIMIT 4";
-
-        $result = $db->query($sql);
-
-        $siteKinds = new SiteKinds($lngObj);
-
-        $lf = "\n";
-        $htmlStr = '<h2 style="margin:0">' . $lngObj->str('Nearby') . '</h2>' . $lf;
-        while ($item = $result->fetch_object()) {
-
-            $summary = viciCommon::htmlentitiesVici(isset($item->psum_short) ? $item->psum_short : $item->pnt_dflt_short);
-            $title = viciCommon::htmlentitiesVici(isset($item->psum_pnt_name) ? $item->psum_pnt_name : $item->pnt_name);
-            $markerclass = 'icon' . $item->pnt_kind . ' marker';
-            $image = '//static.vici.org/cache/60x60-2' . $item->img_path;
-            $alt = $lngObj->str($siteKinds->getName($item->pnt_kind));
-
-            $htmlStr .= '<div class="nearRow">' . $lf;
-            $htmlStr .= '<div class="nearMarkerBox">' . $lf;
-            $htmlStr .= '<a href="/vici/' . $item->pnt_id . '"><img class="' . $markerclass . '" title="' . $alt . '" src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw=="/></a>' . $lf;
-            $htmlStr .= '</div>' . $lf;
-            if (isset($item->img_path)) {
-                $htmlStr .= '<div class="nearImageBox">' . $lf;
-                $htmlStr .= '<img src="' . $image . '" width="60" height="60" alt />' . $lf;
-                $htmlStr .= '</div>' . $lf;
-                $htmlStr .= '<div class="nearTextBoxSmall"><h3>' . $title . '</h3><p>' . $summary . '</p></div>' . $lf;
-                $htmlStr .= '</div>' . $lf;
-            } else {
-                $htmlStr .= '<div class="nearTextBoxFull"><h3>' . $title . '</h3><p>' . $summary . '</p></div>' . $lf;
-                $htmlStr .= '</div>' . $lf;
-            }
-        }
-
-        return $htmlStr;
-    }
     public static function getRelevantMuseumsHTML(DBConnector $db, Site $site, Lang $lngObj)
     {
         if ($site->getKind() === 8) { return ''; }
@@ -241,7 +176,7 @@ class ItemHTMLParts
      * @param Lang $lngObj
      * @return string $htmlStr formatted html of nearby sites
      */
-    public static function getNearbyHTML_new(DBConnector $db, Site $site, Lang $lngObj)
+    public static function getNearbyHTML(DBConnector $db, Site $site, Lang $lngObj)
     {
         $lang = $lngObj->getLang();
 
@@ -311,7 +246,7 @@ class ItemHTMLParts
         DBConnector $db,
         $lat,
         $lng,
-        $imagePathPrepend = 'https://static.vici.org/cache/175x175-2',
+        $imagePathPrepend = 'https://images.vici.org/crop/w175xh175',
         $radiusKM = 9,
         $maxAmount = 30,
         Lang $lngObj,
@@ -356,8 +291,7 @@ class ItemHTMLParts
             $size_wh = self::normalizedSizeWH($row->imgd_width, $row->imgd_height);
 
             $jsonStr.= $sep;
-            $jsonStr.= '{ src: "https://static.vici.org/cache/'.$size_wh[0].'x'.$size_wh[1].'-5'.$row->img_path.'", ' . $lf;
-//            $jsonStr.= '  msrc:   "https://static.vici.org/cache/268x268-6'.$image->current()->getPath().'", ' . $lf;
+            $jsonStr.= '{ src: "https://images.vici.org/size/w'.$size_wh[0].'xh'.$size_wh[1].$row->img_path.'", ' . $lf;
             $jsonStr.= "  title: \"" . $row->imgd_title;
             $jsonStr.= '<br>&copy; {creator} {license}';
             $jsonStr.=  " [&nbsp;<a href='" . $lngObj->langURL($lang, "/image.php?id=" .$row->img_id ). "'>". $lngObj->str("more information") . '</a>&nbsp;]",' . $lf;
@@ -366,10 +300,6 @@ class ItemHTMLParts
             $sep = ',' . $lf;
 
         }
-
-        //$htmlStr = $htmlStr. $lf . '<script>' . $lf . 'var pswpitemsNear = [ ' . $jsonStr . ' ];' . $lf . 'var pswpitemsAll = $.merge(pswpitemsObject, pswpitemsNear);'.$lf.'console.log(pswpitemsAll); </script>' . $lf;
-
-
         return $htmlStr;
     }
 
@@ -415,7 +345,7 @@ class ItemHTMLParts
             $id = $image->current()->getId();
             $htmlStr .= '<figure class="item" >'
                 . '<a href="//vici.org/image.php?id=' . $id . '">'
-                . '<img class="itemImage" src="//static.vici.org/cache/268x268-6' . $image->current()->getPath()
+                . '<img class="itemImage" src="//images.vici.org/cover/w268xh268' . $image->current()->getPath()
                 . '" alt title="' . $image->current()->getTitle()
                 . ' ' . $image->current()->getDescription() . '">'
                 . '</a>'
@@ -424,8 +354,8 @@ class ItemHTMLParts
             $size_wh = self::normalizedSizeWH($image->current()->getWidth(), $image->current()->getHeight());
 
             $jsonStr.= $sep;
-            $jsonStr.= '{ src: "https://static.vici.org/cache/'.$size_wh[0].'x'.$size_wh[1].'-5'.$image->current()->getPath().'", ' . $lf;
-            $jsonStr.= '  msrc:   "https://static.vici.org/cache/268x268-6'.$image->current()->getPath().'", ' . $lf;
+            $jsonStr.= '{ src: "https://images.vici.org/size/w'.$size_wh[0].'xh'.$size_wh[1].$image->current()->getPath().'", ' . $lf;
+            $jsonStr.= '  msrc:   "https://images.vici.org/cover/w268xh268'.$image->current()->getPath().'", ' . $lf;
             $jsonStr.= "  title: \"" . preg_replace('/"/', '\"', $image->current()->getTitle());
             $jsonStr.= '<br>&copy; ' . $image->current()->getCreatorName(). ' ; ' .$image->current()->getLicenseAbbr();
             $jsonStr.=  " [&nbsp;<a href='" . $lngObj->langURL($lang, "/image.php?id=" .$id ). "'>". $lngObj->str("more information") . '</a>&nbsp;]",' . $lf;
