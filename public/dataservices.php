@@ -49,7 +49,7 @@ Returns all markers and lines for given bounds area in <a href='http://www.geojs
 The bounds parameters is specified as  atitude, longitude of south-west point, latitude, longitude of north-east point. The higher the value of 'zoom', the more 'detail' markers are returned.</p>
 
 <a href='https://vici.org/vici/49/json'>https://vici.org/vici/49/json</a><br />
-Returns the data for marker '49' in Geo-JSON format. For other serializations, try <a href='https://vici.org/vici/49/rdf<'>https://vici.org/vici/49/rdf</a> (RDF / Linked Data) or <a href='https://vici.org/vici/49/kml'>https://vici.org/vici/49/kml</a> (KML - Keyhole Markup Language).<br>
+Returns the data for marker '49' in Geo-JSON format. For other serializations, try <a href='https://vici.org/vici/49/rdf'>https://vici.org/vici/49/rdf</a> (RDF / Linked Data) or <a href='https://vici.org/vici/49/kml'>https://vici.org/vici/49/kml</a> (KML - Keyhole Markup Language).<br>
 Adding a '&lang=en'-parameter will return the data in Dutch, regardless http content negotation.</p>
 
 <h3>Cross-origin Resource Sharing</h3>
