@@ -96,9 +96,9 @@ class ViciCommon
 //        $ret.= '<li style="margin-top:12px"><a href="'.$lngObj->langURL($lang, '/linking.php').'">';
 //        $ret.=  $lngObj->str('Linking to the map');
 //        $ret.= "</a></li>\n";
-//        $ret.= '<li><a href="'.$lngObj->langURL($lang, '/dataservices.php').'">';
-//        $ret.=  $lngObj->str('Data services');
-//        $ret.= "</a></li>\n";
+        $ret.= '<li><a href="'.$lngObj->langURL($lang, '/dataservices.php').'">';
+        $ret.=  $lngObj->str('Data services');
+        $ret.= "</a></li>\n";
     
 //        $ret.= '<li style="margin-top:12px"><a href="/mobile.php">';
 //        $ret.=  $lngObj->str('Mobile version');
