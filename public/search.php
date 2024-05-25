@@ -36,7 +36,7 @@ $siteKinds = new SiteKinds($lng);
 
 $db = new DBConnector(); // no errorhandling ...
 
-set_time_limit (300);
+set_time_limit (30);
 define("MAXITEMS", 50);
 
 
@@ -75,15 +75,15 @@ $urlparams = "";
 
 // format options 'html' (default) 'kml' or 'json'
 $format = (isset($_GET['format'])) ? $db->real_escape_string($_GET['format']) : "html";
-if ($format=='html') {
+//if ($format=='html') {
     // paging - only html output is paged
     $page = (isset($_GET['page']) && (int)($_GET['page'])>0 ) ? (int)($_GET['page']) : 1;
     $start = ($page-1)*MAXITEMS;
     $limit = "LIMIT $start,".MAXITEMS;
-} else {
-    $limit = "";
-    $urlparams.= "&format=".$format;
-}
+//} else {
+//    $limit = "";
+//    $urlparams.= "&format=".$format;
+//}
 
 if (isset($_GET['terms'])) {
 //    $q = $db->real_escape_string($_GET['terms']);
