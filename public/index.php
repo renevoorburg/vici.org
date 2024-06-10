@@ -37,7 +37,14 @@ $extScripts .=<<<EOD
 <script src="/js/ol/v4.6.5/ol.js"></script>
 <script src="/js/vici.js"></script>
 EOD;
-  
+
+$app_base_url = getenv('APP_BASE_URL');
+$base_url_json = "";
+if ($app_base_url) {
+    $base_url_json .= "\n                baseUrl: \"$app_base_url\",";
+}
+
+
 $viciCall = "<script type=\"text/javascript\">
 
     $(document).ready(function() {
@@ -70,7 +77,7 @@ $viciCall = "<script type=\"text/javascript\">
                 highlights: 6,
                 lang: \"".$lng->getLang()."\",
                 setUrl: true,
-                showScale: \"metric\",
+                showScale: \"metric\",${base_url_json}
                 moveHere: true
             }
         );

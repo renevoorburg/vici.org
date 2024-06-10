@@ -63,6 +63,13 @@ $extScripts .= <<<EOD
 <script src="/js/photoswipe/photoswipe-ui-default.min.js"></script>
 EOD;
 
+
+$app_base_url = getenv('APP_BASE_URL');
+$base_url_json = "";
+if ($app_base_url) {
+    $base_url_json .= "\n                baseUrl: \"$app_base_url\",";
+}
+
 $viciCall = "<script type=\"text/javascript\">
 $(document).ready(function() {
     var mapObj = new ViciWidget('canvas',
@@ -94,7 +101,7 @@ $(document).ready(function() {
         lang: \"".$lngObj->getLang()."\",
         center: { lat: " . $site->getLat() . ", lng: " . $site->getLng() . "},
         followFocus: true,
-        focus: " . $site->getId() . ",
+        focus: " . $site->getId() . ",${base_url_json}
         showScale: \"metric\"
      }
     );
