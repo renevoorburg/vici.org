@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./config/initdb:/docker-entrypoint-initdb.d
+
+  web:
+    build: .
+    volumes:
+      - ./public/:/var/www/public
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    depends_on:
+      - db

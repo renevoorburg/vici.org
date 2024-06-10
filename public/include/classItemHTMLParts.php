@@ -26,7 +26,7 @@ class ItemHTMLParts
     {
         $lf = "\n";
 
-        $geodb = new DBConnector('GEO');
+        $geodb = new DBConnector('geo');
 
         $reverse_geocoder = new GeoCoder\Reverse($geodb, $site->getLat(), $site->getLng() );
         $image = new ImageData($site->getId());

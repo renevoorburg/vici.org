@@ -9,13 +9,17 @@ class DBConnector extends mysqli
     private string $database;
     private array $primaryKeysArr ;
 
-    public function __construct($connectTo = 'MAIN')
+    public function __construct($connectTo = 'vici')
     {
 // db settings for testing, main db:
-        $datahost = getenv('DB_HOST');
-        $database = getenv('DB_'.$connectTo);
-        $username = getenv('DB_USER');
-        $password = getenv('DB_PASS');
+        $datahost = getenv('MYSQL_HOST');
+//        $datahost ='db';
+        $database = $connectTo;
+//        $database= 'vici';
+        $username = getenv('MYSQL_USER');
+//        $username = 'vici-user';
+        $password = getenv('MYSQL_PASSWORD');
+//        $password = 'vici-password';
 
         parent::__construct($datahost, $username, $password, $database);
         parent::set_charset("utf8");

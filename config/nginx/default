@@ -1,24 +1,15 @@
 server {
     listen       80;
-    server_name  vici.local;
+    server_name  localhost;
 
     # set client body size to 2M #
 	client_max_body_size 100M;
 
+    root   /var/www/public;
 
     location / {
-        root   /var/www/org.vici/public;
         index index.php index.html index.htm;
         try_files $uri $uri/ @app;
-    }
-
-    #error_page  404              /404.html;
-
-    # redirect server error pages to the static page /50x.html
-    #
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
     }
 
 
@@ -26,9 +17,9 @@ server {
     #
     location ~ \.php$ {
         root           html;
-        fastcgi_pass   php:9000;
+        fastcgi_pass   127.0.0.1:9000;
         fastcgi_index  index.php;
-        fastcgi_param  SCRIPT_FILENAME  /var/www/org.vici/public/$fastcgi_script_name;
+        fastcgi_param  SCRIPT_FILENAME  /var/www/public/$fastcgi_script_name;
         include        fastcgi_params;
         fastcgi_read_timeout 500;
     }
