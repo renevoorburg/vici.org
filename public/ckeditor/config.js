@@ -8,4 +8,5 @@ CKEDITOR.editorConfig = function( config )
 	config.extraAllowedContent = 'cite[href](reference); blockquote';
     config.format_tags = 'p;h2;h3';
     config.forcePasteAsPlainText = true;
+    config.versionCheck = false;
 };
