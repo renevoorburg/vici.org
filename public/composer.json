@@ -1,8 +1,8 @@
 {
     "require": {
-        "smarty/smarty": "~3.1",
+        "smarty/smarty": "~4.5.3",
         "phayes/geophp": "~1.2",
-	    "ckeditor/ckeditor": "4.22",
+	    "ckeditor/ckeditor": "4.22.1",
         "easyrdf/easyrdf": "~0.9.1",
         "ml/json-ld": "~1.0",
         "solarium/solarium": "^3.7"
