@@ -30,6 +30,14 @@
                                         <td>the year 123 BCE</td>
                                     </tr>
                                     <tr>
+                                        <td>post 70</td>
+                                        <td>after the year 70 CE</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ante 405</td>
+                                        <td>before the year 405 CE</td>
+                                    </tr>
+                                    <tr>
                                         <td>3xx</td>
                                         <td>the fourth century CE</td>
                                     </tr>
@@ -57,12 +65,12 @@
                             </div>
 
                             <label for="start_yr">{if ! isset($startlabel)}Year (of creation){else}{$startlabel}{/if}:</label>
-                            <input type="text" id="start_yr" name="start_yr" pattern="{literal}-?[0-9]{0,5}[x]{0,3}\??~?{/literal}" value="{$start}" />
+                            <input type="text" id="start_yr" name="start_yr" pattern="{literal}(post |ante )?-?[0-9]{0,5}[x]{0,3}\??~?{/literal}" value="{$start}" />
                             {*<input type="checkbox" name="start_uncertain" value="start_uncertain"> Uncertain<br>*}
                             {*<input type="checkbox" name="start_approx" value="start_approx"> Approximately<br>*}
 
                             <label for="end_yr">{if ! isset($endlabel)}Year of destruction / abandonment{else}{$endlabel}{/if}:</label>
-                            <input type="text" id="end_yr" name="end_yr" pattern="{literal}(-?[0-9]{1,5}[x]{0,3}\??~?|open|unknown){/literal}"" value="{$end}" />
+                            <input type="text" id="end_yr" name="end_yr" pattern="{literal}(post |ante )?(-?[0-9]{1,5}[x]{0,3}\??~?|open|unknown){/literal}" value="{$end}" />
                         </div>
 
 
