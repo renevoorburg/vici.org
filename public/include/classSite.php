@@ -405,12 +405,15 @@ class Site
     public function setStartYear($year) : void
     {
         $this->startYearStr = trim($year);
+        
+        // Remove post/ante prefixes for numerical processing while keeping original in startYearStr
+        $yeartmp = preg_replace('/^(post |ante )/', '', $this->startYearStr);
 
         // earliest variant:
-        if ((strlen($this->startYearStr) > 0) && ($this->startYearStr[0] == '-')) {
-            $yeartmp = preg_replace('/x/', '9', $this->startYearStr);
+        if ((strlen($yeartmp) > 0) && ($yeartmp[0] == '-')) {
+            $yeartmp = preg_replace('/x/', '9', $yeartmp);
         } else  {
-            $yeartmp = preg_replace('/x/', '0', $this->startYearStr);
+            $yeartmp = preg_replace('/x/', '0', $yeartmp);
         }
 
         $this->startYear = (int)preg_replace('/[?~]*/', '', $yeartmp);
@@ -437,13 +440,16 @@ class Site
             } elseif ($year === '') {
                 $this->lastError .= "Error: Please supply a valid end year.<br>";
             } else {
-                $this->endYearStr = trim($year);
+                $this->endYearStr = $year;
+                
+                // Remove post/ante prefixes for numerical processing while keeping original in endYearStr
+                $yeartmp = preg_replace('/^(post |ante )/', '', $year);
 
                 // latest variant:
-                if ($this->endYearStr[0] == '-') {
-                    $yeartmp = preg_replace('/x/', '0', $this->endYearStr);
+                if ($yeartmp[0] == '-') {
+                    $yeartmp = preg_replace('/x/', '0', $yeartmp);
                 } else {
-                    $yeartmp = preg_replace('/x/', '9', $this->endYearStr);
+                    $yeartmp = preg_replace('/x/', '9', $yeartmp);
                 }
 
                 $this->endYear = (int)preg_replace('/[?~]*/', '', $yeartmp);
