@@ -56,7 +56,13 @@ if (!empty($email) ) {
         $message = sprintf($lng->str('reset password %s %s'), htmlentities($realname),
             viciCommon::getSiteBase() . "/reset.php?code=" . $uuid);
         $message = wordwrap($message, 70);
-        $headers .= 'From: Vici <noreply@vici.org>' . "\r\n";
+
+        $headers  = 'From: Vici <noreply@vici.org>' . "\r\n";
+        $headers .= 'Reply-To: noreply@vici.org' . "\r\n";
+        $headers .= 'Return-Path: noreply@vici.org' . "\r\n";
+        $headers .= 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+        $headers .= 'MIME-Version: 1.0' . "\r\n";
+
         mail($email, $lng->str('Reset your password at Vici.org'), $message, $headers);
         
         $html = "<p>".$lng->str('An email with instructions has been sent.')."</p>\n";

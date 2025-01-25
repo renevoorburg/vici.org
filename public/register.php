@@ -83,7 +83,14 @@ if ( (strlen($name)>3) && (strlen($password)>5) && ($passwordrepeat==$password) 
         $message = sprintf($lng->str('confirmation mail %s %s'), htmlentities($realname),
             viciCommon::getSiteBase() . "/confirm.php?code=" .$uuid);
         $message = wordwrap($message, 70);
-        $headers = 'From: Vici <noreply@vici.org>' . "\r\n";
+
+        $headers  = 'From: Vici <noreply@vici.org>' . "\r\n";
+        $headers .= 'Reply-To: noreply@vici.org' . "\r\n";
+        $headers .= 'Return-Path: noreply@vici.org' . "\r\n"; // Voor bounce-adressen
+        $headers .= 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
+        $headers .= 'MIME-Version: 1.0' . "\r\n";
+
+
         mail($email, $lng->str('Activate your account at Vici.org'), $message, $headers);
 
         // report
