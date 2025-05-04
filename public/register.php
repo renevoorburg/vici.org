@@ -86,12 +86,11 @@ if ( (strlen($name)>3) && (strlen($password)>5) && ($passwordrepeat==$password) 
 
         $headers  = 'From: Vici <noreply@vici.org>' . "\r\n";
         $headers .= 'Reply-To: noreply@vici.org' . "\r\n";
-        $headers .= 'Return-Path: noreply@vici.org' . "\r\n"; // Voor bounce-adressen
         $headers .= 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
         $headers .= 'MIME-Version: 1.0' . "\r\n";
 
 
-        mail($email, $lng->str('Activate your account at Vici.org'), $message, $headers);
+        mail($email, $lng->str('Activate your account at Vici.org'), $message, $headers, '-f noreply@vici.org');
 
         // report
         $content = "<p>" . sprintf($lng->str('Account created, activation required %s'), $email) . "</p>";
