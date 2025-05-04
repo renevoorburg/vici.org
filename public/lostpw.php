@@ -59,11 +59,10 @@ if (!empty($email) ) {
 
         $headers  = 'From: Vici <noreply@vici.org>' . "\r\n";
         $headers .= 'Reply-To: noreply@vici.org' . "\r\n";
-        $headers .= 'Return-Path: noreply@vici.org' . "\r\n";
         $headers .= 'Content-Type: text/plain; charset=UTF-8' . "\r\n";
         $headers .= 'MIME-Version: 1.0' . "\r\n";
 
-        mail($email, $lng->str('Reset your password at Vici.org'), $message, $headers);
+        mail($email, $lng->str('Reset your password at Vici.org'), $message, $headers, '-f noreply@vici.org');
         
         $html = "<p>".$lng->str('An email with instructions has been sent.')."</p>\n";
     
