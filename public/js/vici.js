@@ -1,6 +1,23 @@
 
 function ViciWidget(element, options) {
 
+    function getGridSize(zoom) {
+        if (zoom >= 13) return 0.125;
+        if (zoom >= 10) return 0.25;
+        if (zoom >= 7)  return 0.5;
+        return 1.0;
+    }
+
+    function snap(val, step) {
+        return Math.floor(val / step) * step;
+    }
+    function snapCeil(val, step) {
+        return Math.ceil(val / step) * step;
+    }
+
+    function snapZoom(zoom) {
+        return Math.floor(zoom + 0.5);
+    }
     class FocusLocationControl extends  ol.control.Control {
         /**
          * @param {Object} [opt_options] Control options.
@@ -629,9 +646,6 @@ function ViciWidget(element, options) {
                 mapState.initialized = true;
             }
         }
-        function getGridSize(zoom) {
-            return 360 / Math.pow(2, zoom);
-        }
 
         let extent = map.getView().calculateExtent();
         let zoomlevel = map.getView().getZoom();
@@ -640,18 +654,12 @@ function ViciWidget(element, options) {
         let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
         let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
         
-        function snap(val, step) {
-            return Math.floor(val / step) * step;
-        }
-        function snapCeil(val, step) {
-            return Math.ceil(val / step) * step;
-        }
-        
         let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
         let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
+        let snappedZoom = snapZoom(zoomlevel);
 
         $.ajax({
-            url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + zoomlevel + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
+            url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
             dataType: 'json',
             success: setFeatures
         });
@@ -797,11 +805,18 @@ function ViciWidget(element, options) {
         if (mapState.numHighlights > 0) {
             let extent = map.getView().calculateExtent();
             let zoomlevel = map.getView().getZoom();
-            let SW = ol.proj.toLonLat([extent[0], extent[1]]);
-            let NE = ol.proj.toLonLat([extent[2], extent[3]]);
-            let bounds = SW[1] + "," + SW[0] + "," + NE[1] + "," + NE[0];
+            let grid = getGridSize(zoomlevel);
+            
+            let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
+            let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
+            
+            let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
+            let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
+            let snappedZoom = snapZoom(zoomlevel);
+            
+            let bounds = snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1];
 
-            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + zoomlevel + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
+            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + snappedZoom + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
             if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId)) {
                 let extent = ol.proj.toLonLat(vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent());
                 let lat = extent[1];
