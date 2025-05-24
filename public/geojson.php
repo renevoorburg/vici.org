@@ -19,7 +19,7 @@ if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
     $token = isset($headers['X-Vici-Token']) ? $headers['X-Vici-Token'] : '';
     
     // Controleer tegen een vaste token-string
-    $expectedToken = "20E2ADF5AB";
+    $expectedToken = getenv('VICITOKEN');
     
     // If tokens don't match, return an empty response
     if (empty($token) || $token !== $expectedToken) {

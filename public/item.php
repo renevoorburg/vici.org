@@ -89,6 +89,7 @@ $(document).ready(function() {
                 opacity: 0.8
             }
         },".ViciCommon::getBaseUrlDeclaration()."
+        ".ViciCommon::getViciTokenDeclaration()."
         showFilter: true,
         highlights: 0,
         lang: \"".$lngObj->getLang()."\",
