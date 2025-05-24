@@ -97,9 +97,9 @@ class ViciCommon
         $ret.= '<li style="margin-top:12px"><a href="'.$lngObj->langURL($lang, '/about-vici.php').'">';
         $ret.=  $lngObj->str('About Vici');
         $ret.= "</a></li>\n";
-        $ret.= '<li><a href="'.$lngObj->langURL($lang, '/widget.php').'">';
-        $ret.=  $lngObj->str('Vici widget');
-        $ret.= "</a></li>\n";
+        // $ret.= '<li><a href="'.$lngObj->langURL($lang, '/widget.php').'">';
+        // $ret.=  $lngObj->str('Vici widget');
+        // $ret.= "</a></li>\n";
     
         $ret.= "</ul>\n";
 
