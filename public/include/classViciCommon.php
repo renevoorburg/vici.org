@@ -175,6 +175,16 @@ class ViciCommon
         }
     }
 
+    public static function getViciTokenDeclaration()
+    {
+        if (getenv('VICITOKEN')) {
+            return "
+                viciToken: '" . getenv('VICITOKEN') . "',";
+        } else {
+            return "";
+        }
+    }
+
     public static function getSiteBase(): string
     {
         $site_base = "http://";

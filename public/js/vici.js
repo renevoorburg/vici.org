@@ -657,15 +657,12 @@ function ViciWidget(element, options) {
         let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
         let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
         let snappedZoom = snapZoom(zoomlevel);
-
-        // Gebruik een vaste token-string
-        let secToken = "20E2ADF5AB";
         
         $.ajax({
             url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
             dataType: 'json',
             headers: {
-                'X-Vici-Token': secToken
+                'X-Vici-Token': options.viciToken
             },
             success: setFeatures
         });
