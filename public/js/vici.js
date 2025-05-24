@@ -629,6 +629,9 @@ function ViciWidget(element, options) {
                 mapState.initialized = true;
             }
         }
+        function getGridSize(zoom) {
+            return 360 / Math.pow(2, zoom);
+        }
 
         let extent = map.getView().calculateExtent();
         let zoomlevel = map.getView().getZoom();
