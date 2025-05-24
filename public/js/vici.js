@@ -651,7 +651,7 @@ function ViciWidget(element, options) {
         let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
 
         $.ajax({
-            url: baseUrl + "/geojson.php?bounds=" + snappedSW[1] + "," + snappedSW[0] + "," + snappedNE[1] + "," + snappedNE[0] + "&zoom=" + zoomlevel + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
+            url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + zoomlevel + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
             dataType: 'json',
             success: setFeatures
         });
