@@ -6,6 +6,10 @@ require_once (dirname(__FILE__).'/include/classDBConnector.php');
 
 use ExtIds\NormalizersIndex;
 
+header("Content-Type: application/json");
+header("Cache-Control: public, max-age=300");
+header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
+
 ViciCommon::handlePreflightReq();
 
 
