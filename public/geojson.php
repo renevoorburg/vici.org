@@ -12,6 +12,23 @@ header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
 
 ViciCommon::handlePreflightReq();
 
+// Verify security token if present
+if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
+    // Get token from HTTP header
+    $headers = getallheaders();
+    $token = isset($headers['X-Vici-Token']) ? $headers['X-Vici-Token'] : '';
+    
+    // Controleer tegen een vaste token-string
+    $expectedToken = "20E2ADF5AB";
+    
+    // If tokens don't match, return an empty response
+    if (empty($token) || $token !== $expectedToken) {
+        header('HTTP/1.1 403 Forbidden');
+        echo json_encode(['error' => 'Invalid token']);
+        exit;
+    }
+}
+
 
 class lineData
 {
