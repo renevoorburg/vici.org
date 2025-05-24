@@ -49,7 +49,7 @@ class ViciCommon
           // only allow CORS if we're doing a GET - i.e. no saving for now.
           if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']) && $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'GET') {
             header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Headers: X-Requested-With');
+            header('Access-Control-Allow-Headers: X-Requested-With, X-Vici-Token');
           }
           exit;
         }   
@@ -60,6 +60,7 @@ class ViciCommon
         if (!ob_start("ob_gzhandler")) ob_start();
         if (!headers_sent()) { 
             header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Allow-Headers: X-Requested-With, X-Vici-Token');
             if ($isJsonpReq) {
                 header('Content-Type:text/javascript; charset=UTF-8');
             } else {
@@ -89,21 +90,10 @@ class ViciCommon
         $ret.=  $lngObj->str('Recently changed');
         $ret.= "</a></li>\n";
 
-//        $ret.= '<li style="margin-top:12px"><a href="/forum/">';
-//        $ret.=  $lngObj->str('Forum');
-//        $ret.= "</a></li>\n";
-
-//        $ret.= '<li style="margin-top:12px"><a href="'.$lngObj->langURL($lang, '/linking.php').'">';
-//        $ret.=  $lngObj->str('Linking to the map');
-//        $ret.= "</a></li>\n";
-        $ret.= '<li><a href="'.$lngObj->langURL($lang, '/dataservices.php').'">';
-        $ret.=  $lngObj->str('Data services');
-        $ret.= "</a></li>\n";
+        // $ret.= '<li><a href="'.$lngObj->langURL($lang, '/dataservices.php').'">';
+        // $ret.=  $lngObj->str('Data services');
+        // $ret.= "</a></li>\n";
     
-//        $ret.= '<li style="margin-top:12px"><a href="/mobile.php">';
-//        $ret.=  $lngObj->str('Mobile version');
-//        $ret.= "</a></li>\n";
-//
         $ret.= '<li style="margin-top:12px"><a href="'.$lngObj->langURL($lang, '/about-vici.php').'">';
         $ret.=  $lngObj->str('About Vici');
         $ret.= "</a></li>\n";
@@ -112,8 +102,6 @@ class ViciCommon
         $ret.= "</a></li>\n";
     
         $ret.= "</ul>\n";
-
-        //$ret .= "<p><a href='http://www.karwansaraypublishers.com/pw/ancient-history-magazine/'><img src='/images/ahm.jpg'></a></p>";
 
         $ret.= '<p style="margin:0;padding-top:12px;padding-bottom:0;color:#888">';
         $ret.=  $lngObj->str('Languages');
