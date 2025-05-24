@@ -31,20 +31,25 @@ class Reverse
 
     private function retrieveCountryCode() : void
     {
-        $sql =
-            "SELECT country FROM geo_allcountries
-            WHERE 
-	            latitude < " . $this->lat . " + 0.5 AND
-	            latitude > " . $this->lat . " - 0.5 AND
-	            longitude < " . $this->lng . " + 0.5 AND
-	            longitude > " . $this->lng . " - 0.5 
-                AND fclass <> 'A' 
-                AND country <> '' 
-            ORDER BY 
-                acos(cos(radians(" . $this->lat . "))*cos(radians(latitude))*cos(radians(longitude)-radians(" . $this->lng . "))+sin(radians(" . $this->lat . "))*sin(radians(latitude)))
-            LIMIT 1;";
-        $result_obj = $this->connector->query($sql)->fetch_object();
-        $this->country_code = $result_obj->country;
+        $load = sys_getloadavg()[0];
+        if ($load < 6.0) {
+            $sql =
+                "SELECT country FROM geo_allcountries
+                WHERE 
+                    latitude < " . $this->lat . " + 0.5 AND
+                    latitude > " . $this->lat . " - 0.5 AND
+                    longitude < " . $this->lng . " + 0.5 AND
+                    longitude > " . $this->lng . " - 0.5 
+                    AND fclass <> 'A' 
+                    AND country <> '' 
+                ORDER BY 
+                    acos(cos(radians(" . $this->lat . "))*cos(radians(latitude))*cos(radians(longitude)-radians(" . $this->lng . "))+sin(radians(" . $this->lat . "))*sin(radians(latitude)))
+                LIMIT 1;";
+            $result_obj = $this->connector->query($sql)->fetch_object();
+            $this->country_code = $result_obj->country;
+        } else {
+            $this->country_code = '';
+        }
     }
 
     private function retrieveCountryName(string $lang) : void
@@ -64,22 +69,26 @@ class Reverse
 
     private function retrieveNearbyPlace() : void
     {
-        $result_obj = $this->connector->query(
-            "SELECT name FROM geo_allcountries
-            WHERE 
-	            latitude < " . $this->lat . " + 0.5
-    	        AND latitude > " . $this->lat . " - 0.5
-	            AND longitude < " . $this->lng . " + 0.5
-	            AND longitude > " . $this->lng . " - 0.5 
-                AND fclass = 'P' 
- 	            AND fcode <> 'PPLX'
-                AND fcode <> 'PPLCH'
-                AND fcode <> 'PPLH'
-            ORDER BY 
-                acos(cos(radians(" . $this->lat . "))*cos(radians(latitude))*cos(radians(longitude)-radians(" . $this->lng . "))+sin(radians(" . $this->lat . "))*sin(radians(latitude)))  / log10 (population + 50)
-            LIMIT 1;"
-        );
-        $this->nearby_place = $result_obj->fetch_object()->name;
+        $load = sys_getloadavg()[0];
+        if ($load < 6.0) {
+            $result_obj = $this->connector->query(
+                "SELECT name FROM geo_allcountries
+                WHERE 
+                    latitude < " . $this->lat . " + 0.5
+                    AND latitude > " . $this->lat . " - 0.5
+                    AND longitude < " . $this->lng . " + 0.5
+                    AND longitude > " . $this->lng . " - 0.5 
+                    AND fclass = 'P' 
+                    AND fcode <> 'PPLX'
+                    AND fcode <> 'PPLCH'
+                    AND fcode <> 'PPLH'
+                ORDER BY 
+                    acos(cos(radians(" . $this->lat . "))*cos(radians(latitude))*cos(radians(longitude)-radians(" . $this->lng . "))+sin(radians(" . $this->lat . "))*sin(radians(latitude)))  / log10 (population + 50)
+                LIMIT 1;"
+            );
+            $this->nearby_place = $result_obj->fetch_object()->name;
+        } else {
+            $this->nearby_place = '';
+        }
     }
-
 }

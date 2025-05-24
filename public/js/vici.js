@@ -632,11 +632,23 @@ function ViciWidget(element, options) {
 
         let extent = map.getView().calculateExtent();
         let zoomlevel = map.getView().getZoom();
-        let SW = ol.proj.toLonLat([extent[0], extent[1]]);
-        let NE = ol.proj.toLonLat([extent[2], extent[3]]);
+        let grid = getGridSize(zoomlevel);
+        
+        let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
+        let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
+        
+        function snap(val, step) {
+            return Math.floor(val / step) * step;
+        }
+        function snapCeil(val, step) {
+            return Math.ceil(val / step) * step;
+        }
+        
+        let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
+        let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
 
         $.ajax({
-            url: baseUrl + "/geojson.php?bounds=" + SW[1] + "," + SW[0] + "," + NE[1] + "," + NE[0] + "&zoom=" + zoomlevel + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
+            url: baseUrl + "/geojson.php?bounds=" + snappedSW[1] + "," + snappedSW[0] + "," + snappedNE[1] + "," + snappedNE[0] + "&zoom=" + zoomlevel + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
             dataType: 'json',
             success: setFeatures
         });
