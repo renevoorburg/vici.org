@@ -38,20 +38,17 @@ function kindStr($id) {
 
 
 function flipLine($line) {
-    $flipped = array();
-    foreach ($line as $point) {
-        $flipped[] = [$point[1], $point[0]];
-    }
-    return $flipped;
+    return array_map(function($point) {
+        return [$point[1], $point[0]];
+    }, $line);
 }
 
 
 function flipMultiLine($multiLine) {
-    $flipped = array();
-    foreach ($multiLine as $line) {
-        $flipped[] = flipLine(json_decode($line));
-    }
-    return $flipped;
+    return array_map(function($line) {
+        $decoded = json_decode($line, true);
+        return flipLine($decoded ?: []);
+    }, $multiLine);
 }
 
 $lng = new Lang();
@@ -194,7 +191,17 @@ if ($showZoomedArea) {
             . $focusPointRestrictSQL;
 }
 
+// Start output buffering for better performance
+ob_start();
+
 $result = $db->query($sql); // no error handling
+
+if (!$result) {
+    // Handle query error
+    echo "{\"type\":\"FeatureCollection\",\"features\":[],\"error\":\"Database query failed\"}";
+    if ($isJsonpReq) echo ');';
+    exit;
+}
 
 $sepx = "";
 echo "{\"type\":\"FeatureCollection\",\"features\":[";
@@ -265,3 +272,9 @@ while($obj = $result->fetch_object()) {
 echo "]}";
 
 if ($isJsonpReq) echo ');';
+
+// Free the result set to reduce memory usage
+$result->free();
+
+// Flush the output buffer
+ob_end_flush();
