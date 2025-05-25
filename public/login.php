@@ -13,7 +13,10 @@ require_once dirname(__FILE__).'/include/classPage.php';
 
 $lng = new Lang();
 $session = new Session($lng->getLang());
-$db = new DBConnector(); // no errorhandling 
+// Bepaal return URL: uit ?return, of val terug op /
+$returnUrl = $_GET['return'] ?? ($_SESSION['return'] ?? '/');
+$_SESSION['return'] = ($returnUrl === '/login.php') ? '/' : $returnUrl;
+$db = new DBConnector(); 
 
 $errorMsg = '';
 $name = isset($_POST['name']) ? (string)$_POST['name'] : null;
@@ -37,13 +40,10 @@ if (!empty($name) || !empty($password)) {
             $_SESSION['acc_level'] = $rowObj->acc_level;
             $_SESSION['acc_email'] = $rowObj->acc_email;
 
-            $return =  $_SESSION['return'];
+            $return = $_SESSION['return'] ?? '/';
             unset($_SESSION['return']);
-            if (empty($return) || ($return=="/login.php")) {
-                $return = "/";
-            }
-
             header("Location: $return");
+            exit;
         
             /* acc_level: b440a58cca0ddde37a9289ae1d766b3f40f3e92f
             0: deleted: record kept for integrity, acc. data flushed
@@ -93,11 +93,19 @@ $lng_register = $lng->str("Don't have an account? Create one.");
 
 $captcha = viciCommon::captchaDisplay();
 
-$form=<<<EOD
+$msg = "";
+if (isset($_GET['wait'])) {
+    $sec = (int)$_GET['wait'];
+    $msg = "<p>".sprintf($lng->str("error: Page limit for anonymous users reached. Log in or wait %s seconds."), $sec)."</p>";
+}
+
+$form = $msg;
+
+$form .= <<<EOD
 <div style="margin-top:8px; width:500px">
 <form action="login.php" method="post">
-<label style="display:block; width:160px; float:left">$lng_username:</label><input style="width:200px" type="text" id="frm_name" name="name"  value="$name" /><br />
-<label  style="display:block; width:160px; float:left">$lng_password:</label><input style="width:200px" type="password" id="frm_password" name="password" /><br />
+<label style="display:block; width:160px; float:left">$lng_username:</label><input style="width:200px" type="text" id="frm_name" name="name"  value="$name" /><br><br>
+<label  style="display:block; width:160px; float:left">$lng_password:</label><input style="width:200px" type="password" id="frm_password" name="password" /><br>
 $captcha<br />
 <input style="margin-left:160px; margin-top:8px;" type="submit" value="$lng_login">
 </div>
