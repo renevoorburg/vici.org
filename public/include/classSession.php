@@ -4,7 +4,6 @@ class Session
 {
     private $lang = '';
     
-
     public function __construct($lang)
     {
         session_start();
@@ -43,6 +42,26 @@ class Session
     public function setReturnURL($url)
     {
         $_SESSION['return'] = $url;
+    }
+
+    public function enforceAnonymousRateLimit($max = 12, $seconds = 600)
+    {
+        if ($this->hasUser()) {
+            return; // no limit
+        }
+    
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $key = "anon_ip_" . $ip;
+    
+        $hits = apcu_fetch($key) ?: 0;
+        $hits++;
+        apcu_store($key, $hits, $seconds);
+    
+        if ($hits > $max) {
+            $uri = $_SERVER['REQUEST_URI'];
+            header('Location: /login.php?wait=' . $seconds . '&return=' . urlencode($uri));
+            exit;
+        }
     }
 
 

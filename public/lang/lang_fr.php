@@ -54,6 +54,8 @@ $stringsArr = array(
     //"error:fullname_too_short" => $element,
     //"error:wrong_email" => $element,
     
+    "error: Page limit for anonymous users reached. Log in or wait %s seconds." => "Vous avez demandé des pages trop rapidement en tant qu'utilisateur anonyme. Veuillez vous connecter ou attendre %s secondes pour continuer.",
+
     "altar" => "Autel ou sculpture",
     "aquaduct" => "Aqueduc",
     "baths" => 'Thermes',

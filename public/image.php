@@ -32,7 +32,8 @@ function Restricted($owner)
 
 $lng = new Lang();
 $session = new Session($lng->getLang());
-$db = new DBConnector(); // no errorhandling 
+$session->enforceAnonymousRateLimit();
+$db = new DBConnector();
 
 $id = (int)$_GET['id'];
 
