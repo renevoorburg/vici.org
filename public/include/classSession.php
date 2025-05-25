@@ -59,6 +59,7 @@ class Session
     
         if ($hits > $max) {
             $uri = $_SERVER['REQUEST_URI'];
+            header("Retry-After: $seconds"); 
             header('Location: /login.php?wait=' . $seconds . '&return=' . urlencode($uri));
             exit;
         }
