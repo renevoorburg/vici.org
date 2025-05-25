@@ -18,6 +18,10 @@ require_once __DIR__ . '/include/classRDF.php';
 require_once __DIR__ . '/include/classLineData.php';
 require_once __DIR__ . '/include/classViciKML.php';
 
+$lngObj = new Lang();
+$session = new Session($lngObj->getLang());
+$session->enforceAnonymousRateLimit();
+
 $requestKindStr = ViciCommonLogic::matchRequestedContentType($_GET['id']);
 switch ($requestKindStr) {
     case 'rdf':
@@ -34,9 +38,6 @@ switch ($requestKindStr) {
         break;
 }
 
-$lngObj = new Lang();
-$session = new Session($lngObj->getLang());
-$session->enforceAnonymousRateLimit();
 $db = new DBConnector();
 
 try {
