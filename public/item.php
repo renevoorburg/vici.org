@@ -36,6 +36,7 @@ switch ($requestKindStr) {
 
 $lngObj = new Lang();
 $session = new Session($lngObj->getLang());
+$session->enforceAnonymousRateLimit();
 $db = new DBConnector();
 
 try {

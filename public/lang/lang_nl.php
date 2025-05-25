@@ -51,6 +51,9 @@ $stringsArr = array(
     "error:fullname_too_short" => "Geef aub ook uw naam op.",
     "error:wrong_email" => "Onjuist e-mailadres.",
     
+    "error: Page limit for anonymous users reached. Log in or wait %s seconds." => "U vraagt te snel pagina's op voor een anonieme gebruiker. Log in, of wacht %s seconden, om door te kunnen gaan.",
+
+
     "altar" => "Votiefsteen of reliëf",
     "aquaduct" => "Aquaduct",
     "baths" => 'Thermen',

@@ -30,6 +30,10 @@ require_once (dirname(__FILE__).'/include/classLang.php');
 require_once (dirname(__FILE__).'/include/classViciCommon.php');
 require_once (dirname(__FILE__).'/include/classDBConnector.php');
 
+header("Content-Type: application/json");   
+header("Cache-Control: public, max-age=300");
+header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
+
 ViciCommon::handlePreflightReq();
 
 $lng = new Lang();
