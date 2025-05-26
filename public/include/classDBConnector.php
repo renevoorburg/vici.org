@@ -1,6 +1,9 @@
 <?php
-
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/classViciCommon.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
 class DBConnector extends mysqli
 {
@@ -11,11 +14,11 @@ class DBConnector extends mysqli
 
     public function __construct($connectTo = 'MAIN')
     {
-// db settings for testing, main db:
-        $datahost = getenv('DB_HOST');
-        $database = getenv('DB_'.$connectTo);
-        $username = getenv('DB_USER');
-        $password = getenv('DB_PASS');
+
+        $datahost = $_ENV['DB_HOST'] ?? '';
+        $database = $_ENV['DB_' . $connectTo] ?? '';
+        $username = $_ENV['DB_USER'] ?? '';
+        $password = $_ENV['DB_PASS'] ?? '';
 
         parent::__construct($datahost, $username, $password, $database);
         parent::set_charset("utf8");

@@ -1,0 +1,10 @@
+# example .env file
+# copy this file to .env and fill out the values for your environment
+DB_HOST=mysql
+DB_MAIN=main
+DB_GEO=geo
+DB_USER=user
+DB_PASS=password
+VICIBASE=http://vici.local
+VICITOKEN=1234
+EXTSECRET=5678

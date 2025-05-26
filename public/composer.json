@@ -5,7 +5,8 @@
 	    "ckeditor/ckeditor": "4.22.1",
         "easyrdf/easyrdf": "~0.9.1",
         "ml/json-ld": "~1.0",
-        "solarium/solarium": "^3.7"
+        "solarium/solarium": "^3.7",
+        "vlucas/phpdotenv": "^5.6"
     },
     "autoload": {
         "psr-4": {

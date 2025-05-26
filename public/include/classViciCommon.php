@@ -4,10 +4,14 @@
  * Class ViciCommon. Common generic functions for Vici that don't require a db connection.
  */
 
+require_once __DIR__ . '/../vendor/autoload.php';
 
-require_once (dirname(__FILE__).'/classLang.php');
-require_once (dirname(__FILE__).'/classSession.php');
-require_once (dirname(__FILE__).'/classPage.php');
+require_once __DIR__ .'/classLang.php';
+require_once __DIR__ .'/classSession.php';
+require_once __DIR__ .'/classPage.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
 class ViciCommon 
 {
@@ -167,9 +171,9 @@ class ViciCommon
 
     public static function getBaseUrlDeclaration()
     {
-        if (getenv('VICIBASE')) {
+        if ($_ENV['VICIBASE']) {
             return "
-                baseUrl: '" . getenv('VICIBASE') . "',";
+                baseUrl: '" . $_ENV['VICIBASE'] . "',";
         } else {
             return "";
         }
@@ -177,9 +181,9 @@ class ViciCommon
 
     public static function getViciTokenDeclaration()
     {
-        if (getenv('VICITOKEN')) {
+        if ($_ENV['VICITOKEN']) {
             return "
-                viciToken: '" . getenv('VICITOKEN') . "',";
+                viciToken: '" . $_ENV['VICITOKEN'] . "',";
         } else {
             return "";
         }
