@@ -20,13 +20,17 @@ ViciCommon::handlePreflightReq();
 if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
     // Get token from HTTP header
     $headers = getallheaders();
-    $token = isset($headers['X-Vici-Token']) ? $headers['X-Vici-Token'] : '';
-    
-    // Controleer tegen een vaste token-string
-    $expectedToken = $_ENV['VICITOKEN'];
-    
-    // If tokens don't match, return an empty response
-    if (empty($token) || $token !== $expectedToken) {
+    $vici_token = $headers['X-Vici-Token'] ?? '';
+    $token_match = $vici_token === $_ENV['VICITOKEN'];
+
+    $needle = $_ENV['EXTSECRET'] ?? null;
+    $ext_secret_match = false;
+    if ($needle !== null && isset($_SERVER['QUERY_STRING'])) {
+        $ext_secret_match = strpos($_SERVER['QUERY_STRING'], $needle) !== false;
+    }
+
+    $security_pass = $token_match || $ext_secret_match;
+    if (!$security_pass) {
         header('HTTP/1.1 403 Forbidden');
         echo json_encode(['error' => 'Invalid token']);
         exit;
