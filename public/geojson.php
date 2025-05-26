@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 require_once (dirname(__FILE__).'/include/classLang.php');
 require_once (dirname(__FILE__).'/include/classViciCommon.php');
@@ -19,7 +23,7 @@ if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
     $token = isset($headers['X-Vici-Token']) ? $headers['X-Vici-Token'] : '';
     
     // Controleer tegen een vaste token-string
-    $expectedToken = getenv('VICITOKEN');
+    $expectedToken = $_ENV['VICITOKEN'];
     
     // If tokens don't match, return an empty response
     if (empty($token) || $token !== $expectedToken) {
