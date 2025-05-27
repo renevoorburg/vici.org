@@ -98,6 +98,9 @@ if (isset($_GET['wait'])) {
     $sec = (int)$_GET['wait'];
     $msg = "<p>".sprintf($lng->str("error: Page limit for anonymous users reached. Log in or wait %s seconds."), $sec)."</p>";
 }
+if (isset($_GET['loginrequired'])) {
+    $msg = "<p>" . sprintf($lng->str("error: You need to log in to access this dataservice."), $sec) . "</p>";
+}
 
 $form = $msg;
 
