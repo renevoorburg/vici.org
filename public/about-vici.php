@@ -30,46 +30,32 @@ require_once (dirname(__FILE__).'/include/classPage.php');
 $lng = new Lang();
 $session = new Session($lng->getLang());
 
-$text_en='
-
-<div style="float:right;width:560px;margin:0 0 4px 8px">
-<iframe width="560" height="315" src="//www.youtube.com/embed/9LDdsN4_WRM" frameborder="0" allowfullscreen></iframe>
-Presenting Vici.org at Wikidata trifft Archäologie (Berlin, 2013)
-</div>
-
-<p style="margin-top:0">Vici.org is the archaeological atlas of classical antiquity. It is a community driven archaeological map, inspired by and modelled after Wikipedia.</p>
+$text_en='<p style="margin-top:0">Vici.org is the archaeological atlas of classical antiquity. It is a community-driven archaeological map, inspired by and modelled after Wikipedia.</p>
 
 <p>
 The first version of Vici.org went online in May 2012.
-It was preceded by a sister website <a href="http://omnesviae.org">Omnesviae.org</a>, a roman routeplanner based on the Peutinger map.
-Since its start, Vici.org has grown a lot. At the time to this writing, over 140 contributors have added nearly 20,000 locations, approximately 1,000 line tracings and over 3,000 images.
+It was preceded by a sister website, <a href="http://omnesviae.org">Omnesviae.org</a>, a Roman route planner based on the Peutinger map.
 </p>
 
 <h2>Open Data</h2>
-
 <p>
-Similar to Wikipedia, all written content is available for reuse using the <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.nl">Creative Commons Attribution-ShareAlike</a>-license.
-Metadata is available using the <a href="http://creativecommons.org/about/cc0">CC0 / Public Domain</a> dedication.
+Similar to Wikipedia, all written content is available for reuse under the <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.nl">Creative Commons Attribution-ShareAlike</a> license.
+Metadata is available under the <a href="http://creativecommons.org/about/cc0">CC0 / Public Domain</a> dedication.
 Images or line tracings may be available under other licenses.
 Vici.org invites everyone to participate and share their knowledge of classical antiquity.
-Vici.org does provide various services to reuse this shared knowledge, through various <a href="/dataservices.php">dataservices</a> or by using the <a href="/widget.php">Vici widget</a>.
+Vici.org provides various services to reuse this shared knowledge; please contact me for more information.
 </p>
 
 <p>
-<span style="font-style:italic">René Voorburg, December 2014.</span><br />
+<span style="font-style:italic">René Voorburg, May 27th, 2025.</span><br />
 rene@digitopia.nl
 </p>
-
 ';
 
 $text_nl='<p>Vici.org is de archeologische atlas van de oudheid.</p>
 
 <h2>Vici</h2>
 
-<div style="float:right;width:560px;margin:0 0 4px 8px">
-<iframe width="560" height="315" src="//www.youtube.com/embed/9LDdsN4_WRM" frameborder="0" allowfullscreen></iframe>
-Presentatie van Vici.org voor Wikidata trifft Archäologie (Berlijn, 2013)
-</div>
 
 <p>De naam <em>Vici</em> verwijst naar het meervoud het woord <em>vicus</em> (dorp) in het latijn.
 <em>Vici</em> betekent dus \'dorpen\', of vrijer \'plaatsen\'.
@@ -77,21 +63,61 @@ Volgens hedendaagse inzichten zou <em>vici</em> in het klassieke Latijn uitgespr
 Dat de term \'vici\' vooral bekend is van de woorden van Julius Caesar, "Veni, vidi, vici" (ik kwam, ik zag, ik overwon) is een leuke bijkomstigheid, "Ik kwam, ik zag, Vici!"</p>
 
 <p>Begin 2011 is het idee voor Vici.org ontstaan. Via een zijsprong leidde dit eerst tot de Romeinse routeplanner <a href="http://omnesviae.org">Omnesviae.org</a>.
-De eerste versie van Vici.org ging in mei 2012 online.
-Sindsdien zijn functionaliteit en inhoud flink uitgebreid.
-Ondertussen bevat Vici.org bijna 20.000 locaties, zo\'n 1.000 lijnen als wegen of aquaducten en meer dan 3.000 afbeeldingen, dit alles bijgedragen door meer dan 140 personen.</p>
-
+De eerste versie van Vici.org ging in mei 2012 online.</p>
 
 <h2>Open Data</h2>
 
 <p>Vici.org is, net als Wikipedia, gericht op <em>delen</em> en <em>samenwerken</em>. Zoals bij Wikipedia is alle geschreven content beschikbaar onder de <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.nl">Creative Commons Naamsvermelding/Gelijk delen</a>-licentie.
 Metadata is vrij beschikbaar (<a href="http://creativecommons.org/about/cc0">CC0 / Public Domain</a>). Voor afbeeldingen en lijnen kunnen afwijkende licenties gelden.
 Iedereen wordt uitgenodigd om via Vici.org zijn of haar kennis van de klassieke oudheid te delen.
-Vici.org stelt gedeelde kennis op haar beurt ter beschikking voor hergebruik via verschillende <a href="/dataservices.php">dataservices</a> of via de <a href="/widget.php">Vici-widget</a>.</p>
+Vici.org stelt gedeelde kennis op haar beurt ter beschikking voor hergebruik via verschillende dataservices. Neem hiervoor even contact met me op.</p>
 
-
-<p><span style="font-style:italic">René Voorburg, 8 december 2014.</span><br />
+<p><span style="font-style:italic">René Voorburg, 27 mei 2025.</span><br />
 rene@digitopia.nl</p>';
+
+$text_de = '<p style="margin-top:0">Vici.org ist der archäologische Atlas der klassischen Antike. Es handelt sich um eine gemeinschaftlich erstellte archäologische Karte, inspiriert von und modelliert nach Wikipedia.</p>
+
+<p>
+Die erste Version von Vici.org ging im Mai 2012 online.
+Zuvor gab es eine Schwester-Website, <a href="http://omnesviae.org">Omnesviae.org</a>, einen römischen Routenplaner basierend auf der Peutingerkarte.
+</p>
+
+<h2>Offene Daten</h2>
+<p>
+Ähnlich wie bei Wikipedia sind alle schriftlichen Inhalte zur Wiederverwendung unter der <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.de">Creative Commons Attribution-ShareAlike</a>-Lizenz verfügbar.
+Metadaten stehen unter der <a href="http://creativecommons.org/about/cc0">CC0 / Public Domain</a>-Widmung zur Verfügung.
+Bilder oder Linienzeichnungen können unter anderen Lizenzen verfügbar sein.
+Vici.org lädt alle ein, ihr Wissen über die klassische Antike zu teilen.
+Vici.org bietet verschiedene Dienste zur Wiederverwendung dieses geteilten Wissens an; bitte kontaktieren Sie mich für weitere Informationen.
+</p>
+
+<p>
+<span style="font-style:italic">René Voorburg, 27. Mai 2025.</span><br />
+rene@digitopia.nl
+</p>
+';
+
+$text_fr = '<p style="margin-top:0">Vici.org est l’atlas archéologique de l’Antiquité classique. Il s’agit d’une carte archéologique collaborative, inspirée et modélisée d’après Wikipédia.</p>
+
+<p>
+La première version de Vici.org a été mise en ligne en mai 2012.
+Elle a été précédée par un site sœur, <a href="http://omnesviae.org">Omnesviae.org</a>, un planificateur d’itinéraires romains basé sur la carte de Peutinger.
+</p>
+
+<h2>Données ouvertes</h2>
+<p>
+Comme sur Wikipédia, tout le contenu écrit est disponible pour réutilisation sous la licence <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.fr">Creative Commons Attribution-ShareAlike</a>.
+Les métadonnées sont disponibles sous la dédicace <a href="http://creativecommons.org/about/cc0">CC0 / Domaine public</a>.
+Les images ou tracés peuvent être disponibles sous d’autres licences.
+Vici.org invite chacun à participer et à partager ses connaissances sur l’Antiquité classique.
+Vici.org propose divers services pour réutiliser ces connaissances partagées ; veuillez me contacter pour plus d’informations.
+</p>
+
+<p>
+<span style="font-style:italic">René Voorburg, 27 mai 2025.</span><br />
+rene@digitopia.nl
+</p>
+';
 
 switch ($lng->getLang()) {
    case 'en': 
@@ -99,6 +125,12 @@ switch ($lng->getLang()) {
         break;
    case 'nl': 
         $text = $text_nl;
+        break;
+   case 'de': 
+        $text = $text_de;
+        break;
+   case 'fr': 
+        $text = $text_fr;
         break;
    default:
         $text = '<span lang="en">'.$text_en.'</span>';
