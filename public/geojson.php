@@ -16,17 +16,16 @@ header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
 
 ViciCommon::handlePreflightReq();
 
-// Verify security token if present
+// Verify security token or external secret
 if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
-    // Get token from HTTP header
     $headers = getallheaders();
     $vici_token = $headers['X-Vici-Token'] ?? '';
     $token_match = $vici_token === $_ENV['VICITOKEN'];
 
-    $needle = $_ENV['EXTSECRET'] ?? null;
+    $ext_secret = $_ENV['EXTSECRET'] ?? null;
     $ext_secret_match = false;
-    if ($needle !== null && isset($_SERVER['QUERY_STRING'])) {
-        $ext_secret_match = strpos($_SERVER['QUERY_STRING'], $needle) !== false;
+    if ($ext_secret !== null && isset($_SERVER['QUERY_STRING'])) {
+        $ext_secret_match = strpos($_SERVER['QUERY_STRING'], $ext_secret) !== false;
     }
 
     $security_pass = $token_match || $ext_secret_match;

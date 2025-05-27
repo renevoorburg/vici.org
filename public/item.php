@@ -18,6 +18,11 @@ require_once __DIR__ . '/include/classRDF.php';
 require_once __DIR__ . '/include/classLineData.php';
 require_once __DIR__ . '/include/classViciKML.php';
 
+function enforceLogin() {
+    $uri = $_SERVER['REQUEST_URI'];
+    header('Location: /login.php?loginrequired&return=' . urlencode($uri));
+}
+
 $lngObj = new Lang();
 $session = new Session($lngObj->getLang());
 $session->enforceAnonymousRateLimit();
@@ -25,15 +30,17 @@ $session->enforceAnonymousRateLimit();
 $requestKindStr = ViciCommonLogic::matchRequestedContentType($_GET['id']);
 switch ($requestKindStr) {
     case 'rdf':
+        if (!$session->hasUser()) {
+            enforceLogin();
+        }
         $rdfObj = new RDF('site', $_GET['id']);
         exit;
         break;
     case 'kml':
+        if (!$session->hasUser()) {
+            enforceLogin();
+        }
         $kml = new ViciKML($_GET['id']);
-        exit;
-        break;
-    case 'json':
-        include __DIR__ . '/object.php';
         exit;
         break;
 }
@@ -187,7 +194,7 @@ if ($tracing->getNumLines()) {
 $footer = '<p>' ;
 $footer.= sprintf($lngObj->str('This object was added by %s on %s.'),  $site->getCreatorName(), $site->getCreateDate()). " ";
 $footer.= sprintf($lngObj->str('Last update by %s on %s.'),  $site->getEditorName(), $site->getEditDate())." ";
-$footer.= $lngObj->str('Persistent URI').': http://vici.org/vici/'.$site->getId().' . '.$lngObj->str('Download as').' <a href="/vici/'.$site->getId().'/rdf">RDF/XML</a>, <a href="/vici/'.$site->getId().'/json">GeoJSON</a>, <a href="/vici/'.$site->getId().'/kml">KML</a>.<br>';
+$footer.= $lngObj->str('Persistent URI').': http://vici.org/vici/'.$site->getId().' . '.$lngObj->str('Download as').' <a href="/vici/'.$site->getId().'/rdf">RDF/XML</a>, <a href="/vici/'.$site->getId().'/kml">KML</a>.<br>';
 $footer.= $lngObj->str('Annotation CCBYSA');
 $footer.= $lngObj->str('Metadata CC0')."<br>";
 $footer.= $linefoot;

@@ -8,6 +8,6 @@ Disallow: /edit.php
 Disallow: /search.php
 Disallow: /*/kml
 Disallow: /*/rdf
-Crawl-delay: 20
+Crawl-delay: 60
 
-Sitemap: https://vici.org/sitemap.php
+# please be kind to us
