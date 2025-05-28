@@ -20,7 +20,13 @@ require_once __DIR__ . '/include/classViciKML.php';
 
 function enforceLogin() {
     $uri = $_SERVER['REQUEST_URI'];
+    
+    header('HTTP/1.1 302 Found');
     header('Location: /login.php?loginrequired&return=' . urlencode($uri));
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Content-Type: text/html; charset=UTF-8');
+    exit('Redirecting to login page. Authentication required.');
 }
 
 $lngObj = new Lang();
