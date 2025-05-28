@@ -56,7 +56,7 @@ class ViciCommonLogic extends ViciCommon
      */
     public static function matchRequestedContentType($idStr) : string
     {
-        $acceptable =array('html', 'rdf', 'kml', 'json');
+        $acceptable =array('html', 'rdf', 'kml');
         $default = 'html';
         $idArr = explode("/", $idStr);
         $accept_format = self::getAcceptFormat($acceptable);
