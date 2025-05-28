@@ -21,6 +21,17 @@ if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
     $headers = getallheaders();
     $vici_token = $headers['X-Vici-Token'] ?? '';
     $token_match = $vici_token === $_ENV['VICITOKEN'];
+    
+    // Check tegen CUST1 tot CUST9 variabelen
+    if (!$token_match && !empty($vici_token)) {
+        for ($i = 1; $i <= 9; $i++) {
+            $cust_key = 'CUST' . $i;
+            if (isset($_ENV[$cust_key]) && $_ENV[$cust_key] === $vici_token) {
+                $token_match = true;
+                break;
+            }
+        }
+    }
 
     $ext_secret = $_ENV['EXTSECRET'] ?? null;
     $ext_secret_match = false;
