@@ -22,7 +22,7 @@ if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
     $vici_token = $headers['X-Vici-Token'] ?? '';
     $token_match = $vici_token === $_ENV['VICITOKEN'];
     
-    // Check tegen CUST1 tot CUST9 variabelen
+    // Check token tegen CUST1 tot CUST9 variabelen
     if (!$token_match && !empty($vici_token)) {
         for ($i = 1; $i <= 9; $i++) {
             $cust_key = 'CUST' . $i;
@@ -33,13 +33,27 @@ if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
         }
     }
 
+    // Check of de User-Agent begint met een van de waarden in UA1 t/m UA9
+    $useragent_match = false;
+    if (!$token_match && isset($_SERVER['HTTP_USER_AGENT'])) {
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+        for ($i = 1; $i <= 9; $i++) {
+            $ua_key = 'UA' . $i;
+            if (!empty($_ENV[$ua_key]) && strpos($user_agent, $_ENV[$ua_key]) === 0) {
+                $useragent_match = true;
+                break;
+            }
+        }
+    }
+
+    // Check of de querystring de extsecret bevat
     $ext_secret = $_ENV['EXTSECRET'] ?? null;
     $ext_secret_match = false;
     if ($ext_secret !== null && isset($_SERVER['QUERY_STRING'])) {
         $ext_secret_match = strpos($_SERVER['QUERY_STRING'], $ext_secret) !== false;
     }
 
-    $security_pass = $token_match || $ext_secret_match;
+    $security_pass = $token_match || $ext_secret_match || $useragent_match;
     if (!$security_pass) {
         header('HTTP/1.1 403 Forbidden');
         echo json_encode(['error' => 'Invalid token']);
