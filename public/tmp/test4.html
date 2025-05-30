@@ -6,17 +6,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Vici.org kaartvoorbeeld</title>
   <style>
-    body {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+html, body {
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
     main {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
     #map {
       flex: 1;
       min-height: 300px;
@@ -32,6 +33,22 @@
     .footer-expanded {
       max-height: 300px; /* max-hoogte als uitgeklapt */
     }
+
+    @media (max-width: 768px) {
+  main {
+    flex-direction: column;
+    height: auto;
+  }
+
+  #map {
+    height: 400px;
+  }
+
+  .highlights-scroll {
+    overflow: visible;
+    max-height: none;
+  }
+}
   </style>
 </head>
 <body>
