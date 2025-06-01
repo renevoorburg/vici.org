@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Vici.org kaartvoorbeeld</title>
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
+  <script src="/js/ol/v4.6.5/ol.js"></script>
+  <script src="/js/vici.js"></script>
+  <style>
+html, body {
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+    header {
+      height: 4rem;
+      flex-shrink: 0;
+    }
+
+    main {
+      display: flex;
+      flex: none;
+      height: calc(100vh - 4rem - 2.5rem); /* header + teaser */
+    }
+
+    #map {
+      flex: 1;
+      min-height: 300px;
+    }
+
+    .highlights {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 25%;
+  min-width: 240px;
+  background: white;
+  height: 100%;
+}
+
+.highlights-scroll {
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #map {
+        max-height: 350px;
+      }
+
+      .highlights {
+        max-width: none;
+      }
+
+      .highlights-scroll {
+        overflow: visible;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            var mapObj = new ViciWidget('map',
+                {   defaultMap: "OSM",
+                    useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
+                    extraMaps: {
+                        DARE: {
+                            name: 'Digital Atlas of the Roman Empire',
+                            url: "https://tiles.vici.org/imperium/{z}/{x}/{y}.png",
+                            attributions: '© <a href="http://dare.ht.lu.se/">Johan Åhlfeldt</a>',
+                            maxZoom: 11
+                        },
+                        ESRI: {
+                            name: 'Esri WorldImagery',
+                            url: "https://tiles.vici.org/world/{z}/{y}/{x}",
+                            attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                        }
+                    },
+                    extraOverlays: {
+                        LIMESNL: {
+                            name: 'Limes NL',
+                            url: "https://tiles.vici.org/Limes/{z}/{x}/{y}.png",
+                            attributions: '© Olav Odé - CC BY',
+                            opacity: 0.8
+                        }
+                    },
+                    
+                    viciToken: '20E2ADF5AB',
+                    showFilter: true,
+    //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
+                    highlights: 0,
+                    lang: "nl",
+                    setUrl: true,
+                    showScale: "metric",
+                    moveHere: true
+                }
+            );
+        });
+    
+    </script>
+  <!-- Navigatie -->
+  <header class="bg-white shadow px-4 py-2 flex items-center justify-between">
+    <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">– archeologische atlas</span></div>
+    <button id="menu-button" class="md:hidden text-blue-900 text-2xl">&#9776;</button>
+    <nav id="main-menu" class="hidden md:flex items-center space-x-4 text-blue-900 font-medium">
+      <input type="text" placeholder="Zoeken..." class="border rounded px-2 py-1 text-sm" />
+      <a href="#" class="hover:underline">Toevoegen</a>
+      <a href="#" class="hover:underline">Login / Register</a>
+    </nav>
+  </header>
+
+  <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 space-y-2">
+    <a href="#" class="block py-1 text-blue-900">Toevoegen</a>
+    <a href="#" class="block py-1 text-blue-900">Login / Register</a>
+    <input type="text" placeholder="Zoeken..." class="w-full border rounded px-2 py-1 text-sm" />
+  </div>
+
+  <!-- Hoofdinhoud -->
+  <main>
+    <div id="map" class="bg-blue-200"></div>
+  
+    <div class="highlights">
+      <div class="highlights-scroll">
+        <div class="p-2 md:pt-0 md:px-2 md:pb-2">
+          <div class="relative">
+            <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" class="w-full rounded" />
+            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
+              <div class="font-semibold">Romeins badhuis</div>
+              <p>Kort overzicht van het object [&nbsp;<a href="#" class="underline">meer</a>&nbsp;]</p>
+            </div>
+          </div>
+        </div>
+        <div class="px-2 pb-2">
+          <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
+          <div class="space-y-3">
+            <!-- Voorbeelditems -->
+            <div class="bg-gray-100 rounded shadow">
+              <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" class="w-full rounded-t" />
+              <div class="p-2 text-sm">
+                <div class="font-semibold">Tollan</div>
+                Site of a major city.
+              </div>
+            </div>
+            <div class="bg-gray-100 rounded shadow">
+              <img src="https://images.vici.org/crop/w220xh124/uploads/d7a18710_1dfa_6834_d074_ad58e1d7b778.jpg" class="w-full rounded-t" />
+              <div class="p-2 text-sm">
+                <div class="font-semibold">Forum Romanum</div>
+                Political center of ancient Rome.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white text-sm text-gray-600">
+    <div class="max-w-screen-md mx-auto px-4 pt-3">
+      <div class="text-center font-semibold border-t border-gray-300 pb-2">
+        Meer over Vici.org
+      </div>
+      <div>
+        <div class="mt-2">
+          <div class="flex flex-wrap justify-center gap-4 mb-4">
+            <a href="https://github.com/renevoorburg/vici.org" class="flex items-center gap-2">
+              <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="w-5 h-5" alt="GitHub" />
+              GitHub
+            </a>
+            <a href="https://mastodon.social/@vici" class="flex items-center gap-2">
+              <img src="https://joinmastodon.org/logos/logo-purple.svg" class="w-5 h-5" alt="Mastodon" />
+              Mastodon
+            </a>
+            <a href="https://livius.org" class="flex items-center gap-2">
+              <img src="https://www.livius.org/favicon.ico" class="w-5 h-5" alt="Livius" />
+              Livius.org
+            </a>
+          </div>
+          <div class="flex justify-center space-x-4">
+            <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('menu-button').addEventListener('click', function () {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>
