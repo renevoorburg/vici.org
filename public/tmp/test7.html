@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vici.org kaartvoorbeeld</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: white;
+      border-bottom: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .title {
+      font-weight: bold;
+      color: #1e3a8a;
+      font-size: 1.2rem;
+    }
+    header .subtitle {
+      font-weight: normal;
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-left: 0.5rem;
+    }
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      padding: 0 1rem 1rem;
+      background: white;
+    }
+    #mobile-menu a,
+    #mobile-menu input {
+      margin-bottom: 0.5rem;
+    }
+    .hamburger {
+      font-size: 1.5rem;
+      color: #1e3a8a;
+      cursor: pointer;
+      display: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    #map {
+      flex: 1;
+      background: #bfdbfe;
+      min-height: 300px;
+    }
+    .sidebar {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      background: white;
+    }
+    .sidebar-scroll {
+      overflow-y: auto;
+      flex-grow: 1;
+      padding: 1rem;
+    }
+    .highlight {
+      margin-bottom: 1rem;
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    .highlight img {
+      width: 100%;
+      display: block;
+    }
+    .highlight .text {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+    footer {
+      font-size: 0.9rem;
+      background: white;
+      color: #4b5563;
+      overflow: hidden;
+      max-height: 2.5rem;
+      transition: max-height 0.3s ease;
+    }
+    footer.expanded {
+      max-height: 300px;
+    }
+    footer .toggle {
+      text-align: center;
+      border-top: 1px solid #ccc;
+      padding: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+      }
+      .hamburger {
+        display: block;
+      }
+      #mobile-menu {
+        display: flex;
+      }
+      main {
+        flex-direction: column;
+        height: auto;
+      }
+      #map {
+        height: 400px;
+      }
+      .sidebar {
+        width: 100%;
+        max-height: none;
+      }
+      .sidebar-scroll {
+        max-height: none;
+        overflow-y: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">Vici.org<span class="subtitle"> – archeologische atlas</span></div>
+    <div class="hamburger" onclick="toggleMobileMenu()">☰</div>
+    <nav>
+      <a href="#">Login / Register</a>
+      <a href="#">Toevoegen</a>
+      <input type="text" placeholder="Zoeken..." />
+    </nav>
+  </header>
+  <div id="mobile-menu">
+    <a href="#">Login / Register</a>
+    <a href="#">Toevoegen</a>
+    <input type="text" placeholder="Zoeken..." />
+  </div>
+
+  <main>
+    <div id="map">Kaart hier</div>
+    <div class="sidebar">
+      <div class="sidebar-scroll">
+        <h2>Uitgelicht</h2>
+        <div class="highlight">
+          <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" alt="Tollan" />
+          <div class="text">
+            <strong>Tollan</strong><br />
+            Site of a major city.
+          </div>
+        </div>
+        <div class="highlight">
+          <img src="https://images.vici.org/crop/w220xh124/uploads/d7a18710_1dfa_6834_d074_ad58e1d7b778.jpg" alt="Forum Romanum" />
+          <div class="text">
+            <strong>Forum Romanum</strong><br />
+            Political center of ancient Rome.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="toggle" onclick="toggleFooter()">Meer over Vici.org ↓</div>
+    <div class="content" style="padding: 1rem; text-align: center;">
+      <p><a href="https://github.com/renevoorburg/vici.org">GitHub</a> – <a href="https://mastodon.social/@vici">Mastodon</a> – <a href="https://livius.org">Livius.org</a></p>
+      <p><a href="#">NL</a> | <a href="#">DE</a> | <a href="#">FR</a> | <a href="#">EN</a></p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function toggleFooter() {
+      const footer = document.getElementById('footer');
+      footer.classList.toggle('expanded');
+    }
+  </script>
+</body>
+</html>
