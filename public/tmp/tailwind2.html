@@ -36,9 +36,6 @@ html, body {
     .highlights {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 25%;
-  min-width: 240px;
   background: white;
   height: 100%;
 }
@@ -59,15 +56,6 @@ html, body {
 
       #map {
         max-height: 350px;
-      }
-
-      .highlights {
-        max-width: none;
-      }
-
-      .highlights-scroll {
-        overflow: visible;
-        max-height: none;
       }
     }
   </style>
@@ -135,7 +123,7 @@ html, body {
   <main>
     <div id="map" class="bg-blue-200"></div>
   
-    <div class="highlights">
+    <div class="highlights w-full md:w-1/4 lg:w-[350px] xl:w-[400px] min-w-[240px]">
       <div class="highlights-scroll">
         <div class="p-2 md:pt-0 md:px-2 md:pb-2">
           <div class="relative">

@@ -194,6 +194,9 @@ function ViciWidget(element, options) {
         }()),
         langReq: '',
         numHighlights : (function(){
+            if (typeof options.highlightFunc === 'function') {
+                return options.highlights;
+            }
             if (document.getElementById(element).clientWidth < 800) {
                 return 0;
             }
@@ -768,41 +771,46 @@ function ViciWidget(element, options) {
         function showHighlights(d) {
             let highlights = d.features;
 
-            let highlightText='';
-            if (highlights.length > 0) {
+            if (typeof options.highlightFunc === 'function') {
+                options.highlightFunc(highlights);
+            } else {
+                let highlightText='';
+                if (highlights.length > 0) {
 
-                highlightText += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_high_close" src="'+baseUrl+'/images/close-button.png"/></div>';
-                highlightText += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>"+txt["Featured"]+":</div>";
+                    highlightText += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_high_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+                    highlightText += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>"+txt["Featured"]+":</div>";
 
-                for (let i in highlights) {
-                    let highlight = highlights[i];
+                    for (let i in highlights) {
+                        let highlight = highlights[i];
 
-                    highlightText += '<div style="padding:5px; min-height: 36px;" class="highclick" id="high_'+highlight.properties.id+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker icon'+highlight.properties.kind+'" width="32" height="37"><div style="font-weight:bold">'+highlight.properties.title+'</div>';
-                    if (highlight.properties.img) {
-                        highlightText += '<div style="margin:2px 0px 0px 37px;position:relative;cursor: pointer"><img id="vici_high_image'+i+'" src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+highlight.properties.img+'">';
-                        highlightText += '<div style="position: absolute; bottom:3px; left:0px; width:220px; background-color: rgba(0, 60, 136, 0.7);">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
-                        highlightText += '</div>';
-                    } else {
-                        highlightText += '<div style="margin-left:37px">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
+                        highlightText += '<div style="padding:5px; min-height: 36px;" class="highclick" id="high_'+highlight.properties.id+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker icon'+highlight.properties.kind+'" width="32" height="37"><div style="font-weight:bold">'+highlight.properties.title+'</div>';
+                        if (highlight.properties.img) {
+                            highlightText += '<div style="margin:2px 0px 0px 37px;position:relative;cursor: pointer"><img id="vici_high_image'+i+'" src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+highlight.properties.img+'">';
+                            highlightText += '<div style="position: absolute; bottom:3px; left:0px; width:220px; background-color: rgba(0, 60, 136, 0.7);">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
+                            highlightText += '</div>';
+                        } else {
+                            highlightText += '<div style="margin-left:37px">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
+                        }
+                        highlightText += '</div>'
                     }
-                    highlightText += '</div>'
                 }
+
+                highlightsbox.innerHTML = highlightText;
+
+                $('#vici_high_close').click(function(){
+                    highlightsbox.innerHTML = '';
+                });
+
+                $('.highclick').click(function(){
+                    let string = this.id;
+                    let id = string.substr(5, string.length-5);
+                    let marker = vectorSourceMarkers.getFeatureById(id);
+
+                    updateInfobox(marker);
+                    panTo(id);
+                });
             }
-
-            highlightsbox.innerHTML = highlightText;
-
-            $('#vici_high_close').click(function(){
-                highlightsbox.innerHTML = '';
-            });
-
-            $('.highclick').click(function(){
-                let string = this.id;
-                let id = string.substr(5, string.length-5);
-                let marker = vectorSourceMarkers.getFeatureById(id);
-
-                updateInfobox(marker);
-                panTo(id);
-            });
+     
         }
 
         if (mapState.numHighlights > 0) {
@@ -942,19 +950,23 @@ function ViciWidget(element, options) {
             image: selectIcon(feature, true)
         }));
 
-        contents += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_sel_close" src="'+baseUrl+'/images/close-button.png"/></div>';
-        contents += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>" + txt["selection"] + ":</div>";
-        contents += '<div style="padding:5px; min-height: 36px;"><a href="'+markerData.url+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+markerData.kind+'" width="32" height="37"></a><div style="font-weight:bold">'+markerData.title+'</div>';
-        if (markerData.picture) {
-            contents+= '<div style="margin:2px 0 0 37px; position: relative"><a href="'+markerData.url+'"><img src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+markerData.picture+'" style="border:0"></a>';
-            contents+= '<div style="position: absolute; bottom:3px; left:0; width:220px; background-color: rgba(0, 60, 136, 0.7)">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
-            contents+= '</div>';
+        if(typeof options.selectionFunc === 'function') {
+            options.selectionFunc(markerData);
         } else {
-            contents+= '<div style="margin-left:37px">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
+            contents += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_sel_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+            contents += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>" + txt["selection"] + ":</div>";
+            contents += '<div style="padding:5px; min-height: 36px;"><a href="'+markerData.url+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+markerData.kind+'" width="32" height="37"></a><div style="font-weight:bold">'+markerData.title+'</div>';
+            if (markerData.picture) {
+                contents+= '<div style="margin:2px 0 0 37px; position: relative"><a href="'+markerData.url+'"><img src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+markerData.picture+'" style="border:0"></a>';
+                contents+= '<div style="position: absolute; bottom:3px; left:0; width:220px; background-color: rgba(0, 60, 136, 0.7)">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
+                contents+= '</div>';
+            } else {
+                contents+= '<div style="margin-left:37px">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
+            }
+            contents += '</div>';
+    
+            infobox.innerHTML = contents;
         }
-        contents += '</div>';
-
-        infobox.innerHTML = contents;
 
         $('#vici_sel_close').click(function(){
             deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
