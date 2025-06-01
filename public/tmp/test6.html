@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vici.org kaartvoorbeeld</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: sans-serif;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #fff;
+      padding: 1rem;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    nav { display: flex; gap: 1rem; }
+
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 0.5rem;
+    }
+
+    main {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    #map {
+      flex: 1;
+      background: #cce0ff;
+      min-height: 300px;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      min-height: 0;
+    }
+
+    .sidebar-scroll {
+      overflow-y: auto;
+      flex-grow: 1;
+      min-height: 0;
+      padding: 1rem;
+    }
+
+    .highlight {
+      background: #f5f5f5;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .highlight img {
+      width: 100%;
+      display: block;
+    }
+
+    footer {
+      background: #eee;
+      font-size: 0.9rem;
+      color: #333;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      max-height: 2.5rem;
+      cursor: pointer;
+    }
+
+    footer.expanded {
+      max-height: 300px;
+    }
+
+    .footer-content {
+      padding: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      nav { display: none; }
+
+      #mobile-menu.active { display: flex; }
+
+      main {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+      }
+
+      #map {
+        min-height: 300px;
+        height: 400px;
+      }
+
+      .sidebar {
+        width: 100%;
+        max-height: none;
+      }
+
+      .sidebar-scroll {
+        overflow: visible;
+        max-height: none;
+      }
+
+      html, body {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>Vici.org</strong> – archeologische atlas</div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <nav>
+      <a href="#">Login</a>
+      <a href="#">Toevoegen</a>
+      <input type="text" placeholder="Zoeken..." />
+    </nav>
+  </header>
+
+  <div id="mobile-menu">
+    <a href="#">Login</a>
+    <a href="#">Toevoegen</a>
+    <input type="text" placeholder="Zoeken..." />
+  </div>
+
+  <main>
+    <div id="map">Kaart hier</div>
+    <div class="sidebar">
+      <div class="sidebar-scroll">
+        <h2>Uitgelicht</h2>
+        <div class="highlight">
+          <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" alt="Altaar">
+          <div class="p-2">
+            <strong>Romeins badhuis</strong><br />
+            Kort overzicht van het object [&nbsp;<a href="#">meer</a>&nbsp;]
+          </div>
+        </div>
+        <div class="highlight">
+          <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" alt="De Meern">
+          <div class="p-2">
+            <strong>Tollan</strong><br />
+            Site of a major city.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer" onclick="toggleFooter()">
+    <div class="footer-content">
+      <div style="text-align:center; font-weight:600; border-top:1px solid #ccc; padding-top:0.5rem;">
+        Meer over Vici.org ↓
+      </div>
+      <div style="margin-top:0.5rem;">
+        <div style="display:flex; justify-content:center; gap:1rem;">
+          <a href="#">GitHub</a>
+          <a href="#">Mastodon</a>
+          <a href="#">Livius.org</a>
+        </div>
+        <div style="text-align:center; margin-top:0.5rem;">
+          <a href="#">NL</a> · <a href="#">DE</a> · <a href="#">FR</a> · <a href="#">EN</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('active');
+    }
+
+    function toggleFooter() {
+      document.getElementById('footer').classList.toggle('expanded');
+    }
+  </script>
+</body>
+</html>
