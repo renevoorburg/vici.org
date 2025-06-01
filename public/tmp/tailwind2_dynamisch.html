@@ -61,8 +61,98 @@ html, body {
   </style>
 </head>
 <body>
-    <script type="text/javascript">
+    <script>
+        function updateSelectionBox(feature) {
+            // krijgt één geseleerde feature en toont deze in de selection box
+            console.log(feature)
+            
+            // Selecteer de container voor de selectiebox
+            const selectionBox = document.querySelector('.highlights .p-2.md\\:pt-0');
+            
+            // // Controleer of er een feature is
+            // if (!feature || !feature.properties) {
+            //     // Als er geen feature is, maak de selectiebox leeg
+            //     selectionBox.innerHTML = '';
+            //     return;
+            // }
+            
+            // Haal de benodigde gegevens op uit het feature object
+            const title = feature.title || 'Onbekende locatie';
+            const summary = feature.html || '';
+            const id = feature.id || '';
+            const hasImage = feature.img && feature.img !== '';
+            
+            // Maak de HTML voor de selectiebox
+            let selectionHTML = '';
+            
+            if (hasImage) {
+                // Als er een afbeelding is, toon deze met overlay
+                const imageUrl = `https://images.vici.org/crop/w220xh124${feature.properties.img}`;
+                selectionHTML = `
+                    <div class="relative">
+                        <img src="${imageUrl}" class="w-full rounded" alt="${title}" onerror="this.style.display='none'; this.parentNode.classList.remove('relative');" />
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
+                            <div class="font-semibold">${title}</div>
+                            <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Als er geen afbeelding is, toon alleen de tekst
+                selectionHTML = `
+                    <div class="bg-blue-100 p-3 rounded">
+                        <div class="font-semibold">${title}</div>
+                        <p class="text-sm">${summary} ${id ? `[<a href="/vici/${id}" class="text-blue-600 hover:underline">meer</a>]` : ''}</p>
+                    </div>
+                `;
+            }
+            
+            // Plaats de HTML in de selectiebox
+            selectionBox.innerHTML = selectionHTML;
+        }
 
+        function updateHighlightsBox(highlights) {
+            // Selecteer de container voor de highlights
+            const highlightsContainer = document.querySelector('.highlights .space-y-3');
+            
+            // Controleer of er highlights zijn
+            if (!highlights || highlights.length === 0) {
+                highlightsContainer.innerHTML = '<div class="p-2 text-sm text-gray-500">Geen uitgelichte items beschikbaar.</div>';
+                return;
+            }
+            
+            // Maak HTML voor de highlights
+            let highlightHTML = '';
+            
+            // Loop door de highlights array
+            for (let i = 0; i < highlights.length; i++) {
+                const highlight = highlights[i];
+                
+                // Haal de benodigde gegevens op uit het highlight object
+                const title = highlight.properties.title || 'Onbekende locatie';
+                const summary = highlight.properties.summary || '';
+                const imageUrl = highlight.properties.img 
+                    ? `https://images.vici.org/crop/w220xh124${highlight.properties.img}`
+                    : 'https://images.vici.org/crop/w220xh124/uploads/no_image.png';
+                const id = highlight.properties.id || '';
+                
+                // Voeg HTML toe voor dit highlight item
+                highlightHTML += `
+                <div class="bg-gray-100 rounded shadow">
+                    <img src="${imageUrl}" class="w-full rounded-t" alt="${title}" />
+                    <div class="p-2 text-sm">
+                        <div class="font-semibold">${title}</div>
+                        ${summary}
+                        ${id ? `<a href="/vici/${id}" class="text-blue-600 hover:underline ml-1">[meer]</a>` : ''}
+                    </div>
+                </div>`;
+            }
+            
+            // Plaats de HTML in de container
+            highlightsContainer.innerHTML = highlightHTML;
+        }
+    </script>
+    <script type="text/javascript">
         $(document).ready(function() {
             var mapObj = new ViciWidget('map',
                 {   defaultMap: "OSM",
@@ -92,11 +182,13 @@ html, body {
                     viciToken: '20E2ADF5AB',
                     showFilter: true,
     //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
-                    highlights: 0,
+                    highlights: 4,
                     lang: "nl",
                     setUrl: true,
                     showScale: "metric",
-                    moveHere: true
+                    moveHere: true,
+                    highlightFunc: updateHighlightsBox,
+                    selectionFunc: updateSelectionBox
                 }
             );
         });
@@ -138,20 +230,6 @@ html, body {
           <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
           <div class="space-y-3">
             <!-- Voorbeelditems -->
-            <div class="bg-gray-100 rounded shadow">
-              <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" class="w-full rounded-t" />
-              <div class="p-2 text-sm">
-                <div class="font-semibold">Tollan</div>
-                Site of a major city.
-              </div>
-            </div>
-            <div class="bg-gray-100 rounded shadow">
-              <img src="https://images.vici.org/crop/w220xh124/uploads/d7a18710_1dfa_6834_d074_ad58e1d7b778.jpg" class="w-full rounded-t" />
-              <div class="p-2 text-sm">
-                <div class="font-semibold">Forum Romanum</div>
-                Political center of ancient Rome.
-              </div>
-            </div>
           </div>
         </div>
       </div>
