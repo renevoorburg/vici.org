@@ -59,8 +59,18 @@ class Session
     
         if ($hits > $max) {
             $uri = $_SERVER['REQUEST_URI'];
-            header('HTTP/1.1 429 Too Many Requests');
-            header("Retry-After: $seconds"); 
+            
+            if (isset($_SERVER['HTTP_USER_AGENT'])) {
+                $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
+                if (strpos($userAgent, 'bot') !== false || 
+                    strpos($userAgent, 'crawler') !== false || 
+                    strpos($userAgent, 'spider') !== false) {
+                    header('HTTP/1.1 429 Too Many Requests');
+                    header("Retry-After: $seconds");
+                    exit;
+                }
+            }
+            
             header('Location: /login.php?wait=' . $seconds . '&return=' . urlencode($uri));
             exit;
         }
