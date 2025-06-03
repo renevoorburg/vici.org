@@ -59,6 +59,7 @@ class Session
     
         if ($hits > $max) {
             $uri = $_SERVER['REQUEST_URI'];
+            header('HTTP/1.1 429 Too Many Requests');
             header("Retry-After: $seconds"); 
             header('Location: /login.php?wait=' . $seconds . '&return=' . urlencode($uri));
             exit;
