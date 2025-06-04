@@ -73,6 +73,39 @@ html, body {
             return icon_type * 32 - 32
         }
 
+        function iconHtml(icon_type) {
+            const title = [];
+            
+            title[1] = 'An aqueduct'
+            title[2] = 'A bath or a bathcomplex'
+            title[3] = 'A city'
+            title[4] = 'A castle or a major military defensive structure'
+            title[5] = 'A grave or a burial field'
+            title[6] = 'A workshop or an industry'
+            title[7] = 'A tavern or a relay'
+            title[8] = 'A museum (contemporary)'
+            title[9] = 'A village like a vicus or a canabae'
+            title[10] = 'The site of a shipwreck'
+            title[11] = 'A temple or a sanctuary'
+            title[12] = 'A theatre or an amphitheatre'
+            title[13] = 'A rural villa or major farm'
+            title[14] = 'A rural settlement'
+            title[15] = 'A watchtower'
+            title[16] = 'A relief, votiv stone or altar'
+            title[17] = 'An archaeological find'
+            title[18] = 'An archaeological observation'
+            title[19] = 'A memorial or replica (contemporary)'
+            title[20] = 'A milestone'
+            title[21] = 'A building'
+            title[22] = 'A bridge'
+            title[23] = 'A road'
+            title[24] = 'The site of a historic event'
+            title[25] = 'A temporary military camp'
+            
+            const iconTitle = title[icon_type] || 'Unknown type';
+            return `<div class="marker-icon w-[32px] h-[37px] bg-[-${iconOffset(icon_type)}px_0px]" title="${iconTitle}"></div>`
+        }
+
         function updateSelectionBox(feature) {
             // krijgt één geseleerde feature en toont deze in de selection box
             console.log(feature)
@@ -96,8 +129,15 @@ html, body {
                     <div class="relative">
                         <img src="${imageUrl}" class="w-full rounded" alt="${title}" onerror="this.style.display='none'; this.parentNode.classList.remove('relative');" />
                         <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
-                            <div class="font-semibold">${title}</div>
-                            <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
+                            <div class="flex justify-between items-stretch gap-2">
+                                <div>
+                                    <div class="font-semibold">${title}</div>
+                                    <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
+                                </div>
+                                <div class="flex items-center">
+                                    ${iconHtml(feature.kind || 1)}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -105,8 +145,15 @@ html, body {
                 // Als er geen afbeelding is, toon alleen de tekst
                 selectionHTML = `
                     <div class="bg-blue-100 p-3 rounded">
-                        <div class="font-semibold">${title}</div>
-                        <p class="text-sm">${summary} ${id ? `[<a href="/vici/${id}" class="text-blue-600 hover:underline">meer</a>]` : ''}</p>
+                        <div class="flex justify-between items-stretch gap-2">
+                            <div>
+                                <div class="font-semibold">${title}</div>
+                                <p class="text-sm">${summary} ${id ? `[<a href="/vici/${id}" class="text-blue-600 hover:underline">meer</a>]` : ''}</p>
+                            </div>
+                            <div class="flex items-center">
+                                ${iconHtml(feature.kind || 1)}
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -142,9 +189,6 @@ html, body {
                     ? `https://images.vici.org/crop/w220xh124${highlight.properties.img}`
                     : 'https://images.vici.org/crop/w220xh124/uploads/no_image.png';
                 const id = highlight.properties.id || '';
-                const icon_type = highlight.properties.kind || 1;
-                const icon_offset = iconOffset(icon_type);
-                console.log(icon_offset);
 
                 highlightHTML += `
                 <div class="bg-gray-100 rounded shadow">
@@ -157,7 +201,7 @@ html, body {
                                 ${id ? `<a href="/vici/${id}" class="text-blue-600 hover:underline ml-1">[meer]</a>` : ''}</div>
                         </div>
                         <div class="flex items-center">
-                            <div class="marker-icon w-[32px] h-[37px] bg-[-${icon_offset}px_0px]"></div>
+                            ${iconHtml(highlight.properties.kind || 1)}
                         </div>
                     </div>
                 </div>`;
@@ -198,7 +242,7 @@ html, body {
                     viciToken: '20E2ADF5AB',
                     showFilter: true,
     //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
-                    highlights: 6,
+                    highlights: 8,
                     lang: "nl",
                     setUrl: true,
                     showScale: "metric",
