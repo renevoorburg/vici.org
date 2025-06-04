@@ -8,8 +8,8 @@
   <title>Vici.org kaartvoorbeeld</title>
   <style>
     .marker-icon {
-      background-image: url('https://vici.org/images/markers.png');
-      background-size: auto;
+        background-image: url('/images/markers.png');
+        background-size: auto;  
     }
   </style>
 </head>
@@ -109,16 +109,18 @@
       <div class="overflow-y-auto px-2 pb-2 flex-grow">
         <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
         <div class="space-y-3">
-          <div class="bg-gray-100 rounded shadow">
-            <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" class="w-full rounded-t">
-            <div class="p-2 text-sm">
-              <div class="flex items-center gap-2">
-                <div class="marker-icon w-6 h-6 bg-[0px_-96px] shrink-0"></div>
-                <div class="font-semibold">Tollan</div>
+            <div class="bg-gray-100 rounded shadow">
+                <img src="https://images.vici.org/crop/w220xh124/uploads/de_meern1_2.png" class="w-full rounded-t">
+                <div class="p-2 text-sm flex justify-between items-stretch gap-2">
+                  <div class="flex flex-col justify-center">
+                    <div class="font-semibold">Tollan</div>
+                    <div>Site of a major city.</div>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="marker-icon w-[32px] h-[37px] bg-[0px_-74px]"></div>
+                  </div>
+                </div>
               </div>
-              Site of a major city.
-            </div>
-          </div>
 
           <div class="bg-gray-100 rounded shadow">
             <img src="https://images.vici.org/crop/w220xh124/uploads/d7a18710_1dfa_6834_d074_ad58e1d7b778.jpg" class="w-full rounded-t">
