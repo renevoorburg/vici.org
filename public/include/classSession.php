@@ -54,9 +54,7 @@ class Session
         $key = "anon_ip_" . $ip;
     
         $hits = apcu_fetch($key) ?: 0;
-        $hits++;
-        apcu_store($key, $hits, $seconds);
-    
+        
         if ($hits > $max) {
             $uri = $_SERVER['REQUEST_URI'];
             
@@ -73,6 +71,9 @@ class Session
             
             header('Location: /login.php?wait=' . $seconds . '&return=' . urlencode($uri));
             exit;
+        } else {
+            $hits++;
+            apcu_store($key, $hits, $seconds);
         }
     }
 
