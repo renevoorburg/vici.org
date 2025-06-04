@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Vici.org kaartvoorbeeld</title>
+  <style>
+    .marker-icon {
+        background-image: url('/images/markers.png');
+        background-size: auto;  
+    }
+  </style>
   <script src="/js/jquery-3.3.1.min.js"></script>
   <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
   <script src="/js/ol/v4.6.5/ol.js"></script>
@@ -62,6 +68,11 @@ html, body {
 </head>
 <body>
     <script>
+
+        function iconOffset(icon_type) {
+            return icon_type * 32 - 32
+        }
+
         function updateSelectionBox(feature) {
             // krijgt één geseleerde feature en toont deze in de selection box
             console.log(feature)
@@ -105,8 +116,8 @@ html, body {
         }
 
         function updateHighlightsBox(highlights) {
-            // krijgt een array met uitgelichte objecten en toont deze in de highlights box
-            console.log(highlights);
+            // // krijgt een array met uitgelichte objecten en toont deze in de highlights box
+            // console.log(highlights);
             
             // Selecteer de container voor de highlights
             const highlightsContainer = document.getElementById('highlights-container');
@@ -131,17 +142,26 @@ html, body {
                     ? `https://images.vici.org/crop/w220xh124${highlight.properties.img}`
                     : 'https://images.vici.org/crop/w220xh124/uploads/no_image.png';
                 const id = highlight.properties.id || '';
-                
-                // Voeg HTML toe voor dit highlight item
+                const icon_type = highlight.properties.kind || 1;
+                const icon_offset = iconOffset(icon_type);
+                console.log(icon_offset);
+
                 highlightHTML += `
                 <div class="bg-gray-100 rounded shadow">
                     <img src="${imageUrl}" class="w-full rounded-t" alt="${title}" />
-                    <div class="p-2 text-sm">
-                        <div class="font-semibold">${title}</div>
-                        ${summary}
-                        ${id ? `<a href="/vici/${id}" class="text-blue-600 hover:underline ml-1">[meer]</a>` : ''}
+                    <div class="p-2 text-sm flex justify-between items-stretch gap-2">
+                        <div class="flex flex-col justify-center">
+                            <div class="font-semibold">${title}</div>
+                            <div>
+                                ${summary}
+                                ${id ? `<a href="/vici/${id}" class="text-blue-600 hover:underline ml-1">[meer]</a>` : ''}</div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="marker-icon w-[32px] h-[37px] bg-[-${icon_offset}px_0px]"></div>
+                        </div>
                     </div>
                 </div>`;
+
             }
             
             // Plaats de HTML in de container
@@ -178,7 +198,7 @@ html, body {
                     viciToken: '20E2ADF5AB',
                     showFilter: true,
     //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
-                    highlights: 4,
+                    highlights: 6,
                     lang: "nl",
                     setUrl: true,
                     showScale: "metric",
@@ -192,7 +212,7 @@ html, body {
     </script>
   <!-- Navigatie -->
   <header class="bg-white shadow px-4 py-2 flex items-center justify-between">
-    <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">archeologische atlas</span></div>
+    <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">&nbsp;:: archeologische atlas</span></div>
     <button id="menu-button" class="md:hidden text-blue-900 text-2xl">&#9776;</button>
     <nav id="main-menu" class="hidden md:flex items-center space-x-4 text-blue-900 font-medium">
       <input type="text" placeholder="Zoeken..." class="border rounded px-2 py-1 text-sm" />
