@@ -742,6 +742,10 @@ function ViciWidget(element, options) {
         }));
         session.selectedMarkerId = null;
         storeSession();
+        
+        if (typeof options.selectionFunc === 'function') {
+            options.selectionFunc(null);
+        }
         infobox.innerHTML = '';
 
         // update drawing of all lines to make sure connected line is hidden if required (not efficient...)
@@ -764,6 +768,13 @@ function ViciWidget(element, options) {
         storeSession();
     }
 
+    function selectMarkerAndPan(id) {
+        let marker = vectorSourceMarkers.getFeatureById(id);
+        if (marker) {
+            updateInfobox(marker);
+            panTo(id);
+        }
+    }
 
     function getHighlights() {
         // loads data to the highlightsArray for given bounds and zoom
@@ -804,10 +815,7 @@ function ViciWidget(element, options) {
                 $('.highclick').click(function(){
                     let string = this.id;
                     let id = string.substr(5, string.length-5);
-                    let marker = vectorSourceMarkers.getFeatureById(id);
-
-                    updateInfobox(marker);
-                    panTo(id);
+                    selectMarkerAndPan(id)
                 });
             }
      
@@ -1093,6 +1101,9 @@ function ViciWidget(element, options) {
     }
 
     // expose functions:
-    return { panTo: panTo }
+    return { 
+        panTo: panTo,
+        selectMarkerAndPan: selectMarkerAndPan 
+    }
 
 }
