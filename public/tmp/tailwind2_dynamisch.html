@@ -67,27 +67,20 @@ html, body {
             console.log(feature)
             
             // Selecteer de container voor de selectiebox
-            const selectionBox = document.querySelector('.highlights .p-2.md\\:pt-0');
-            
-            // // Controleer of er een feature is
-            // if (!feature || !feature.properties) {
-            //     // Als er geen feature is, maak de selectiebox leeg
-            //     selectionBox.innerHTML = '';
-            //     return;
-            // }
+            const selectionBox = document.getElementById('selection-box-content');
             
             // Haal de benodigde gegevens op uit het feature object
             const title = feature.title || 'Onbekende locatie';
             const summary = feature.html || '';
             const id = feature.id || '';
-            const hasImage = feature.img && feature.img !== '';
+            const hasImage = feature.picture && feature.picture !== '';
             
             // Maak de HTML voor de selectiebox
             let selectionHTML = '';
             
             if (hasImage) {
                 // Als er een afbeelding is, toon deze met overlay
-                const imageUrl = `https://images.vici.org/crop/w220xh124${feature.properties.img}`;
+                const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
                 selectionHTML = `
                     <div class="relative">
                         <img src="${imageUrl}" class="w-full rounded" alt="${title}" onerror="this.style.display='none'; this.parentNode.classList.remove('relative');" />
@@ -112,8 +105,11 @@ html, body {
         }
 
         function updateHighlightsBox(highlights) {
+            // krijgt een array met uitgelichte objecten en toont deze in de highlights box
+            console.log(highlights);
+            
             // Selecteer de container voor de highlights
-            const highlightsContainer = document.querySelector('.highlights .space-y-3');
+            const highlightsContainer = document.getElementById('highlights-container');
             
             // Controleer of er highlights zijn
             if (!highlights || highlights.length === 0) {
@@ -196,7 +192,7 @@ html, body {
     </script>
   <!-- Navigatie -->
   <header class="bg-white shadow px-4 py-2 flex items-center justify-between">
-    <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">– archeologische atlas</span></div>
+    <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">archeologische atlas</span></div>
     <button id="menu-button" class="md:hidden text-blue-900 text-2xl">&#9776;</button>
     <nav id="main-menu" class="hidden md:flex items-center space-x-4 text-blue-900 font-medium">
       <input type="text" placeholder="Zoeken..." class="border rounded px-2 py-1 text-sm" />
@@ -217,7 +213,7 @@ html, body {
   
     <div class="highlights w-full md:w-1/4 lg:w-[350px] xl:w-[400px] min-w-[240px]">
       <div class="highlights-scroll">
-        <div class="p-2 md:pt-0 md:px-2 md:pb-2">
+        <div id="selection-box-content" class="p-2 md:pt-0 md:px-2 md:pb-2">
           <div class="relative">
             <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" class="w-full rounded" />
             <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
@@ -228,7 +224,7 @@ html, body {
         </div>
         <div class="px-2 pb-2">
           <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
-          <div class="space-y-3">
+          <div id="highlights-container" class="space-y-3">
             <!-- Voorbeelditems -->
           </div>
         </div>
