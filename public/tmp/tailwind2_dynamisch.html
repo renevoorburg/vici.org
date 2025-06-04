@@ -69,6 +69,9 @@ html, body {
 <body>
     <script>
 
+        // Globale variabele voor de ViciWidget
+        var mapObj;
+
         function iconOffset(icon_type) {
             return icon_type * 32 - 32
         }
@@ -107,23 +110,19 @@ html, body {
         }
 
         function updateSelectionBox(feature) {
-            // krijgt één geseleerde feature en toont deze in de selection box
-            console.log(feature)
-            
-            // Selecteer de container voor de selectiebox
             const selectionBox = document.getElementById('selection-box-content');
+            if (feature === null || feature === undefined) {
+                selectionBox.innerHTML = '';
+                return;
+            }
             
-            // Haal de benodigde gegevens op uit het feature object
             const title = feature.title || 'Onbekende locatie';
             const summary = feature.html || '';
             const id = feature.id || '';
             const hasImage = feature.picture && feature.picture !== '';
             
-            // Maak de HTML voor de selectiebox
             let selectionHTML = '';
-            
             if (hasImage) {
-                // Als er een afbeelding is, toon deze met overlay
                 const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
                 selectionHTML = `
                     <div class="relative">
@@ -142,47 +141,40 @@ html, body {
                     </div>
                 `;
             } else {
-                // Als er geen afbeelding is, toon alleen de tekst
                 selectionHTML = `
-                    <div class="bg-blue-100 p-3 rounded">
+                    <div class="bg-gray-700 p-3 rounded">
                         <div class="flex justify-between items-stretch gap-2">
                             <div>
-                                <div class="font-semibold">${title}</div>
-                                <p class="text-sm">${summary} ${id ? `[<a href="/vici/${id}" class="text-blue-600 hover:underline">meer</a>]` : ''}</p>
+                                <div class="font-semibold text-white">${title}</div>
+                                <p class="text-sm text-white">${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
                             </div>
-                            <div class="flex items-center">
+                            <div class="flex items-center text-white">
                                 ${iconHtml(feature.kind || 1)}
                             </div>
                         </div>
                     </div>
                 `;
             }
-            
-            // Plaats de HTML in de selectiebox
             selectionBox.innerHTML = selectionHTML;
+            
+            // Scroll de highlights-scroll div naar boven
+            const highlightsScroll = document.querySelector('.highlights-scroll');
+            if (highlightsScroll) {
+                highlightsScroll.scrollTop = 0;
+            }
         }
 
         function updateHighlightsBox(highlights) {
-            // // krijgt een array met uitgelichte objecten en toont deze in de highlights box
-            // console.log(highlights);
-            
-            // Selecteer de container voor de highlights
             const highlightsContainer = document.getElementById('highlights-container');
             
-            // Controleer of er highlights zijn
             if (!highlights || highlights.length === 0) {
                 highlightsContainer.innerHTML = '<div class="p-2 text-sm text-gray-500">Geen uitgelichte items beschikbaar.</div>';
                 return;
             }
-            
-            // Maak HTML voor de highlights
+        
             let highlightHTML = '';
-            
-            // Loop door de highlights array
             for (let i = 0; i < highlights.length; i++) {
                 const highlight = highlights[i];
-                
-                // Haal de benodigde gegevens op uit het highlight object
                 const title = highlight.properties.title || 'Onbekende locatie';
                 const summary = highlight.properties.summary || '';
                 const imageUrl = highlight.properties.img 
@@ -198,7 +190,7 @@ html, body {
                             <div class="font-semibold">${title}</div>
                             <div>
                                 ${summary}
-                                ${id ? `<a href="/vici/${id}" class="text-blue-600 hover:underline ml-1">[meer]</a>` : ''}</div>
+                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="text-blue-600 hover:underline ml-1">[toon op kaart]</a>` : ''}</div>
                         </div>
                         <div class="flex items-center">
                             ${iconHtml(highlight.properties.kind || 1)}
@@ -207,14 +199,12 @@ html, body {
                 </div>`;
 
             }
-            
-            // Plaats de HTML in de container
             highlightsContainer.innerHTML = highlightHTML;
         }
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
-            var mapObj = new ViciWidget('map',
+            mapObj = new ViciWidget('map',
                 {   defaultMap: "OSM",
                     useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
                     extraMaps: {
@@ -278,13 +268,13 @@ html, body {
     <div class="highlights w-full md:w-1/4 lg:w-[350px] xl:w-[400px] min-w-[240px]">
       <div class="highlights-scroll">
         <div id="selection-box-content" class="p-2 md:pt-0 md:px-2 md:pb-2">
-          <div class="relative">
+          <!-- <div class="relative">
             <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" class="w-full rounded" />
             <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
               <div class="font-semibold">Romeins badhuis</div>
               <p>Kort overzicht van het object [&nbsp;<a href="#" class="underline">meer</a>&nbsp;]</p>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="px-2 pb-2">
           <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
