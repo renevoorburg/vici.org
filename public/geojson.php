@@ -1,66 +1,23 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
-
 require_once (dirname(__FILE__).'/include/classLang.php');
 require_once (dirname(__FILE__).'/include/classViciCommon.php');
 require_once (dirname(__FILE__).'/include/classDBConnector.php');
 
 use ExtIds\NormalizersIndex;
+use Vici\PublicApiAuthenticator;
+
+PublicApiAuthenticator::enforceAuthorization();
+
+ViciCommon::handlePreflightReq();
 
 header("Content-Type: application/json");
 header("Cache-Control: public, max-age=300");
 header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
 
-ViciCommon::handlePreflightReq();
-
-// Verify security token or external secret
-if (isset($_GET['bounds']) && isset($_GET['zoom'])) {
-    $headers = getallheaders();
-    $vici_token = $headers['X-Vici-Token'] ?? '';
-    $token_match = $vici_token === $_ENV['VICITOKEN'];
-    
-    // Check token tegen CUST1 tot CUST9 variabelen
-    if (!$token_match && !empty($vici_token)) {
-        for ($i = 1; $i <= 9; $i++) {
-            $cust_key = 'CUST' . $i;
-            if (isset($_ENV[$cust_key]) && $_ENV[$cust_key] === $vici_token) {
-                $token_match = true;
-                break;
-            }
-        }
-    }
-
-    // Check of de User-Agent begint met een van de waarden in UA1 t/m UA9
-    $useragent_match = false;
-    if (!$token_match && isset($_SERVER['HTTP_USER_AGENT'])) {
-        $user_agent = $_SERVER['HTTP_USER_AGENT'];
-        for ($i = 1; $i <= 9; $i++) {
-            $ua_key = 'UA' . $i;
-            if (!empty($_ENV[$ua_key]) && strpos($user_agent, $_ENV[$ua_key]) === 0) {
-                $useragent_match = true;
-                break;
-            }
-        }
-    }
-
-    // Check of de querystring de extsecret bevat
-    $ext_secret = $_ENV['EXTSECRET'] ?? null;
-    $ext_secret_match = false;
-    if ($ext_secret !== null && isset($_SERVER['QUERY_STRING'])) {
-        $ext_secret_match = strpos($_SERVER['QUERY_STRING'], $ext_secret) !== false;
-    }
-
-    $security_pass = $token_match || $ext_secret_match || $useragent_match;
-    if (!$security_pass) {
-        header('HTTP/1.1 403 Forbidden');
-        echo json_encode(['error' => 'Invalid token']);
-        exit;
-    }
-}
-
+$isJsonpReq = isset($_GET['callback']);
+ViciCommon::sendCORSHeaders($isJsonpReq);
 
 class lineData
 {
@@ -103,9 +60,6 @@ function flipMultiLine($multiLine) {
 $lng = new Lang();
 $db = new DBConnector(); // no errorhandling ... 
 
-$isJsonpReq = isset($_GET['callback']);
-
-ViciCommon::sendCORSHeaders($isJsonpReq);
 
 //  A 'perspective' shows only markers that have a specified external identifier.
 //  Links to the related external site are added to the output. 
