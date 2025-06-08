@@ -36,12 +36,12 @@ class ViciKML extends XMLNode
         $coordStr = "$lng,$lat,0 ";
 
         $placemark = new XMLNode('Placemark', new XMLNode('name', $site->getName()));
-        $placemark->addNode(new XMLNode('description', htmlspecialchars($site->getSummary())));
+        $placemark->addNode(new XMLNode('description', htmlspecialchars("https://vici.org/vici/$id - ".$site->getSummary())));
         $placemark->addNode(new XMLNode('Point', new XMLNode('coordinates', $coordStr)));
         
         $folder = new XMLNode('Folder');
         $folder->addNode(new XMLNode('name', $site->getName()));
-        $folder->addNode(new XMLNode('description', "Data downloaded from http://vici.org/vici/$id")); 
+        $folder->addNode(new XMLNode('description', "Data downloaded from https://vici.org/vici/$id")); 
         $folder->addNode($placemark);
 
         $kmlline = new LineData($id);
@@ -50,7 +50,8 @@ class ViciKML extends XMLNode
             $placemark = new XMLNode('Placemark', new XMLNode('name', $site->getName().", line part ".($i+1)));
 
             if ($kmlline->isFree()) {
-                $descStr = $kmlline->getLicense().' by '.$kmlline->getAuthor();
+                $descStr = "Line data from https://vici.org/vici/$id - ";
+                $descStr .= $kmlline->getLicense().', by '.$kmlline->getAuthor();
                 $descStr .= $kmlline->getAttribution() ? ' - '.$kmlline->getAttribution() : '';
             } else {
                 $descStr = 'Line data is not available under a free license. Included is a simplified representation.';
