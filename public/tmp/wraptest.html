@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flex voorbeeld</title>
+<style>
+  .meta-container {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+    flex-wrap: wrap; /* was: nowrap */
+  }
+
+  .meta-left {
+    background: lightblue;
+    padding: 1rem;
+    white-space: nowrap;
+  }
+
+  .meta-right {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .meta-right > div {
+    background: lightgray;
+    padding: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+
+  <!-- main container -->
+  <div id="maincontent">
+    
+
+     <!--  meta container -->
+  <div class="meta-container">
+    <div class="meta-left">A</div>
+    <div class="meta-right">
+      <div>
+        <h3>Locatie:</h3>
+        <ul>
+          <li>Nederland, Vechten</li>
+          <li>geo:52.059711,5.17359</li>
+          <li>Locatie exact</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Period or year:</h3>
+        <ul>
+          <li>1~ / unknown</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Classificatie:</h3>
+        <ul>
+          <li>Graf (-veld)</li>
+          <li>Niet zichtbaar</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Identifiers:</h3>
+        <ul>
+          <li>vici:place=4093</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+</body>
+</html>
