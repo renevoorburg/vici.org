@@ -17,19 +17,6 @@ require_once(dirname(__FILE__) . '/include/classViciCommon.php');
 require_once(dirname(__FILE__) . '/include/classDBConnector.php');
 require_once(dirname(__FILE__) . '/include/classPage.php');
 
-function Restricted($owner)
-{
-    // Tests if this is an image that has special restrictions.
-    // Now only for Livius, restriction is that width should be reduced.
-    $restrict = array('/livius/i');
-    foreach ($restrict as $pattern) {
-        if (preg_match($pattern, $owner)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 $lng = new Lang();
 $session = new Session($lng->getLang());
 $session->enforceAnonymousRateLimit();
