@@ -57,7 +57,7 @@ html, body {
 
 .meta-container {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: start;
     flex-wrap: wrap; /* was: nowrap */
   }
@@ -71,14 +71,13 @@ html, body {
   .meta-right {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.5rem;
+    gap: 0.3rem;
     flex: 1;
   }
 
-  .meta-right > div {
-    background: lightgray;
-    padding: 0.5rem;
-  }
+  /* .meta-right > div {
+    background: lightblue;
+  } */
 
 
 
@@ -171,7 +170,7 @@ html, body {
         <div class="meta-left">A</div>
         <div class="meta-right">
           <div>
-            <h3>Locatie:</h3>
+            <h3 class="text-md text-blue-900 font-semibold">Locatie:</h3>
             <ul>
               <li>Nederland, Vechten</li>
               <li>geo:52.059711,5.17359</li>
@@ -179,20 +178,20 @@ html, body {
             </ul>
           </div>
           <div>
-            <h3>Period or year:</h3>
+            <h3 class="text-md text-blue-900 font-semibold">Period or year:</h3>
             <ul>
               <li>1~ / unknown</li>
             </ul>
           </div>
           <div>
-            <h3>Classificatie:</h3>
+            <h3 class="text-md text-blue-900 font-semibold">Classificatie:</h3>
             <ul>
               <li>Graf (-veld)</li>
               <li>Niet zichtbaar</li>
             </ul>
           </div>
           <div>
-            <h3>Identifiers:</h3>
+            <h3 class="text-md text-blue-900 font-semibold">Identifiers:</h3>
             <ul>
               <li>vici:place=4093</li>
             </ul>
