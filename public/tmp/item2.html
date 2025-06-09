@@ -39,6 +39,8 @@ html, body {
   flex-direction: column;
   background: white;
   height: 100%;
+  margin-left: 6px;
+  margin-right: 6px;
 }
 
 .highlights-scroll {
@@ -63,7 +65,6 @@ html, body {
   }
 
   .meta-left {
-    background: lightblue;
     padding: 1rem;
     white-space: nowrap;
   }
@@ -71,7 +72,8 @@ html, body {
   .meta-right {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.3rem;
+    column-gap: 0.1rem;
+    row-gap: 1rem;
     flex: 1;
   }
 
@@ -80,7 +82,13 @@ html, body {
   } */
 
 
+  .marker-icon {
+        background-image: url('/images/markers.png');
+        background-size: auto;  
+    }
 
+    .itemImage{height:auto;width:100%;border:0;object-fit:cover;object-position:center;cursor: zoom-in;aspect-ratio: 1/1;}
+    figure.item{margin:0 5px 5px 0;width:100%;max-width:600px;flex: 0 0 auto;}
 
 
     @media (max-width: 768px) {
@@ -92,6 +100,11 @@ html, body {
       #map {
         min-height: 250px;
         max-height: 350px;
+      }
+
+      .highlights {
+        margin-left: 2rem;
+        margin-right: 2rem;
       }
     }
 
@@ -141,7 +154,7 @@ html, body {
     
     </script>
   <!-- Navigatie -->
-  <header class="bg-white px-2 py-2 flex items-center justify-between">
+  <header class="bg-white px-2 py-2 flex items-center justify-between mr-6">
     <div class="text-blue-900 font-bold text-xl flex items-center">Vici.org <span class="text-sm font-normal text-gray-600 max-w-[180px] truncate inline-block sm:max-w-full">– archeologische atlas</span></div>
     <button id="menu-button" class="md:hidden text-blue-900 text-2xl">&#9776;</button>
     <nav id="main-menu" class="hidden md:flex items-center space-x-4 text-blue-900 font-medium">
@@ -158,55 +171,70 @@ html, body {
   </div>
 
   <!-- Hoofdinhoud -->
-  <main class="gap-4">
+  <main>
     <div id="maincontent" class="w-full md:w-2/3 space-y-4">
         <div id="map" class="bg-blue-200"></div>
         
-        
-     <h1 class="text-2xl text-blue-900 font-bold mb-4 ml-2">In situ est locus</h1>   
+        <div class="mb-8 ml-6 mr-6" id="textualcontent">
+            
 
-     <!--  meta container -->
-     <div class="meta-container">
-        <div class="meta-left">A</div>
-        <div class="meta-right">
-          <div>
-            <h3 class="text-md text-blue-900 font-semibold">Locatie:</h3>
-            <ul>
-              <li>Nederland, Vechten</li>
-              <li>geo:52.059711,5.17359</li>
-              <li>Locatie exact</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-md text-blue-900 font-semibold">Period or year:</h3>
-            <ul>
-              <li>1~ / unknown</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-md text-blue-900 font-semibold">Classificatie:</h3>
-            <ul>
-              <li>Graf (-veld)</li>
-              <li>Niet zichtbaar</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-md text-blue-900 font-semibold">Identifiers:</h3>
-            <ul>
-              <li>vici:place=4093</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+            <h1 class="mb-2 text-2xl text-blue-900 font-bold">In situ est locus</h1>   
+
+            <!--  meta container -->
+            <div class="meta-container">
+                <div class="meta-left">
+                    <div class="marker-icon w-[32px] h-[37px] bg-[-672px_0px]" title="A bridge"></div>
+                </div>
+                <div class="meta-right">
+                <div>
+                    <h3 class="text-md text-blue-900 font-semibold">Locatie:</h3>
+                    <ul>
+                    <li>Nederland, Vechten</li>
+                    <li>geo:52.059711,5.17359</li>
+                    <li>Locatie exact</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-md text-blue-900 font-semibold">Period or year:</h3>
+                    <ul>
+                    <li>1~ / unknown</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-md text-blue-900 font-semibold">Classificatie:</h3>
+                    <ul>
+                    <li>Graf (-veld)</li>
+                    <li>Niet zichtbaar</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-md text-blue-900 font-semibold">Identifiers:</h3>
+                    <ul>
+                    <li>vici:place=4093</li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+
+            <h2 class="mt-4 mb-2 text-lg text-blue-900 font-semibold">Annotaties</h2>            
+
+            <article id="txt_nl" class="article mb-8"><p>
+                Het Tabularium was in de Romeinse tijd het staatsarchief en het is het enige antieke Capitolijnse gebouw dat nog deels overeind staat. Het werd in 78 v.Chr. gebouwd door een architect uit Ostia, Lucius Cornelius, in opdracht van de Senaat en op kosten van consul Quintus Lutatius Catulus. Een steen met inscripties over de bouw is zichtbaar bij de ingang aan de linkerkant van het Palazzo Senatorio. Het gebouw is 73,6 meter lang en is gebouwd in regelmatige rijen van tufstenen blokken, omhoogrijzend van de fundering tot aan het plein op de heuvel erachter.<br>
+                In de muur bevinden zich zes kleine vensters, die corresponderen met een reeks vertrekken, te bereiken via een trap, die nog goed bewaard gebleven is. Deze trap leidde naar beneden vanaf een poort, die later gesloten werd op het moment van de bouw van de tempel van Vespasianus en Titus<sup id="#cite_note-1"><a href="#cite_note-1">1</a></sup>.</p><h2>Bronverwijzingen</h2><p></p><ol><li><a href="#cite_ref-1">↑</a><a href="http://nl.wikipedia.org/wiki/Tabularium">Wikipedia: Tabularium</a></li></ol><p></p>
+            </article>
 
 
+        </div> 
 
-        <div id="content"></div>
     </div> <!-- maincontent -->
 
     <div class="highlights w-full md:w-1/3 min-w-[240px]">
-        jdkjdksjkd kjdk jk dfjkfj ksjdfkdsjfksdjfkjsdkfjskfjdskf jksjfeijfk sdjkfj
-    </div>
+        <div class="flex flex-wrap justify-start">
+            <figure class="item"><a href="//vici.org/image.php?id=1843"><img class="itemImage" loading="lazy" src="//images.vici.org/cover/w268xh268/uploads/rome_tabularium_from_east2.jpg" alt="" title="Tabularium " data-pswp-uid="0"></a></figure>
+            <figure class="item"><a href="//vici.org/image.php?id=1843"><img class="itemImage" loading="lazy" src="//images.vici.org/cover/w268xh268/uploads/8430187532_62e87af0b7_b.jpg" alt="" title="Columns " data-pswp-uid="1"></a></figure>
+        </div>
+ 
+    </div> 
     
   </main>
 
