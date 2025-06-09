@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Vici.org kaartvoorbeeld</title>
+  <style>
+    .marker-icon {
+        background-image: url('/images/markers.png');
+        background-size: auto;  
+    }
+  </style>
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
+  <script src="/js/ol/v4.6.5/ol.js"></script>
+  <script src="/js/vici.js"></script>
+  
+  <style>
+    html, body {
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    header {
+        height: 3rem;
+        flex-shrink: 0;
+        background-color: white;      
+        padding-left: 0.5rem;         
+        padding-right: 0.5rem;        
+        padding-top: 0.5rem;          
+        padding-bottom: 0.5rem;       
+        display: flex;                
+        align-items: center;          
+        justify-content: space-between;
+    }
+
+    header div {
+        color: #1e3a8a; 
+        font-weight: 700; 
+        font-size: 1.25rem; 
+        line-height: 1.75rem; 
+        display: flex; 
+        align-items: center;
+    }
+
+    header .subtitle {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: #718096; 
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        padding-left: 0.5rem;
+    }
+
+    #menu-button {
+        display: block;
+        color: #1e3a8a; 
+        font-size: 1.5rem; 
+    }
+
+    #main-menu {
+        display: none;
+        color: #1e3a8a; 
+        font-weight: 500; 
+    }
+
+    #main-menu a {
+        margin-left: 1rem; 
+    }
+
+    #main-menu a:first-child {
+        margin-left: 0; 
+    }
+
+    #main-menu a:hover { 
+        text-decoration: underline; 
+    }
+
+    #main-menu input {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+
+    #mobile-menu {
+        display: none; 
+        padding: 1rem;
+        flex-direction: column; 
+        gap: 0.5rem;
+    }
+
+    #mobile-menu > * + * {
+      margin-top: 0.5rem;
+    }
+    
+
+    #mobile-menu a {
+      display: block;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      color: #1a365d;
+    }
+    
+    #mobile-menu input {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+
+
+    
+    main {
+        display: flex;
+        flex: none;
+        height: calc(100vh - 4rem - 2.5rem);
+    }
+
+    #map {
+      flex: 1;
+      min-height: 300px;
+    }
+
+    .highlights {
+        display: flex;
+        flex-direction: column;
+        background: white;
+        height: 100%;
+    }
+
+    .highlights-scroll {
+        overflow-y: auto;
+        flex-grow: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+        #menu-button {
+            display: none; 
+        }
+
+        #main-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        #mobile-menu {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #map {
+        max-height: 350px;
+      }
+    }
+
+    
+  </style>
+</head>
+<body>
+    <script>
+
+        // Globale variabele voor de ViciWidget
+        var mapObj;
+
+        function iconOffset(icon_type) {
+            return icon_type * 32 - 32
+        }
+
+        function iconHtml(icon_type) {
+            const title = [];
+            
+            title[1] = 'An aqueduct'
+            title[2] = 'A bath or a bathcomplex'
+            title[3] = 'A city'
+            title[4] = 'A castle or a major military defensive structure'
+            title[5] = 'A grave or a burial field'
+            title[6] = 'A workshop or an industry'
+            title[7] = 'A tavern or a relay'
+            title[8] = 'A museum (contemporary)'
+            title[9] = 'A village like a vicus or a canabae'
+            title[10] = 'The site of a shipwreck'
+            title[11] = 'A temple or a sanctuary'
+            title[12] = 'A theatre or an amphitheatre'
+            title[13] = 'A rural villa or major farm'
+            title[14] = 'A rural settlement'
+            title[15] = 'A watchtower'
+            title[16] = 'A relief, votiv stone or altar'
+            title[17] = 'An archaeological find'
+            title[18] = 'An archaeological observation'
+            title[19] = 'A memorial or replica (contemporary)'
+            title[20] = 'A milestone'
+            title[21] = 'A building'
+            title[22] = 'A bridge'
+            title[23] = 'A road'
+            title[24] = 'The site of a historic event'
+            title[25] = 'A temporary military camp'
+            
+            const iconTitle = title[icon_type] || 'Unknown type';
+            return `<div class="marker-icon w-[32px] h-[37px] bg-[-${iconOffset(icon_type)}px_0px]" title="${iconTitle}"></div>`
+        }
+
+        function updateSelectionBox(feature) {
+            const selectionBox = document.getElementById('selection-box-content');
+            if (feature === null || feature === undefined) {
+                selectionBox.innerHTML = '';
+                return;
+            }
+            
+            const title = feature.title || 'Onbekende locatie';
+            const summary = feature.html || '';
+            const id = feature.id || '';
+            const hasImage = feature.picture && feature.picture !== '';
+            
+            let selectionHTML = '';
+            if (hasImage) {
+                const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
+                selectionHTML = `
+                    <div class="relative">
+                        <img src="${imageUrl}" class="w-full rounded" alt="${title}" onerror="this.style.display='none'; this.parentNode.classList.remove('relative');" />
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
+                            <div class="flex justify-between items-stretch gap-2">
+                                <div>
+                                    <div class="font-semibold">${title}</div>
+                                    <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
+                                </div>
+                                <div class="flex items-center">
+                                    ${iconHtml(feature.kind || 1)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                selectionHTML = `
+                    <div class="bg-gray-700 p-3 rounded">
+                        <div class="flex justify-between items-stretch gap-2">
+                            <div>
+                                <div class="font-semibold text-white">${title}</div>
+                                <p class="text-sm text-white">${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
+                            </div>
+                            <div class="flex items-center text-white">
+                                ${iconHtml(feature.kind || 1)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            selectionBox.innerHTML = selectionHTML;
+            
+            // Scroll de highlights-scroll div naar boven
+            const highlightsScroll = document.querySelector('.highlights-scroll');
+            if (highlightsScroll) {
+                highlightsScroll.scrollTop = 0;
+            }
+        }
+
+        function updateHighlightsBox(highlights) {
+            const highlightsContainer = document.getElementById('highlights-container');
+            
+            if (!highlights || highlights.length === 0) {
+                highlightsContainer.innerHTML = '<div class="p-2 text-sm text-gray-500">Geen uitgelichte items beschikbaar.</div>';
+                return;
+            }
+        
+            let highlightHTML = '';
+            for (let i = 0; i < highlights.length; i++) {
+                const highlight = highlights[i];
+                const title = highlight.properties.title || 'Onbekende locatie';
+                const summary = highlight.properties.summary || '';
+                const imageUrl = highlight.properties.img 
+                    ? `https://images.vici.org/crop/w220xh124${highlight.properties.img}`
+                    : 'https://images.vici.org/crop/w220xh124/uploads/no_image.png';
+                const id = highlight.properties.id || '';
+
+                highlightHTML += `
+                <div class="bg-gray-100 rounded shadow">
+                    <img src="${imageUrl}" class="w-full rounded-t" alt="${title}" />
+                    <div class="p-2 text-sm flex justify-between items-stretch gap-2">
+                        <div class="flex flex-col justify-center">
+                            <div class="font-semibold">${title}</div>
+                            <div>
+                                ${summary}
+                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="text-blue-600 hover:underline ml-1">[toon op kaart]</a>` : ''}</div>
+                        </div>
+                        <div class="flex items-center">
+                            ${iconHtml(highlight.properties.kind || 1)}
+                        </div>
+                    </div>
+                </div>`;
+
+            }
+            highlightsContainer.innerHTML = highlightHTML;
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            mapObj = new ViciWidget('map',
+                {   defaultMap: "OSM",
+                    useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
+                    extraMaps: {
+                        DARE: {
+                            name: 'Digital Atlas of the Roman Empire',
+                            url: "https://tiles.vici.org/imperium/{z}/{x}/{y}.png",
+                            attributions: '© <a href="http://dare.ht.lu.se/">Johan Åhlfeldt</a>',
+                            maxZoom: 11
+                        },
+                        ESRI: {
+                            name: 'Esri WorldImagery',
+                            url: "https://tiles.vici.org/world/{z}/{y}/{x}",
+                            attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                        }
+                    },
+                    extraOverlays: {
+                        LIMESNL: {
+                            name: 'Limes NL',
+                            url: "https://tiles.vici.org/Limes/{z}/{x}/{y}.png",
+                            attributions: '© Olav Odé - CC BY',
+                            opacity: 0.8
+                        }
+                    },
+                    
+                    viciToken: '20E2ADF5AB',
+                    showFilter: true,
+    //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
+                    highlights: 8,
+                    lang: "nl",
+                    setUrl: true,
+                    showScale: "metric",
+                    moveHere: true,
+                    highlightFunc: updateHighlightsBox,
+                    selectionFunc: updateSelectionBox
+                }
+            );
+        });
+    
+    </script>
+
+
+  <header>
+    <div>Vici.org <span class="subtitle">:: archeologische atlas</span></div>
+    <button id="menu-button">&#9776;</button>
+    <nav id="main-menu">
+      <input type="text" placeholder="Zoeken..."/>
+      <a href="#">Toevoegen</a>
+      <a href="#">Login / Registreer</a>
+    </nav>
+  </header>
+
+  <div id="mobile-menu">
+    <a href="#">Toevoegen</a>
+    <a href="#">Login / Register</a>
+    <input type="text" placeholder="Zoeken..."/>
+  </div>
+
+  <main>
+    <div id="map"></div>
+  
+    <div class="highlights w-full md:w-1/4 lg:w-[350px] xl:w-[400px] min-w-[240px]">
+      <div class="highlights-scroll">
+        <div id="selection-box-content" class="p-2 md:pt-0 md:px-2 md:pb-2">
+          <!-- <div class="relative">
+            <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" class="w-full rounded" />
+            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
+              <div class="font-semibold">Romeins badhuis</div>
+              <p>Kort overzicht van het object [&nbsp;<a href="#" class="underline">meer</a>&nbsp;]</p>
+            </div>
+          </div> -->
+        </div>
+        <div class="px-2 pb-2">
+          <h2 class="text-lg font-bold mb-2">Uitgelicht</h2>
+          <div id="highlights-container" class="space-y-3">
+            <!-- Voorbeelditems -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white text-sm text-gray-600">
+    <div class="max-w-screen-md mx-auto px-4 pt-3">
+      <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
+        Meer over Vici.org <span id="footer-arrow">↓</span>
+      </div>
+      <div>
+        <div class="mt-2">
+            <div class="flex flex-wrap justify-center gap-4 mb-4">
+                <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
+                <a href="/changed.php" class="flex items-center gap-2">Laatste wijzigingen</a>
+                <a href="/about.php" class="flex items-center gap-2">Over Vici.org</a>
+            </div>
+          <div class="flex flex-wrap justify-center gap-4 mb-4">
+            <a href="https://github.com/renevoorburg/vici.org" class="flex items-center gap-2">
+              <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="w-5 h-5" alt="GitHub" />
+              GitHub
+            </a>
+            <a href="https://mastodon.social/@vici" class="flex items-center gap-2">
+              <img src="https://joinmastodon.org/logos/logo-purple.svg" class="w-5 h-5" alt="Mastodon" />
+              Mastodon
+            </a>
+            <a href="https://livius.org" class="flex items-center gap-2">
+              <img src="https://www.livius.org/favicon.ico" class="w-5 h-5" alt="Livius" />
+              Livius.org
+            </a>
+          </div>
+          <div class="flex justify-center space-x-4">
+            <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = 'none';
+      }
+    }
+    document.getElementById('menu-button').addEventListener('click', toggleMobileMenu);
+
+    let isAtFooter = false;
+
+    function toggleFooter() {
+      const footer = document.getElementById('footer');
+      const footerArrow = document.getElementById('footer-arrow');
+      
+      if (isAtFooter) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        footerArrow.textContent = '↓';
+        isAtFooter = false;
+      } else {
+        footer.scrollIntoView({ behavior: 'smooth' });
+        footerArrow.textContent = '↑';
+        isAtFooter = true;
+      }
+    }
+    document.getElementById('footer-toggle').addEventListener('click', toggleFooter);
+    
+  </script>
+</body>
+</html>
