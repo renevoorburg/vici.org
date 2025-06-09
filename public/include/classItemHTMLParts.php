@@ -345,7 +345,7 @@ class ItemHTMLParts
             $id = $image->current()->getId();
             $htmlStr .= '<figure class="item" >'
                 . '<a href="//vici.org/image.php?id=' . $id . '">'
-                . '<img class="itemImage" src="//images.vici.org/cover/w268xh268' . $image->current()->getPath()
+                . '<img loading="lazy" width="268" height="268" class="itemImage" src="//images.vici.org/cover/w268xh268' . $image->current()->getPath()
                 . '" alt title="' . $image->current()->getTitle()
                 . ' ' . $image->current()->getDescription() . '">'
                 . '</a>'

@@ -4,6 +4,8 @@
  * Displays details of a given item. Provides edit functionality.
  */
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 require_once __DIR__ . '/include/classLang.php';
 require_once __DIR__ . '/include/classSession.php';
 require_once __DIR__ . '/include/classViciCommonLogic.php';
@@ -18,38 +20,29 @@ require_once __DIR__ . '/include/classRDF.php';
 require_once __DIR__ . '/include/classLineData.php';
 require_once __DIR__ . '/include/classViciKML.php';
 
-function enforceLogin() {
-    $uri = $_SERVER['REQUEST_URI'];
-    
-    header('HTTP/1.1 302 Found');
-    header('Location: /login.php?loginrequired&return=' . urlencode($uri));
-    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-    header('Pragma: no-cache');
-    header('Content-Type: text/html; charset=UTF-8');
-    exit('Redirecting to login page. Authentication required.');
-}
+use Vici\PublicApiAuthenticator;
 
 $lngObj = new Lang();
 $session = new Session($lngObj->getLang());
-$session->enforceAnonymousRateLimit();
 
 $requestKindStr = ViciCommonLogic::matchRequestedContentType($_GET['id']);
 switch ($requestKindStr) {
     case 'rdf':
-        if (!$session->hasUser()) {
-            enforceLogin();
+        if (!(PublicApiAuthenticator::isAuthorized() || $session->hasUser())) {
+            $session->denyAccess();
         }
         $rdfObj = new RDF('site', $_GET['id']);
         exit;
         break;
     case 'kml':
-        if (!$session->hasUser()) {
-            enforceLogin();
+        if (!(PublicApiAuthenticator::isAuthorized() || $session->hasUser())) {
+            $session->denyAccess();
         }
         $kml = new ViciKML($_GET['id']);
         exit;
         break;
 }
+$session->enforceAnonymousRateLimit();
 
 $db = new DBConnector();
 
@@ -168,7 +161,7 @@ $itemImages .= ItemHTMLParts::getItemImagesHTML($site, $lngObj) . $lf;
 $nearbyImages = ItemHTMLParts::getNearbyImages($db, $site->getLat(), $site->getLng(), 'https://images.vici.org/crop/w175xh175', 9, 30, $lngObj, $site->getId());
 if (strlen($nearbyImages) > 1 ) {
     $itemImages .= '<h3>' . $lngObj->str('Surroundings') . ': </h3>' .  $lf;
-    $itemImages .= '<div id="nearby">' .$nearbyImages.'</div>';
+    $itemImages .= '<div width="177" height="177" loading="lazy" id="nearby">' .$nearbyImages.'</div>';
 }
 
 // content
