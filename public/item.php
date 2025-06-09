@@ -161,7 +161,7 @@ $itemImages .= ItemHTMLParts::getItemImagesHTML($site, $lngObj) . $lf;
 $nearbyImages = ItemHTMLParts::getNearbyImages($db, $site->getLat(), $site->getLng(), 'https://images.vici.org/crop/w175xh175', 9, 30, $lngObj, $site->getId());
 if (strlen($nearbyImages) > 1 ) {
     $itemImages .= '<h3>' . $lngObj->str('Surroundings') . ': </h3>' .  $lf;
-    $itemImages .= '<div loading="lazy" id="nearby">' .$nearbyImages.'</div>';
+    $itemImages .= '<div width="177" height="177" loading="lazy" id="nearby">' .$nearbyImages.'</div>';
 }
 
 // content
