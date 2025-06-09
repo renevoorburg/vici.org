@@ -10,4 +10,5 @@ Disallow: /*/kml
 Disallow: /*/rdf
 Crawl-delay: 60
 
-# please be kind to us
+# Please be kind, don't overload our server.
+# Support us at https://www.paypal.com/donate?token=ESS4WskdinQXpgSThEzrz3H8M7LCuwztFTCwcVVDNsF0kX8nSAt0lcOlwfZr1oXEjZHs8STj7bNpWGt2
