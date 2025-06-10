@@ -56,21 +56,21 @@ function getItemHTML(Lang $lngObj, $itemId, $kindName, $pntId, $itemName, $user,
 
 
 
-// format options 'html' (default) 'kml' or 'json'
+$urlparams = "";
+$page = (isset($_GET['page']) && (int)($_GET['page'])>0 ) ? (int)($_GET['page']) : 1;
+$start = ($page-1)*MAXITEMS;
 $format = (isset($_GET['format'])) ? $db->real_escape_string($_GET['format']) : "html";
 
 if ($format=='kml') {
     if (!(PublicApiAuthenticator::isAuthorized() || $session->hasUser())) {
         $session->denyAccess();
     }
+    $limit = "";
+} else {
+    $limit = "LIMIT $start,".MAXITEMS;
 }
 $session->enforceAnonymousRateLimit();
 
-$input_errors = "";
-$urlparams = "";
-$page = (isset($_GET['page']) && (int)($_GET['page'])>0 ) ? (int)($_GET['page']) : 1;
-$start = ($page-1)*MAXITEMS;
-$limit = "LIMIT $start,".MAXITEMS;
 
 if (isset($_GET['terms'])) {
     $terms = preg_replace('/\+/', ' ', $_GET['terms']);
@@ -187,17 +187,35 @@ $sql = "
             ) AS w ON pmeta_editor = updater_id 
             LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
             LEFT JOIN img_data ON pil_img = imgd_imgid
-            WHERE pnt_hide=0 AND (
+            WHERE pnt_hide=0" . ($q ? " AND (
                 match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
                 match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
                 match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
                 match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
-            ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
+            )" : "") . " $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
             
     )  $distance_filter $order $limit
 ";
 
 $result = $db->query($sql);
+// Controleer of de hoofdquery succesvol was
+$error_message = "";
+if ($result === false) {
+    // Stel foutmelding in
+    // $error_message = "Er is een fout opgetreden bij het uitvoeren van de zoekopdracht.";
+    
+    // Voor JSON en KML formaten direct stoppen met een foutmelding
+    if ($format == 'json') {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => $error_message]);
+        exit;
+    } elseif ($format == 'kml') {
+        header('Content-Type: application/vnd.google-earth.kml+xml');
+        echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>Error</name><description>$error_message</description></Document></kml>";
+        exit;
+    }
+    // Voor HTML formaat gaan we door en tonen de foutmelding in de pagina
+}
 
 if ($format=='html') {
     $countquery = "
@@ -225,20 +243,31 @@ if ($format=='html') {
             ) AS w ON pmeta_editor = updater_id 
             LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
             LEFT JOIN img_data ON pil_img = imgd_imgid
-            WHERE pnt_hide=0 AND (
+            WHERE pnt_hide=0" . ($q ? " AND (
                 match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
                 match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
                 match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
                 match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
-                ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
+            )" : "") . " $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
                 
         )  $distance_filter 
     ";
 
     $counter = $db->query($countquery);
-    $countrow = $counter->fetch_row();
-    $count = $countrow[0];
-    $total_pages = ceil($count / MAXITEMS);
+    
+    // Controleer of de query succesvol was
+    if ($counter !== false && $counter instanceof mysqli_result) {
+        $countrow = $counter->fetch_row();
+        $count = $countrow[0];
+        $total_pages = ceil($count / MAXITEMS);
+    } else {
+        // Fallback bij query fout
+        $count = 0;
+        $total_pages = 0;
+        // if ($error_message == "") {
+        //     $error_message = "Er is een fout opgetreden bij het tellen van de zoekresultaten.";
+        // }
+    }
 
     if ($count > 0) {
         $html = '';
@@ -267,6 +296,10 @@ if ($format=='html') {
         $html.= "<p><a href='/search.php?".$urlparams."&format=kml' style='color:black'><img src='/images/kml.png' style='vertical-align:sub'> ".$lng->str('Download as KML').'</a></p>';
     } else {
         $html = "<p>".$lng->str('Nothing found')."</p>";
+    }
+
+    if ($error_message != "") {
+        $html = "<p>$error_message</p>" . $html;
     }
 
     // display page:
