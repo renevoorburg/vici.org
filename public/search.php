@@ -1,27 +1,10 @@
 <?php
 
 /**
-Copyright 2013-6, René Voorburg, rene@digitopia.nl
-
-This file is part of the Vici.org source.
-
-Vici.org source is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Vici.org  source is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Vici.org source.  If not, see <http://www.gnu.org/licenses/>.
+ * Handles searches.
  */
 
-/**
-Handles searches.
- */
+require_once __DIR__ . '/vendor/autoload.php';
 
 require_once dirname(__FILE__).'/include/classLang.php';
 require_once dirname(__FILE__).'/include/classSession.php';
@@ -30,8 +13,11 @@ require_once dirname(__FILE__).'/include/classDBConnector.php';
 require_once dirname(__FILE__).'/include/classSiteKinds.php';
 require_once dirname(__FILE__).'/include/classPage.php';
 
+use Vici\PublicApiAuthenticator;
+
 $lng = new Lang();
 $session = new Session($lng->getLang());
+
 $siteKinds = new SiteKinds($lng);
 
 $db = new DBConnector(); // no errorhandling ...
@@ -69,29 +55,28 @@ function getItemHTML(Lang $lngObj, $itemId, $kindName, $pntId, $itemName, $user,
 }
 
 
-// manage input:
-$input_errors = "";
-$urlparams = "";
 
 // format options 'html' (default) 'kml' or 'json'
 $format = (isset($_GET['format'])) ? $db->real_escape_string($_GET['format']) : "html";
-//if ($format=='html') {
-    // paging - only html output is paged
-    $page = (isset($_GET['page']) && (int)($_GET['page'])>0 ) ? (int)($_GET['page']) : 1;
-    $start = ($page-1)*MAXITEMS;
-    $limit = "LIMIT $start,".MAXITEMS;
-//} else {
-//    $limit = "";
-//    $urlparams.= "&format=".$format;
-//}
+
+if ($format=='kml') {
+    if (!(PublicApiAuthenticator::isAuthorized() || $session->hasUser())) {
+        $session->denyAccess();
+    }
+}
+$session->enforceAnonymousRateLimit();
+
+$input_errors = "";
+$urlparams = "";
+$page = (isset($_GET['page']) && (int)($_GET['page'])>0 ) ? (int)($_GET['page']) : 1;
+$start = ($page-1)*MAXITEMS;
+$limit = "LIMIT $start,".MAXITEMS;
 
 if (isset($_GET['terms'])) {
-//    $q = $db->real_escape_string($_GET['terms']);
-
     $terms = preg_replace('/\+/', ' ', $_GET['terms']);
-    $q= $db->real_escape_string('+' . preg_replace('/\s+/', '+', trim($terms)));
+    $q = $db->real_escape_string('+' . preg_replace('/\s+/', '+', trim($terms)));
     $order = " ORDER BY pnt_name='$q' DESC, match (pnt_name, pnt_dflt_short) against ('$q') DESC ";
-    $urlparams.= "&terms=$q";
+    $urlparams .= "&terms=$q";
 } else {
     $q = '';
     $order = '';
@@ -175,80 +160,80 @@ if ( ($format=='json') || ($format=='kml')) {
     $jsonselect = '';
 }
           
-$sql =
-"SELECT pnt_id, pnt_name,  psum_pnt_name, pnt_kind, pnt_dflt_short, img_path, psum_short$jsonselect$near_select
-FROM points 
-LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
-LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND psum_lang='".$lng->getLang()."'
-LEFT JOIN pkinds ON pkind_id=pnt_kind
-LEFT JOIN pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1
-LEFT JOIN images ON pil_img=img_id
-WHERE pnt_id IN (
-    SELECT DISTINCT pnt_id FROM points 
-          LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
-          LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
-		  LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
-          LEFT JOIN (
-          	SELECT acc_id as editor_id, acc_name as editor_name, acc_realname as editor_realname
-          	FROM accounts
-          ) AS u ON ptxt_editor = editor_id   
-          LEFT JOIN (
-          	SELECT acc_id as creator_id, acc_name as creator_name, acc_realname as creator_realname
-          	FROM accounts
-          ) AS v ON pmeta_creator = creator_id 
-          LEFT JOIN (
-          	SELECT acc_id as updater_id, acc_name as updater_name, acc_realname as updater_realname
-          	FROM accounts
-          ) AS w ON pmeta_editor = updater_id 
-          LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
-          LEFT JOIN img_data ON pil_img = imgd_imgid
-          WHERE pnt_hide=0 AND (
-            match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
-            match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
-            match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
-            match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
-           ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
-          
-)  $distance_filter $order $limit";
+$sql = "
+    SELECT pnt_id, pnt_name,  psum_pnt_name, pnt_kind, pnt_dflt_short, img_path, psum_short$jsonselect$near_select
+    FROM points 
+    LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
+    LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND psum_lang='".$lng->getLang()."'
+    LEFT JOIN pkinds ON pkind_id=pnt_kind
+    LEFT JOIN pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1
+    LEFT JOIN images ON pil_img=img_id
+    WHERE pnt_id IN (
+        SELECT DISTINCT pnt_id FROM points 
+            LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
+            LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
+            LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
+            LEFT JOIN (
+                SELECT acc_id as editor_id, acc_name as editor_name, acc_realname as editor_realname
+                FROM accounts
+            ) AS u ON ptxt_editor = editor_id   
+            LEFT JOIN (
+                SELECT acc_id as creator_id, acc_name as creator_name, acc_realname as creator_realname
+                FROM accounts
+            ) AS v ON pmeta_creator = creator_id 
+            LEFT JOIN (
+                SELECT acc_id as updater_id, acc_name as updater_name, acc_realname as updater_realname
+                FROM accounts
+            ) AS w ON pmeta_editor = updater_id 
+            LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
+            LEFT JOIN img_data ON pil_img = imgd_imgid
+            WHERE pnt_hide=0 AND (
+                match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
+                match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
+                match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
+                match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
+            ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
+            
+    )  $distance_filter $order $limit
+";
 
 $result = $db->query($sql);
 
-
 if ($format=='html') {
-
-    $countquery = 
-    "SELECT count(*) 
-    FROM points 
-    LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
-    LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND  psum_lang='".$lng->getLang()."'
-    LEFT JOIN pkinds ON pkind_id=pnt_kind
-    WHERE pnt_id IN (
-    SELECT DISTINCT pnt_id FROM points 
-          LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
-          LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
-		  LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
-          LEFT JOIN (
-          	SELECT acc_id as editor_id, acc_name as editor_name, acc_realname as editor_realname
-          	FROM accounts
-          ) AS u ON ptxt_editor = editor_id   
-          LEFT JOIN (
-          	SELECT acc_id as creator_id, acc_name as creator_name, acc_realname as creator_realname
-          	FROM accounts
-          ) AS v ON pmeta_creator = creator_id 
-          LEFT JOIN (
-          	SELECT acc_id as updater_id, acc_name as updater_name, acc_realname as updater_realname
-          	FROM accounts
-          ) AS w ON pmeta_editor = updater_id 
-        LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
-          LEFT JOIN img_data ON pil_img = imgd_imgid
-          WHERE pnt_hide=0 AND (
-            match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
-            match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
-            match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
-            match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
-            ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
-              
-    )  $distance_filter ";
+    $countquery = "
+        SELECT count(*) 
+        FROM points 
+        LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
+        LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND  psum_lang='".$lng->getLang()."'
+        LEFT JOIN pkinds ON pkind_id=pnt_kind
+        WHERE pnt_id IN (
+        SELECT DISTINCT pnt_id FROM points 
+            LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
+            LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
+            LEFT JOIN pmetadata ON pnt_id = pmeta_pnt_id
+            LEFT JOIN (
+                SELECT acc_id as editor_id, acc_name as editor_name, acc_realname as editor_realname
+                FROM accounts
+            ) AS u ON ptxt_editor = editor_id   
+            LEFT JOIN (
+                SELECT acc_id as creator_id, acc_name as creator_name, acc_realname as creator_realname
+                FROM accounts
+            ) AS v ON pmeta_creator = creator_id 
+            LEFT JOIN (
+                SELECT acc_id as updater_id, acc_name as updater_name, acc_realname as updater_realname
+                FROM accounts
+            ) AS w ON pmeta_editor = updater_id 
+            LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
+            LEFT JOIN img_data ON pil_img = imgd_imgid
+            WHERE pnt_hide=0 AND (
+                match (pnt_name, pnt_dflt_short) against ('$q' IN BOOLEAN MODE)  OR 
+                match(psum_short, psum_pnt_name)  against ('$q' IN BOOLEAN MODE) OR 
+                match(ptxt_full) against ('$q' IN BOOLEAN MODE) OR
+                match(imgd_title, imgd_description) against ('$q' IN BOOLEAN MODE)
+                ) $category_filter $creator_filter $bounds_filter $from_filter $extid_filter
+                
+        )  $distance_filter 
+    ";
 
     $counter = $db->query($countquery);
     $countrow = $counter->fetch_row();
@@ -262,13 +247,8 @@ if ($format=='html') {
             $urlname = ViciCommon::urlencodeVici(preg_replace('/ /', '_', $name));
             $name = ($row->psum_pnt_name=='') ? $name :  $row->psum_pnt_name;
             $text = ($row->psum_short=='') ? $row->pnt_dflt_short : $row->psum_short ;
-           // $html.= "<li style=\"background-image: url(/images/".ViciCommon::$pkinds[$row->pnt_kind][0]."_minimal.png);\"><a href='/vici/".$row->pnt_id."'>$name</a> $text</li>\n";
-
             $html .= getItemHTML($lng, $row->pnt_kind, $lng->str($siteKinds->getName($row->pnt_kind)), $row->pnt_id, $name, '' , $text, $row->img_path);
-
-
         }
-        //$html.='';
         
         if ($total_pages > 1) {
             $html.= '<p>'.$lng->str('Page').': ';
@@ -281,7 +261,7 @@ if ($format=='html') {
             };
             $html.= '</p>';
         };
-        // kml download link
+
         $urlparams = str_replace("format=html", "", $urlparams);
         $urlparams = substr($urlparams, 1);
         $html.= "<p><a href='/search.php?".$urlparams."&format=kml' style='color:black'><img src='/images/kml.png' style='vertical-align:sub'> ".$lng->str('Download as KML').'</a></p>';
@@ -318,7 +298,7 @@ if ($format=='html') {
             
         echo "<Placemark>\n";
         echo '<name>'.htmlspecialchars($pnt_name)."</name>\n";
-        echo '<description>'.htmlspecialchars($pnt_dflt_short)."</description>\n";
+        echo '<description>'.htmlspecialchars("https://vici.org/vici/$pnt_id - ").htmlspecialchars($pnt_dflt_short)."</description>\n";
         echo "<Point>\n";
         echo '<coordinates>'.$pnt_lng.','.$pnt_lat.",0</coordinates>\n";
         echo "</Point>\n";
@@ -327,28 +307,4 @@ if ($format=='html') {
     echo "</Document>\n";
     echo '</kml>';
     
-} else if ($format=='json') {
-    if (!headers_sent()) { header('Content-Type:application/json; charset=UTF-8'); } ;
-    echo "{ \"type\": \"FeatureCollection\",\n";
-    echo "  \"features\": [\n";
-    $sepx="";
-
-    while (list($pnt_id, $pnt_name, $psum_pnt_name, $pnt_kind,  $pnt_dflt_short, $img_path, $psum_short, $pnt_lat, $pnt_lng, $pnt_visible, $pnt_promote, $pkind_low, $pkind_high, $pkind_zindex ) = $result->fetch_row()) {
-
-        $pnt_url = preg_replace('/ /', '_', $pnt_name);
-        if (!empty($psum_pnt_name)) {$pnt_name=$psum_pnt_name;}
-        if (!empty($psum_short)) {$pnt_dflt_short=$psum_short;}
-
-        if ($pnt_promote) { 
-            $pkind_high = $pkind_high-1;
-            $pkind_zindex = $pkind_zindex+2;
-        }
-
-        echo $sepx."  {\"type\": \"Feature\",\n";
-        echo "  \"geometry\": {\"type\": \"Point\", \"coordinates\": [".$pnt_lng.", ".$pnt_lat."]},\n";
-        echo "  \"properties\": {\"id\": ".$pnt_id.", \"url\": \"".ViciCommon::$url_base.ViciCommon::urlencodeVici($pnt_url).$lng->getLangGET('?')."\", \"title\": ".json_encode($pnt_name).", \"kind\": \"".ViciCommon::$pkinds[$pnt_kind][0]."\", \"zoomsmall\": ".$pkind_low.", \"zoomnormal\": ".$pkind_high.", \"zindex\": ".$pkind_zindex.", \"isvisible\": ".$pnt_visible.", \"summary\": ".json_encode($pnt_dflt_short)."}\n";
-        echo "  }";
-        $sepx=",\n";
-    };
-    echo "\n]}";
-}
+} 
