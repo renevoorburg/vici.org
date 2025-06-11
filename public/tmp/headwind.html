@@ -301,12 +301,17 @@
     }
 
     footer {
-        font-size: 0.875rem; color: #4b5563;
+        font-size: 0.875rem;
+        color: #718096;
+    }
+
+    .footerbox {
         max-width: 768px; 
         margin-left: auto; 
         margin-right: auto; 
         padding-left: 1rem; 
-        padding-right: 1rem; padding-top: 0.75rem;
+        padding-right: 1rem; 
+        padding-top: 0.75rem;
     }
 
     @media (min-width: 768px) {
@@ -471,7 +476,7 @@
                             <div class="font-semibold">${title}</div>
                             <div>
                                 ${summary}
-                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="text-blue-600 hover:underline ml-1">[toon op kaart]</a>` : ''}</div>
+                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[toon op kaart]</a>` : ''}</div>
                         </div>
                         <div class="centered-flex">
                             ${iconHtml(highlight.properties.kind || 1)}
@@ -567,10 +572,11 @@
 
   <!-- Footer -->
   <footer id="footer">
-    <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
-      Meer over Vici.org <span id="footer-arrow">↓</span>
-    </div>
-    <div>
+    <div class="footerbox">
+      <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
+        Meer over Vici.org <span id="footer-arrow">↓</span>
+      </div>
+      <div>
         <div class="mt-2">
             <div class="flex flex-wrap justify-center gap-4 mb-4">
                 <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
@@ -596,9 +602,10 @@
           </div>
         </div>
       </div>
-    </footer>
+    </div>
+  </footer>
 
-
+  
   <script>
     function toggleMobileMenu() {
       const menu = document.getElementById('mobile-menu');
