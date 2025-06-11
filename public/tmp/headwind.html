@@ -179,7 +179,7 @@
     main {
         display: flex;
         flex: none;
-        height: calc(100vh - 4rem - 2.5rem);
+        height: calc(100vh - 5.5rem);
     }
 
     #map {
@@ -303,15 +303,47 @@
     footer {
         font-size: 0.875rem;
         color: #718096;
+        /* max-width: 768px;  */
+        margin-left: auto; 
+        margin-right: auto; 
+        margin-top: 0.5rem;
+        padding-left: 0.5rem; 
+        padding-right: 0.5rem; 
     }
 
     .footerbox {
-        max-width: 768px; 
-        margin-left: auto; 
-        margin-right: auto; 
-        padding-left: 1rem; 
-        padding-right: 1rem; 
-        padding-top: 0.75rem;
+        border-top: 1px solid rgb(209, 213, 219);
+        padding-top: 0.25rem;
+    }
+
+    #footer-toggle {
+        text-align: center;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
+    .footer-parts {
+        margin-top: 0.5rem;
+    }
+
+    .footer-line {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .footer-logo {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .footer-logo-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     @media (min-width: 768px) {
@@ -528,9 +560,7 @@
                 }
             );
         });
-    
     </script>
-
 
   <header>
     <div>Vici.org <span class="subtitle">:: archeologische atlas</span></div>
@@ -553,18 +583,13 @@
   
     <div class="highlights-column">
       <div class="highlights-scroll">
-
-        <div id="selection-box-content" class="selection-box-content">
-
-        </div>
-
+        <div id="selection-box-content" class="selection-box-content"></div>
         <div class="highlights-content">
           <h2>Uitgelicht</h2>
           <div id="highlights-items" class="space-y-3">
             <!-- Voorbeelditems -->
           </div>
         </div>
-
       </div>
     </div>
 
@@ -572,36 +597,32 @@
 
   <!-- Footer -->
   <footer id="footer">
-    <div class="footerbox">
-      <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
-        Meer over Vici.org <span id="footer-arrow">↓</span>
-      </div>
-      <div>
-        <div class="mt-2">
-            <div class="flex flex-wrap justify-center gap-4 mb-4">
+    <div class="footerbox"
+        <div id="footer-toggle">Meer over Vici.org <span id="footer-arrow">↓</span></div>
+        <div class="footer-parts">
+            <div class="footer-line">
                 <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
                 <a href="/changed.php" class="flex items-center gap-2">Laatste wijzigingen</a>
                 <a href="/about.php" class="flex items-center gap-2">Over Vici.org</a>
             </div>
-          <div class="flex flex-wrap justify-center gap-4 mb-4">
-            <a href="https://github.com/renevoorburg/vici.org" class="flex items-center gap-2">
-              <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="w-5 h-5" alt="GitHub" />
-              GitHub
+            <div class="footer-line">
+            <a href="https://github.com/renevoorburg/vici.org" class="footer-logo-link">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="footer-logo" alt="GitHub" />
+                GitHub
             </a>
-            <a href="https://mastodon.social/@vici" class="flex items-center gap-2">
-              <img src="https://joinmastodon.org/logos/logo-purple.svg" class="w-5 h-5" alt="Mastodon" />
-              Mastodon
+            <a href="https://mastodon.social/@vici" class="footer-logo-link">
+                <img src="https://joinmastodon.org/logos/logo-purple.svg" class="footer-logo" alt="Mastodon" />
+                Mastodon
             </a>
-            <a href="https://livius.org" class="flex items-center gap-2">
-              <img src="https://www.livius.org/favicon.ico" class="w-5 h-5" alt="Livius" />
-              Livius.org
+            <a href="https://livius.org" class="footer-logo-link">
+                <img src="https://www.livius.org/favicon.ico" class="footer-logo" alt="Livius" />
+                Livius.org
             </a>
-          </div>
-          <div class="flex justify-center space-x-4">
+            </div>
+            <div class="flex justify-center space-x-4">
             <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
   </footer>
 
