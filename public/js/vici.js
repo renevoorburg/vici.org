@@ -883,7 +883,13 @@ function ViciWidget(element, options) {
         vicistyle += ".iconS"+i+"{background:url("+baseUrl+"/images/markers_selection.png) " + (32 - 32*i) + "px -37px} ";
     }
     vicistyle += ".ol-rotate{top: 85px !important; left: .5em !important; right: auto !important} "; // reposition ol rotate button
-    vicistyle += ".ol-scale-line{bottom: 22px !important;right: 5px !important; left: auto !important} "; // reposition ol rotate button
+    vicistyle += ".ol-scale-line{bottom: 2em !important;right: 5px !important; left: auto !important} "; 
+    vicistyle += ".ol-attribution {background-color: rgba(255, 255, 255, 0.8) !important;} "; // make background visible
+    vicistyle += ".ol-attribution ul {color: #333 !important; text-shadow: none !important;} "; // make text readable
+    vicistyle += ".ol-attribution img {position: relative; top: 3px !important;} "; // lower the image by 3px
+    vicistyle += ".ol-attribution {bottom: .5em !important; max-height: none !important;} "; // fix attribution position
+    vicistyle += ".ol-attribution ul {max-width: 100% !important; overflow: visible !important; margin-bottom: 3px !important; margin-top: -3px !important;} "; // fix attribution text overflow and position
+    vicistyle += ".ol-attribution li {display: inline-block !important; max-width: 100% !important;} "; // ensure attribution items are visible
 
     // create css
     let css = document.createElement("style");
@@ -990,7 +996,7 @@ function ViciWidget(element, options) {
     // show the preference box:
     if (hasPrefbox()) {
 
-        let html = '<div style="position:relative"><div id="vicihandle" style="width:100%; font-size: 1.2em;font-weight:bold; margin:4px 8px; cursor: pointer;padding-right:14px"><img style="vertical-align:bottom;width:18px;height:18px;background:url(' + baseUrl + '/images/icons-18-white.png) -792px 0;" src="' + baseUrl + '/images/trans.gif" width="1" height="1" />' + txt["Adjust_view"] + '</div><div id="viciform" style="display:none; margin:4px 8px;">';
+        let html = '<div style="position:relative"><div id="vicihandle" style="width:100%; font-size: 1.2em;font-weight:bold; margin:4px 8px; cursor: pointer;padding-right:14px">&#9776; ' + txt["Adjust_view"] + '</div><div id="viciform" style="display:none; margin:4px 8px;">';
 
         let selectorHtml = '';
         if (options.showFilter) {
