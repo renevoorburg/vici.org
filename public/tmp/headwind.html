@@ -3,26 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <title>Vici.org kaartvoorbeeld</title>
   <style>
     .marker-icon {
         background-image: url('/images/markers.png');
-        background-size: auto;  
+        background-size: auto;
+        width: 32px;
+        height: 37px;
+        background-position: 0 0;
     }
-  </style>
-  <script src="/js/jquery-3.3.1.min.js"></script>
-  <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
-  <script src="/js/ol/v4.6.5/ol.js"></script>
-  <script src="/js/vici.js"></script>
-  
-  <style>
+    
+    .marker-icon[data-icon-type="1"] { background-position-x: -0px; }
+    .marker-icon[data-icon-type="2"] { background-position-x: -32px; }
+    .marker-icon[data-icon-type="3"] { background-position-x: -64px; }
+    .marker-icon[data-icon-type="4"] { background-position-x: -96px; }
+    .marker-icon[data-icon-type="5"] { background-position-x: -128px; }
+    .marker-icon[data-icon-type="6"] { background-position-x: -160px; }
+    .marker-icon[data-icon-type="7"] { background-position-x: -192px; }
+    .marker-icon[data-icon-type="8"] { background-position-x: -224px; }
+    .marker-icon[data-icon-type="9"] { background-position-x: -256px; }
+    .marker-icon[data-icon-type="10"] { background-position-x: -288px; }
+    .marker-icon[data-icon-type="11"] { background-position-x: -320px; }
+    .marker-icon[data-icon-type="12"] { background-position-x: -352px; }
+    .marker-icon[data-icon-type="13"] { background-position-x: -384px; }
+    .marker-icon[data-icon-type="14"] { background-position-x: -416px; }
+    .marker-icon[data-icon-type="15"] { background-position-x: -448px; }
+    .marker-icon[data-icon-type="16"] { background-position-x: -480px; }
+    .marker-icon[data-icon-type="17"] { background-position-x: -512px; }
+    .marker-icon[data-icon-type="18"] { background-position-x: -544px; }
+    .marker-icon[data-icon-type="19"] { background-position-x: -576px; }
+    .marker-icon[data-icon-type="20"] { background-position-x: -608px; }
+    .marker-icon[data-icon-type="21"] { background-position-x: -640px; }
+    .marker-icon[data-icon-type="22"] { background-position-x: -672px; }
+    .marker-icon[data-icon-type="23"] { background-position-x: -704px; }
+    .marker-icon[data-icon-type="24"] { background-position-x: -736px; }
+    .marker-icon[data-icon-type="25"] { background-position-x: -768px; }
 
     *, *::before, *::after {
         box-sizing: border-box;
     }
+
     a {
-        text-decoration: none;
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+    p {
+        margin: 0;
     }
 
     html, body {
@@ -197,12 +225,46 @@
         position: absolute;
     }
 
-    .w-full {
-        width: 100%;
+    .font-semibold {
+        font-weight: 600;
     }
 
-    .rounded {
-        border-radius: 0.25rem;
+    .underline {
+        text-decoration: underline;
+    }
+
+    .centered-flex {
+        display: flex;
+        align-items: center;    
+    }
+
+    .highlight-image {
+        width: 100%;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;   
+    }
+
+    .selection-overlay {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        font-size: 0.875rem;
+        padding: 0.5rem; 
+    }
+
+    .selection-overlay-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .selection-no-image {
+        background-color: #374151; 
+        padding: 0.75rem;
+        border-radius: 0.25rem;   
     }
 
     @media (min-width: 768px) {
@@ -243,6 +305,11 @@
     }
     
   </style>
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css" type="text/css">
+  <script src="/js/ol/v4.6.5/ol.js"></script>
+  <script src="/js/vici.js"></script>
+  
 </head>
 <body>
     <script>
@@ -282,7 +349,7 @@
             title[25] = 'A temporary military camp'
             
             const iconTitle = title[icon_type] || 'Unknown type';
-            return `<div class="marker-icon w-[32px] h-[37px] bg-[-${iconOffset(icon_type)}px_0px]" title="${iconTitle}"></div>`
+            return `<div class="marker-icon" data-icon-type="${icon_type}" title="${iconTitle}"></div>`
         }
 
         function updateSelectionBox(feature) {
@@ -302,14 +369,14 @@
                 const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
                 selectionHTML = `
                     <div class="relative">
-                        <img src="${imageUrl}" class="w-full rounded" alt="${title}" />
-                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
-                            <div class="flex justify-between items-stretch gap-2">
+                        <img src="${imageUrl}" class="highlight-image" alt="${title}" />
+                        <div class="absolute selection-overlay">
+                            <div class="selection-overlay-content">
                                 <div>
                                     <div class="font-semibold">${title}</div>
                                     <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
                                 </div>
-                                <div class="flex items-center">
+                                <div class="centered-flex">
                                     ${iconHtml(feature.kind || 1)}
                                 </div>
                             </div>
@@ -318,13 +385,13 @@
                 `;
             } else {
                 selectionHTML = `
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="flex justify-between items-stretch gap-2">
+                    <div class="selection-no-image">
+                        <div class="selection-overlay-content">
                             <div>
                                 <div class="font-semibold text-white">${title}</div>
                                 <p class="text-sm text-white">${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
                             </div>
-                            <div class="flex items-center text-white">
+                            <div class="centered-flex">
                                 ${iconHtml(feature.kind || 1)}
                             </div>
                         </div>
@@ -360,7 +427,7 @@
 
                 highlightHTML += `
                 <div class="bg-gray-100 rounded shadow">
-                    <img src="${imageUrl}" class="w-full rounded-t" alt="${title}" />
+                    <img src="${imageUrl}" class="highlight-image" alt="${title}" />
                     <div class="p-2 text-sm flex justify-between items-stretch gap-2">
                         <div class="flex flex-col justify-center">
                             <div class="font-semibold">${title}</div>
@@ -445,13 +512,7 @@
       <div class="highlights-scroll">
 
         <div id="selection-box-content" class="selection-box-content">
-          <!-- <div class="relative">
-            <img src="https://images.vici.org/crop/w220xh124/uploads/Altaar_Viradecdis.jpg" class="w-full rounded" />
-            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm p-2">
-              <div class="font-semibold">Romeins badhuis</div>
-              <p>Kort overzicht van het object [&nbsp;<a href="#" class="underline">meer</a>&nbsp;]</p>
-            </div>
-          </div> -->
+
         </div>
 
         <div class="highlights-content">
