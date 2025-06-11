@@ -53,6 +53,10 @@
         margin: 0;
     }
 
+    img {
+      display: block;
+    }
+
     html, body {
         margin: 0;
         padding: 0;
@@ -229,8 +233,18 @@
         font-weight: 600;
     }
 
+    .text-white {
+        color: white;
+    }
+
     .underline {
         text-decoration: underline;
+    }
+
+    .highlight-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .centered-flex {
@@ -249,8 +263,6 @@
         left: 0;
         right: 0;
         background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        font-size: 0.875rem;
         padding: 0.5rem; 
     }
 
@@ -259,12 +271,42 @@
         justify-content: space-between;
         align-items: stretch;
         gap: 0.5rem;
+        color: white;
     }
 
     .selection-no-image {
         background-color: #374151; 
         padding: 0.75rem;
         border-radius: 0.25rem;   
+    }
+
+    .empty-message {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .highlight-box {
+        background-color: #f3f4f6;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .highlight-info {
+        padding: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    footer {
+        font-size: 0.875rem; color: #4b5563;
+        max-width: 768px; 
+        margin-left: auto; 
+        margin-right: auto; 
+        padding-left: 1rem; 
+        padding-right: 1rem; padding-top: 0.75rem;
     }
 
     @media (min-width: 768px) {
@@ -315,10 +357,6 @@
     <script>
         var mapObj;
 
-        function iconOffset(icon_type) {
-            return icon_type * 32 - 32
-        }
-
         function iconHtml(icon_type) {
             const title = [];
             
@@ -348,7 +386,7 @@
             title[24] = 'The site of a historic event'
             title[25] = 'A temporary military camp'
             
-            const iconTitle = title[icon_type] || 'Unknown type';
+            const iconTitle = title[icon_type] || 'unknown';
             return `<div class="marker-icon" data-icon-type="${icon_type}" title="${iconTitle}"></div>`
         }
 
@@ -388,8 +426,8 @@
                     <div class="selection-no-image">
                         <div class="selection-overlay-content">
                             <div>
-                                <div class="font-semibold text-white">${title}</div>
-                                <p class="text-sm text-white">${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
+                                <div class="font-semibold">${title}</div>
+                                <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
                             </div>
                             <div class="centered-flex">
                                 ${iconHtml(feature.kind || 1)}
@@ -411,7 +449,7 @@
             const highlightsContainer = document.getElementById('highlights-items');
             
             if (!highlights || highlights.length === 0) {
-                highlightsContainer.innerHTML = '<div class="p-2 text-sm text-gray-500">Geen uitgelichte items beschikbaar.</div>';
+                highlightsContainer.innerHTML = '<div class="empty-message">Geen uitgelichte items beschikbaar.</div>';
                 return;
             }
         
@@ -426,16 +464,16 @@
                 const id = highlight.properties.id || '';
 
                 highlightHTML += `
-                <div class="bg-gray-100 rounded shadow">
+                <div class="highlight-box">
                     <img src="${imageUrl}" class="highlight-image" alt="${title}" />
-                    <div class="p-2 text-sm flex justify-between items-stretch gap-2">
-                        <div class="flex flex-col justify-center">
+                    <div class="highlight-info">
+                        <div class="highlight-content">
                             <div class="font-semibold">${title}</div>
                             <div>
                                 ${summary}
                                 ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="text-blue-600 hover:underline ml-1">[toon op kaart]</a>` : ''}</div>
                         </div>
-                        <div class="flex items-center">
+                        <div class="centered-flex">
                             ${iconHtml(highlight.properties.kind || 1)}
                         </div>
                     </div>
@@ -528,12 +566,11 @@
   </main>
 
   <!-- Footer -->
-  <footer id="footer" class="bg-white text-sm text-gray-600">
-    <div class="max-w-screen-md mx-auto px-4 pt-3">
-      <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
-        Meer over Vici.org <span id="footer-arrow">↓</span>
-      </div>
-      <div>
+  <footer id="footer">
+    <div id="footer-toggle" class="text-center font-semibold border-t border-gray-300 pb-2 cursor-pointer">
+      Meer over Vici.org <span id="footer-arrow">↓</span>
+    </div>
+    <div>
         <div class="mt-2">
             <div class="flex flex-wrap justify-center gap-4 mb-4">
                 <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
@@ -559,8 +596,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+
 
   <script>
     function toggleMobileMenu() {
