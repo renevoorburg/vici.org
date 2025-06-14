@@ -1,5 +1,7 @@
 <?php
 
+namespace Vici\Session;
+
 use Vici\Negotiator\LanguageNegotiator;
 
 class Session 
@@ -8,15 +10,20 @@ class Session
     const MAX_REQUESTS = 12;
     const RATE_LIMIT_SECONDS = 600;
 
-    private $language= '';
+    private $language = '';
+    private $requestedAction = '';
 
     public function __construct()
     {
         session_start();
         date_default_timezone_set('Europe/Rome');
-
+        
         $languageNegotiator = new LanguageNegotiator(['en', 'de', 'fr', 'nl']);
         $this->language = $languageNegotiator->negotiate();
+        
+        $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
+        $this->requestedAction = $urlParts[1];
+
     }
     
     public function getUserId() : int
@@ -38,6 +45,16 @@ class Session
     {
         return (bool)$this->getUserId();
     }
+    
+    public function getLanguage() : string
+    {
+        return $this->language;
+    }
+
+    public function getRequestedAction() : string
+    {
+        return $this->requestedAction;
+    }  
 
     public function setReturnURL($url) : void
     {

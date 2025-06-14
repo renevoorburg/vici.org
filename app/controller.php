@@ -2,23 +2,30 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
-$action = $urlParts[1];
+use Vici\Session\Session;
 
-$languageNegotiator = new \Vici\Negotiator\LanguageNegotiator(['en', 'de', 'fr', 'nl']);
-$language = $languageNegotiator->negotiate();
+use Vici\Page\Pages\HomePage;
 
 
-switch ($action) {
-    case '':
-        echo "home";
-        break;
+$session = new Session();
+
+
+
+
+
+switch ($session->getRequestedAction()) {
     case 'hello':
         echo "Hello World";
-        echo "Language: " . $language;
-        echo "Action: " . $action;
+        echo "Language: " . $session->getLanguage();
+        echo "Action: " . $session->getRequestedAction();
+        break;
+    case '':
+        $page = new HomePage();
+        $page->display();
         break;
     default:
         echo "Hello World";
+        echo "Language: " . $session->getLanguage();
+        echo "Action: " . $session->getRequestedAction();
         break;
 }
