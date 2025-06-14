@@ -1,18 +1,22 @@
 <?php
 
+use Vici\Negotiator\LanguageNegotiator;
+
 class Session 
 {
    
     const MAX_REQUESTS = 12;
     const RATE_LIMIT_SECONDS = 600;
 
-    private $lang = '';
+    private $language= '';
 
-    public function __construct($lang)
+    public function __construct()
     {
         session_start();
         date_default_timezone_set('Europe/Rome');
-        $this->lang = $lang;
+
+        $languageNegotiator = new LanguageNegotiator(['en', 'de', 'fr', 'nl']);
+        $this->language = $languageNegotiator->negotiate();
     }
     
     public function getUserId() : int
