@@ -22,41 +22,25 @@ class PageRenderer extends Smarty
         if ($language !== null) {
             $this->setLanguage($language);
         }
+
+        $this->setBaseTemplateVars();
+
     }
 
-    /**
-     * Set the template to be rendered
-     * 
-     * @param string $template Template name
-     * @return self
-     */
+
+
     public function setTemplate(string $template): self
     {
         $this->assign('template', $template);
         return $this;
     }
     
-    /**
-     * Set the language for the page
-     * 
-     * @param string $language Language code
-     * @return self
-     */
     public function setLanguage(string $language): self
     {
         $this->assign('language', $language);
         return $this;
     }
     
-    /**
-     * Display the page using the template set with setTemplate()
-     * 
-     * @param string|null $template Optional template to override the one set with setTemplate()
-     * @param string|null $cache_id Optional cache ID
-     * @param string|null $compile_id Optional compile ID
-     * @param Smarty_Internal_Template|null $parent Optional parent template
-     * @return void
-     */
     public function display($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
         if ($template === null) {
@@ -67,5 +51,10 @@ class PageRenderer extends Smarty
         }
         
         parent::display($template, $cache_id, $compile_id, $parent);
+    }
+
+    private function setBaseTemplateVars()
+    {
+        $this->assign('sitesubtitle', "archeologische atlas");
     }
 }
