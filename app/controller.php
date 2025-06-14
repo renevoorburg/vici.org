@@ -20,7 +20,7 @@ switch ($session->getRequestedAction()) {
         echo "Action: " . $session->getRequestedAction();
         break;
     case '':
-        $page = new HomePage();
+        $page = new HomePage($translator);
         $page->display();
         break;
     default:

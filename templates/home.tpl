@@ -8,7 +8,7 @@
                 <!-- selection -->
             </div>
             <div class="highlights-content">
-                <h2>{$highlights_title|default:"Highlights"}</h2>
+                <h2>{$highlights_title|default:"Highlights"}:</h2>
                 <div id="highlights-items" class="space-y-3">
                     <!-- highlights -->
                 </div>
