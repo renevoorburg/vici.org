@@ -5,114 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vici.org kaartvoorbeeld</title>
     <style>
-        .marker-icon {
-            background-image: url('/images/markers.png');
-            background-size: auto;
-            width: 32px;
-            height: 37px;
-            background-position: 0 0;
-        }
-
-        .marker-icon[data-icon-type="1"] {
-            background-position-x: -0px;
-        }
-
-        .marker-icon[data-icon-type="2"] {
-            background-position-x: -32px;
-        }
-
-        .marker-icon[data-icon-type="3"] {
-            background-position-x: -64px;
-        }
-
-        .marker-icon[data-icon-type="4"] {
-            background-position-x: -96px;
-        }
-
-        .marker-icon[data-icon-type="5"] {
-            background-position-x: -128px;
-        }
-
-        .marker-icon[data-icon-type="6"] {
-            background-position-x: -160px;
-        }
-
-        .marker-icon[data-icon-type="7"] {
-            background-position-x: -192px;
-        }
-
-        .marker-icon[data-icon-type="8"] {
-            background-position-x: -224px;
-        }
-
-        .marker-icon[data-icon-type="9"] {
-            background-position-x: -256px;
-        }
-
-        .marker-icon[data-icon-type="10"] {
-            background-position-x: -288px;
-        }
-
-        .marker-icon[data-icon-type="11"] {
-            background-position-x: -320px;
-        }
-
-        .marker-icon[data-icon-type="12"] {
-            background-position-x: -352px;
-        }
-
-        .marker-icon[data-icon-type="13"] {
-            background-position-x: -384px;
-        }
-
-        .marker-icon[data-icon-type="14"] {
-            background-position-x: -416px;
-        }
-
-        .marker-icon[data-icon-type="15"] {
-            background-position-x: -448px;
-        }
-
-        .marker-icon[data-icon-type="16"] {
-            background-position-x: -480px;
-        }
-
-        .marker-icon[data-icon-type="17"] {
-            background-position-x: -512px;
-        }
-
-        .marker-icon[data-icon-type="18"] {
-            background-position-x: -544px;
-        }
-
-        .marker-icon[data-icon-type="19"] {
-            background-position-x: -576px;
-        }
-
-        .marker-icon[data-icon-type="20"] {
-            background-position-x: -608px;
-        }
-
-        .marker-icon[data-icon-type="21"] {
-            background-position-x: -640px;
-        }
-
-        .marker-icon[data-icon-type="22"] {
-            background-position-x: -672px;
-        }
-
-        .marker-icon[data-icon-type="23"] {
-            background-position-x: -704px;
-        }
-
-        .marker-icon[data-icon-type="24"] {
-            background-position-x: -736px;
-        }
-
-        .marker-icon[data-icon-type="25"] {
-            background-position-x: -768px;
-        }
-
         *,
         *::before,
         *::after {
@@ -283,7 +175,7 @@
             flex-direction: column;
         }
 
-        .selection-box-content {
+        #selectionbox-content {
             padding: 0.5rem;
         }
 
@@ -399,18 +291,18 @@
             padding-top: 0.25rem;
         }
 
-        #footer-toggle {
+        #footerhead {
             text-align: center;
             font-weight: 600;
             padding-bottom: 0.5rem;
             cursor: pointer;
         }
 
-        .footer-parts {
+        .footercontent {
             margin-top: 0.5rem;
         }
 
-        .footer-line {
+        .footerline {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -423,13 +315,13 @@
             height: 1.25rem;
         }
 
-        .footer-logo-link {
+        .footer-logolink {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .footer-lang-links {
+        .languageselector {
             display: flex;
             justify-content: center;
         }
@@ -452,7 +344,7 @@
                 width: 25%;
             }
 
-            .selection-box-content {
+            #selectionbox-content {
                 padding-top: 0;
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
@@ -469,6 +361,114 @@
             #map {
                 max-height: 350px;
             }
+        }
+
+        .marker-icon {
+            background-image: url('/images/markers.png');
+            background-size: auto;
+            width: 32px;
+            height: 37px;
+            background-position: 0 0;
+        }
+
+        .marker-icon[data-icon-type="1"] {
+            background-position-x: -0px;
+        }
+
+        .marker-icon[data-icon-type="2"] {
+            background-position-x: -32px;
+        }
+
+        .marker-icon[data-icon-type="3"] {
+            background-position-x: -64px;
+        }
+
+        .marker-icon[data-icon-type="4"] {
+            background-position-x: -96px;
+        }
+
+        .marker-icon[data-icon-type="5"] {
+            background-position-x: -128px;
+        }
+
+        .marker-icon[data-icon-type="6"] {
+            background-position-x: -160px;
+        }
+
+        .marker-icon[data-icon-type="7"] {
+            background-position-x: -192px;
+        }
+
+        .marker-icon[data-icon-type="8"] {
+            background-position-x: -224px;
+        }
+
+        .marker-icon[data-icon-type="9"] {
+            background-position-x: -256px;
+        }
+
+        .marker-icon[data-icon-type="10"] {
+            background-position-x: -288px;
+        }
+
+        .marker-icon[data-icon-type="11"] {
+            background-position-x: -320px;
+        }
+
+        .marker-icon[data-icon-type="12"] {
+            background-position-x: -352px;
+        }
+
+        .marker-icon[data-icon-type="13"] {
+            background-position-x: -384px;
+        }
+
+        .marker-icon[data-icon-type="14"] {
+            background-position-x: -416px;
+        }
+
+        .marker-icon[data-icon-type="15"] {
+            background-position-x: -448px;
+        }
+
+        .marker-icon[data-icon-type="16"] {
+            background-position-x: -480px;
+        }
+
+        .marker-icon[data-icon-type="17"] {
+            background-position-x: -512px;
+        }
+
+        .marker-icon[data-icon-type="18"] {
+            background-position-x: -544px;
+        }
+
+        .marker-icon[data-icon-type="19"] {
+            background-position-x: -576px;
+        }
+
+        .marker-icon[data-icon-type="20"] {
+            background-position-x: -608px;
+        }
+
+        .marker-icon[data-icon-type="21"] {
+            background-position-x: -640px;
+        }
+
+        .marker-icon[data-icon-type="22"] {
+            background-position-x: -672px;
+        }
+
+        .marker-icon[data-icon-type="23"] {
+            background-position-x: -704px;
+        }
+
+        .marker-icon[data-icon-type="24"] {
+            background-position-x: -736px;
+        }
+
+        .marker-icon[data-icon-type="25"] {
+            background-position-x: -768px;
         }
     </style>
     <script src="/js/jquery-3.3.1.min.js"></script>
@@ -516,7 +516,7 @@
         }
 
         function updateSelectionBox(feature) {
-            const selectionBox = document.getElementById('selection-box-content');
+            const selectionBox = document.getElementById('selectionbox-content');
             if (feature === null || feature === undefined) {
                 selectionBox.innerHTML = '';
                 return;
@@ -532,12 +532,12 @@
                 const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
                 selectionHTML = `
                     <div class="relative">
-                        <img src="${imageUrl}" class="highlight-image" alt="${title}" />
+                        <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
                         <div class="absolute selection-overlay">
                             <div class="selection-overlay-content">
                                 <div>
                                     <div class="font-semibold">${title}</div>
-                                    <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">meer</a>&nbsp;]` : ''}</p>
+                                    <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">more</a>&nbsp;]` : ''}</p>
                                 </div>
                                 <div class="centered-flex">
                                     ${iconHtml(feature.kind || 1)}
@@ -552,7 +552,7 @@
                         <div class="selection-overlay-content">
                             <div>
                                 <div class="font-semibold">${title}</div>
-                                <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">meer</a>]` : ''}</p>
+                                <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">more</a>]` : ''}</p>
                             </div>
                             <div class="centered-flex">
                                 ${iconHtml(feature.kind || 1)}
@@ -596,7 +596,7 @@
                             <div class="font-semibold">${title}</div>
                             <div>
                                 ${summary}
-                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[toon op kaart]</a>` : ''}</div>
+                                ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[show on map]</a>` : ''}</div>
                         </div>
                         <div class="centered-flex">
                             ${iconHtml(highlight.properties.kind || 1)}
@@ -624,7 +624,7 @@
                         ESRI: {
                             name: 'Esri WorldImagery',
                             url: "https://tiles.vici.org/world/{z}/{y}/{x}",
-                            attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                            attributions: 'Tiles © Esri &mdash; and the GIS User Community'
                         }
                     },
                     extraOverlays: {
@@ -638,8 +638,7 @@
 
                     viciToken: '20E2ADF5AB',
                     showFilter: true,
-                    //                filter: { visibility: "anyVisibility", era: "anyEra" }, // onlyVisible , contemporaryEra, historicalEra
-                    highlights: 8,
+                    highlights: 6,
                     lang: "nl",
                     setUrl: true,
                     showScale: "metric",
@@ -652,7 +651,7 @@
     </script>
 
     <header>
-        <div>Vici.org <span class="subtitle">:: archeologische atlas</span></div>
+        <div>Vici.org<span class="subtitle">:: archeologische atlas</span></div>
         <button id="menu-button">&#9776;</button>
         <nav id="main-menu">
             <input type="text" placeholder="Zoeken..." />
@@ -672,11 +671,13 @@
 
         <div class="highlights-column">
             <div class="highlights-scroll">
-                <div id="selection-box-content" class="selection-box-content"></div>
+                <div id="selectionbox-content">
+                    <!-- selection -->
+                </div>
                 <div class="highlights-content">
                     <h2>Uitgelicht</h2>
                     <div id="highlights-items" class="space-y-3">
-                        <!-- Voorbeelditems -->
+                        <!-- highlights -->
                     </div>
                 </div>
             </div>
@@ -686,32 +687,33 @@
 
     <!-- Footer -->
     <footer id="footer">
-        <div class="footerbox" <div id="footer-toggle">Meer over Vici.org <span id="footer-arrow">↓</span></div>
-        <div class="footer-parts">
-            <div class="footer-line">
-                <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
-                <a href="/changed.php" class="flex items-center gap-2">Laatste wijzigingen</a>
-                <a href="/about.php" class="flex items-center gap-2">Over Vici.org</a>
+        <div class="footerbox">
+            <div id="footerhead">Meer over Vici.org <span id="footer-arrow">↓</span></div>
+            <div class="footercontent">
+                <div class="footerline">
+                    <a href="/new.php" class="flex items-center gap-2">Nieuw op Vici.org</a>
+                    <a href="/changed.php" class="flex items-center gap-2">Laatste wijzigingen</a>
+                    <a href="/about.php" class="flex items-center gap-2">Over Vici.org</a>
+                </div>
+                <div class="footerline">
+                    <a href="https://github.com/renevoorburg/vici.org" class="footer-logolink">
+                        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                            class="footer-logo" alt="GitHub" />
+                        GitHub
+                    </a>
+                    <a href="https://mastodon.social/@vici" class="footer-logolink">
+                        <img src="https://joinmastodon.org/logos/logo-purple.svg" class="footer-logo" alt="Mastodon" />
+                        Mastodon
+                    </a>
+                    <a href="https://livius.org" class="footer-logolink">
+                        <img src="https://www.livius.org/favicon.ico" class="footer-logo" alt="Livius" />
+                        Livius.org
+                    </a>
+                </div>
+                <div class="languageselector space-x-4">
+                    <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
+                </div>
             </div>
-            <div class="footer-line">
-                <a href="https://github.com/renevoorburg/vici.org" class="footer-logo-link">
-                    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-                        class="footer-logo" alt="GitHub" />
-                    GitHub
-                </a>
-                <a href="https://mastodon.social/@vici" class="footer-logo-link">
-                    <img src="https://joinmastodon.org/logos/logo-purple.svg" class="footer-logo" alt="Mastodon" />
-                    Mastodon
-                </a>
-                <a href="https://livius.org" class="footer-logo-link">
-                    <img src="https://www.livius.org/favicon.ico" class="footer-logo" alt="Livius" />
-                    Livius.org
-                </a>
-            </div>
-            <div class="footer-lang-links space-x-4">
-                <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
-            </div>
-        </div>
         </div>
     </footer>
 
@@ -743,8 +745,7 @@
                 isAtFooter = true;
             }
         }
-        document.getElementById('footer-toggle').addEventListener('click', toggleFooter);
-
+        document.getElementById('footerhead').addEventListener('click', toggleFooter);
     </script>
 </body>
 
