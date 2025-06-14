@@ -1,4 +1,3 @@
-
 function ViciWidget(element, options) {
 
     function getGridSize(zoom) {
@@ -52,14 +51,15 @@ function ViciWidget(element, options) {
     }
 
     // use the element as an anchor but don't override absolute positioning:
-    if ($("#"+element).css("position")  !== "absolute") {
-        document.getElementById(element).style.position = "relative";
+    const elementStyle = document.getElementById(element).style;
+    if (elementStyle.position !== "absolute") {
+        elementStyle.position = "relative";
     }
 
     let baseUrl = (options.baseUrl) ? options.baseUrl : "https://vici.org";
 
     let lang =  (options.lang) ? options.lang : (navigator.language || navigator.userLanguage).substring(0, 2) ;
-    if ($.inArray(lang,["de", "en", "fr", "nl"]) < 0) lang = "en";
+    if (["de", "en", "fr", "nl"].indexOf(lang) < 0) lang = "en";
     let txt = {
         de: {
             selection: "Selektion",
@@ -187,7 +187,7 @@ function ViciWidget(element, options) {
         initialized : false,
         lang: (function(){
             let lang =  (options.lang) ? options.lang : (navigator.language.substring(0, 2) || navigator.userLanguage).substring(0, 2) ;
-            if ($.inArray(lang,['de', 'en', 'fr', 'nl']) < 0) {
+            if (['de', 'en', 'fr', 'nl'].indexOf(lang) < 0) {
                 lang = 'en';
             }
             return lang;
@@ -239,7 +239,7 @@ function ViciWidget(element, options) {
 
     let mapLayers = [];
 
-    $.each(options.useMaps, function(i, mapId){
+    options.useMaps.forEach(function(mapId){
         let mapData = (options.extraMaps && options.extraMaps[mapId]) ? options.extraMaps[mapId] : defaultMaps[mapId];
         mapLayers.push(new ol.layer.Tile({
             id: mapId,
@@ -348,7 +348,7 @@ function ViciWidget(element, options) {
     if (options.useMaps.indexOf(session.mapId) < 0 ) {
         session.mapId = options.useMaps[0];
     }
-    $.each(mapLayers, function(id, mapLayer){
+    mapLayers.forEach(function(mapLayer){
         let selected = (session.mapId === mapLayer.get('id'));
         mapLayer.setVisible(selected);
 
@@ -362,7 +362,7 @@ function ViciWidget(element, options) {
 
     // show enabled overlays:
     function setOverlayVisibility() {
-        $.each(overlays, function(id, overlay){
+        overlays.forEach(function(overlay){
             overlay.setVisible(session.overlays.indexOf(overlay.get('id')) > -1);
             overlay.changed();
         });
@@ -661,14 +661,13 @@ function ViciWidget(element, options) {
         let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
         let snappedZoom = snapZoom(zoomlevel);
         
-        $.ajax({
-            url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
-            dataType: 'json',
+        fetch(baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam, {
             headers: {
                 'X-Vici-Token': options.viciToken
-            },
-            success: setFeatures
-        });
+            }
+        })
+        .then(response => response.json())
+        .then(setFeatures);
     }
 
     map.on('click', function(evt) {
@@ -695,7 +694,10 @@ function ViciWidget(element, options) {
     map.on("moveend", function() {
 
         if (hasPrefbox()) {
-            $('#viciform').hide(100);
+            const viciform = document.getElementById('viciform');
+            if (viciform) {
+                viciform.style.display = 'none';
+            }
         }
 
         let zoomlevel = map.getView().getZoom();
@@ -755,7 +757,7 @@ function ViciWidget(element, options) {
     }
 
     function selectMap(mapId) {
-        $.each(mapLayers, function(id, mapLayer){
+        mapLayers.forEach(function(mapLayer){
             let selected = (mapId === mapLayer.get('id'));
             mapLayer.setVisible(selected);
 
@@ -808,14 +810,20 @@ function ViciWidget(element, options) {
 
                 highlightsbox.innerHTML = highlightText;
 
-                $('#vici_high_close').click(function(){
-                    highlightsbox.innerHTML = '';
-                });
+                const closeButton = document.getElementById('vici_high_close');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function(){
+                        highlightsbox.innerHTML = '';
+                    });
+                }
 
-                $('.highclick').click(function(){
-                    let string = this.id;
-                    let id = string.substr(5, string.length-5);
-                    selectMarkerAndPan(id)
+                const highclickElements = document.querySelectorAll('.highclick');
+                highclickElements.forEach(function(highclick) {
+                    highclick.addEventListener('click', function(){
+                        let string = this.id;
+                        let id = string.substr(5, string.length-5);
+                        selectMarkerAndPan(id)
+                    });
                 });
             }
      
@@ -845,11 +853,9 @@ function ViciWidget(element, options) {
                 requrl += "&exclude=" + session.selectedMarkerId;
             }
 
-            $.ajax({
-                url: requrl,
-                dataType: 'json',
-                success: showHighlights
-            });
+            fetch(requrl)
+            .then(response => response.json())
+            .then(showHighlights);
         }
     }
 
@@ -914,7 +920,7 @@ function ViciWidget(element, options) {
     displaybox.style.zIndex = '1';
     displaybox.id = 'displaybox';
 
-    $('#' + element).append(displaybox);
+    document.getElementById(element).appendChild(displaybox);
 
     let infobox = document.createElement('div');
     infobox.style.width = '270px';
@@ -929,8 +935,8 @@ function ViciWidget(element, options) {
     highlightsbox.style.borderRadius = '2px';
     highlightsbox.id = 'highlightsbox';
 
-    $('#displaybox').append(infobox);
-    $('#displaybox').append(highlightsbox);
+    displaybox.appendChild(infobox);
+    displaybox.appendChild(highlightsbox);
 
 
     // updates the display of selected marker
@@ -982,9 +988,12 @@ function ViciWidget(element, options) {
             infobox.innerHTML = contents;
         }
 
-        $('#vici_sel_close').click(function(){
-            deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
-        });
+        const closeButton = document.getElementById('vici_sel_close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function(){
+                deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+            });
+        }
 
         storeSession();
     }
@@ -1006,20 +1015,18 @@ function ViciWidget(element, options) {
         let mapsHtml = '';
         if (options.useMaps.length > 1) {
             mapsHtml = '<div style="margin-top:8px"><strong>' + txt["Map_background"] + ':</strong></div>';
-            $.each(mapLayers, function (id, mapLayer) {
-                let mapId = mapLayer.get('id');
+            options.useMaps.forEach(function (mapId) {
                 let checked = (mapId === session.mapId) ? ' checked' : '';
-                mapsHtml += '<input type="radio" name="map" value="' + mapId + '" id="' + mapId + '"' + checked + '><label for="' + mapId + '"> ' + mapLayer.get('name') + '</label><br/>'
+                mapsHtml += '<input type="radio" name="map" value="' + mapId + '" id="' + mapId + '"' + checked + '><label for="' + mapId + '"> ' + mapLayers.find(function(layer){ return layer.get('id') === mapId }).get('name') + '</label><br/>'
             });
         }
 
         let overlaysHtml = '';
         if (overlays.length > 0) {
             overlaysHtml = '<div style="margin-top:8px"><strong> Overlays:</strong></div>';
-            $.each(overlays, function (id, overlay) {
-                let overlayId = overlay.get('id');
-                let checked = (session.overlays.indexOf(overlayId) > -1) ? ' checked' : '';
-                overlaysHtml += '<input type="checkbox" name="overlay" value="' + overlayId + '" id="' + overlayId + '"' + checked + '><label for="' + overlayId + '"> ' + overlay.get('name') + '</label><br/>'
+            overlays.forEach(function (overlay) {
+                let checked = (session.overlays.indexOf(overlay.get('id')) > -1) ? ' checked' : '';
+                overlaysHtml += '<input type="checkbox" name="overlay" value="' + overlay.get('id') + '" id="' + overlay.get('id') + '"' + checked + '><label for="' + overlay.get('id') + '"> ' + overlay.get('name') + '</label><br/>'
             });
         }
 
@@ -1041,43 +1048,51 @@ function ViciWidget(element, options) {
 
         prefbox.innerHTML = html;
 
-        $('#' + element).append(prefbox);
+        document.getElementById(element).appendChild(prefbox);
 
-        $('#' + session.filter.visibility).prop('checked',true);
-        $('#' + session.filter.era).prop('checked',true);
+        document.getElementById(session.filter.visibility).checked = true;
+        document.getElementById(session.filter.era).checked = true;
 
         // attach eventlisteners:
-        $('#vicihandle').click(function() {
-            $('#viciform').toggle(100);
+        document.getElementById('vicihandle').addEventListener('click', function() {
+            document.getElementById('viciform').style.display = document.getElementById('viciform').style.display === 'none' ? 'block' : 'none';
         });
 
-        $("input[name=map]").change(function () {
-            selectMap($("input[name='map']:checked").val());
+        document.querySelectorAll("input[name=map]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                selectMap(this.value);
+            });
         });
 
-        $("input[name=visibility]").change(function () {
-            session.filter.visibility = $("input[name='visibility']:checked").val();
-            redrawMarkers();
-            getHighlights();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=visibility]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                session.filter.visibility = this.value;
+                redrawMarkers();
+                getHighlights();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
-        $("input[name=era]").change(function () {
-            session.filter.era = $("input[name='era']:checked").val();
-            redrawMarkers();
-            getHighlights();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=era]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                session.filter.era = this.value;
+                redrawMarkers();
+                getHighlights();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
-        $("input[name=overlay]").change(function () {
-            let i = session.overlays.indexOf(this.id);
-            if (i > -1) {
-                session.overlays.splice(i, 1);
-            } else {
-                session.overlays.push(this.id);
-            }
-            setOverlayVisibility();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=overlay]").forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                let i = session.overlays.indexOf(this.id);
+                if (i > -1) {
+                    session.overlays.splice(i, 1);
+                } else {
+                    session.overlays.push(this.id);
+                }
+                setOverlayVisibility();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
     } // end show prefbox
