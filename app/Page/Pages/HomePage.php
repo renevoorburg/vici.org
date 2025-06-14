@@ -8,8 +8,7 @@ class HomePage extends PageRenderer
 {
     public function __construct(string $language = null)
     {
-        // Roep de parent constructor aan met de specifieke template
-        parent::__construct('base.tpl', $language);
+        parent::__construct('home.tpl', $language);
         
     }
 }

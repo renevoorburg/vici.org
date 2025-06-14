@@ -2,4 +2,5 @@
 /public/smarty/cache/
 /public/smarty/templates_c/
 /.idea/
+/var/
 .env

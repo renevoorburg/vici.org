@@ -3,13 +3,13 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Vici\Session\Session;
-
 use Vici\Page\Pages\HomePage;
+use Vici\I18n\Translator;
 
 
 $session = new Session();
 
-
+$translator = new Translator($session->getLanguage());
 
 
 
