@@ -3,12 +3,20 @@
 namespace Vici\Page\Pages;
 
 use Vici\Page\PageRenderer;
+use Vici\I18n\Translator;
 
 class HomePage extends PageRenderer
 {
-    public function __construct(string $language = null)
+
+    private Translator $translator;
+    private string $template = 'home.tpl';
+
+    public function __construct(Translator $translator)
     {
-        parent::__construct('home.tpl', $language);
+        $this->translator = $translator;
+        parent::__construct($this->template, $translator);
+        $this->assignTranslatedTemplateVars($this->template);
         
     }
+
 }

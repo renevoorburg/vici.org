@@ -3,10 +3,15 @@
 namespace Vici\Page;
 
 use Smarty;
+use Vici\I18n\Translator;
 
 class PageRenderer extends Smarty
 {
-    public function __construct(string $template = null, string $language = null)
+
+    private Translator $translator;
+    protected string $baseTemplate = 'base.tpl';
+    
+    public function __construct(string $template, Translator $translator)
     {
         parent::__construct();
 
@@ -15,19 +20,11 @@ class PageRenderer extends Smarty
         $this->setCacheDir(__DIR__ . '/../../var/templates_cache');
         $this->setConfigDir(__DIR__ . '/../../config/smarty');
 
-        if ($template !== null) {
-            $this->setTemplate($template);
-        }
+        $this->translator = $translator;
         
-        if ($language !== null) {
-            $this->setLanguage($language);
-        }
-
-        $this->setBaseTemplateVars();
-
+        $this->setTemplate($template);
+        $this->assignTranslatedTemplateVars($this->baseTemplate);
     }
-
-
 
     public function setTemplate(string $template): self
     {
@@ -53,8 +50,48 @@ class PageRenderer extends Smarty
         parent::display($template, $cache_id, $compile_id, $parent);
     }
 
-    private function setBaseTemplateVars()
+    public function setBaseTemplate(string $baseTemplate): self
     {
-        $this->assign('sitesubtitle', "archeologische atlas");
+        $this->baseTemplate = $baseTemplate;
+        return $this;
+    }
+
+    protected function assignTranslatedTemplateVars(string $template)
+    {
+        $baseVars = $this->getDefaultTemplateVars($template);
+        
+        foreach ($baseVars as $var => $defaultValue) {
+            $this->assign($var, $this->translator->get($defaultValue));
+        }
+    }
+
+    private function getDefaultTemplateVars(string $template): array 
+    {
+        $templateBaseName = pathinfo($template, PATHINFO_FILENAME);
+        $cacheFile = $this->getCacheDir() . '/' . $templateBaseName . '_template_vars.php';
+
+        $baseVars = [];
+        $templateFile = $this->getTemplateDir()[0] . '/' . $template;
+        if (!file_exists($cacheFile) || filemtime($cacheFile) < filemtime($templateFile)) {
+            $baseVars = $this->createDefaultTemplateVarsCache($templateFile, $cacheFile);
+        } else {
+            $baseVars = include($cacheFile);
+        }
+        return $baseVars;
+    }
+    
+    private function createDefaultTemplateVarsCache(string $templateFile, string $cacheFile): array
+    {
+        $baseVars = [];
+        $templateContent = file_get_contents($templateFile);
+        
+        // Zoek alle Smarty variabelen met standaardwaarden
+        preg_match_all('/{\$([\w_]+)\|default:"([^"]+)"}/', $templateContent, $matches, PREG_SET_ORDER);
+        
+        foreach ($matches as $match) {
+            $baseVars[$match[1]] = $match[2];
+        }
+        file_put_contents($cacheFile, '<?php return ' . var_export($baseVars, true) . ';');
+        return $baseVars;
     }
 }
