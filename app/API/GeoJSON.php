@@ -4,13 +4,8 @@ namespace Vici\API;
 
 use Vici\Session\Session;
 use Vici\DB\DBConnector;
-
-class lineData
-{
-    public $expire;
-    public $kind;
-    public $points = array();
-}
+use Vici\Geometries\Line;
+use Vici\Identifiers\NormalizersIndex;
 
 class GeoJSON extends APICall
 {
@@ -24,7 +19,6 @@ class GeoJSON extends APICall
         $this->db = $session->getDBConnector();
     }
 
-
     public function headers()
     {
         header("Content-Type: application/json");
@@ -32,11 +26,8 @@ class GeoJSON extends APICall
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
     }
     
-
     public function payload()
     {
-        // echo '{"yo": "lo"}';
-
         $lng = $this->session->getLanguage();
 
         //  A 'perspective' shows only markers that have a specified external identifier.
@@ -44,9 +35,9 @@ class GeoJSON extends APICall
         //  Perspectives are only applied when a boundary / zoom based subset is requested.
         $perspective = (isset($_GET['perspective']) ? $_GET['perspective'] : '');
 
-        // if ($perspective) {
-        //     $normalizer = NormalizersIndex::getIndexedNormalizer($perspective);
-        // }
+        if ($perspective) {
+            $normalizer = NormalizersIndex::getIndexedNormalizer($perspective);
+        }
 
         // Set general SQL modifiers for when we are using a perspective on the data:
         $perspectiveLineJoinSQL = ($perspective ? " LEFT JOIN pmetadata ON line_pnt_id=pmeta_pnt_id " : "");
@@ -109,7 +100,7 @@ class GeoJSON extends APICall
                     . $focusLineRestrictSQL;
         }
 
-        $result = $this->db->query($sql); // no error handling
+        $result = $this->db->query($sql); 
 
         $linedata = array();
         $lines = array();   // TODO  =ugly but fast and simple??
@@ -118,7 +109,7 @@ class GeoJSON extends APICall
             $requiredPointsArr[$line_pnt_id] = true;
 
             if (! array_key_exists($line_pnt_id, $lines)) {
-                $lines[$line_pnt_id] = new lineData();
+                $lines[$line_pnt_id] = new Line();
             }
 
             $lines[$line_pnt_id]->points[] = $pldata_points;
@@ -169,9 +160,6 @@ class GeoJSON extends APICall
                     . $focusPointRestrictSQL;
         }
 
-        // Start output buffering for better performance
-        ob_start();
-
         $result = $this->db->query($sql); // no error handling
 
         if (!$result) {
@@ -190,11 +178,9 @@ class GeoJSON extends APICall
             $short = (empty($obj->psum_short) ? $obj->pnt_dflt_short : $obj->psum_short);
             $kind = $obj->pnt_kind;
 
-            // $fullUrl = $perspective
-            //     ? $normalizer->idToUrl($obj->extid)
-            //     : ViciCommon::$url_base . $obj->pnt_id . '/' ;
-
-            $fullUrl = 'https://vici.novo/vici/' . $obj->pnt_id . '/' ;
+            $fullUrl = $perspective
+                ? $normalizer->idToUrl($obj->extid)
+                : $this->session->getViciBase() . '/vici/' . $obj->pnt_id . '/' ;
             
             // write output:
             echo $sepx . "{\"type\":\"Feature\",";
@@ -207,9 +193,9 @@ class GeoJSON extends APICall
             echo "\"type\": \"GeometryCollection\",\"geometries\":[";
             echo "{" . $point . "},";
             if (count($lines[$obj->pnt_id]->points) > 1) {
-                echo '{"type": "MultiLineString", "coordinates": ' . json_encode($this->flipMultiLine($lines[$obj->pnt_id]->points)) . '}';
+                echo '{"type": "MultiLineString", "coordinates": ' . json_encode(Line::flipMultiLine($lines[$obj->pnt_id]->points)) . '}';
             } else {
-                echo '{"type": "LineString", "coordinates": ' . json_encode($this->flipLine(json_decode($lines[$obj->pnt_id]->points[0]))) . '}';
+                echo '{"type": "LineString", "coordinates": ' . json_encode(Line::flipLine(json_decode($lines[$obj->pnt_id]->points[0]))) . '}';
             }
             echo "]";
             } else {
@@ -235,7 +221,7 @@ class GeoJSON extends APICall
 
             if (array_key_exists($obj->pnt_id, $lines)) {
                 echo '"line": {';
-                echo '"kind":' . $this->kindStr($lines[$obj->pnt_id]->kind) . ',';
+                echo '"kind":' . Line::kindStr($lines[$obj->pnt_id]->kind) . ',';
                 echo '"expire": ' . $lines[$obj->pnt_id]->expire;
                 echo '},';
             }
@@ -249,45 +235,6 @@ class GeoJSON extends APICall
         }
             
         echo "]}";
-
-
-
-
-
-
     }
-
-
-
-    ### Helper functions
-    function kindStr($id) {
-        switch ($id) {
-            case 1:
-                return '"road"';
-            case 2:
-                return '"aqueduct"';
-            case 3:
-                return '"canal"';
-            case 4:
-                return '"wall"';
-            case 5:
-                return '"other"';
-        }
-    }
-    
-    function flipLine($line) {
-        return array_map(function($point) {
-            return [$point[1], $point[0]];
-        }, $line);
-    }
-    
-    function flipMultiLine($multiLine) {
-        return array_map(function($line) {
-            $decoded = json_decode($line, true);
-            return $this->flipLine($decoded ?: []);
-        }, $multiLine);
-    }
-
-
 
 }

@@ -6,6 +6,8 @@ use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
 use Vici\DB\DBConnector;
 
+const VICIBASE = 'https://vici.org';
+
 class Session 
 {
    
@@ -33,7 +35,6 @@ class Session
         
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
         $this->requestedAction = $urlParts[1];
-
     }
 
     public function getDBConnector($database = 'MAIN') : DBConnector
@@ -44,6 +45,15 @@ class Session
         return $this->dbconnectors[$database];
     }
     
+    public function getViciBase() : string
+    {
+        if (isset($_ENV['VICIBASE'])) {
+            return $_ENV['VICIBASE'];
+        }
+        return self::VICIBASE;
+    }
+
+
     public function getUserId() : int
     {
         return isset($_SESSION['acc_id']) ? $_SESSION['acc_id'] : 0;
