@@ -4,8 +4,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Vici\Session\Session;
 use Vici\Page\Pages\HomePage;
-use Vici\I18n\Translator;
-
 
 $session = new Session();
 
@@ -16,7 +14,11 @@ switch ($session->getRequestedAction()) {
         echo "Language: " . $session->getLanguage();
         echo "Action: " . $session->getRequestedAction();
         break;
-    case 'test':
+    case '':
+        $page = new HomePage($session);
+        $page->display();
+        break;
+    case 'new':
         $page = new HomePage($session);
         $page->display();
         break;
