@@ -12,7 +12,6 @@ class Session
     const RATE_LIMIT_SECONDS = 600;
 
     private $availableLanguages = [];
-    private $language = '';
     private $requestedAction = '';
     public Translator $translator;
     
@@ -22,14 +21,18 @@ class Session
         date_default_timezone_set('Europe/Rome');
         
         $this->availableLanguages = Translator::getAvailableLanguages();
-        $languageNegotiator = new LanguageNegotiator($this->availableLanguages);
-        $this->language = $languageNegotiator->negotiate();
-        $this->translator = new Translator($this->language);
+        
+        if (LanguageNegotiator::hasForcedLanguage() || !$this->hasSessionLanguage()) {
+            $languageNegotiator = new LanguageNegotiator($this->availableLanguages);
+            $this->setLanguage($languageNegotiator->negotiate());
+        } 
+        $this->translator = new Translator($this->getLanguage());
         
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
         $this->requestedAction = $urlParts[1];
 
     }
+
     
     public function getUserId() : int
     {
@@ -51,7 +54,6 @@ class Session
         return (bool)$this->getUserId();
     }
     
-
     public function getAvailableLanguages() : array
     {
         return $this->availableLanguages;
@@ -59,7 +61,17 @@ class Session
     
     public function getLanguage() : string
     {
-        return $this->language;
+        return $_SESSION['lang'];
+    }
+
+    public function setLanguage(string $language) : void
+    {
+        $_SESSION['lang'] = $language;
+    }
+    
+    private function hasSessionLanguage() : bool
+    {
+        return isset($_SESSION['lang']);
     }
 
     public function getRequestedAction() : string
@@ -128,5 +140,6 @@ class Session
             exit;
         }
     }
+    
 
 }
