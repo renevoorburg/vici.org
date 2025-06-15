@@ -4,6 +4,7 @@ namespace Vici\Session;
 
 use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
+use Vici\DB\DBConnector;
 
 class Session 
 {
@@ -13,6 +14,8 @@ class Session
 
     private $availableLanguages = [];
     private $requestedAction = '';
+    private array $dbconnectors = [];
+
     public Translator $translator;
     
     public function __construct()
@@ -33,6 +36,13 @@ class Session
 
     }
 
+    public function getDBConnector($database = 'MAIN') : DBConnector
+    {
+        if (!isset($this->dbconnectors[$database])) {
+            $this->dbconnectors[$database] = new DBConnector($database);
+        }
+        return $this->dbconnectors[$database];
+    }
     
     public function getUserId() : int
     {
