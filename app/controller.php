@@ -23,6 +23,9 @@ switch ($session->getRequestedAction()) {
         $page = new HomePage($translator);
         $page->display();
         break;
+    case 'texts':
+        echo $translator->getTranslationsJson(null, 'markerdef.');
+        break;
     default:
         echo "Hello World";
         echo "Language: " . $session->getLanguage();
