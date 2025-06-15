@@ -1,34 +1,14 @@
 var mapObj;
-function iconHtml(icon_type) {
-    const title = [];
 
-    title[1] = 'An aqueduct'
-    title[2] = 'A bath or a bathcomplex'
-    title[3] = 'A city'
-    title[4] = 'A castle or a major military defensive structure'
-    title[5] = 'A grave or a burial field'
-    title[6] = 'A workshop or an industry'
-    title[7] = 'A tavern or a relay'
-    title[8] = 'A museum (contemporary)'
-    title[9] = 'A village like a vicus or a canabae'
-    title[10] = 'The site of a shipwreck'
-    title[11] = 'A temple or a sanctuary'
-    title[12] = 'A theatre or an amphitheatre'
-    title[13] = 'A rural villa or major farm'
-    title[14] = 'A rural settlement'
-    title[15] = 'A watchtower'
-    title[16] = 'A relief, votiv stone or altar'
-    title[17] = 'An archaeological find'
-    title[18] = 'An archaeological observation'
-    title[19] = 'A memorial or replica (contemporary)'
-    title[20] = 'A milestone'
-    title[21] = 'A building'
-    title[22] = 'A bridge'
-    title[23] = 'A road'
-    title[24] = 'The site of a historic event'
-    title[25] = 'A temporary military camp'
+function trl(key) {
+    if (window.viciTranslations && window.viciTranslations[key]) {
+        return window.viciTranslations[key];
+    }
+    return key;
+}
 
-    const iconTitle = title[icon_type] || 'unknown';
+function iconHtml(icon_type) {    
+    const iconTitle = trl(`markerdef.${icon_type}`);
     return `<div class="marker-icon" data-icon-type="${icon_type}" title="${iconTitle}"></div>`
 }
 
@@ -54,7 +34,7 @@ function updateSelectionBox(feature) {
                         <div class="selection-overlay-content">
                             <div>
                                 <div class="font-semibold">${title}</div>
-                                <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">more</a>&nbsp;]` : ''}</p>
+                                <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">${trl('more')}</a>&nbsp;]` : ''}</p>
                             </div>
                             <div class="centered-flex">
                                 ${iconHtml(feature.kind || 1)}
@@ -69,7 +49,7 @@ function updateSelectionBox(feature) {
                     <div class="selection-overlay-content">
                         <div>
                             <div class="font-semibold">${title}</div>
-                            <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">more</a>]` : ''}</p>
+                            <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">${trl('more')}</a>]` : ''}</p>
                         </div>
                         <div class="centered-flex">
                             ${iconHtml(feature.kind || 1)}
@@ -91,7 +71,7 @@ function updateHighlightsBox(highlights) {
     const highlightsContainer = document.getElementById('highlights-items');
 
     if (!highlights || highlights.length === 0) {
-        highlightsContainer.innerHTML = '<div class="empty-message">Geen uitgelichte items beschikbaar.</div>';
+        highlightsContainer.innerHTML = '<div class="empty-message"></div>';
         return;
     }
 
@@ -113,7 +93,7 @@ function updateHighlightsBox(highlights) {
                         <div class="font-semibold">${title}</div>
                         <div>
                             ${summary}
-                            ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[show on map]</a>` : ''}</div>
+                            ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[${trl('show on map')}]</a>` : ''}</div>
                     </div>
                     <div class="centered-flex">
                         ${iconHtml(highlight.properties.kind || 1)}

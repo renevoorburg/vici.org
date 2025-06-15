@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
+    {if isset($js_translations)}
+    <script>
+        window.viciTranslations = {$js_translations};
+    </script>
+    {/if}
     <script src="/js/vici.js?version=20250614"></script>
 
 </head>
@@ -47,7 +52,7 @@
                          class="footer-logo" alt="GitHub" />
                     GitHub
                 </a>
-                <a href="https://mastodon.social/@vici" class="footer-logolink">
+                <a href="https://archaeo.social/@vici" class="footer-logolink">
                     <img src="https://joinmastodon.org/logos/logo-purple.svg" class="footer-logo" alt="Mastodon" />
                     Mastodon
                 </a>

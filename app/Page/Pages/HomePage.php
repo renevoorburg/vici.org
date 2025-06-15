@@ -16,7 +16,7 @@ class HomePage extends PageRenderer
         $this->translator = $translator;
         parent::__construct($this->template, $translator);
         $this->assignTranslatedTemplateVars($this->template);
-        
+        $this->assign('js_translations', $this->translator->getTranslationsJson(['more', 'show on map'], 'markerdef.'));
     }
 
 }
