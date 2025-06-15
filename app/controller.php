@@ -4,9 +4,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Vici\Session\Session;
 use Vici\Page\Pages\HomePage;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 $session = new Session();
-
 
 switch ($session->getRequestedAction()) {
     case 'hello':

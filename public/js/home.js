@@ -106,41 +106,44 @@ function updateHighlightsBox(highlights) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    mapObj = new ViciWidget('map',
-        {
-            defaultMap: "OSM",
-            useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
-            extraMaps: {
-                DARE: {
-                    name: 'Digital Atlas of the Roman Empire',
-                    url: "https://tiles.vici.org/imperium/{z}/{x}/{y}.png",
-                    attributions: '© <a href="http://dare.ht.lu.se/">Johan Åhlfeldt</a>',
-                    maxZoom: 11
-                },
-                ESRI: {
-                    name: 'Esri WorldImagery',
-                    url: "https://tiles.vici.org/world/{z}/{y}/{x}",
-                    attributions: 'Tiles © Esri &mdash; and the GIS User Community'
-                }
+    let mapOptions = {
+        defaultMap: "OSM",
+        useMaps: ["AWMC", "OSM", "DARE", "ESRI"],
+        extraMaps: {
+            DARE: {
+                name: 'Digital Atlas of the Roman Empire',
+                url: "https://tiles.vici.org/imperium/{z}/{x}/{y}.png",
+                attributions: '© <a href="http://dare.ht.lu.se/">Johan Åhlfeldt</a>',
+                maxZoom: 11
             },
-            extraOverlays: {
-                LIMESNL: {
-                    name: 'Limes NL',
-                    url: "https://tiles.vici.org/Limes/{z}/{x}/{y}.png",
-                    attributions: '© Olav Odé - CC BY',
-                    opacity: 0.8
-                }
-            },
+            ESRI: {
+                name: 'Esri WorldImagery',
+                url: "https://tiles.vici.org/world/{z}/{y}/{x}",
+                attributions: 'Tiles © Esri &mdash; and the GIS User Community'
+            }
+        },
+        extraOverlays: {
+            LIMESNL: {
+                name: 'Limes NL',
+                url: "https://tiles.vici.org/Limes/{z}/{x}/{y}.png",
+                attributions: '© Olav Odé - CC BY',
+                opacity: 0.8
+            }
+        },
 
-            viciToken: '20E2ADF5AB',
-            showFilter: true,
-            highlights: 6,
-            lang: "nl",
-            setUrl: true,
-            showScale: "metric",
-            moveHere: true,
-            highlightFunc: updateHighlightsBox,
-            selectionFunc: updateSelectionBox
-        }
-    );
+        viciToken: '20E2ADF5AB',
+        showFilter: true,
+        highlights: 6,
+        lang: "nl",
+        setUrl: true,
+        showScale: "metric",
+        moveHere: true,
+        highlightFunc: updateHighlightsBox,
+        selectionFunc: updateSelectionBox
+    }
+
+    if (window.viciBase) {
+        mapOptions.baseUrl = window.viciBase;
+    }
+    mapObj = new ViciWidget('map', mapOptions);
 });

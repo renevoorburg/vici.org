@@ -25,6 +25,9 @@ class PageRenderer extends Smarty
         $this->setTemplate($template);
         $this->assignTranslatedTemplateVars($this->baseTemplate);
         $this->assign('availableLanguages', $this->session->getAvailableLanguages());
+        if (isset($_ENV['VICIBASE'])) {
+            $this->assign('vicibase', $_ENV['VICIBASE']);
+        }
     }
 
     public function setTemplate(string $template): self

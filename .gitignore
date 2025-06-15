@@ -3,7 +3,6 @@
 /public/smarty/templates_c/
 /.idea/
 /var/
-/var/**/*
 /var/templates_cache/
 /var/templates_compile/
 .env

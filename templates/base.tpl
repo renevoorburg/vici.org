@@ -7,10 +7,15 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
+    {if isset($vicibase)}
+        <script>
+            window.viciBase = "{$vicibase}";
+        </script>
+    {/if}
     {if isset($js_translations)}
-    <script>
-        window.viciTranslations = {$js_translations};
-    </script>
+        <script>
+            window.viciTranslations = {$js_translations};
+        </script>
     {/if}
     <script src="/js/vici.js?version=20250614"></script>
 
