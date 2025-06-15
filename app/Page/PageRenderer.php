@@ -3,15 +3,15 @@
 namespace Vici\Page;
 
 use Smarty;
-use Vici\I18n\Translator;
+use Vici\Session\Session;
 
 class PageRenderer extends Smarty
 {
 
-    private Translator $translator;
+    private Session $session;
     protected string $baseTemplate = 'base.tpl';
     
-    public function __construct(string $template, Translator $translator)
+    public function __construct(string $template, Session $session)
     {
         parent::__construct();
 
@@ -20,10 +20,11 @@ class PageRenderer extends Smarty
         $this->setCacheDir(__DIR__ . '/../../var/templates_cache');
         $this->setConfigDir(__DIR__ . '/../../config/smarty');
 
-        $this->translator = $translator;
+        $this->session = $session;
         
         $this->setTemplate($template);
         $this->assignTranslatedTemplateVars($this->baseTemplate);
+        $this->assign('availableLanguages', $this->session->getAvailableLanguages());
     }
 
     public function setTemplate(string $template): self
@@ -61,7 +62,7 @@ class PageRenderer extends Smarty
         $baseVars = $this->getDefaultTemplateVars($template);
         
         foreach ($baseVars as $var => $defaultValue) {
-            $this->assign($var, $this->translator->get($defaultValue));
+            $this->assign($var, $this->session->translator->get($defaultValue));
         }
     }
 

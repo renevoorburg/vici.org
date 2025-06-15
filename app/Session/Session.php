@@ -3,6 +3,7 @@
 namespace Vici\Session;
 
 use Vici\Negotiator\LanguageNegotiator;
+use Vici\I18n\Translator;
 
 class Session 
 {
@@ -10,16 +11,20 @@ class Session
     const MAX_REQUESTS = 12;
     const RATE_LIMIT_SECONDS = 600;
 
+    private $availableLanguages = [];
     private $language = '';
     private $requestedAction = '';
-
+    public Translator $translator;
+    
     public function __construct()
     {
         session_start();
         date_default_timezone_set('Europe/Rome');
         
-        $languageNegotiator = new LanguageNegotiator(['en', 'de', 'fr', 'nl']);
+        $this->availableLanguages = Translator::getAvailableLanguages();
+        $languageNegotiator = new LanguageNegotiator($this->availableLanguages);
         $this->language = $languageNegotiator->negotiate();
+        $this->translator = new Translator($this->language);
         
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
         $this->requestedAction = $urlParts[1];
@@ -44,6 +49,12 @@ class Session
     public function hasUser() : bool
     {
         return (bool)$this->getUserId();
+    }
+    
+
+    public function getAvailableLanguages() : array
+    {
+        return $this->availableLanguages;
     }
     
     public function getLanguage() : string
