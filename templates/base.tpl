@@ -62,7 +62,9 @@
                 </a>
             </div>
             <div class="languageselector space-x-4">
-                <a href="#">NL</a><a href="#">DE</a><a href="#">FR</a><a href="#">EN</a>
+                {foreach $availableLanguages as $lang}
+                <a href="?lang={$lang}">{$lang}</a>
+                {/foreach}
             </div>
         </div>
     </div>

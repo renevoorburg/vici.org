@@ -5,10 +5,11 @@ namespace Vici\I18n;
 class Translator {
     private array $strings = [];
     private string $language;
+    private static string $basePath = __DIR__ . '/../../lang';
 
-    public function __construct(string $lang, string $basePath = __DIR__ . '/../../lang') {
+    public function __construct(string $lang) {
         $this->language = $lang;
-        $file = $basePath . "/lang_$lang.php";
+        $file = self::$basePath . "/lang_$lang.php";
         if (file_exists($file)) {
             $this->strings = include $file;
         }
@@ -69,5 +70,25 @@ class Translator {
         }
         
         return $json;
+    }
+    
+    /**
+     * Get all available languages based on language files in the lang directory
+     * 
+     * @return array List of available language codes
+     */
+    public static function getAvailableLanguages(): array
+    {
+        $languages = [];
+        $files = glob(self::$basePath . '/lang_*.php');
+        
+        foreach ($files as $file) {
+            // Extract language code from filename (lang_en.php -> en)
+            if (preg_match('/lang_([a-z]{2})\.php$/', $file, $matches)) {
+                $languages[] = $matches[1];
+            }
+        }
+        
+        return $languages;
     }
 }

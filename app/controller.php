@@ -9,9 +9,6 @@ use Vici\I18n\Translator;
 
 $session = new Session();
 
-$translator = new Translator($session->getLanguage());
-
-
 
 switch ($session->getRequestedAction()) {
     case 'hello':
@@ -19,8 +16,8 @@ switch ($session->getRequestedAction()) {
         echo "Language: " . $session->getLanguage();
         echo "Action: " . $session->getRequestedAction();
         break;
-    case '':
-        $page = new HomePage($translator);
+    case 'test':
+        $page = new HomePage($session);
         $page->display();
         break;
     case 'texts':

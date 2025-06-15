@@ -3,20 +3,20 @@
 namespace Vici\Page\Pages;
 
 use Vici\Page\PageRenderer;
-use Vici\I18n\Translator;
+use Vici\Session\Session;
 
 class HomePage extends PageRenderer
 {
 
-    private Translator $translator;
+    private Session $session;
     private string $template = 'home.tpl';
 
-    public function __construct(Translator $translator)
+    public function __construct(Session $session)
     {
-        $this->translator = $translator;
-        parent::__construct($this->template, $translator);
+        $this->session = $session;
+        parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
-        $this->assign('js_translations', $this->translator->getTranslationsJson(['more', 'show on map'], 'markerdef.'));
+        $this->assign('js_translations', $this->session->translator->getTranslationsJson(['more', 'show on map'], 'markerdef.'));
     }
 
 }
