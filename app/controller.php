@@ -7,6 +7,7 @@ use Vici\Session\Session;
 use Vici\Page\Pages\HomePage;
 use Vici\API\GeoJSON;
 use Vici\API\Highlights;
+use Vici\Users\User;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -27,6 +28,16 @@ switch ($session->getRequestedAction()) {
         $highlights = new Highlights($session);
         $highlights->get();
         break;
+    case 'login':
+        $session->setUser(new User(1, 'John Doe', 'john@example.com'));
+        $page = new HomePage($session);
+        $page->display();
+        break;
+    case 'logout':
+        $session->clearUser();
+        $page = new HomePage($session);
+        $page->display();
+        break;  
     case 'new':
         $page = new HomePage($session);
         $page->display();

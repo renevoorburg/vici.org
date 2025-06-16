@@ -10,6 +10,7 @@ return [
     'Recently added' => 'Recent toegevoegd',
     'Recently changed' => 'Recent aangepast',
     'About Vici.org' => 'Over Vici.org',
+    'Logout' => 'Uitloggen',
 
     // defaults from home.tpl:
     'Highlights' => 'Uitgelicht',

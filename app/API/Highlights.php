@@ -127,8 +127,6 @@ class Highlights extends APICall
         };
         echo "\n]}";	
 
-
-
     }
 
 }

@@ -5,6 +5,7 @@ namespace Vici\Session;
 use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
 use Vici\DB\DBConnector;
+use Vici\Users\User;
 
 const VICIBASE = 'https://vici.org';
 
@@ -17,6 +18,7 @@ class Session
     private $availableLanguages = [];
     private $requestedAction = '';
     private array $dbconnectors = [];
+    private User $user;
 
     public Translator $translator;
     
@@ -33,6 +35,8 @@ class Session
         } 
         $this->translator = new Translator($this->getLanguage());
         
+        $this->loadUser();
+
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
         $this->requestedAction = $urlParts[1];
     }
@@ -53,27 +57,35 @@ class Session
         return self::VICIBASE;
     }
 
-
-    public function getUserId() : int
+    private function loadUser() : void
     {
-        return isset($_SESSION['acc_id']) ? $_SESSION['acc_id'] : 0;
-    }
-
-    public function getAccountName() : string
-    {
-        return $_SESSION['acc_name'] ?? '';
-    }
-
-    public function getAccountEmail() : string
-    {
-        return $_SESSION['acc_email'] ?? '';
+        if (isset($_SESSION['user_id'])) {
+            $this->user = new User($_SESSION['user_id'], 'John Doe', 'john@example.com');
+        }
     }
 
     public function hasUser() : bool
     {
-        return (bool)$this->getUserId();
+        return isset($this->user) && $this->user !== null;
+    }   
+
+    public function getUser() : User
+    {
+        return $this->user;
     }
-    
+
+    public function setUser(User $user) : void
+    {
+        $this->user = $user;
+        $_SESSION['user_id'] = $user->getId();
+    }
+
+    public function clearUser() : void
+    {
+        unset($this->user);
+        unset($_SESSION['user_id']);
+    }
+
     public function getAvailableLanguages() : array
     {
         return $this->availableLanguages;
