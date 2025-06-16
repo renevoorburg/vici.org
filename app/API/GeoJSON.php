@@ -18,13 +18,6 @@ class GeoJSON extends APICall
         $this->session = $session;
         $this->db = $session->getDBConnector();
     }
-
-    public function headers()
-    {
-        header("Content-Type: application/json");
-        header("Cache-Control: public, max-age=300");
-        header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
-    }
     
     public function payload()
     {
