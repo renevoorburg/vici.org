@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 use Vici\Session\Session;
 use Vici\Page\Pages\HomePage;
 use Vici\API\GeoJSON;
+use Vici\API\Highlights;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -21,6 +22,10 @@ switch ($session->getRequestedAction()) {
     case 'geojson.php':
         $geojson = new GeoJSON($session);
         $geojson->get();
+        break;
+    case 'highlight.php':
+        $highlights = new Highlights($session);
+        $highlights->get();
         break;
     case 'new':
         $page = new HomePage($session);

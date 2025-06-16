@@ -10,8 +10,14 @@ abstract class APICall
     {
     }
 
-    abstract public function headers();
     abstract public function payload();
+
+    public function headers()
+    {
+        header("Content-Type: application/json");
+        header("Cache-Control: public, max-age=300");
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
+    }
 
     private function corsHeaders()
     {
