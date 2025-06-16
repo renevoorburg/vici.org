@@ -28,6 +28,10 @@ class PageRenderer extends Smarty
         if (isset($_ENV['VICIBASE'])) {
             $this->assign('vicibase', $_ENV['VICIBASE']);
         }
+        if ($this->session->hasUser()) {
+            $this->assign('username', $this->session->getUser()->getName());
+        }
+            
     }
 
     public function setTemplate(string $template): self
