@@ -6,6 +6,7 @@ use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
 use Vici\DB\DBConnector;
 use Vici\Model\Users\User;
+use Vici\Model\Users\UserRepository;
 
 const VICIBASE = 'https://vici.org';
 
@@ -60,7 +61,8 @@ class Session
     private function loadUser() : void
     {
         if (isset($_SESSION['user_id'])) {
-            $this->user = new User($_SESSION['user_id'], "johndoe", "John Doe", "john@example.com");
+            $userRepository = new UserRepository($this->getDBConnector());
+            $this->user = $userRepository->getUserById($_SESSION['user_id']);
         }
     }
 

@@ -5,9 +5,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Dotenv\Dotenv;
 use Vici\Session\Session;
 use Vici\Page\Pages\HomePage;
+use Vici\Page\Pages\LoginPage;
 use Vici\API\GeoJSON;
 use Vici\API\Highlights;
-use Vici\Users\User;
+use Vici\Model\Users\User;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -29,8 +30,7 @@ switch ($session->getRequestedAction()) {
         $highlights->get();
         break;
     case 'login':
-        $session->setUser(new User(1, 'John Doe', 'john@example.com'));
-        $page = new HomePage($session);
+        $page = new LoginPage($session);
         $page->display();
         break;
     case 'logout':
