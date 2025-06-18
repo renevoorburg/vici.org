@@ -18,8 +18,22 @@ class UserRepository
         $query = "SELECT * FROM accounts WHERE acc_id = :id";
         $stmt = $this->dbConnector->prepare($query);
         $stmt->execute(['id' => $id]);
-        $result = $stmt->fetchObject(User::class);
-        return $result;
+        $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$userData) {
+            return null; // Gebruiker niet gevonden
+        }
+        
+        // Maak User object
+        $user = new User(
+            $userData['acc_id'],
+            $userData['acc_name'],
+            $userData['acc_realname'],
+            $userData['acc_email'],
+            $userData['acc_passwd']
+        );
+        
+        return $user;
     }
     
     public function authenticateUser(string $identity, string $password): ?User
