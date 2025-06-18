@@ -5,7 +5,7 @@ namespace Vici\Session;
 use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
 use Vici\DB\DBConnector;
-use Vici\Users\User;
+use Vici\Model\Users\User;
 
 const VICIBASE = 'https://vici.org';
 
@@ -60,7 +60,7 @@ class Session
     private function loadUser() : void
     {
         if (isset($_SESSION['user_id'])) {
-            $this->user = new User($_SESSION['user_id'], 'John Doe', 'john@example.com');
+            $this->user = new User($_SESSION['user_id'], "johndoe", "John Doe", "john@example.com");
         }
     }
 
