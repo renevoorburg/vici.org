@@ -2,6 +2,7 @@
 
 namespace Vici\API;
 
+use PDO;
 use Vici\Session\Session;
 use Vici\DB\DBConnector;
 use Vici\Geometries\Line;
@@ -93,21 +94,22 @@ class GeoJSON extends APICall
                     . $focusLineRestrictSQL;
         }
 
-        $result = $this->db->query($sql); 
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
         $linedata = array();
         $lines = array();   // TODO  =ugly but fast and simple??
 
-        while (list($line_id, $line_pnt_id, $line_kind, $line_note, $pldata_tozoom, $pldata_points) = $result->fetch_row()) {
-            $requiredPointsArr[$line_pnt_id] = true;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $requiredPointsArr[$row['line_pnt_id']] = true;
 
-            if (! array_key_exists($line_pnt_id, $lines)) {
-                $lines[$line_pnt_id] = new Line();
+            if (! array_key_exists($row['line_pnt_id'], $lines)) {
+                $lines[$row['line_pnt_id']] = new Line();
             }
 
-            $lines[$line_pnt_id]->points[] = $pldata_points;
-            $lines[$line_pnt_id]->expire = $pldata_tozoom;
-            $lines[$line_pnt_id]->kind = $line_kind;
+            $lines[$row['line_pnt_id']]->points[] = $row['pldata_points'];
+            $lines[$row['line_pnt_id']]->expire = $row['pldata_tozoom'];
+            $lines[$row['line_pnt_id']]->kind = $row['line_kind'];
 
         }
 
@@ -153,9 +155,10 @@ class GeoJSON extends APICall
                     . $focusPointRestrictSQL;
         }
 
-        $result = $this->db->query($sql); // no error handling
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
-        if (!$result) {
+        if ($stmt->errorCode() !== '00000') {
             // Handle query error
             echo "{\"type\":\"FeatureCollection\",\"features\":[],\"error\":\"Database query failed\"}";
             exit;
@@ -164,31 +167,31 @@ class GeoJSON extends APICall
         $sepx = "";
         echo "{\"type\":\"FeatureCollection\",\"features\":[";
 
-        while($obj = $result->fetch_object()) {
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
             // prepare output:
-            $name = (empty($obj->psum_pnt_name) ? $obj->pnt_name : $obj->psum_pnt_name);
-            $short = (empty($obj->psum_short) ? $obj->pnt_dflt_short : $obj->psum_short);
-            $kind = $obj->pnt_kind;
+            $name = (empty($row['psum_pnt_name']) ? $row['pnt_name'] : $row['psum_pnt_name']);
+            $short = (empty($row['psum_short']) ? $row['pnt_dflt_short'] : $row['psum_short']);
+            $kind = $row['pnt_kind'];
 
             $fullUrl = $perspective
-                ? $normalizer->idToUrl($obj->extid)
-                : $this->session->getViciBase() . '/vici/' . $obj->pnt_id . '/' ;
+                ? $normalizer->idToUrl($row['extid'])
+                : $this->session->getViciBase() . '/vici/' . $row['pnt_id'] . '/' ;
             
             // write output:
             echo $sepx . "{\"type\":\"Feature\",";
-            echo "\"id\":",$obj->pnt_id,",";
+            echo "\"id\":",$row['pnt_id'],",";
             echo "\"geometry\":{";
 
-            $point = "\"type\":\"Point\",\"coordinates\":[" . $obj->pnt_lng . "," . $obj->pnt_lat . "]";
+            $point = "\"type\":\"Point\",\"coordinates\":[" . $row['pnt_lng'] . "," . $row['pnt_lat'] . "]";
 
-        if (array_key_exists($obj->pnt_id, $lines)) {
+        if (array_key_exists($row['pnt_id'], $lines)) {
             echo "\"type\": \"GeometryCollection\",\"geometries\":[";
             echo "{" . $point . "},";
-            if (count($lines[$obj->pnt_id]->points) > 1) {
-                echo '{"type": "MultiLineString", "coordinates": ' . json_encode(Line::flipMultiLine($lines[$obj->pnt_id]->points)) . '}';
+            if (count($lines[$row['pnt_id']]->points) > 1) {
+                echo '{"type": "MultiLineString", "coordinates": ' . json_encode(Line::flipMultiLine($lines[$row['pnt_id']]->points)) . '}';
             } else {
-                echo '{"type": "LineString", "coordinates": ' . json_encode(Line::flipLine(json_decode($lines[$obj->pnt_id]->points[0]))) . '}';
+                echo '{"type": "LineString", "coordinates": ' . json_encode(Line::flipLine(json_decode($lines[$row['pnt_id']]->points[0]))) . '}';
             }
             echo "]";
             } else {
@@ -198,30 +201,30 @@ class GeoJSON extends APICall
 
 
             echo "\"properties\":{";
-        //    echo "\"id\":",$obj->pnt_id,",";
+        //    echo "\"id\":",$row['pnt_id'],",";
             echo "\"url\":\"",$fullUrl,"\",";
             echo "\"title\":",json_encode($name),",";
             echo "\"kind\":",$kind,",";
             if ($isFlat) {
                 echo "\"zoomsmall\":1,";
             } else {
-                echo "\"zoomsmall\":",$obj->pkind_low,",";
+                echo "\"zoomsmall\":",$row['pkind_low'],",";
             }
-            echo "\"zoomnormal\":",$obj->pkind_high,",";
-            echo "\"zindex\":",$obj->pkind_zindex,",";
-            echo "\"isvisible\":",$obj->pnt_visible,",";
-            echo "\"identified\":",($obj->pmeta_loc_accuracy=='5'?"false":"true"),",";
+            echo "\"zoomnormal\":",$row['pkind_high'],",";
+            echo "\"zindex\":",$row['pkind_zindex'],",";
+            echo "\"isvisible\":",$row['pnt_visible'],",";
+            echo "\"identified\":",($row['pmeta_loc_accuracy']=='5'?"false":"true"),",";
 
-            if (array_key_exists($obj->pnt_id, $lines)) {
+            if (array_key_exists($row['pnt_id'], $lines)) {
                 echo '"line": {';
-                echo '"kind":' . Line::kindStr($lines[$obj->pnt_id]->kind) . ',';
-                echo '"expire": ' . $lines[$obj->pnt_id]->expire;
+                echo '"kind":' . Line::kindStr($lines[$row['pnt_id']]->kind) . ',';
+                echo '"expire": ' . $lines[$row['pnt_id']]->expire;
                 echo '},';
             }
 
             echo "\"summary\":",json_encode($short);
-            if ($obj->img_path) {
-                echo ",\"img\":", json_encode($obj->img_path);
+            if ($row['img_path']) {
+                echo ",\"img\":", json_encode($row['img_path']);
             }
             echo "}}";
             $sepx=",";

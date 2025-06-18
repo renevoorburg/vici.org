@@ -2,6 +2,7 @@
 
 namespace Vici\API;
 
+use PDO;
 use Vici\Session\Session;
 use Vici\DB\DBConnector;
 use Vici\Geometries\Line;
@@ -98,30 +99,31 @@ class Highlights extends APICall
                 .  "ORDER BY $orderby ASC "
                 .  "LIMIT $n ";
 
-        $result = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
         $sepx = '';
         echo '{ "type": "FeatureCollection",'."\n"; 
         echo '"features": ['."\n"; 
 
-        while ($obj = $result->fetch_object()) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             
             // prepare output:
-            $name  = (empty($obj->psum_pnt_name) ? $obj->pnt_name : $obj->psum_pnt_name);
-            $short = (empty($obj->psum_short) ? $obj->pnt_dflt_short : $obj->psum_short);
-            $kind = $obj->pnt_kind;
+            $name  = (empty($row['psum_pnt_name']) ? $row['pnt_name'] : $row['psum_pnt_name']);
+            $short = (empty($row['psum_short']) ? $row['pnt_dflt_short'] : $row['psum_short']);
+            $kind = $row['pnt_kind'];
             // $fullUrl = $perspective 
-            //     ? str_replace('$1', str_replace('=', '/', $obj->extid), $perspectiveLinkTempl) 
-            //     : ViciCommon::$url_base.$obj->pnt_id."/".ViciCommon::urlencodeVici(str_replace(' ', '_', $obj->pnt_name)).$lng->getLangGET('?');
+            //     ? str_replace('$1', str_replace('=', '/', $row['extid']), $perspectiveLinkTempl) 
+            //     : ViciCommon::$url_base.$row['pnt_id']."/".ViciCommon::urlencodeVici(str_replace(' ', '_', $row['pnt_name'])).$lng->getLangGET('?');
 
-            $fullUrl =  $this->session->getViciBase() . '/vici/' . $obj->pnt_id . '/' ;
+            $fullUrl =  $this->session->getViciBase() . '/vici/' . $row['pnt_id'] . '/' ;
 
-            $kindStr = $obj->pnt_kind;
+            $kindStr = $row['pnt_kind'];
 
             // output
             echo $sepx."  {\"type\": \"Feature\",\n"; 
-            echo "   \"geometry\": {\"type\": \"Point\", \"coordinates\": [".$obj->pnt_lng.", ".$obj->pnt_lat."]},\n";
-            echo "   \"properties\": {\"id\": ".$obj->pnt_id.", \"url\": \"".$fullUrl."\", \"title\": ".json_encode($name).", \"kind\": $kindStr, \"summary\": ".json_encode($short).", \"img\": ".json_encode($obj->img_path)."}\n";
+            echo "   \"geometry\": {\"type\": \"Point\", \"coordinates\": [".$row['pnt_lng'].", ".$row['pnt_lat']."]},\n";
+            echo "   \"properties\": {\"id\": ".$row['pnt_id'].", \"url\": \"".$fullUrl."\", \"title\": ".json_encode($name).", \"kind\": $kindStr, \"summary\": ".json_encode($short).", \"img\": ".json_encode($row['img_path'])."}\n";
             echo "  }";
             $sepx=",\n";
         };
