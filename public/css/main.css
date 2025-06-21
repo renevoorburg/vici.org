@@ -319,6 +319,10 @@ footer {
     justify-content: center;
 }
 
+.login-text a {
+    text-decoration: underline;
+}
+
 @media (min-width: 768px) {
     #menu-button {
         display: none;

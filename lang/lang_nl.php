@@ -46,5 +46,12 @@ return [
     'markerdef.24' => 'Een plaats van een historische gebeurtenis',
     'markerdef.25' => 'Een militaire structuur van tijdelijke aard',
 
+    // defaults from login.tpl:
+    'Login' => 'Aanmelden',
+    "Log on to your account or <a href='/register'>register</a>." => "Meld je aan of <a href='/register'>registreer</a>.",
+    'Account name' => 'Accountnaam',
+    'Password' => 'Wachtwoord',
+    'Invalid username or password.' => 'Onbekende accountnaam of wachtwoord.',
+    'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
 
 ];
