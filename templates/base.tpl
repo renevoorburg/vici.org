@@ -29,7 +29,7 @@
         <input type="text" placeholder="{$search_placeholder|default:"search"}..." />
         <a href="/add">{$add_menu_item|default:"Add"}</a>
         {if isset($username)}
-            <a href="/logout">{$logout_menu_item|default:"Logout"}</a> <span>{$username}</span>
+            <a href="/logout">{$logout_menu_item|default:"Logout"}</a>
         {else}
             <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
         {/if}
