@@ -23,9 +23,9 @@ class LoginPage extends PageRenderer
         $password = isset($_POST['password']) ? trim($_POST['password']) : null;
         $token = $_POST['cf-turnstile-response'] ?? '';
 
+        $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'], $_ENV['TURNSTILE_SITE_KEY']);
+
         if (!empty($token)) {
-            $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'], $_ENV['TURNSTILE_SITE_KEY']);
-            
             if ($turnstile->validate($token, $_SERVER['REMOTE_ADDR'] ?? '')) {
                 if ($accountname && $password) {
                     $userRepository = new UserRepository($this->session->getDBConnector());
