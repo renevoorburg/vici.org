@@ -20,9 +20,8 @@
                     <input type="password" id="frm_password" name="password" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem;" />
                 </div>
                 
-                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-                <div class="cf-turnstile" data-sitekey="{$turnstile_sitekey}"></div>
-                
+                {include file="turnstile.tpl"}
+
                 <div style="margin-top: 0.5rem;">
                     <input type="submit" value="{$form_login|default:Login}" style="background-color: #1e3a8a; color: white; border: none; border-radius: 0.25rem; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer;">
                 </div>
