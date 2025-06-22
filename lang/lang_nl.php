@@ -5,12 +5,12 @@ return [
     'archaeological atlas' => 'archeologische atlas',
     'search' => 'Zoeken',
     'Add' => 'Toevoegen',
-    'Login / Register' => 'Login / Register',
+    'Login / Register' => 'Aanmelden / Registreren',
     'More about Vici.org' => 'Meer over Vici.org',
     'Recently added' => 'Recent toegevoegd',
     'Recently changed' => 'Recent aangepast',
     'About Vici.org' => 'Over Vici.org',
-    'Logout' => 'Uitloggen',
+    'Logout' => 'Afmelden',
 
     // defaults from home.tpl:
     'Highlights' => 'Uitgelicht',
@@ -49,9 +49,9 @@ return [
     // defaults from login.tpl:
     'Login' => 'Aanmelden',
     "Log on to your account or <a href='/register'>register</a>." => "Meld je aan of <a href='/register'>registreer</a>.",
-    'Account name' => 'Accountnaam',
+    'Account name' => 'Gebruikersnaam',
     'Password' => 'Wachtwoord',
-    'Invalid username or password.' => 'Onbekende accountnaam of wachtwoord.',
+    'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
     'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
 
 ];
