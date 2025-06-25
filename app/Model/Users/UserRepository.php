@@ -6,17 +6,17 @@ use Vici\DB\DBConnector;
 
 class UserRepository
 {
-    private DBConnector $dbConnector;
+    private DBConnector $db;
 
-    public function __construct(DBConnector $dbConnector)
+    public function __construct(DBConnector $db)
     {
-        $this->dbConnector = $dbConnector;
+        $this->db = $db;
     }
 
-    public function getUserById(int $id): ?User
+    public function getById(int $id): ?User
     {
         $query = "SELECT * FROM accounts WHERE acc_id = :id";
-        $stmt = $this->dbConnector->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->execute(['id' => $id]);
         $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
         
@@ -39,7 +39,7 @@ class UserRepository
     public function authenticateUser(string $identity, string $password): ?User
     {
         $query = "SELECT * FROM accounts WHERE acc_name = :username OR acc_email = :email";
-        $stmt = $this->dbConnector->prepare($query);
+        $stmt = $this->dbdb->prepare($query);
         $stmt->execute([
             'username' => $identity,
             'email' => $identity
