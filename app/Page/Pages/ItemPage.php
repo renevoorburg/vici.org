@@ -21,10 +21,12 @@ class ItemPage extends PageRenderer
         $db = $session->getDBConnector();
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->getById($session->getRequestedItem());
-        // $this->assign('annotation', $site->locales[0]->title);
-        $this->assign('annotation', $site->locales[$session->getLanguage()]->description);
 
-        print_r($site->locales[0]);
+        $this->assign('annotation', $site->locales[$session->getLanguage()]->description);
+        $this->assign('period_start_qualifier', $site->period->startQualifier);
+        $this->assign('period_end_qualifier', $site->period->endQualifier);
+        $this->assign('lat', $site->representativeLocation->latitude);
+        $this->assign('lng', $site->representativeLocation->longitude);
     }
 
 }
