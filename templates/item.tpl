@@ -27,7 +27,7 @@
                 <div>
                     <h3 class="text-md text-blue-900 font-semibold">{$period_metadata|default:"Period or year"}:</h3>
                     <ul>
-                    <li>{$period}</li>
+                    <li>{$period_start_qualifier} /{$period_end_qualifier}</li>
                     </ul>
                 </div>
                 <div>
