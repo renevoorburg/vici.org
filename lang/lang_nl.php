@@ -47,6 +47,7 @@ return [
     'markerdef.25' => 'Een militaire structuur van tijdelijke aard',
 
     // defaults from login.tpl:
+    "Close" => "Sluiten",
     'Login' => 'Aanmelden',
     "Log on to your account or <a href='/register'>register</a>." => "Meld je aan of <a href='/register'>registreer</a>.",
     'Account name' => 'Gebruikersnaam',

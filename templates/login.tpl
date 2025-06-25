@@ -2,7 +2,8 @@
 {block name=main}
 
     <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-        <div style="margin: auto; border: 1px solid #ccc; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1); background-color: white; max-width: 31.25rem; width: 100%;">
+        <div style="margin: auto; border: 1px solid #ccc; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1); background-color: white; max-width: 31.25rem; width: 100%; position: relative;">
+        <a href="/" title="Sluiten" style="position: absolute; top: 0.5rem; right: 0.5rem; text-decoration: none; color: #888; font-size: 1.5rem; font-weight: bold; line-height: 1; cursor: pointer; z-index: 10;" aria-label="{$close|default:"Close"}">×</a>
         <h1 style="font-size: 1.5rem; color: #1e3a8a; margin-bottom: 1rem;">{$title|default:"Login"}</h1>
             {if $message}
             <div style="margin-bottom: 1rem; color: #718096;">{$message}</div>

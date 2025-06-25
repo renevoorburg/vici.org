@@ -4,10 +4,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use Vici\Session\Session;
-use Vici\Page\Pages\HomePage;
-use Vici\Page\Pages\LoginPage;
-use Vici\API\GeoJSON;
-use Vici\API\Highlights;
+use Vici\Page\Pages;
+use Vici\API;
 use Vici\Model\Users\User;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -17,33 +15,37 @@ $session = new Session();
 
 switch ($session->getRequestedAction()) {
     case '':
-        $page = new HomePage($session);
+        $page = new Pages\HomePage($session);
+        $page->display();
+        break;
+    case 'vici':
+        $page = new Pages\ItemPage($session);
         $page->display();
         break;
 
     case 'geojson.php':
-        $geojson = new GeoJSON($session);
+        $geojson = new API\GeoJSON($session);
         $geojson->get();
         break;
     case 'highlight.php':
-        $highlights = new Highlights($session);
+        $highlights = new API\Highlights($session);
         $highlights->get();
         break;
     case 'login':
-        $page = new LoginPage($session);
+        $page = new Pages\LoginPage($session);
         $page->display();
         break;
     case 'logout':
         $session->clearUser();
-        $page = new HomePage($session);
+        $page = new Pages\HomePage($session);
         $page->display();
         break;  
     case 'new':
-        $page = new HomePage($session);
+        $page = new Pages\HomePage($session);
         $page->display();
         break;
     case 'texts':
-        echo $translator->getTranslationsJson(null, 'markerdef.');
+        echo $session->translator->getTranslationsJson(null, 'markerdef.');
         break;
     default:
         echo "Hello World";
