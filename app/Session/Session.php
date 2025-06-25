@@ -17,7 +17,8 @@ class Session
     const RATE_LIMIT_SECONDS = 600;
 
     private $availableLanguages = [];
-    private $requestedAction = '';
+    private $requestedAction = null;
+    private $requestedItem = null;
     private array $dbconnectors = [];
     private User $user;
 
@@ -39,7 +40,8 @@ class Session
         $this->loadUser();
 
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
-        $this->requestedAction = $urlParts[1];
+        $this->requestedAction = $urlParts[1] ?? null;
+        $this->requestedItem = $urlParts[2] ?? null;
     }
 
     public function getDBConnector($database = 'MAIN') : DBConnector
@@ -111,6 +113,11 @@ class Session
     public function getRequestedAction() : string
     {
         return $this->requestedAction;
+    }  
+
+    public function getRequestedItem() : string
+    {
+        return $this->requestedItem;
     }  
 
     public function setReturnURL($url) : void

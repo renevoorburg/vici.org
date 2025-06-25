@@ -19,19 +19,19 @@ class LoginPage extends PageRenderer
     {
         $this->session = $session;
 
-        $accountname = isset($_POST['accountname']) ? (string)$_POST['accountname'] : null;
-        $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+        $accountname = $_POST['accountname'] ?? null;
+        $password = $_POST['password'] ?? null;
         $token = $_POST['cf-turnstile-response'] ?? '';
 
         $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'], $_ENV['TURNSTILE_SITE_KEY']);
 
-        if (!empty($token)) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             if ($turnstile->validate($token, $_SERVER['REMOTE_ADDR'] ?? '')) {
                 if ($accountname && $password) {
                     $userRepository = new UserRepository($this->session->getDBConnector());
                     $user = $userRepository->authenticateUser($accountname, $password);
         
-                    if ($user) {
+                    if ($user) {    
                         $this->session->setUser($user);
                         header("Location: /");
                         exit;
@@ -42,6 +42,7 @@ class LoginPage extends PageRenderer
             } else {
                 $this->error_message = $this->session->translator->get("Could not identify you as a human.");
             }
+            usleep(500000); 
         }
 
         parent::__construct($this->template, $session);
