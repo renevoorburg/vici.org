@@ -64,7 +64,7 @@ class Session
     {
         if (isset($_SESSION['user_id'])) {
             $userRepository = new UserRepository($this->getDBConnector());
-            $this->user = $userRepository->getUserById($_SESSION['user_id']);
+            $this->user = $userRepository->getById($_SESSION['user_id']);
         }
     }
 
@@ -115,9 +115,9 @@ class Session
         return $this->requestedAction;
     }  
 
-    public function getRequestedItem() : string
+    public function getRequestedItem() : int    
     {
-        return $this->requestedItem;
+        return (int)$this->requestedItem;
     }  
 
     public function setReturnURL($url) : void

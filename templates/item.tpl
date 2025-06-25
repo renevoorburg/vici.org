@@ -51,7 +51,7 @@
             <h2 class="mt-4 mb-2 text-lg text-blue-900 font-semibold">{$annotation_metadata|default:"Annotation"}   </h2>            
 
             <article id="txt_nl" class="article mb-8"><p>
-                {$annotation}
+                test: {$annotation}
             </article>
 
 
