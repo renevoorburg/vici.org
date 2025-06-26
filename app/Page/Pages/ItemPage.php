@@ -27,6 +27,9 @@ class ItemPage extends PageRenderer
         $this->assign('period_end_qualifier', $site->period->endQualifier);
         $this->assign('lat', $site->representativeLocation->latitude);
         $this->assign('lng', $site->representativeLocation->longitude);
+        $this->assign('country_name', $site->toponym->countryName);
+        $this->assign('place_name', $site->toponym->placeName);
+        $this->assign('q', $site->representativeLocation->qualifier);
     }
 
 }

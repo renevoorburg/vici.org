@@ -90,12 +90,36 @@ class PageRenderer extends Smarty
     
     private function createDefaultTemplateVarsCache(string $templateFile, string $cacheFile): array
     {
+        $templateDir = dirname($templateFile);
         $baseVars = [];
         $templateContent = file_get_contents($templateFile);
-        
+
+        // Recursief: zoek alle {include file="..."} tags
+        preg_match_all('/{include file="([^"]+)"/', $templateContent, $includeMatches, PREG_SET_ORDER);
+        foreach ($includeMatches as $includeMatch) {
+            $includePath = $includeMatch[1];
+            // Maak pad absoluut tov template-map
+            $includeFile = $templateDir . '/' . $includePath;
+            if (!file_exists($includeFile)) {
+                // Probeer relatief aan de hoofd template dir als fallback
+                $altIncludeFile = __DIR__ . '/../../../templates/' . $includePath;
+                if (file_exists($altIncludeFile)) {
+                    $includeFile = $altIncludeFile;
+                } else {
+                    continue; // Sla niet-bestaande includes over
+                }
+            }
+            $includeVars = $this->createDefaultTemplateVarsCache($includeFile, sys_get_temp_dir() . '/vici_tpl_cache_' . md5($includeFile) . '.php');
+            // Alleen toevoegen als de key nog niet bestaat (hoofdtemplate heeft voorrang)
+            foreach ($includeVars as $k => $v) {
+                if (!array_key_exists($k, $baseVars)) {
+                    $baseVars[$k] = $v;
+                }
+            }
+        }
+
         // Zoek alle Smarty variabelen met standaardwaarden
         preg_match_all('/{\$([\w_]+)\|default:"([^"]+)"}/', $templateContent, $matches, PREG_SET_ORDER);
-        
         foreach ($matches as $match) {
             $baseVars[$match[1]] = $match[2];
         }

@@ -63,6 +63,10 @@ class SiteRepository
         $site->representativeLocation->longitude = (float)$row['pnt_lng'];
         $site->representativeLocation->qualifier = $row['locationAccuracy'];
         $site->locales = $locales; // ['nl' => SiteLocale, 'en' => SiteLocale, ...]
+
+        // Vul Toponym via ReverseGeocoder
+        $geocoder = new \Vici\Service\ReverseGeocoder($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+        $site->toponym = $geocoder->resolveToponym('nl');
        
         $site->period = new Period();
         $site->period->startYear = $row['startYear'];
