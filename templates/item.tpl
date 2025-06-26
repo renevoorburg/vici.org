@@ -19,9 +19,10 @@
                 <div>
                     <h3 class="text-md text-blue-900 font-semibold">{$location_metadata|default:"Location"}</h3>
                     <ul>
-                    <li>{$location_name}</li>
+                    <li>{$country_name}, {$place_name}</li>
                     <li>geo:{$lat},{$lng}</li>
-                    <li>{$location_qualifier}</li>
+                    <li>{$q}</li>
+                    <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
                     </ul>
                 </div>
                 <div>

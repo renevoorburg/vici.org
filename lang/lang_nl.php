@@ -45,6 +45,15 @@ return [
     'markerdef.23' => 'Een verharde weg',
     'markerdef.24' => 'Een plaats van een historische gebeurtenis',
     'markerdef.25' => 'Een militaire structuur van tijdelijke aard',
+    
+    // defaults from include/location_accuracy.tpl:
+    "Location: correct and verified" => "Locatie: correct en geverifieerd",
+    "Location: with minor uncertainty" => "Locatie: met geringe onzekerheid",
+    "Location: in range of ± 5-25 m." => "Locatie: binnen ± 5-25 m.",
+    "Location: in range of ± 25-100 m." => "Locatie: binnen ± 25-100 m.",
+    "Location: in range of ± 100-500 m." => "Locatie: binnen ± 100-500 m.",
+    "Location: uncertain" => "Locatie: onzeker",
+
 
     // defaults from login.tpl:
     "Close" => "Sluiten",
