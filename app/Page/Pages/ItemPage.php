@@ -22,6 +22,7 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->getById($session->getRequestedItem());
 
+        $this->assign('id', $site->id);
         $this->assign('annotation', $site->locales[$session->getLanguage()]->description);
         $this->assign('period_start_qualifier', $site->period->startQualifier);
         $this->assign('period_end_qualifier', $site->period->endQualifier);
@@ -30,6 +31,9 @@ class ItemPage extends PageRenderer
         $this->assign('country_name', $site->toponym->countryName);
         $this->assign('place_name', $site->toponym->placeName);
         $this->assign('q', $site->representativeLocation->qualifier);
+        $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
+        $this->assign('classification_title', $this->session->translator->get($site->type->title));
+        $this->assign('isVisible', $site->isVisible);
     }
 
 }

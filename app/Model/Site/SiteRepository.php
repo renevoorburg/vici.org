@@ -14,18 +14,15 @@ class SiteRepository
         $this->db = $db;
     }
 
-    /**
-     * Haal een Site op met alle locales en type (nog zonder images/lines)
-     */
+
     public function getById(int $id): ?Site
     {
-        // Haal basisdata uit points
         $stmt = $this->db->prepare("
             SELECT 
                 p.pnt_kind, 
                 p.pnt_lat, 
                 p.pnt_lng, 
-                p.pnt_visible AS visibility, 
+                p.pnt_visible AS isVisible, 
                 p.pnt_hide AS isPublished, 
                 m.pmeta_loc_accuracy AS locationAccuracy,
                 m.pmeta_startyr AS startYear, 
@@ -45,26 +42,24 @@ class SiteRepository
             return null;
         }
 
-        // Haal type op
-        $typeRepo = new SiteTypeRepository($this->db);
-        $type = $typeRepo->getById((int)$row['pnt_kind']);
-
-
-        // Haal alle SiteLocales op via SiteLocaleRepository (associatieve array per taal)
-        $localeRepo = new SiteLocaleRepository($this->db);
-        $locales = $localeRepo->getBySiteId($id);
-
-        // Maak Site object
         $site = new Site();
-        $site->id = (int)$row['pnt_id'];
-        $site->type = $type;
+        $site->id = $id;
+        $site->isVisible = (bool)$row['isVisible'];
+        $site->isPublished = (bool)$row['isPublished'];
+
+        $typeRepo = new SiteTypeRepository($this->db);
+        $site->type = $typeRepo->getById((int)$row['pnt_kind']);
+
+
         $site->representativeLocation = new Point();
         $site->representativeLocation->latitude = (float)$row['pnt_lat'];
         $site->representativeLocation->longitude = (float)$row['pnt_lng'];
         $site->representativeLocation->qualifier = $row['locationAccuracy'];
+
+        $localeRepo = new SiteLocaleRepository($this->db);
+        $locales = $localeRepo->getBySiteId($id);
         $site->locales = $locales; // ['nl' => SiteLocale, 'en' => SiteLocale, ...]
 
-        // Vul Toponym via ReverseGeocoder
         $geocoder = new \Vici\Service\ReverseGeocoder($site->representativeLocation->latitude, $site->representativeLocation->longitude);
         $site->toponym = $geocoder->resolveToponym('nl');
        

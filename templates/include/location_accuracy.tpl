@@ -1,5 +1,4 @@
 {* Smarty include for displaying location accuracy label, with translation and sensible defaults *}
-{* Usage: {include file="include/location_accuracy.tpl" accuracy=$site->representativeLocation->qualifier} *}
 
 {if accuracy == 0}
     {$accuracy_label_0|default:"Location: correct and verified"}
@@ -15,4 +14,3 @@
     {$accuracy_label_5|default:"Location: uncertain"}
 {/if}
 
-    

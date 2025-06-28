@@ -45,7 +45,33 @@ return [
     'markerdef.23' => 'Een verharde weg',
     'markerdef.24' => 'Een plaats van een historische gebeurtenis',
     'markerdef.25' => 'Een militaire structuur van tijdelijke aard',
-    
+
+    "altar" => "Votiefsteen of reliëf",
+    "aquaduct" => "Waterleiding / aquaduct",
+    "baths" => 'Bad of badcomplex',
+    "bridge" => "Brug",
+    "building" => "Gebouw (overig)",
+    "camp" => 'Tijdelijk militair kamp',
+    "city" => "Stad",
+    "event" => "Plaats historische gebeurtenis",
+    "fort" => "Fortificatie",
+    "graves" => "Graf of grafveld)",
+    "industry" => "Werkplaats of industrie",
+    "mansio" => "Herberg of halteplaats",
+    "memorial" => "Hedendaags monument of replica",
+    "milestone" => "Wegwijzer of mijlsteen",
+    "museum" => "Museum (hedendaags)",
+    "object" => "Vindplaats",
+    "observation" => "Archeologische waarneming", 
+    "road" => "Verharde weg",
+    "rural" => 'Landelijke nederzetting',
+    "shipwreck" => "Scheepswrak",
+    "temple" => "Tempel of heiligdom",
+    "theater" => "Theater",
+    "vicus" => "Een nederzetting",
+    "villa" => "Villa rustica",
+    "watchtower" => "Wachttoren",
+
     // defaults from include/location_accuracy.tpl:
     "Location: correct and verified" => "Locatie: correct en geverifieerd",
     "Location: with minor uncertainty" => "Locatie: met geringe onzekerheid",
@@ -54,6 +80,9 @@ return [
     "Location: in range of ± 100-500 m." => "Locatie: binnen ± 100-500 m.",
     "Location: uncertain" => "Locatie: onzeker",
 
+    // defaults from include/is_visible.tpl:
+    "Visible" => "Zichtbaar",
+    "Not visible" => "Niet zichtbaar",
 
     // defaults from login.tpl:
     "Close" => "Sluiten",

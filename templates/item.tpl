@@ -21,26 +21,26 @@
                     <ul>
                     <li>{$country_name}, {$place_name}</li>
                     <li>geo:{$lat},{$lng}</li>
-                    <li>{$q}</li>
                     <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-md text-blue-900 font-semibold">{$period_metadata|default:"Period or year"}:</h3>
                     <ul>
-                    <li>{$period_start_qualifier} /{$period_end_qualifier}</li>
+                    <li>{$period_start_qualifier} / {$period_end_qualifier}</li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-md text-blue-900 font-semibold">{$classification_metadata|default:"Classification"}:</h3>
                     <ul>
-                    <li>{$classification}</li>
-                    <li>{$visibility}</li>
+                    <li title="{$classification_description}">{$classification_title}</li>
+                    <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-md text-blue-900 font-semibold">{$identifier_metadata|default:"Identifier"}:</h3>
+                    <h3 class="text-md text-blue-900 font-semibold">{$identifier_metadata|default:"Identifiers"}:</h3>
                     <ul>
+                      <li><a href="/vici/{$id}">vici:{$id}</a></li>
                     {foreach $identifiers as $id}
                       <li>{$id}</li>
                     {/foreach}
