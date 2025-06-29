@@ -63,7 +63,10 @@ main.item {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1em;
+    border-bottom: 2px solid #ccc; /* lijn onder de hele rij */
+    position: relative;
 }
+
 #langSelBox ul {
     display: flex;
     gap: 0.5em;
@@ -71,6 +74,7 @@ main.item {
     margin: 0;
     list-style: none;
 }
+
 #langSelBox li {
     display: block;
     padding: 0.3em 1.2em;
@@ -79,18 +83,29 @@ main.item {
     background: #f2f2f2;
     color: #444;
     border: 1px solid #ccc;
-    border-bottom: none;
-    margin-bottom: -1px;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: -2px;
+    margin-top: 10px; 
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     font-weight: 500;
+    position: relative;
+    z-index: 1;
 }
+
 #langSelBox li.selected {
     background: #fff;
     color: #222;
     border-color: #888 #888 #fff #888;
-    z-index: 1;
+    border-bottom: 2px solid #fff;
+    z-index: 2;
     position: relative;
+}
+
+#langSelBox li.disabled {
+    color: #bbb;
+    background: #f8f8f8;
+    cursor: not-allowed;
 }
 
 @media (min-width: 768px) {
