@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vici.org :: {$title|default:"archaeological atlas"}</title>
     <link rel="stylesheet" href="/css/main.css">
+    {block name=stylesheets}{/block}
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
     {if isset($vicibase)}
@@ -42,9 +43,9 @@
     <input type="text" placeholder="{$search_placeholder|default:"search"}..." />
 </div>
 
-<main>
-    {block name=main}{/block}
-</main>
+
+{block name=main}{/block}
+
 
 <footer id="footer">
     <div class="footerbox">
@@ -109,7 +110,6 @@
     }
     document.getElementById('footerhead').addEventListener('click', toggleFooter);
 </script>
-<script src="/js/home.js"></script>
+{block name=footerscripts}{/block}
 </body>
-
 </html>

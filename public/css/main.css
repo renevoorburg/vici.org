@@ -134,8 +134,7 @@ header .subtitle {
     font-size: 0.875rem;
 }
 
-
-main {
+main.homepage {
     display: flex;
     flex: none;
     height: calc(100dvh - 5.5rem);
@@ -172,12 +171,29 @@ main {
     padding: 0.5rem;
 }
 
+
+h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-bottom: 0.5rem;
+    color: #1e3a8a;
+}
+
 h2 {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.25rem;
     line-height: 1.75rem;
     margin-bottom: 0.5rem;
     color: #1e3a8a;
+}
+h3 {
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: #1e3a8a;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 .relative {

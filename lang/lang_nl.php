@@ -93,4 +93,11 @@ return [
     'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
     'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
 
+    // defaults from item.tpl:
+    "Annotation" => "Annotatie",
+    "Location" => "Locatie",
+    "Period or year" => "Periode of jaar",
+    "Classification" => "Classificatie",
+    "Identifiers" => "Identifiers",
+
 ];
