@@ -23,6 +23,9 @@ class ItemPage extends PageRenderer
         $site = $siteRepo->getById($session->getRequestedItem());
 
         $this->assign('id', $site->id);
+        $this->assign('title', $site->locales[$session->getLanguage()]->title);
+        $this->assign('icon_type', $site->type->id);
+        $this->assign('iconTitle', $this->session->translator->get("markerdef." . $site->type->id));
         $this->assign('annotation', $site->locales[$session->getLanguage()]->description);
         $this->assign('period_start_qualifier', $site->period->startQualifier);
         $this->assign('period_end_qualifier', $site->period->endQualifier);
