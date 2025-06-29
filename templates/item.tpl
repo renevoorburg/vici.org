@@ -60,7 +60,7 @@ main.item {
 
 .lang-header-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* tabs onderaan uitlijnen */
     justify-content: space-between;
     margin-bottom: 1em;
     border-bottom: 2px solid #ccc; /* lijn onder de hele rij */
@@ -85,7 +85,6 @@ main.item {
     border: 1px solid #ccc;
     border-bottom: 2px solid #ccc;
     margin-bottom: -2px;
-    margin-top: 10px; 
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     font-weight: 500;
@@ -105,7 +104,6 @@ main.item {
 #langSelBox li.disabled {
     color: #bbb;
     background: #f8f8f8;
-    cursor: not-allowed;
 }
 
 @media (min-width: 768px) {
@@ -173,10 +171,9 @@ main.item {
                     <h2>{$annotation_metadata|default:"Annotation"}</h2>
                     <nav id="langSelBox">
                         <ul>
-                            <li class="selected" id="xt_nl">NL</li>
-                            <li class="disabled" id="xt_en">EN</li>
-                            <li class="disabled" id="xt_de">DE</li>
-                            <li class="disabled" id="xt_fr">FR</li>
+                            {foreach from=$locales key=langKey item=langVal}
+                                <li class="{if $langKey == $selectedLang}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
+                            {/foreach}
                         </ul>
                     </nav>
                 </div>
