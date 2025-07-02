@@ -130,11 +130,7 @@ article.disabled {
             <div id="map"></div>
             
             <div class="textualcontent">
-                
-
-                <h1>{$title}</h1>   
-
-                <!--  meta container -->
+            
                 <div class="meta-container">
                     <div class="meta-left">
                         <div class="marker-icon" data-icon-type="{$icon_type}" title="{$iconTitle}"></div>
@@ -174,7 +170,7 @@ article.disabled {
                 </div>
 
                 <div class="lang-header-row">
-                    <h2>{$annotation_metadata|default:"Annotation"}</h2>
+                    <h1>{$title}</h1>
                     <nav id="langSelBox">
                         <ul>
                             {foreach from=$locales key=langKey item=langVal}
