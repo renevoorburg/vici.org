@@ -20,5 +20,5 @@
 {/block}
 
 {block name=footerscripts}
-    <script src="/js/home.js"></script>
+    <script src="/js/footer-home.js"></script>
 {/block}

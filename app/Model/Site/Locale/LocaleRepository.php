@@ -1,9 +1,9 @@
 <?php
-namespace Vici\Model\Site;
+namespace Vici\Model\Site\Locale;
 
 use Vici\DB\DBConnector;
 
-class SiteLocaleRepository
+class LocaleRepository
 {
     private DBConnector $db;
 
@@ -26,7 +26,7 @@ class SiteLocaleRepository
 
         $locales = [];
         foreach ($rows as $row) {
-            $locale = new SiteLocale();
+            $locale = new Locale();
             $locale->language = $row['language'];
             $locale->title = $row['title'];
             $locale->summary = $row['summary'];

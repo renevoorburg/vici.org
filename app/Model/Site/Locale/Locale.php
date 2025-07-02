@@ -1,8 +1,8 @@
 <?php
 
-namespace Vici\Model\Site;
+namespace Vici\Model\Site\Locale;
 
-class SiteLocale
+class Locale
 {
     public string $language;
     public string $title;

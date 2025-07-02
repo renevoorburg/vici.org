@@ -4,8 +4,8 @@ namespace Vici\Model\Site;
 
 class Period
 {
-    public int $startYear;
-    public ?int $endYear = null;
-    public string $startQualifier;
+    public ?int $startYear = null;
+    public ?int $endYear =  null;
+    public ?string $startQualifier = null;
     public ?string $endQualifier = null;
 }

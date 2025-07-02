@@ -178,14 +178,14 @@ article.disabled {
                     <nav id="langSelBox">
                         <ul>
                             {foreach from=$locales key=langKey item=langVal}
-                                <li class="{if $langKey == $selectedLang}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
+                                <li class="{if $langKey == $preferredLocale}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
                             {/foreach}
                         </ul>
                     </nav>
                 </div>
 
                 {foreach from=$locales key=langKey item=langVal}
-                <article id="txt_{$langKey}" class="{if $langKey == $selectedLang}selected{else}disabled{/if}">
+                <article id="txt_{$langKey}" class="{if $langKey == $preferredLocale}selected{else}disabled{/if}">
                     {$langVal->description}
                 </article>
                 {/foreach}
@@ -203,44 +203,9 @@ article.disabled {
     
         </div> 
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabList = document.querySelectorAll('#langSelBox li');
-        const articles = document.querySelectorAll('article[id^="txt_"]');
-
-        function select(el) {
-            el.classList.add('selected');
-            el.classList.remove('disabled');
-        }
-
-        function disable(el) {
-            el.classList.remove('selected');
-            el.classList.add('disabled');
-        }
-
-        function selectTab(lang) {
-            tabList.forEach(tab => {
-                if(tab.id === 'xt_' + lang) {
-                    select(tab);
-                } else {
-                    disable(tab);
-                }
-            });
-            articles.forEach(article => {
-                if(article.id === 'txt_' + lang) {
-                    select(article);
-                } else {
-                    disable(article);
-                }
-            });
-        }
-
-        tabList.forEach(tab => {
-            tab.addEventListener('click', function () {
-                selectTab(this.id.replace('xt_', ''));
-            });
-        });
-    });
-    </script>
     </main>
+{/block}
+
+{block name=footerscripts}
+    <script src="/js/footer-item.js"></script>
 {/block}
