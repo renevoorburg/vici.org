@@ -71,13 +71,29 @@ class LocaleCollection implements \ArrayAccess, \IteratorAggregate, \Countable
 
     public function preferredLocaleLanguage(string $language): string
     {
-        if ($this->offsetExists($language)) {
+        if ($this->offsetExists($language) && $this->locales[$language]->description) {
             return $language;
-        } else if ($this->offsetExists('en')) {
+        } elseif ($this->offsetExists('en') && $this->locales['en']->description) {
             return 'en';
         } else {
-            return $this->getFirstLocaleKey();
+            $key = $this->getFirstLocaleWithDescriptionKey();
+            if ($key !== null) {
+                return $key;
+            }
+            $fallbackKey = $this->getFirstLocaleKey();
+            return $fallbackKey !== null ? $fallbackKey : '';
+
         }
+    }
+
+    public function getFirstLocaleWithDescriptionKey(): ?string
+    {
+        foreach ($this->locales as $key => $locale) {
+            if (!empty($locale->description)) {
+                return $key;
+            }
+        }
+        return null;
     }
 
     private function setDefaults(Locale $locale, string $defaultTitle, string $defaultSummary): void
