@@ -63,7 +63,7 @@ class SiteRepository
 
         $localeRepo = new Locale\LocaleRepository($this->db);
         $locales = $localeRepo->getBySiteId($id);
-        $site->locales = new Locale\LocaleCollection($locales); 
+        $site->locales = new Locale\LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary); 
 
         $geocoder = new \Vici\Service\ReverseGeocoder($site->representativeLocation->latitude, $site->representativeLocation->longitude);
         $site->toponym = $geocoder->resolveToponym('nl');

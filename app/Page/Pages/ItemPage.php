@@ -22,13 +22,15 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->getById($session->getRequestedItem());
 
+        $preferredLocaleLanguage = $site->locales->preferredLocaleLanguage($session->getLanguage());
+
         $this->assign('id', $site->id);
-        $this->assign('title', $site->locales[$session->getLanguage()]->title);
+        $this->assign('title', $site->locales[$preferredLocaleLanguage]->title);
         $this->assign('icon_type', $site->type->id);
         $this->assign('iconTitle', $this->session->translator->get("markerdef." . $site->type->id));
         $this->assign('locales', $site->locales);
-        $this->assign('preferredLocale', $site->locales->preferredLocale($session->getLanguage()));
-        $this->assign('annotation', $site->locales[$session->getLanguage()]->description);
+        $this->assign('preferredLocale', $preferredLocaleLanguage);
+        $this->assign('annotation', $site->locales[$preferredLocaleLanguage]->description);
         $this->assign('period_start_qualifier', $site->period->startQualifier);
         $this->assign('period_end_qualifier', $site->period->endQualifier);
         $this->assign('lat', $site->representativeLocation->latitude);

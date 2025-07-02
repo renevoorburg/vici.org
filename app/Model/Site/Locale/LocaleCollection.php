@@ -11,12 +11,7 @@ class LocaleCollection implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         foreach ($locales as $key => $locale) {
             if ($locale instanceof Locale) {
-                if (empty($locale->title)) {
-                    $locale->title = $defaultTitle;
-                }
-                if (empty($locale->summary)) {
-                    $locale->summary = $defaultSummary;
-                }
+                $this->setDefaults($locale, $defaultTitle, $defaultSummary);
                 $this->locales[$key] = $locale;
             }
         }
@@ -54,25 +49,16 @@ class LocaleCollection implements \ArrayAccess, \IteratorAggregate, \Countable
         return count($this->locales);
     }
 
-    /**
-     * Geeft de key (taalcode) van de eerste locale terug
-     */
     public function getFirstLocaleKey(): ?string
     {
         return array_key_first($this->locales);
     }
 
-    /**
-     * Geeft de SiteLocale voor een gegeven taalcode, of null
-     */
     public function getByLanguage(string $language): ?Locale
     {
         return $this->locales[$language] ?? null;
     }
 
-    /**
-     * Geeft de eerste niet-lege titel terug
-     */
     public function getFirstTitle(): string
     {
         foreach ($this->locales as $locale) {
@@ -83,7 +69,7 @@ class LocaleCollection implements \ArrayAccess, \IteratorAggregate, \Countable
         return '';
     }
 
-    public function preferredLocale(string $language): string
+    public function preferredLocaleLanguage(string $language): string
     {
         if ($this->offsetExists($language)) {
             return $language;
@@ -94,5 +80,14 @@ class LocaleCollection implements \ArrayAccess, \IteratorAggregate, \Countable
         }
     }
 
-    // Voeg hier meer functionaliteit toe indien gewenst
+    private function setDefaults(Locale $locale, string $defaultTitle, string $defaultSummary): void
+    {
+        if (empty($locale->title)) {
+            $locale->title = $defaultTitle;
+        }
+        if (empty($locale->summary)) {
+            $locale->summary = $defaultSummary;
+        }
+    }
 }
+
