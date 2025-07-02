@@ -2,25 +2,23 @@
 
 namespace Vici\Model\License;
 
+use Vici\DB\DBConnector;
 use PDO;
+use Vici\Model\License\License;
+use Vici\Model\License\LicenseCollection;
 
 class LicenseRepository
 {
-    private PDO $pdo;
+    private DBConnector $db;
 
-    public function __construct(PDO $pdo)
+    public function __construct(DBConnector $db)
     {
-        $this->pdo = $pdo;
+        $this->db = $db;
     }
 
-    /**
-     * Vind een enkele licentie op basis van ID.
-     * @param int $id
-     * @return License|null
-     */
     public function findById(int $id): ?License
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM licenses WHERE id = :id LIMIT 1');
+        $stmt = $this->db->prepare("SELECT * FROM licenses WHERE license_id = :id LIMIT 1");
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
@@ -29,13 +27,9 @@ class LicenseRepository
         return null;
     }
 
-    /**
-     * Vind alle licenties.
-     * @return LicenseCollection
-     */
     public function findAll(): LicenseCollection
     {
-        $stmt = $this->pdo->query('SELECT * FROM licenses');
+        $stmt = $this->db->query('SELECT * FROM licenses');
         $licenses = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $licenses[] = $this->mapRowToLicense($row);
@@ -43,19 +37,14 @@ class LicenseRepository
         return new LicenseCollection($licenses);
     }
 
-    /**
-     * Map een database-row naar een License object
-     * @param array $row
-     * @return License
-     */
     private function mapRowToLicense(array $row): License
     {
         $license = new License();
-        $license->id = (int)$row['id'];
-        $license->name = $row['name'];
-        $license->url = $row['url'];
-        $license->text = $row['text'];
-        // Voeg hier extra properties toe indien nodig
+        $license->id = (int)$row['license_id'];
+        $license->name = $row['license_short'];
+        $license->shortName = $row['license_abbr'];
+        $license->uri = $row['license_uri'];
+        $license->isUserSelectable = (bool)$row['license_uploadable'];
         return $license;
     }
 }

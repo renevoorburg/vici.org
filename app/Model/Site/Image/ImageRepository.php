@@ -2,27 +2,28 @@
 
 namespace Vici\Model\Site\Image;
 
+use Vici\DB\DBConnector;
 use PDO;
 use Vici\Model\Site\Image\Image;
 use Vici\Model\Site\Image\ImageCollection;
 
 class ImageRepository
 {
-    private PDO $pdo;
+    private DBConnector $db;
 
-    public function __construct(PDO $pdo)
+    public function __construct(DBConnector $db)
     {
-        $this->pdo = $pdo;
+        $this->db = $db;
     }
 
-    /**
-     * Vind een enkele afbeelding op basis van ID.
-     * @param int $id
-     * @return Image|null
-     */
     public function findById(int $id): ?Image
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM images WHERE id = :id LIMIT 1');
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            WHERE i.img_id = :id LIMIT 1
+        ");
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
@@ -31,14 +32,9 @@ class ImageRepository
         return null;
     }
 
-    /**
-     * Vind alle afbeeldingen bij een bepaalde site.
-     * @param int $siteId
-     * @return ImageCollection
-     */
     public function findBySite(int $siteId): ImageCollection
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM images WHERE site_id = :site_id');
+        $stmt = $this->db->prepare("SELECT * FROM images WHERE site_id = :site_id");
         $stmt->execute(['site_id' => $siteId]);
         $images = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -47,29 +43,28 @@ class ImageRepository
         return new ImageCollection($images);
     }
 
-    /**
-     * Map een database-row naar een Image object
-     * @param array $row
-     * @return Image
-     */
     private function mapRowToImage(array $row): Image
     {
         $image = new Image();
-        $image->id = (int)$row['id'];
-        $image->title = $row['title'];
-        $image->description = $row['description'];
-        $image->language = $row['language'];
-        $image->filepath = $row['filepath'];
-        $image->isPublished = (bool)$row['is_published'];
-        // $image->uploader = ... // moet apart worden opgehaald
-        $image->isOwnWork = (bool)$row['is_own_work'];
-        $image->source = $row['source'];
-        $image->creator = $row['creator'];
+        $image->id = (int)$row['img_id'];
+        $image->filepath = $row['img_path'];
+        $image->isPublished = !(bool)$row['img_hide'];
+
+        $image->isOwnWork = (bool)$row['imgd_ownwork'];
+        $image->source = $row['imgd_source'];
+        $image->creator = $row['imgd_creator'];
+
+        $image->title = $row['imgd_title'];
+        $image->description = $row['imgd_description'];
+        $image->language = $row['imgd_lang'];
+        $image->md5sum = $row['imgd_md5sum'];
+        $image->dateAdded = $row['imgd_date'];
+        $image->width = (int)$row['imgd_width'];
+        $image->height = (int)$row['imgd_height'];
+
+        $image->data = $row['imgd_data'];
         // $image->license = ... // moet apart worden opgehaald of geconstrueerd
-        $image->dateAdded = $row['date_added'];
-        $image->width = (int)$row['width'];
-        $image->height = (int)$row['height'];
-        $image->md5sum = $row['md5sum'];
+        // $image->uploader = ... // moet apart worden opgehaald
         return $image;
     }
 }
