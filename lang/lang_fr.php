@@ -1,0 +1,103 @@
+<?php
+
+return [
+    // defaults from base.tpl:
+    'archaeological atlas' => 'archeologische atlas',
+    'search' => 'Zoeken',
+    'Add' => 'Toevoegen',
+    'Login / Register' => 'Aanmelden / Registreren',
+    'More about Vici.org' => 'Meer over Vici.org',
+    'Recently added' => 'Recent toegevoegd',
+    'Recently changed' => 'Recent aangepast',
+    'About Vici.org' => 'Over Vici.org',
+    'Logout' => 'Afmelden',
+
+    // defaults from home.tpl:
+    'Highlights' => 'Uitgelicht',
+
+    // 
+    'more' => 'meer',
+    'show on map' => 'toon op kaart',
+
+    // keyed definitions:
+    'markerdef.1' => 'Een waterleiding, bovengronds of ondergronds, of een deel daarvan',
+    'markerdef.2' => 'Een bad of een badcomplex',
+    'markerdef.3' => 'Een nederzetting met administratieve, economische of religieuze functies van meer dan lokale betekenis',
+    'markerdef.4' => 'Een fort of een grotere militaire verdedigingsstructuur',
+    'markerdef.5' => 'Een graf, grafmonument of grafveld',
+    'markerdef.6' => 'Een werkplaats of een industrie, bijvoorbeeld een haven of mijn',
+    'markerdef.7' => 'Een herberg of halteplaats',
+    'markerdef.8' => 'Een hedendaags museum met archeologisch vondsten',
+    'markerdef.9' => 'Een nederzetting vooral lokale betekenis',
+    'markerdef.10' => 'Een scheepswrak of de vindplaats van een schip',
+    'markerdef.11' => 'Een tempel, kerk of andere religieuze plaats',
+    'markerdef.12' => 'Een plaats of gebouw voor het opvoeren van voorstellingen voor een publiek',
+    'markerdef.13' => 'Een wooncomplex met een agrarische functie, bewoond door mensen van hogere status',
+    'markerdef.14' => 'Een landelijke nederzetting',
+    'markerdef.15' => 'Een wachttoren of een kleine militaire structuur',
+    'markerdef.16' => 'Een monument met publieke of religieuze betekenis',
+    'markerdef.17' => 'Een plaats van een archeologische vondst',
+    'markerdef.18' => 'Een plaats van  archeologische waarneming',
+    'markerdef.19' => 'Een hedendaags monument of replica, gerelateerd aan historische gebeurtenissen',
+    'markerdef.20' => 'Een wegwijzer of mijlsteen, of de oorspronkelijke plaats daarvan',
+    'markerdef.21' => 'Een gebouw, of een andere gefabriceerde structuur',
+    'markerdef.22' => 'Een brug',
+    'markerdef.23' => 'Een verharde weg',
+    'markerdef.24' => 'Een plaats van een historische gebeurtenis',
+    'markerdef.25' => 'Een militaire structuur van tijdelijke aard',
+
+    "altar" => "Votiefsteen of reliëf",
+    "aquaduct" => "Waterleiding / aquaduct",
+    "baths" => 'Bad of badcomplex',
+    "bridge" => "Brug",
+    "building" => "Gebouw (overig)",
+    "camp" => 'Tijdelijk militair kamp',
+    "city" => "Stad",
+    "event" => "Plaats historische gebeurtenis",
+    "fort" => "Fortificatie",
+    "graves" => "Graf of grafveld)",
+    "industry" => "Werkplaats of industrie",
+    "mansio" => "Herberg of halteplaats",
+    "memorial" => "Hedendaags monument of replica",
+    "milestone" => "Wegwijzer of mijlsteen",
+    "museum" => "Museum (hedendaags)",
+    "object" => "Vindplaats",
+    "observation" => "Archeologische waarneming", 
+    "road" => "Verharde weg",
+    "rural" => 'Landelijke nederzetting',
+    "shipwreck" => "Scheepswrak",
+    "temple" => "Tempel of heiligdom",
+    "theater" => "Theater",
+    "vicus" => "Een nederzetting",
+    "villa" => "Villa rustica",
+    "watchtower" => "Wachttoren",
+
+    // defaults from include/location_accuracy.tpl:
+    "Location: correct and verified" => "Locatie: correct en geverifieerd",
+    "Location: with minor uncertainty" => "Locatie: met geringe onzekerheid",
+    "Location: in range of ± 5-25 m." => "Locatie: binnen ± 5-25 m.",
+    "Location: in range of ± 25-100 m." => "Locatie: binnen ± 25-100 m.",
+    "Location: in range of ± 100-500 m." => "Locatie: binnen ± 100-500 m.",
+    "Location: uncertain" => "Locatie: onzeker",
+
+    // defaults from include/is_visible.tpl:
+    "Visible" => "Zichtbaar",
+    "Not visible" => "Niet zichtbaar",
+
+    // defaults from login.tpl:
+    "Close" => "Sluiten",
+    'Login' => 'Aanmelden',
+    "Log on to your account or <a href='/register'>register</a>." => "Meld je aan of <a href='/register'>registreer</a>.",
+    'Account name' => 'Gebruikersnaam',
+    'Password' => 'Wachtwoord',
+    'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
+    'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
+
+    // defaults from item.tpl:
+    "Annotation" => "Annotatie",
+    "Location" => "Locatie",
+    "Period or year" => "Periode of jaar",
+    "Classification" => "Classificatie",
+    "Identifiers" => "Identifiers",
+
+];
