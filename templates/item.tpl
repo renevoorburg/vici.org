@@ -174,16 +174,20 @@ article.disabled {
                     <nav id="langSelBox">
                         <ul>
                             {foreach from=$locales key=langKey item=langVal}
-                                <li class="{if $langKey == $preferredLocale}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
+                                {if $langVal->description}
+                                    <li class="{if $langKey == $preferredLocale}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
+                                {/if}
                             {/foreach}
                         </ul>
                     </nav>
                 </div>
 
                 {foreach from=$locales key=langKey item=langVal}
-                <article id="txt_{$langKey}" class="{if $langKey == $preferredLocale}selected{else}disabled{/if}">
-                    {$langVal->description}
-                </article>
+                    {if $langVal->description}
+                        <article id="txt_{$langKey}" class="{if $langKey == $preferredLocale}selected{else}disabled{/if}">
+                            {$langVal->description}
+                        </article>
+                    {/if}
                 {/foreach}
 
 
