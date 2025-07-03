@@ -7,6 +7,7 @@ use Vici\Model\Site\Locale\LocaleCollection;
 use Vici\Model\Site\Point;
 use Vici\Model\Site\Toponym;
 use Vici\Model\Site\Period;
+use Vici\Model\Site\Image\ImageCollection;
 
 class Site
 {
@@ -16,14 +17,13 @@ class Site
     public SiteType $type;
     public Point $representativeLocation;
     public LocaleCollection $locales;
+    public ImageCollection $images;
     public Toponym $toponym;
     public Period $period;
     public bool $isVisible = true;
     public bool $isPublished = true;
 
 
-    /** @var Image[] */
-    public array $images = [];
 
 
 }
