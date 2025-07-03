@@ -1,6 +1,6 @@
 <?php
 
-namespace Vici\Model\Site;
+namespace Vici\Model\Site\Image;
 
 use Vici\Model\Users\User;
 use Vici\Model\License\License;

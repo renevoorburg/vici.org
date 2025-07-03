@@ -74,7 +74,8 @@ class SiteRepository
         $site->period->startQualifier = $row['startQualifier'];
         $site->period->endQualifier = $row['endQualifier'];
        
-        $site->images = []; // images later
+        $imageRepo = new Image\ImageRepository($this->db);
+        $site->images = $imageRepo->findBySite($site->id);
         return $site;
     }
 

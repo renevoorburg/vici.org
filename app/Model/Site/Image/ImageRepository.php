@@ -16,15 +16,16 @@ class ImageRepository
         $this->db = $db;
     }
 
-    public function findById(int $id): ?Image
+    public function findById(int $id, bool $isPublished = true ): ?Image
     {
         $stmt = $this->db->prepare("
             SELECT * 
             FROM images i
             LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
-            WHERE i.img_id = :id LIMIT 1
+            WHERE i.img_id = :id AND i.img_hide = :isHidden LIMIT 1
         ");
-        $stmt->execute(['id' => $id]);
+        $isHidden = !$isPublished;
+        $stmt->execute(['id' => $id, 'isHidden' => $isHidden]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             return $this->mapRowToImage($row);
@@ -32,10 +33,18 @@ class ImageRepository
         return null;
     }
 
-    public function findBySite(int $siteId): ImageCollection
+    public function findBySite(int $siteId, bool $isPublished = true): ImageCollection
     {
-        $stmt = $this->db->prepare("SELECT * FROM images WHERE site_id = :site_id");
-        $stmt->execute(['site_id' => $siteId]);
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            JOIN pnt_img_lnk l ON i.img_id = l.pil_img 
+            WHERE l.pil_pnt = :site_id AND i.img_hide = :isHidden
+            ORDER BY i.img_id ASC
+        ");
+        $isHidden = !$isPublished;
+        $stmt->execute(['site_id' => $siteId, 'isHidden' => $isHidden]);
         $images = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $images[] = $this->mapRowToImage($row);
