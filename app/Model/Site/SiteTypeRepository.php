@@ -24,7 +24,7 @@ class SiteTypeRepository
             $siteType->longDescription = null; // No equivalent in pkinds
             $siteType->parentId = null; // No parent in pkinds
             $siteType->sortOrder = (int)$row['pkind_sort'];
-            $siteType->isContemporary = (bool)$row['pkind_contemporary'];
+            $siteType->isContemporary = (bool)$row['pkind_ismodern'];
             $this->siteTypes[$siteType->id] = $siteType;
         }
     }

@@ -158,7 +158,7 @@ article.disabled {
                         <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
                         </ul>
                     </div>
-                    {if $isContemporary}
+                    {if !$isContemporary}
                         <div>
                             <h3>{$period_metadata|default:"Period or year"}</h3>
                             <ul>
