@@ -14,7 +14,7 @@ class SiteTypeRepository
 
     public function __construct(DBConnector $db)
     {
-        $stmt = $db->prepare("SELECT pkind_id, pkind_name, pkind_low, pkind_high, pkind_zindex, pkind_group, pkind_sort, pkind_line FROM pkinds ORDER BY pkind_group, pkind_sort");
+        $stmt = $db->prepare("SELECT * FROM pkinds ORDER BY pkind_group, pkind_sort");
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $siteType = new SiteType();
@@ -24,6 +24,7 @@ class SiteTypeRepository
             $siteType->longDescription = null; // No equivalent in pkinds
             $siteType->parentId = null; // No parent in pkinds
             $siteType->sortOrder = (int)$row['pkind_sort'];
+            $siteType->isContemporary = (bool)$row['pkind_contemporary'];
             $this->siteTypes[$siteType->id] = $siteType;
         }
     }

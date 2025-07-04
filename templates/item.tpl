@@ -19,7 +19,7 @@ main.item {
 }
     
 #map {
-      height: 350px;
+      max-height: 350px;
       background-color: #ccc;
     }
 
@@ -112,10 +112,24 @@ article.disabled {
     display: none;
 }
 
+.imagecolumn {
+    width: 100%;
+    min-width: 240px;
+}
+
+.itemImages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
 @media (min-width: 768px) {
     .maincontent {
         width: 70%;    
 
+    }
+    .imageColumn {
+        width: 30%;
     }
 }
 
@@ -144,12 +158,14 @@ article.disabled {
                         <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
                         </ul>
                     </div>
-                    <div>
-                        <h3>{$period_metadata|default:"Period or year"}</h3>
-                        <ul>
-                        <li>{$period_start_qualifier} / {$period_end_qualifier}</li>
-                        </ul>
-                    </div>
+                    {if $isContemporary}
+                        <div>
+                            <h3>{$period_metadata|default:"Period or year"}</h3>
+                            <ul>
+                            <li>{$period_start_qualifier} / {$period_end_qualifier}</li>
+                            </ul>
+                        </div>
+                    {/if}
                     <div>
                         <h3>{$classification_metadata|default:"Classification"}</h3>
                         <ul>
@@ -195,10 +211,11 @@ article.disabled {
 
         </div> 
 
-        <div class="highlights w-full md:w-1/3 min-w-[240px]">
-            <div class="flex flex-wrap justify-start">
-                <figure class="item"><a href="//vici.org/image.php?id=1843"><img class="itemImage" loading="lazy" src="//images.vici.org/cover/w268xh268/uploads/rome_tabularium_from_east2.jpg" alt="" title="Tabularium " data-pswp-uid="0"></a></figure>
-                <figure class="item"><a href="//vici.org/image.php?id=1843"><img class="itemImage" loading="lazy" src="//images.vici.org/cover/w268xh268/uploads/8430187532_62e87af0b7_b.jpg" alt="" title="Columns " data-pswp-uid="1"></a></figure>
+        <div class="highlights-column">
+            <div class="highlights-scroll">
+            {foreach from=$images item=image}
+                <figure><img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}" alt="{$image->title} {$image->description}" title="{$image->title}" data-pswp-uid="{$image->id}"></figure>
+            {/foreach}
             </div>
     
         </div> 

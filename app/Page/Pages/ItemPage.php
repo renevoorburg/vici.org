@@ -29,6 +29,7 @@ class ItemPage extends PageRenderer
         $this->assign('icon_type', $site->type->id);
         $this->assign('iconTitle', $this->session->translator->get("markerdef." . $site->type->id));
         $this->assign('locales', $site->locales);
+        $this->assign('images', $site->images);
         $this->assign('preferredLocale', $preferredLocaleLanguage);
         $this->assign('annotation', $site->locales[$preferredLocaleLanguage]->description);
         $this->assign('period_start_qualifier', $site->period->startQualifier);
@@ -41,6 +42,7 @@ class ItemPage extends PageRenderer
         $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
         $this->assign('isVisible', $site->isVisible);
+        $this->assign('isContemporary', $site->type->isContemporary);
     }
 
 }

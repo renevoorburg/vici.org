@@ -17,6 +17,33 @@ img {
     display: block;
 }
 
+.imageColumn {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.itemImages {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.itemImages figure {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.itemImages img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.25rem;
+    background: #f3f4f6;
+}
+
 html,
 body {
     margin: 0;
