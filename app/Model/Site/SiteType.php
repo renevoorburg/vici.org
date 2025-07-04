@@ -11,4 +11,5 @@ class SiteType
     public ?int $parentId;
     public ?SiteType $parent = null;
     public int $sortOrder;
+    public bool $isContemporary;
 }
