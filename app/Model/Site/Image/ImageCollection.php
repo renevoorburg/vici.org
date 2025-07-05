@@ -8,7 +8,6 @@ use Countable;
 use ArrayIterator;
 
 use Vici\Model\LazyLoadTrait;
-
 use Vici\Model\LazyLoading;
 
 class ImageCollection implements ArrayAccess, IteratorAggregate, Countable, LazyLoading

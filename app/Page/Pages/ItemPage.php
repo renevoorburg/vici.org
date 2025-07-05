@@ -22,6 +22,8 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->getById($session->getRequestedItem());
 
+        $nearbySites = $siteRepo->getNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+
         $preferredLocaleLanguage = $site->locales->preferredLocaleLanguage($session->getLanguage());
 
         $this->assign('id', $site->id);
