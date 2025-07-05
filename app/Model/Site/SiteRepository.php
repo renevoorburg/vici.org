@@ -2,8 +2,9 @@
 
 namespace Vici\Model\Site;
 
-use Vici\DB\DBConnector;
 use PDO;
+use Vici\DB\DBConnector;
+use Vici\Model\Site\Image\ImageCollection;
 
 class SiteRepository
 {
@@ -74,8 +75,13 @@ class SiteRepository
         $site->period->startQualifier = $row['startQualifier'];
         $site->period->endQualifier = $row['endQualifier'];
        
-        $imageRepo = new Image\ImageRepository($this->db);
-        $site->images = $imageRepo->findBySite($site->id);
+        $site->images = new Image\ImageCollection();
+        $db = $this->db;
+        $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $db) {
+            $imageRepo = new Image\ImageRepository($db);
+            $images = $imageRepo->findBySite($site->id);
+            $collection->addLoadedImages(iterator_to_array($images));
+        });
         return $site;
     }
 
