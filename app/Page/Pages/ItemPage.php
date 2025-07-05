@@ -23,6 +23,7 @@ class ItemPage extends PageRenderer
         $site = $siteRepo->getById($session->getRequestedItem());
 
         $nearbySites = $siteRepo->getNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+        $relevantMuseums = $siteRepo->getRelevantMuseums($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
         $preferredLocaleLanguage = $site->locales->preferredLocaleLanguage($session->getLanguage());
 
@@ -45,6 +46,10 @@ class ItemPage extends PageRenderer
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
         $this->assign('isVisible', $site->isVisible);
         $this->assign('isContemporary', $site->type->isContemporary);
+
+        $this->assign('nearbySites', $nearbySites);
+        $this->assign('relevantMuseums', $relevantMuseums);
+
     }
 
 }

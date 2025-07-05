@@ -209,6 +209,31 @@ article.disabled {
                 {/foreach}
 
 
+                {if $nearbySites->count() > 0}
+                    <div class="nearbySites">
+                        <h2>Nearby sites</h2>
+                        <ul>
+                            {foreach from=$nearbySites item=site}
+                                {if $site->id != $id}
+                                    <li>{$site->defaultTitle}</li>
+                                {/if}
+                            {/foreach}
+                        </ul>
+                    </div>
+                {/if}
+
+                {if $relevantMuseums->count() > 0 && !$isContemporary}
+                    <div class="relevantMuseums">
+                        <h2>Relevant museums</h2>
+                        <ul>
+                            {foreach from=$relevantMuseums item=site}
+                                <li>{$site->defaultTitle}</li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                {/if}
+
+
             </div> 
 
         </div> 
