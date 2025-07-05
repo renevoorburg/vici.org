@@ -7,12 +7,65 @@ use IteratorAggregate;
 use Countable;
 use ArrayIterator;
 
-class ImageCollection implements ArrayAccess, IteratorAggregate, Countable
+use Vici\Model\LazyLoadTrait;
+
+use Vici\Model\LazyLoading;
+
+class ImageCollection implements ArrayAccess, IteratorAggregate, Countable, LazyLoading
 {
+    use LazyLoadTrait;
+
     /** @var Image[] */
     private array $images = [];
 
+
     public function __construct(array $images = [])
+    {
+        $this->addLoadedImages($images);
+    }
+
+    public function offsetExists($offset): bool
+    {
+        $this->ensureLoaded();
+        return isset($this->images[$offset]);
+    }
+
+    public function offsetGet($offset): ?Image
+    {
+        $this->ensureLoaded();
+        return $this->images[$offset] ?? null;
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->ensureLoaded();
+        if ($value instanceof Image) {
+            $this->images[$offset] = $value;
+        }
+    }
+
+    public function offsetUnset($offset): void
+    {
+        $this->ensureLoaded();
+        unset($this->images[$offset]);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        $this->ensureLoaded();
+        return new ArrayIterator($this->images);
+    }
+
+    public function count(): int
+    {
+        $this->ensureLoaded();
+        return count($this->images);
+    }
+    
+    /** 
+     * For use in closure passed to setLazyLoader.
+     */
+    public function addLoadedImages(array $images): void
     {
         foreach ($images as $key => $image) {
             if ($image instanceof Image) {
@@ -21,39 +74,4 @@ class ImageCollection implements ArrayAccess, IteratorAggregate, Countable
         }
     }
 
-    public function offsetExists($offset): bool
-    {
-        return isset($this->images[$offset]);
-    }
-
-    public function offsetGet($offset): ?Image
-    {
-        return $this->images[$offset] ?? null;
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        if ($value instanceof Image) {
-            $this->images[$offset] = $value;
-        }
-    }
-
-    public function offsetUnset($offset): void
-    {
-        unset($this->images[$offset]);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return new ArrayIterator($this->images);
-    }
-
-    public function count(): int
-    {
-        return count($this->images);
-    }
-
-    /**
-     * Optionally: add more convenience methods here, zoals getFirstImage(), filterByLicense(), etc.
-     */
 }
