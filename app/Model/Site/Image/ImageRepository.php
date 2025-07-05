@@ -66,7 +66,7 @@ class ImageRepository
         $image->title = $row['imgd_title'];
         $image->description = $row['imgd_description'];
         $image->language = $row['imgd_lang'];
-        $image->md5sum = $row['imgd_md5sum'];
+        $image->md5sum = $row['imgd_md5sum'] ?? '';
         $image->dateAdded = $row['imgd_date'];
         $image->width = (int)$row['imgd_width'];
         $image->height = (int)$row['imgd_height'];
