@@ -130,7 +130,7 @@ class SiteRepository
         $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $db) {
             $imageRepo = new Image\ImageRepository($db);
             $images = $imageRepo->findBySite($site->id);
-            $collection->addLoadedImages(iterator_to_array($images));
+            $collection->addLoadedItems(iterator_to_array($images));
         });
         return $site;
     }
