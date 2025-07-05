@@ -170,7 +170,9 @@ article.disabled {
                         <h3>{$classification_metadata|default:"Classification"}</h3>
                         <ul>
                         <li title="{$classification_description}">{$classification_title}</li>
-                        <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
+                        {if !$isContemporary}
+                            <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
+                        {/if}
                         </ul>
                     </div>
                     <div>
