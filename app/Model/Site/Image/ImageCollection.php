@@ -10,67 +10,20 @@ use ArrayIterator;
 use Vici\Model\LazyLoadTrait;
 use Vici\Model\LazyLoading;
 
-class ImageCollection implements ArrayAccess, IteratorAggregate, Countable, LazyLoading
+use Vici\Model\AbstractCollection;
+
+class ImageCollection extends AbstractCollection
 {
-    use LazyLoadTrait;
-
-    /** @var Image[] */
-    private array $images = [];
-
-
-    public function __construct(array $images = [])
-    {
-        $this->addLoadedImages($images);
-    }
-
-    public function offsetExists($offset): bool
-    {
-        $this->ensureLoaded();
-        return isset($this->images[$offset]);
-    }
-
     public function offsetGet($offset): ?Image
     {
-        $this->ensureLoaded();
-        return $this->images[$offset] ?? null;
+        /** @var Image|null */
+        return parent::offsetGet($offset);
     }
 
-    public function offsetSet($offset, $value): void
+    protected function isValidItem($item): bool
     {
-        $this->ensureLoaded();
-        if ($value instanceof Image) {
-            $this->images[$offset] = $value;
-        }
+        return $item instanceof Image;
     }
-
-    public function offsetUnset($offset): void
-    {
-        $this->ensureLoaded();
-        unset($this->images[$offset]);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        $this->ensureLoaded();
-        return new ArrayIterator($this->images);
-    }
-
-    public function count(): int
-    {
-        $this->ensureLoaded();
-        return count($this->images);
-    }
-    
-    /** 
-     * For use in closure passed to setLazyLoader.
-     */
-    public function addLoadedImages(array $images): void
-    {
-        foreach ($images as $key => $image) {
-            if ($image instanceof Image) {
-                $this->images[$key] = $image;
-            }
-        }
-    }
+    use LazyLoadTrait;
 
 }
