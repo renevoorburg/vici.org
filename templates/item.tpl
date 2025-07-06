@@ -52,18 +52,18 @@ main.item {
   }
 
   .meta-right ul {
-    list-style: none;      /* geen bullets */
-    margin-left: 0;        /* geen marge links */
-    margin-top: 0;         /* geen marge boven */
-    padding-left: 0;       /* geen inspringing */
+    list-style: none;
+    margin-left: 0;
+    margin-top: 0;
+    padding-left: 0;
 }
 
 .lang-header-row {
     display: flex;
-    align-items: flex-end; /* tabs onderaan uitlijnen */
+    align-items: flex-end;
     justify-content: space-between;
     margin-bottom: 1em;
-    border-bottom: 2px solid #ccc; /* lijn onder de hele rij */
+    border-bottom: 2px solid #ccc;
     position: relative;
 }
 
@@ -123,6 +123,88 @@ article.disabled {
     justify-content: flex-start;
 }
 
+.sitelist ul {
+    list-style: none;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    padding-left: 0;
+}
+.sitelist li {
+    margin-bottom: 0.5rem;
+}
+
+.sitelist a {
+    color: #1e3a8a;
+    font-weight: 600;
+    text-decoration: none;
+}
+.sitelist a:hover {
+    text-decoration: underline;
+}
+
+.marker-row {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+.marker-text {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.sitelist-container-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 0;
+    gap: 0;
+}
+.sitelist-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0;
+    gap: 0;
+}
+.sitelist {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+.marker-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+.marker-icon {
+    display: inline-block;
+
+}
+.marker-text {
+    flex: 1 1 0;
+    min-width: 0;
+    display: block;
+    word-break: break-word;
+}
+
+
+@media (max-width: 1600px) {
+    .sitelist-container-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .sitelist-container {
+        gap: 1rem;
+    }
+}
+
+
+
 @media (min-width: 768px) {
     .maincontent {
         width: 70%;    
@@ -133,8 +215,7 @@ article.disabled {
     }
 }
 
-
-    </style>
+</style>
 {/block}
 
 
@@ -209,30 +290,30 @@ article.disabled {
                 {/foreach}
 
 
-                {if $nearbySites->count() > 0}
-                    <div class="nearbySites">
-                        <h2>Nearby sites</h2>
-                        <ul>
-                            {foreach from=$nearbySites item=site}
-                                {if $site->id != $id}
-                                    <li>{$site->defaultTitle}</li>
-                                {/if}
-                            {/foreach}
-                        </ul>
-                    </div>
-                {/if}
-
-                {if $relevantMuseums->count() > 0 && !$site_type->isContemporary}
-                    <div class="relevantMuseums">
-                        <h2>Relevant museums</h2>
-                        <ul>
-                            {foreach from=$relevantMuseums item=site}
-                                <li>{$site->defaultTitle}</li>
-                            {/foreach}
-                        </ul>
-                    </div>
-                {/if}
-
+                <div class="sitelist-container-flex">
+                    {if $relevantMuseums->count() > 0 && !$site_type->isContemporary}
+                        <div class="sitelist">
+                            <h2>{$relevant_museums_label|default:"Relevant museums"}</h2>
+                            <ul>
+                                {foreach from=$relevantMuseums item=site}
+                                    <li><span class="marker-row"><div class="marker-icon" data-icon-type="{$site->type->id}"></div><span class="marker-text"><a href="/vici/{$site->id}">{$site->defaultTitle}</a><br>{$site->defaultSummary}</span></span></li>
+                                {/foreach}
+                            </ul>
+                        </div>
+                    {/if}
+                    {if $nearbySites->count() > 0}
+                        <div class="sitelist">
+                            <h2>{$nearby_sites_label|default:"Nearby sites"}</h2>
+                            <ul>
+                                {foreach from=$nearbySites item=site}
+                                    {if $site->id != $id}
+                                        <li><span class="marker-row"><div class="marker-icon" data-icon-type="{$site->type->id}"></div><span class="marker-text"><a href="/vici/{$site->id}">{$site->defaultTitle}</a><br>{$site->defaultSummary}</span></span></li>
+                                    {/if}
+                                {/foreach}
+                            </ul>
+                        </div>
+                    {/if}
+                </div>
 
             </div> 
 

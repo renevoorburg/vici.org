@@ -99,5 +99,7 @@ return [
     "Period or year" => "Periode of jaar",
     "Classification" => "Classificatie",
     "Identifiers" => "Identifiers",
+    "Nearby sites" => "In de buurt",
+    "Relevant museums" => "Relevante musea",
 
 ];
