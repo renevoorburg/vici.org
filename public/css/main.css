@@ -408,6 +408,7 @@ footer {
     background-size: auto;
     width: 32px;
     height: 37px;
+    display: inline-block;
     background-position: 0 0;
 }
 
