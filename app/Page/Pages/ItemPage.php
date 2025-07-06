@@ -33,14 +33,14 @@ class ItemPage extends PageRenderer
         $this->assign('iconTitle', $this->session->translator->get("markerdef." . $site->type->id));
         $this->assign('locales', $site->locales);
         $this->assign('images', $site->images);
+        $this->assign('sessionLanguage', $session->getLanguage());
         $this->assign('preferredLocale', $preferredLocaleLanguage);
         $this->assign('annotation', $site->locales[$preferredLocaleLanguage]->description);
         $this->assign('period_start_qualifier', $site->period->startQualifier);
         $this->assign('period_end_qualifier', $site->period->endQualifier);
         $this->assign('lat', $site->representativeLocation->latitude);
         $this->assign('lng', $site->representativeLocation->longitude);
-        $this->assign('country_name', $site->toponym->countryName);
-        $this->assign('place_name', $site->toponym->placeName);
+        $this->assign('toponym', $site->toponym);
         $this->assign('q', $site->representativeLocation->qualifier);
         $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
