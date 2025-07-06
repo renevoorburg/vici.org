@@ -29,23 +29,19 @@ class ItemPage extends PageRenderer
 
         $this->assign('id', $site->id);
         $this->assign('title', $site->locales[$preferredLocaleLanguage]->title);
-        $this->assign('icon_type', $site->type->id);
-        $this->assign('iconTitle', $this->session->translator->get("markerdef." . $site->type->id));
+        $this->assign('site_type', $site->type);
         $this->assign('locales', $site->locales);
         $this->assign('images', $site->images);
         $this->assign('sessionLanguage', $session->getLanguage());
-        $this->assign('preferredLocale', $preferredLocaleLanguage);
+        $this->assign('preferredLocaleLanguage', $preferredLocaleLanguage);
         $this->assign('annotation', $site->locales[$preferredLocaleLanguage]->description);
-        $this->assign('period_start_qualifier', $site->period->startQualifier);
-        $this->assign('period_end_qualifier', $site->period->endQualifier);
-        $this->assign('lat', $site->representativeLocation->latitude);
-        $this->assign('lng', $site->representativeLocation->longitude);
+        $this->assign('period', $site->period);
+        $this->assign('location', $site->representativeLocation);
         $this->assign('toponym', $site->toponym);
         $this->assign('q', $site->representativeLocation->qualifier);
         $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
         $this->assign('isVisible', $site->isVisible);
-        $this->assign('isContemporary', $site->type->isContemporary);
 
         $this->assign('nearbySites', $nearbySites);
         $this->assign('relevantMuseums', $relevantMuseums);

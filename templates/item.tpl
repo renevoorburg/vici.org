@@ -147,22 +147,22 @@ article.disabled {
             
                 <div class="meta-container">
                     <div class="meta-left">
-                        <div class="marker-icon" data-icon-type="{$icon_type}" title="{$iconTitle}"></div>
+                        <div class="marker-icon" data-icon-type="{$site_type->id}" title="{$classification_description}"></div>
                     </div>
                     <div class="meta-right">
                     <div>
                         <h3>{$location_metadata|default:"Location"}</h3>
                         <ul>
                         <li>{$toponym->countryName[$sessionLanguage]}, {$toponym->placeName[$sessionLanguage]}</li>
-                        <li>geo:{$lat},{$lng}</li>
-                        <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
+                        <li>geo:{$location->latitude},{$location->longitude}</li>
+                        <li>{include file="include/location_accuracy.tpl" accuracy=$location->qualifier}</li>
                         </ul>
                     </div>
-                    {if !$isContemporary}
+                    {if !$site_type->isContemporary}
                         <div>
                             <h3>{$period_metadata|default:"Period or year"}</h3>
                             <ul>
-                            <li>{$period_start_qualifier} / {$period_end_qualifier}</li>
+                            <li>{$period->startQualifier} / {$period->endQualifier}</li>
                             </ul>
                         </div>
                     {/if}
@@ -170,7 +170,7 @@ article.disabled {
                         <h3>{$classification_metadata|default:"Classification"}</h3>
                         <ul>
                         <li title="{$classification_description}">{$classification_title}</li>
-                        {if !$isContemporary}
+                        {if !$site_type->isContemporary}
                             <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
                         {/if}
                         </ul>
@@ -193,7 +193,7 @@ article.disabled {
                         <ul>
                             {foreach from=$locales key=langKey item=langVal}
                                 {if $langVal->description}
-                                    <li class="{if $langKey == $preferredLocale}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
+                                    <li class="{if $langKey == $preferredLocaleLanguage}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
                                 {/if}
                             {/foreach}
                         </ul>
@@ -202,7 +202,7 @@ article.disabled {
 
                 {foreach from=$locales key=langKey item=langVal}
                     {if $langVal->description}
-                        <article id="txt_{$langKey}" class="{if $langKey == $preferredLocale}selected{else}disabled{/if}">
+                        <article id="txt_{$langKey}" class="{if $langKey == $preferredLocaleLanguage}selected{else}disabled{/if}">
                             {$langVal->description}
                         </article>
                     {/if}
@@ -222,7 +222,7 @@ article.disabled {
                     </div>
                 {/if}
 
-                {if $relevantMuseums->count() > 0 && !$isContemporary}
+                {if $relevantMuseums->count() > 0 && !$site_type->isContemporary}
                     <div class="relevantMuseums">
                         <h2>Relevant museums</h2>
                         <ul>
