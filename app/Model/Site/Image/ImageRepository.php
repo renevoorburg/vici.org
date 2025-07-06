@@ -60,12 +60,12 @@ class ImageRepository
         $image->isPublished = !(bool)$row['img_hide'];
 
         $image->isOwnWork = (bool)$row['imgd_ownwork'];
-        $image->source = $row['imgd_source'];
-        $image->creator = $row['imgd_creator'];
+        $image->source = $row['imgd_source'] ?? '';
+        $image->creator = $row['imgd_creator'] ?? '';
 
-        $image->title = $row['imgd_title'];
-        $image->description = $row['imgd_description'];
-        $image->language = $row['imgd_lang'];
+        $image->title = $row['imgd_title'] ?? '';
+        $image->description = $row['imgd_description'] ?? '';
+        $image->language = $row['imgd_lang'] ?? '';
         $image->md5sum = $row['imgd_md5sum'] ?? '';
         $image->dateAdded = $row['imgd_date'];
         $image->width = (int)$row['imgd_width'];

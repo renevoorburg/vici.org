@@ -49,34 +49,29 @@ class ReverseGeocoder
 
     private function retrieveCountryCode(): void
     {
-        $load = sys_getloadavg()[0];
-        if ($load < 6.0) {
-            $sql = "SELECT country FROM geo_allcountries
-                WHERE 
-                    latitude < :lat_plus AND
-                    latitude > :lat_min AND
-                    longitude < :lng_plus AND
-                    longitude > :lng_min
-                    AND fclass <> 'A'
-                    AND country <> ''
-                ORDER BY 
-                    acos(cos(radians(:lat1))*cos(radians(latitude))*cos(radians(longitude)-radians(:lng1))+sin(radians(:lat2))*sin(radians(latitude)))
-                LIMIT 1;";
-            $stmt = $this->geoDb->prepare($sql);
-            $stmt->execute([
-                'lat_plus' => $this->lat + 0.5,
-                'lat_min' => $this->lat - 0.5,
-                'lng_plus' => $this->lng + 0.5,
-                'lng_min' => $this->lng - 0.5,
-                'lat1' => $this->lat,
-                'lng1' => $this->lng,
-                'lat2' => $this->lat
-            ]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->countryCode = $row['country'] ?? '';
-        } else {
-            $this->countryCode = '';
-        }
+        $sql = "SELECT country FROM geo_allcountries
+            WHERE 
+                latitude < :lat_plus AND
+                latitude > :lat_min AND
+                longitude < :lng_plus AND
+                longitude > :lng_min
+                AND fclass <> 'A'
+                AND country <> ''
+            ORDER BY 
+                acos(cos(radians(:lat1))*cos(radians(latitude))*cos(radians(longitude)-radians(:lng1))+sin(radians(:lat2))*sin(radians(latitude)))
+            LIMIT 1;";
+        $stmt = $this->geoDb->prepare($sql);
+        $stmt->execute([
+            'lat_plus' => $this->lat + 0.5,
+            'lat_min' => $this->lat - 0.5,
+            'lng_plus' => $this->lng + 0.5,
+            'lng_min' => $this->lng - 0.5,
+            'lat1' => $this->lat,
+            'lng1' => $this->lng,
+            'lat2' => $this->lat
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->countryCode = $row['country'] ?? '';
     }
 
     private function retrieveCountryName(string $lang): void
@@ -98,35 +93,30 @@ class ReverseGeocoder
 
     private function retrieveNearbyPlace(string $lang = 'en'): void
     {
-        $load = sys_getloadavg()[0];
-        if ($load < 6.0) {
-            $sql = "SELECT name FROM geo_allcountries
-                WHERE 
-                    latitude < :lat_plus
-                    AND latitude > :lat_min
-                    AND longitude < :lng_plus
-                    AND longitude > :lng_min
-                    AND fclass = 'P'
-                    AND fcode <> 'PPLX'
-                    AND fcode <> 'PPLCH'
-                    AND fcode <> 'PPLH'
-                ORDER BY 
-                    acos(cos(radians(:lat1))*cos(radians(latitude))*cos(radians(longitude)-radians(:lng1))+sin(radians(:lat2))*sin(radians(latitude))) / log10(population + 50)
-                LIMIT 1;";
-            $stmt = $this->geoDb->prepare($sql);
-            $stmt->execute([
-                'lat_plus' => $this->lat + 0.5,
-                'lat_min' => $this->lat - 0.5,
-                'lng_plus' => $this->lng + 0.5,
-                'lng_min' => $this->lng - 0.5,
-                'lat1' => $this->lat,
-                'lng1' => $this->lng,
-                'lat2' => $this->lat
-            ]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->nearbyPlace = $row['name'] ?? '';
-        } else {
-            $this->nearbyPlace = '';
-        }
+        $sql = "SELECT name FROM geo_allcountries
+            WHERE 
+                latitude < :lat_plus
+                AND latitude > :lat_min
+                AND longitude < :lng_plus
+                AND longitude > :lng_min
+                AND fclass = 'P'
+                AND fcode <> 'PPLX'
+                AND fcode <> 'PPLCH'
+                AND fcode <> 'PPLH'
+            ORDER BY 
+                acos(cos(radians(:lat1))*cos(radians(latitude))*cos(radians(longitude)-radians(:lng1))+sin(radians(:lat2))*sin(radians(latitude))) / log10(population + 50)
+            LIMIT 1;";
+        $stmt = $this->geoDb->prepare($sql);
+        $stmt->execute([
+            'lat_plus' => $this->lat + 0.5,
+            'lat_min' => $this->lat - 0.5,
+            'lng_plus' => $this->lng + 0.5,
+            'lng_min' => $this->lng - 0.5,
+            'lat1' => $this->lat,
+            'lng1' => $this->lng,
+            'lat2' => $this->lat
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->nearbyPlace = $row['name'] ?? '';
     }
 }
