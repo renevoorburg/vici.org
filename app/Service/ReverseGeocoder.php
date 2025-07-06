@@ -39,12 +39,12 @@ class ReverseGeocoder
         return $this->nearbyPlace ?? '';
     }
 
-    public function resolveToponym(string $lang = 'en'): Toponym
+    public function resolveToponym(string $lang = 'en'): array
     {
-        $toponym = new Toponym();
-        $toponym->countryName = $this->getCountryName($lang);
-        $toponym->placeName = $this->getNearbyPlace();
-        return $toponym;
+        return [
+            'countryName' => [$lang => $this->getCountryName($lang)],
+            'placeName' => [$lang => $this->getNearbyPlace($lang)]
+        ];
     }
 
     private function retrieveCountryCode(): void
@@ -96,7 +96,7 @@ class ReverseGeocoder
         }
     }
 
-    private function retrieveNearbyPlace(): void
+    private function retrieveNearbyPlace(string $lang = 'en'): void
     {
         $load = sys_getloadavg()[0];
         if ($load < 6.0) {

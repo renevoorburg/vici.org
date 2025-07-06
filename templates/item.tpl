@@ -153,7 +153,7 @@ article.disabled {
                     <div>
                         <h3>{$location_metadata|default:"Location"}</h3>
                         <ul>
-                        <li>{$country_name}, {$place_name}</li>
+                        <li>{$toponym->countryName[$sessionLanguage]}, {$toponym->placeName[$sessionLanguage]}</li>
                         <li>geo:{$lat},{$lng}</li>
                         <li>{include file="include/location_accuracy.tpl" accuracy=$q}</li>
                         </ul>

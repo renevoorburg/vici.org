@@ -123,8 +123,7 @@ class SiteRepository
         $locales = $localeRepo->getBySiteId($id);
         $site->locales = new Locale\LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary);
 
-        $geocoder = new \Vici\Service\ReverseGeocoder($site->representativeLocation->latitude, $site->representativeLocation->longitude);
-        $site->toponym = $geocoder->resolveToponym('nl');
+        $site->toponym = new Toponym($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
         $site->images = new Image\ImageCollection();
         $db = $this->db;
