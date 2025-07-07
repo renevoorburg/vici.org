@@ -296,7 +296,9 @@ article.disabled {
                             <h2>{$relevant_museums_label|default:"Relevant museums"}</h2>
                             <ul>
                                 {foreach from=$relevantMuseums item=site}
-                                    <li><span class="marker-row"><div class="marker-icon" data-icon-type="{$site->type->id}"></div><span class="marker-text"><a href="/vici/{$site->id}">{$site->defaultTitle}</a><br>{$site->defaultSummary}</span></span></li>
+                                    <li>
+                                        {include file="include/site_list_item.tpl"}
+                                    </li>
                                 {/foreach}
                             </ul>
                         </div>
@@ -307,7 +309,9 @@ article.disabled {
                             <ul>
                                 {foreach from=$nearbySites item=site}
                                     {if $site->id != $id}
-                                        <li><span class="marker-row"><div class="marker-icon" data-icon-type="{$site->type->id}"></div><span class="marker-text"><a href="/vici/{$site->id}">{$site->defaultTitle}</a><br>{$site->defaultSummary}</span></span></li>
+                                        <li>
+                                            {include file="include/site_list_item.tpl"}
+                                        </li>
                                     {/if}
                                 {/foreach}
                             </ul>
