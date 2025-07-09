@@ -8,6 +8,7 @@ use Vici\Model\Site\Point;
 use Vici\Model\Site\Toponym;
 use Vici\Model\Site\Period;
 use Vici\Model\Site\Image\ImageCollection;
+use Vici\Model\Users\User;
 
 class Site
 {
@@ -20,6 +21,10 @@ class Site
     public ImageCollection $images;
     public Toponym $toponym;
     public Period $period;
+    public User $creator;
+    public string $createDate;
+    public User $updater;
+    public string $updateDate;
     public bool $isVisible = true;
     public bool $isPublished = true;
 

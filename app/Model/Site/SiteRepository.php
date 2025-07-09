@@ -6,6 +6,8 @@ use PDO;
 use Vici\DB\DBConnector;
 use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Site\SiteCollection;
+use Vici\Model\Users\User;
+use Vici\Model\Users\UserRepository;
 
 class SiteRepository
 {
@@ -23,7 +25,11 @@ class SiteRepository
             m.pmeta_startyr AS startYear, 
             m.pmeta_endyr AS endYear, 
             m.pmeta_startyr_str AS startQualifier, 
-            m.pmeta_endyr_str AS endQualifier 
+            m.pmeta_endyr_str AS endQualifier,
+            m.pmeta_creator AS creator,
+            m.pmeta_editor AS updater,
+            m.pmeta_create_date AS createDate,
+            m.pmeta_edit_date AS updateDate
         FROM points p    
         LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id ";
     
@@ -132,6 +138,12 @@ class SiteRepository
             $images = $imageRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($images));
         });
+
+        $userRepo = new UserRepository($this->db);
+        $site->creator = $userRepo->getById($row['creator']);
+        $site->updater = $userRepo->getById($row['updater']);
+        $site->createDate = $row['createDate'];
+        $site->updateDate = $row['updateDate'];
         return $site;
     }
 
