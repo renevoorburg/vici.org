@@ -43,6 +43,11 @@ class ItemPage extends PageRenderer
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
         $this->assign('isVisible', $site->isVisible);
 
+        $this->assign('creator', $site->creator);
+        $this->assign('updater', $site->updater);
+        $this->assign('createDate', $site->createDate);
+        $this->assign('updateDate', $site->updateDate);
+        
         $this->assign('nearbySites', $nearbySites);
         $this->assign('relevantMuseums', $relevantMuseums);
 
