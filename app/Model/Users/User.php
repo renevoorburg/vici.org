@@ -4,11 +4,14 @@ namespace Vici\Model\Users;
 
 class User
 {
-    private $id;
-    private $accountName;
-    private $realName;
-    private $email;
-    private $password;
+    private int $id;
+    private string $accountName;
+    private string $realName;
+    private ?string $firstName = null;
+    private ?string $lastName = null;
+    private ?string $initials = null;
+    private string $email;
+    private string $password;
     private $level;
 
     public function __construct($id, $accountName, $realName, $email, $password = null)
@@ -33,6 +36,30 @@ class User
     public function getRealName()
     {
         return $this->realName;
+    }
+
+    public function getFirstName()
+    {
+        if ($this->firstName) {
+            return $this->firstName;
+        }
+        return $this->extractFirstName($this->realName);
+    }
+
+    public function getLastName()
+    {
+        if ($this->lastName) {
+            return $this->lastName;
+        }
+        return $this->extractLastName($this->realName);
+    }
+
+    public function getInitials()
+    {
+        if ($this->initials) {
+            return $this->initials;
+        }
+        return $this->extractInitials($this->realName);
     }
 
     public function getEmail()
@@ -66,4 +93,35 @@ class User
         $this->level = $level;
         return $this;
     }
+
+    private function extractFirstName($realName)
+    {
+        $firstName = explode(' ', $realName)[0];
+        $this->firstName = $firstName;
+        return $firstName;
+    }
+
+    private function extractLastName($realName)
+    {
+        $lastName = explode(' ', $realName)[1];
+        $this->lastName = $lastName;
+        return $lastName;
+    }
+
+    private function extractInitials($realName)
+    {
+        $firstName = $this->firstName;
+        if (!$firstName) {
+            $firstName = $this->extractFirstName($realName);
+        }
+        $words = preg_split('/\s+/', trim($firstName));
+        $initials = '';
+        foreach ($words as $word) {
+            if ($word !== '') {
+                $initials .= mb_strtoupper(mb_substr($word, 0, 1)) . '.';
+            }
+        }
+        $this->initials = $initials;
+        return $initials;
+    }   
 }
