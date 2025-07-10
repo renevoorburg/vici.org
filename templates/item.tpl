@@ -192,7 +192,35 @@ article.disabled {
     word-break: break-word;
 }
 .attributions {
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    padding: 1.25rem 1rem;
     margin: 0 2rem;
+    margin-bottom: 0.5rem;
+}
+.attributions h2 {
+    font-size: 1rem;
+    color: #64748b;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+.attributions p {
+    color: #6b7280;
+    font-size: 0.95em;
+    margin: 0;
+    line-height: 1.5;
+}
+.attributions a {
+    color: #64748b;
+    text-decoration: underline;
+    font-size: 0.95em;
+}
+.attributions strong {
+    color: #6b7280;
+    font-weight: 600;
+}
+
 
 
 @media (max-width: 1600px) {
@@ -333,36 +361,6 @@ article.disabled {
                 </div>
             </div> 
 
-            <style>
-            .attributions {
-                background-color: #f8fafc;
-                border-radius: 0.5rem;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-                margin: 2rem 0 1.5rem 0;
-                padding: 1.25rem 1rem;
-            }
-            .attributions h2 {
-                font-size: 1rem;
-                color: #64748b;
-                margin-top: 0;
-                margin-bottom: 0.5rem;
-            }
-            .attributions p {
-                color: #6b7280;
-                font-size: 0.95em;
-                margin: 0;
-                line-height: 1.5;
-            }
-            .attributions a {
-                color: #64748b;
-                text-decoration: underline;
-                font-size: 0.95em;
-            }
-            .attributions strong {
-                color: #6b7280;
-                font-weight: 600;
-            }
-            </style>
             <div class="attributions">
                <h2>{$use_and_reuse_label|default:"Use and reuse"}</h2>
                 <p>
