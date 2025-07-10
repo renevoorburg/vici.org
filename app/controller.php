@@ -7,42 +7,39 @@ use Vici\Session\Session;
 use Vici\Page\Pages;
 use Vici\API;
 use Vici\Model\Users\User;
+use Vici\Security\AccessControl;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 $session = new Session();
 
+$accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser());
+
 switch ($session->getRequestedAction()) {
     case '':
-        $page = new Pages\HomePage($session);
-        $page->display();
+        $action = fn() => (new Pages\HomePage($session))->display();
         break;
     case 'vici':
-        $page = new Pages\ItemPage($session);
-        $page->display();
+        $action = fn() => (new Pages\ItemPage($session))->display();
         break;
-
     case 'geojson.php':
-        $geojson = new API\GeoJSON($session);
-        $geojson->get();
+        $accessControl->setRequiresToken(true);
+        $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':
-        $highlights = new API\Highlights($session);
-        $highlights->get();
+        $accessControl->setRequiresToken(false);
+        $action = fn() => (new API\Highlights($session))->get();
         break;
     case 'login':
-        $page = new Pages\LoginPage($session);
-        $page->display();
+        $action = fn() => (new Pages\LoginPage($session))->display();
         break;
     case 'logout':
         $session->clearUser();
-        $page = new Pages\HomePage($session);
-        $page->display();
+        $action = fn() => (new Pages\HomePage($session))->display();
         break;  
     case 'new':
-        $page = new Pages\HomePage($session);
-        $page->display();
+        $action = fn() => (new Pages\HomePage($session))->display();
         break;
     case 'texts':
         echo $session->translator->getTranslationsJson(null, 'markerdef.');
@@ -53,3 +50,5 @@ switch ($session->getRequestedAction()) {
         echo "Action: " . $session->getRequestedAction();
         break;
 }
+
+$accessControl->enforceAndRun($action);

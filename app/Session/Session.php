@@ -19,6 +19,7 @@ class Session
     private $availableLanguages = [];
     private $requestedAction = null;
     private $requestedItem = null;
+    private $ip = null;
     private array $dbconnectors = [];
     private User $user;
 
@@ -42,6 +43,7 @@ class Session
         $urlParts = explode('/', $_SERVER['DOCUMENT_URI']);
         $this->requestedAction = $urlParts[1] ?? null;
         $this->requestedItem = $urlParts[2] ?? null;
+        $this->ip = $_SERVER['REMOTE_ADDR'];
     }
 
     public function getDBConnector($database = 'MAIN') : DBConnector
@@ -66,6 +68,11 @@ class Session
             $userRepository = new UserRepository($this->getDBConnector());
             $this->user = $userRepository->getById($_SESSION['user_id']);
         }
+    }
+
+    public function getIP() : string
+    {
+        return $this->ip;
     }
 
     public function hasUser() : bool
