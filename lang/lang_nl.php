@@ -101,5 +101,16 @@ return [
     "Identifiers" => "Identifiers",
     "Nearby sites" => "In de buurt",
     "Relevant museums" => "Relevante musea",
+    "Use and reuse" => "Gebruik en herbruik",
+    "Creators" => "Bijdrage",
+    "Entry created by" => "Aangemaakt door",
+    "last updated by" => "laatst aangepast door",
+    "with possible contributions by others" => "met mogelijke bijdragen van anderen",
+    "CC BY-SA 4.0" => "CC BY-SA 4.0",
+    "CC-0" => "CC-0",
+    "Persistent URI" => "Permanente URL",
+    "Suggested citation" => "Voorgestelde citatiewijze",
+    "and" => "en",
+    "accessed" => "opgevraagd op",
 
 ];

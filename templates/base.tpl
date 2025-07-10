@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vici.org :: {$title|default:"archaeological atlas"}</title>
+{block name=metadata}{/block}
     <link rel="stylesheet" href="/css/main.css">
     {block name=stylesheets}{/block}
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
@@ -44,6 +45,7 @@
 </div>
 
 
+{block name=metadata}{/block}
 {block name=main}{/block}
 
 
