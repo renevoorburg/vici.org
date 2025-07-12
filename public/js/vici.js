@@ -582,13 +582,7 @@ function ViciWidget(element, options) {
                             title: feature.properties.title,
                             html: feature.properties.summary,
                             kind: feature.properties.kind,
-                            url: (function () {
-                                if (mapState.perspectiveParam) {
-                                    return feature.properties.url;
-                                } else {
-                                    return baseUrl + feature.properties.url;
-                                }
-                            })(),
+                            url: feature.properties.url, // TODO: check if this is always correct: [x] local [ ] production [ ] perspective 
                             picture: feature.properties.img,
                             zIndex: feature.properties.zindex,
                             identified: feature.properties.identified,

@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
         viciToken: window.viciToken,
         showFilter: true,
         highlights: 6,
-        lang: "nl",
+        lang: window.sessionLanguage,
         setUrl: true,
         showScale: "metric",
         moveHere: true,

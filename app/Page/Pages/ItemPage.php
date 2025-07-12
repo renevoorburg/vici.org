@@ -32,7 +32,6 @@ class ItemPage extends PageRenderer
         $this->assign('site_type', $site->type);
         $this->assign('locales', $site->locales);
         $this->assign('images', $site->images);
-        $this->assign('sessionLanguage', $session->getLanguage());
         $this->assign('preferredLocaleLanguage', $preferredLocaleLanguage);
         $this->assign('annotation', $site->locales[$preferredLocaleLanguage]->description);
         $this->assign('period', $site->period);
