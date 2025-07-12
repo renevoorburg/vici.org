@@ -9,18 +9,16 @@
     {block name=stylesheets}{/block}
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
+    <script>
     {if isset($vicibase)}
-        <script>
-            window.viciBase = "{$vicibase}";
-        </script>
+        window.viciBase = "{$vicibase}";
+        window.viciToken = "{$viciToken}";
     {/if}
     {if isset($js_translations)}
-        <script>
-            window.viciTranslations = {$js_translations};
-        </script>
+        window.viciTranslations = {$js_translations};
     {/if}
-    <script src="/js/vici.js?version=20250614"></script>
-
+    </script>
+    <script src="/js/vici.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
 </head>
 
 <body>
