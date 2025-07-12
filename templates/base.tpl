@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
     <script>
+        window.viciToken = "{$viciToken}";
+        window.sessionLanguage = "{$sessionLanguage}";
     {if isset($vicibase)}
         window.viciBase = "{$vicibase}";
-        window.viciToken = "{$viciToken}";
     {/if}
     {if isset($js_translations)}
         window.viciTranslations = {$js_translations};

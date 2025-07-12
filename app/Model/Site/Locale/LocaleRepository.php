@@ -28,7 +28,7 @@ class LocaleRepository
         $locales = [];
         foreach ($rows as $row) {
             $locale = new Locale();
-            $locale->language = $row['language'];
+            $locale->language = $row['language'] ?? 'en';
             $locale->title = $row['title'] ?? '';
             $locale->summary = $row['summary'] ?? '';
             $locale->description = $row['description'] ?? '';

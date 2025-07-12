@@ -269,7 +269,7 @@ article.disabled {
             
                 <div class="meta-container">
                     <div class="meta-left">
-                        <div class="marker-icon" data-icon-type="{$site_type->id}" title="{$classification_description}"></div>
+                        <div class="marker-icon" id="myIcon" data-icon-type="{$site_type->id}" title="{$classification_description}"></div>
                     </div>
                     <div class="meta-right">
                     <div>
@@ -421,7 +421,7 @@ article.disabled {
                 },
                 showFilter: true,
                 highlights: 0,
-                lang: "{$sessionLanguage}",
+                lang: window.sessionLanguage,
                 viciToken: window.viciToken,
                 center: { lat: {$location->latitude}, lng: {$location->longitude} },
                 followFocus: true,
@@ -433,6 +433,9 @@ article.disabled {
                 mapOptions.baseUrl = window.viciBase;
             }
             mapObj = new ViciWidget('map', mapOptions);
+
+            document.getElementById('myIcon')?.addEventListener('click', () => mapObj.panTo("{$id}"));
+
         });
 
     </script>
