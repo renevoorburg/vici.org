@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
 
-        viciToken: '20E2ADF5AB',
+        viciToken: window.viciToken,
         showFilter: true,
         highlights: 6,
         lang: "nl",
