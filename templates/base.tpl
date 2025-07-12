@@ -9,16 +9,6 @@
     {block name=stylesheets}{/block}
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
-    <script>
-        window.viciToken = "{$viciToken}";
-        window.sessionLanguage = "{$sessionLanguage}";
-    {if isset($vicibase)}
-        window.viciBase = "{$vicibase}";
-    {/if}
-    {if isset($js_translations)}
-        window.viciTranslations = {$js_translations};
-    {/if}
-    </script>
     <script src="/js/vici.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
 </head>
 
@@ -43,10 +33,8 @@
     <input type="text" placeholder="{$search_placeholder|default:"search"}..." />
 </div>
 
-
 {block name=metadata}{/block}
 {block name=main}{/block}
-
 
 <footer id="footer">
     <div class="footerbox">
@@ -81,6 +69,20 @@
     </div>
 </footer>
 
+<script>
+    window.viciToken = "{$viciToken}";
+    window.sessionLanguage = "{$sessionLanguage}";
+    {if isset($vicibase)}
+        window.viciBase = "{$vicibase}";
+    {/if}
+    {if isset($id)}
+        window.siteId = "{$id}";
+    {/if}
+    {if isset($location) && isset($location->latitude) && isset($location->longitude)}
+        window.lat = {$location->latitude};
+        window.lng = {$location->longitude};
+    {/if}
+</script>
 <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobile-menu');
