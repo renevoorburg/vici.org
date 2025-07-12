@@ -44,9 +44,16 @@ class AccessControl
 
     public function enforceAndRun(callable $requested_action): void
     {
-        if ($this->is_trap_link && !$this->isCaptchaPassed()) {
-            header("Location: /captcha-check");
-            exit;
+        if ($this->is_trap_link) {
+            if (!$this->isCaptchaPassed()) {
+                header("Location: /captcha-check");
+                exit;
+            } else {
+                apcu_store("ip_blocked_$ip", true, 900); 
+                http_response_code(403);
+                echo "Je bent tijdelijk geblokkeerd vanwege verdacht gedrag.";
+                exit;
+            }
         }
 
         if ($this->isBlocked()) {

@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
         viciToken: window.viciToken,
         center: { lat: window.lat, lng: window.lng },
         followFocus: true,
-        focus: window.siteId,
+        focus: parseInt(window.siteId),
         showScale: "metric"
     }
 
@@ -117,7 +117,5 @@ document.addEventListener('DOMContentLoaded', function () {
     mapObj = new ViciWidget('map', mapOptions);
 
     document.getElementById('myIcon')?.addEventListener('click', () => mapObj.panTo(window.siteId));
-
-
 
 });

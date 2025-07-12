@@ -2,6 +2,11 @@
 {block name=stylesheets}
     <style>
 
+.access-link {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+}
 main.item {
       display: flex;
       flex: none;
@@ -284,7 +289,7 @@ article.disabled {
                         <div>
                             <h3>{$period_metadata|default:"Period or year"}</h3>
                             <ul>
-                            <li>{$period->startQualifier} / {$period->endQualifier}</li>
+                            <li>{if $period->startQualifier || $period->endQualifier} {$period->startQualifier} / {$period->endQualifier}{else}{$not_yet_provided_label|default:"not yet provided"}{/if}</li>
                             </ul>
                         </div>
                     {/if}
@@ -321,6 +326,8 @@ article.disabled {
                         </ul>
                     </nav>
                 </div>
+
+                <a href="/data-access/{$id}" class="access-link">data access {$id}</a>
 
                 {foreach from=$locales key=langKey item=langVal}
                     {if $langVal->description}

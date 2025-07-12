@@ -37,6 +37,10 @@ switch ($session->getRequestedAction()) {
     case 'logout':
         $session->clearUser();
         $action = fn() => (new Pages\HomePage($session))->display();
+        break;
+    case 'data-access':
+        $accessControl->setIsTrapLink(true);
+        $action = fn() => (new Pages\HomePage($session))->display();
         break;  
     case 'new':
         $action = fn() => (new Pages\HomePage($session))->display();
