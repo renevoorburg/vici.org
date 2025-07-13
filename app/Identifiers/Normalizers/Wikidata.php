@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-class Wikidata extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
 {
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?wikidata\.org\/(?:entity|wiki)\/(Q[0-9]+)$/i';

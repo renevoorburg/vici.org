@@ -10,11 +10,13 @@ class Identifier
 
     public function getQname(): string
     {
-        if (strpos($this->uri, $this->namespace) === 0) {
-            $localPart = substr($this->uri, strlen($this->namespace));
-        } else {
-            $localPart = $this->uri;
-        }
-        return $this->prefix . ':' . $localPart;
-    }   
+        return $this->prefix . ':' . $this->getLocalValue();
+    } 
+
+    public function getLocalValue(): string
+    {
+        return (strpos($this->uri, $this->namespace) === 0)
+            ? substr($this->uri, strlen($this->namespace))
+            : $this->uri;
+    }
 }

@@ -1,8 +1,10 @@
 <?php
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-abstract class AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\UrlNormalizerInterface;
+
+abstract class AbstractNormalizer implements UrlNormalizerInterface
 {
     protected string $url = '';
 

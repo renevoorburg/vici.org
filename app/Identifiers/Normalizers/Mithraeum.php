@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-class Mithraeum extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
 {
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?mithraeum\.eu\/(?:monument|person|book)\/([0-9]+)$/i';

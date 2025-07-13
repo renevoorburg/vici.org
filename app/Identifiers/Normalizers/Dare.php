@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-class Dare extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Dare extends AbstractNormalizer implements UrlNormalizerInterface
 {
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:imperium\.ahlfeldt|dh\.gu|francia\.ahlfeldt|dare\.ht\.lu)\.se\/(?:dare\/)?(?:page\/)?(?:places)\/([1-9][0-9]*)(?:\.html)?$/i';

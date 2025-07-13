@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-class Romaq extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Romaq extends AbstractNormalizer implements UrlNormalizerInterface
 {
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/';
@@ -10,7 +13,7 @@ class Romaq extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
 
     protected function getValidTagPattern(): string {
         return '/^romaq( |:)?(?:aqueduct)?\s*=\s*[0-9]+$/';
-    }
+    }   
 
     protected function getValidIdPattern(): string {
         return '/^[0-9]+$/' ;
