@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-use ExtIds\UrlNormalizer;
+use Vici\Identifiers\UrlNormalizerInterface;
 
-class AnyUrl implements \ExtIds\UrlNormalizer
+class AnyUrl implements UrlNormalizerInterface
 {
     private string $url = '';
 

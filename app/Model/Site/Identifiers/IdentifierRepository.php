@@ -7,6 +7,9 @@ use PDO;
 use Vici\Model\Site\Identifiers\Identifier;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
 
+use Vici\Identifiers\Normalizers\Livius;
+use Vici\Identifiers\ExternalIdentifiers;
+
 class IdentifierRepository
 {
     private DBConnector $db;
@@ -41,10 +44,11 @@ class IdentifierRepository
         }
 
         if ($row['pmeta_livius']) {
+            $normalizer = new Livius();
             $identifier = new Identifier();
             $identifier->prefix = 'livius';
-            $identifier->namespace = 'https://livius.org/articles/place/fectio-vechten';
-            $identifier->uri = $identifier->namespace . $row['pmeta_livius'];
+            $identifier->namespace = 'https://livius.org/articles/';
+            $identifier->uri = $normalizer->idToUrl($row['pmeta_livius']);
             $identifiers[] = $identifier;
         }
 
@@ -62,6 +66,19 @@ class IdentifierRepository
             $identifier->namespace = 'http://imperium.ahlfeldt.se/places/';
             $identifier->uri = $identifier->namespace . $row['pmeta_dare'];
             $identifiers[] = $identifier;
+        }
+
+        if ($row['pmeta_extids']) {
+            $other_ids = ExternalIdentifiers::withDbParams($row['pmeta_extids']);
+            $urls = $other_ids->getAllUrlsArray();
+            foreach ($urls as $url) {
+                $identifier = new Identifier();
+                $identifier->prefix = 'http';
+                $identifier->namespace = $url;
+                $identifier->uri = $url;
+                $identifiers[] = $identifier;
+            }
+          
         }
 
         return $identifiers;

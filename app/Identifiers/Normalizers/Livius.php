@@ -1,9 +1,12 @@
 <?php declare(strict_types=1);
 /* RV 20220202 */
 
-namespace ExtIds\Normalizers;
+namespace Vici\Identifiers\Normalizers;
 
-class Livius extends AbstractNormalizer implements \ExtIds\UrlNormalizerInterface
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+use Vici\Identifiers\UrlNormalizerInterface;
+
+class Livius extends AbstractNormalizer implements UrlNormalizerInterface
 {
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?livius\.org\/[a-zA-Z]/i';
