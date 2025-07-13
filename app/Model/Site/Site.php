@@ -9,6 +9,7 @@ use Vici\Model\Site\Toponym;
 use Vici\Model\Site\Period;
 use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Users\User;
+use Vici\Model\Site\Identifiers\IdentifierCollection;
 
 class Site
 {
@@ -22,9 +23,10 @@ class Site
     public Toponym $toponym;
     public Period $period;
     public User $creator;
-    public string $createDate;
     public User $updater;
+    public string $createDate;
     public string $updateDate;
+    public IdentifierCollection $identifiers;
     public bool $isVisible = true;
     public bool $isPublished = true;
 

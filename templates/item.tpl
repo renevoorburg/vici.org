@@ -226,6 +226,9 @@ article.disabled {
     font-weight: 600;
 }
 
+a.hover:hover {
+    text-decoration: underline;
+}
 
 
 @media (max-width: 1600px) {
@@ -305,9 +308,9 @@ article.disabled {
                     <div>
                         <h3>{$identifier_metadata|default:"Identifiers"}</h3>
                         <ul>
-                        <li><a href="/vici/{$id}">vici:{$id}</a></li>
+                        <li><a href="/vici/{$id}" class="hover">vici:{$id}</a></li>
                         {foreach $identifiers as $id}
-                        <li>{$id}</li>
+                        <li><a href="{$id->uri}" class="hover">{$id->getQname()}</a></li>
                         {/foreach}
                         </ul>
                     </div>
