@@ -7,6 +7,18 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
 {
+
+    public function getPrefix(): string
+    {
+        return 'mithraeum';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'http://imperium.ahlfeldt.se/places/';
+    }
+
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?mithraeum\.eu\/(?:monument|person|book)\/([0-9]+)$/i';
     }

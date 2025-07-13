@@ -7,6 +7,16 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
 {
+    public function getPrefix(): string
+    {
+        return 'wikidata';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://wikidata.org/entity/';
+    }
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?wikidata\.org\/(?:entity|wiki)\/(Q[0-9]+)$/i';
     }

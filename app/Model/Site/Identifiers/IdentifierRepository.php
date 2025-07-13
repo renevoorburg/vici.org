@@ -7,6 +7,7 @@ use PDO;
 use Vici\Model\Site\Identifiers\Identifier;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
 
+use Vici\Identifiers\NormalizersIndex;
 use Vici\Identifiers\Normalizers\Livius;
 use Vici\Identifiers\ExternalIdentifiers;
 
@@ -72,13 +73,18 @@ class IdentifierRepository
             $other_ids = ExternalIdentifiers::withDbParams($row['pmeta_extids']);
             $urls = $other_ids->getAllUrlsArray();
             foreach ($urls as $url) {
-                $identifier = new Identifier();
-                $identifier->prefix = 'http';
-                $identifier->namespace = $url;
-                $identifier->uri = $url;
-                $identifiers[] = $identifier;
+                foreach (NormalizersIndex::getNormalizerKeys() as $key) {
+                    $normalizer = NormalizersIndex::getIndexedNormalizer($key);
+                    if ($normalizer->isValidURL($url)) {
+                        $identifier = new Identifier();
+                        $identifier->prefix = $normalizer->getPrefix();
+                        $identifier->namespace = $normalizer->getNamespace();
+                        $identifier->uri = $url;
+                        $identifiers[] = $identifier;
+                        break;
+                    }
+                }
             }
-          
         }
 
         return $identifiers;

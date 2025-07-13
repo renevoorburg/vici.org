@@ -7,6 +7,16 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Dare extends AbstractNormalizer implements UrlNormalizerInterface
 {
+    public function getPrefix(): string
+    {
+        return 'dare';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'http://imperium.ahlfeldt.se/places/';
+    }
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:imperium\.ahlfeldt|dh\.gu|francia\.ahlfeldt|dare\.ht\.lu)\.se\/(?:dare\/)?(?:page\/)?(?:places)\/([1-9][0-9]*)(?:\.html)?$/i';
     }
