@@ -7,6 +7,16 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Pleiades extends AbstractNormalizer implements UrlNormalizerInterface
 {
+    public function getPrefix(): string
+    {
+        return 'pleiades';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://pleiades.stoa.org/places/';
+    }
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/pleiades\.stoa\.org\/places\/([1-9][0-9]*)$/';
     }

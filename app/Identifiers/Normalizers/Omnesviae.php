@@ -7,6 +7,17 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Omnesviae extends AbstractNormalizer implements UrlNormalizerInterface
 {
+
+    public function getPrefix(): string
+    {
+        return 'omnesviae';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://omnesviae.org/#';
+    }
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?omnesviae\.org\/#((?:TP|OV)Place[0-9]+)$/i';
     }

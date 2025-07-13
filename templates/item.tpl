@@ -280,40 +280,41 @@ a.hover:hover {
                         <div class="marker-icon" id="myIcon" data-icon-type="{$site_type->id}" title="{$classification_description}"></div>
                     </div>
                     <div class="meta-right">
-                    <div>
-                        <h3>{$location_metadata|default:"Location"}</h3>
-                        <ul>
-                        <li>{$toponym->countryName[$sessionLanguage]}, {$toponym->placeName[$sessionLanguage]}</li>
-                        <li>geo:{$location->latitude},{$location->longitude}</li>
-                        <li>{include file="include/location_accuracy.tpl" accuracy=$location->qualifier}</li>
-                        </ul>
-                    </div>
-                    {if !$site_type->isContemporary}
                         <div>
-                            <h3>{$period_metadata|default:"Period or year"}</h3>
+                            <h3>{$location_metadata|default:"Location"}</h3>
                             <ul>
-                            <li>{if $period->startQualifier || $period->endQualifier} {$period->startQualifier} / {$period->endQualifier}{else}{$not_yet_provided_label|default:"not yet provided"}{/if}</li>
+                            <li>{$toponym->countryName[$sessionLanguage]}, {$toponym->placeName[$sessionLanguage]}</li>
+                            <li>geo:{$location->latitude},{$location->longitude}</li>
+                            <li>{include file="include/location_accuracy.tpl" accuracy=$location->qualifier}</li>
                             </ul>
                         </div>
-                    {/if}
-                    <div>
-                        <h3>{$classification_metadata|default:"Classification"}</h3>
-                        <ul>
-                        <li title="{$classification_description}">{$classification_title}</li>
                         {if !$site_type->isContemporary}
-                            <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
+                            <div>
+                                <h3>{$period_metadata|default:"Period or year"}</h3>
+                                <ul>
+                                <li>{if $period->startQualifier || $period->endQualifier} {$period->startQualifier} / {$period->endQualifier}{else}{$not_yet_provided_label|default:"not yet provided"}{/if}</li>
+                                </ul>
+                            </div>
                         {/if}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3>{$identifier_metadata|default:"Identifiers"}</h3>
-                        <ul>
-                        <li><a href="/vici/{$id}" class="hover">vici:{$id}</a></li>
-                        {foreach $identifiers as $id}
-                        <li><a href="{$id->uri}" class="hover">{$id->getQname()}</a></li>
-                        {/foreach}
-                        </ul>
-                    </div>
+                        <div>
+                            <h3>{$classification_metadata|default:"Classification"}</h3>
+                            <ul>
+                            <li title="{$classification_description}">{$classification_title}</li>
+                            {if !$site_type->isContemporary}
+                                <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
+                            {/if}
+                            </ul>
+                        </div>
+                        {if $identifiers->count() > 0}
+                            <div>
+                                <h3>{$identifier_metadata|default:"Identifiers"}</h3>
+                                <ul>
+                                {foreach $identifiers as $id}
+                                <li><a href="{$id->uri}" class="hover">{$id->getQname()}</a></li>
+                                {/foreach}
+                                </ul>
+                            </div>
+                        {/if}
                     </div>
                 </div>
 

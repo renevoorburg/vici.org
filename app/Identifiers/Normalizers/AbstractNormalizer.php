@@ -34,12 +34,12 @@ abstract class AbstractNormalizer implements UrlNormalizerInterface
         }
     }
 
-    private function isValidURL(string $url) : bool
+    public function isValidURL(string $url) : bool
     {
         return (preg_match($this->getValidUrlPattern(), $url) > 0);
     }
 
-    private function isValidTag(string $tag) : bool
+    public function isValidTag(string $tag) : bool
     {
         return (preg_match($this->getValidTagPattern(), $tag) > 0);
     }

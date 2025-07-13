@@ -7,6 +7,17 @@ use Vici\Identifiers\Normalizers\AbstractNormalizer;
 
 class Romaq extends AbstractNormalizer implements UrlNormalizerInterface
 {
+
+    public function getPrefix(): string
+    {
+        return 'romaq';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://www.romaq.org/the-project/aqueducts/';
+    }
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/';
     }

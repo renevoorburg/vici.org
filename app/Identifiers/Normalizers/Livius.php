@@ -8,6 +8,17 @@ use Vici\Identifiers\UrlNormalizerInterface;
 
 class Livius extends AbstractNormalizer implements UrlNormalizerInterface
 {
+    public function getPrefix(): string
+    {
+        return 'livius';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://livius.org/articles/';
+    }
+
+
     protected function getValidUrlPattern(): string {
         return '/^https?:\/\/(?:www\.)?livius\.org\/[a-zA-Z]/i';
     }

@@ -8,6 +8,8 @@ class AnyUrl implements UrlNormalizerInterface
 {
     private string $url = '';
 
+
+    
     public static function isValidURL(string $url) : bool
     {
         return (preg_match('/^https?:\/\/(www\.)?.+\.[a-z]+\/.*$/i', $url) > 0);
