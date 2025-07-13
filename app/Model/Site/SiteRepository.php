@@ -8,6 +8,8 @@ use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Site\SiteCollection;
 use Vici\Model\Users\User;
 use Vici\Model\Users\UserRepository;
+use Vici\Model\Site\Identifiers\Identifier;
+use Vici\Model\Site\Identifiers\IdentifierCollection;
 
 class SiteRepository
 {
@@ -131,12 +133,20 @@ class SiteRepository
 
         $site->toponym = new Toponym($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
-        $site->images = new Image\ImageCollection();
         $db = $this->db;
+
+        $site->images = new Image\ImageCollection();
         $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $db) {
             $imageRepo = new Image\ImageRepository($db);
             $images = $imageRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($images));
+        });
+
+        $site->identifiers = new Identifiers\IdentifierCollection();
+        $site->identifiers->setLazyLoader(function(IdentifierCollection $collection) use ($site, $db) {
+            $identifierRepo = new Identifiers\IdentifierRepository($db);
+            $identifiers = $identifierRepo->findBySite($site->id);
+            $collection->addLoadedItems(iterator_to_array($identifiers));
         });
 
         $userRepo = new UserRepository($this->db);
