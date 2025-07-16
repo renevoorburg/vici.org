@@ -179,4 +179,34 @@ class AccessControl
         }
         return false;
     }
+
+
+
+    public static function denyAccess() : void { 
+        $uri = $_SERVER['REQUEST_URI'];
+
+        if (self::isBot()) {
+            header('HTTP/1.1 403 Forbidden');
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Access denied']);
+            exit;
+        } else {
+            header('Location: /login.php?loginrequired&return=' . urlencode($uri));
+            exit;
+        }
+    }
+
+    public static function denyAccessTemporarily() : void
+    {
+        $uri = $_SERVER['REQUEST_URI'];
+            
+        if (self::isBot()) {
+            header('HTTP/1.1 429 Too Many Requests');
+            header("Retry-After: " . self::RATE_LIMIT_SECONDS);
+            exit;
+        } else {
+            header('Location: /login.php?wait=' . self::RATE_LIMIT_SECONDS . '&return=' . urlencode($uri));
+            exit;
+        }
+    }
 }

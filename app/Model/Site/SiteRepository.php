@@ -33,8 +33,9 @@ class SiteRepository
             m.pmeta_create_date AS createDate,
             m.pmeta_edit_date AS updateDate
         FROM points p    
-        LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id ";
-    
+        LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id 
+        ";
+
     private DBConnector $db;
 
     public function __construct(DBConnector $db)
@@ -147,6 +148,13 @@ class SiteRepository
             $identifierRepo = new Identifiers\IdentifierRepository($db);
             $identifiers = $identifierRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($identifiers));
+        });
+
+        $site->lines = new Line\LineCollection();
+        $site->lines->setLazyLoader(function(LineCollection $collection) use ($site, $db) {
+            $lineRepo = new Line\LineRepository($db);
+            $lines = $lineRepo->getLinesForSite($site->id);
+            $collection->addLoadedItems(iterator_to_array($lines));
         });
 
         $userRepo = new UserRepository($this->db);
