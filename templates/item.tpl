@@ -384,6 +384,8 @@ a.hover:hover {
                     <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$creator->getLastName()}, {$creator->getInitials()}
                             {if $creator->getId() != $updater->getId()}{$and_label|default:"and"} {$updater->getLastName()}, {$updater->getInitials()}{/if},
                             {$title}.</em> <span class="underline">https://vici.org/vici/{$id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.<br>
+
+                    <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$id}/kml">KML</a><br>
                 </p>
             </div>
 

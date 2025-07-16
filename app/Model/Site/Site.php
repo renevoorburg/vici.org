@@ -10,6 +10,7 @@ use Vici\Model\Site\Period;
 use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Users\User;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
+use Vici\Model\Site\Line\LineCollection;
 
 class Site
 {
@@ -18,6 +19,7 @@ class Site
     public string $defaultSummary;
     public SiteType $type;
     public Point $representativeLocation;
+    public LineCollection $lines;
     public LocaleCollection $locales;
     public ImageCollection $images;
     public Toponym $toponym;

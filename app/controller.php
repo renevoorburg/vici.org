@@ -21,7 +21,14 @@ switch ($session->getRequestedAction()) {
         $action = fn() => (new Pages\HomePage($session))->display();
         break;
     case 'vici':
-        $action = fn() => (new Pages\ItemPage($session))->display();
+        switch ($session->getRequestedVariant()) {
+            case 'kml':
+                $action = fn() => (new API\KML($session))->get();
+                break;
+            default:
+                $action = fn() => (new Pages\ItemPage($session))->display();
+                break;
+        }
         break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
