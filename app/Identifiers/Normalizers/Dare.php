@@ -34,7 +34,7 @@ class Dare extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^dare(?: |:)(?:place|id)?=\s*([1-9][0-9]*)$/i', 'http://imperium.ahlfeldt.se/places/$1');
+        return array ('/^dare(?: |:)(?:place|id)?=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
     }
 
     protected function getUrlToIdPatternArray(): array {
@@ -42,7 +42,7 @@ class Dare extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getIdToUrlPatternArray(): array {
-        return array ('/^([1-9][0-9]*)$/i', 'http://imperium.ahlfeldt.se/places/$1');
+        return array ('/^([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
     }
 
 }

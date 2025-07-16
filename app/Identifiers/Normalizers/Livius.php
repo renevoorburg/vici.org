@@ -15,7 +15,7 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
 
     public function getNamespace(): string
     {
-        return 'https://livius.org/articles/';
+        return 'https://livius.org/';
     }
 
 
@@ -43,10 +43,10 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
     protected function getTagToUrlPatternArray() : array
     {
         return array (
-            array('/^livius:museum=([^\/]*)\/?$/i', 'https://livius.org/museum/$1'),
-            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2'),
-            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2/$3'),
-            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2/$3/$4')
+            array('/^livius:museum=([^\/]*)\/?$/i', $this->getNamespace() . 'museum/$1'),
+            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2'),
+            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3'),
+            array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3/$4')
         );
     }
 
@@ -61,10 +61,10 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
 
     protected function getIdToUrlPatternArray(): array {
         return array (
-            array('/^museum=([^\/]*)\/?$/i', 'https://livius.org/museum/$1'),
-            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2'),
-            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2/$3'),
-            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', 'https://livius.org/articles/$1/$2/$3/$4')
+            array('/^museum=([^\/]*)\/?$/i', $this->getNamespace() . 'museum/$1'),
+            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2'),
+            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3'),
+            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3/$4')
         );
     }
 

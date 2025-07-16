@@ -14,7 +14,7 @@ class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
 
     public function getNamespace(): string
     {
-        return 'https://wikidata.org/entity/';
+        return 'http://wikidata.org/entity/';
     }
 
     protected function getValidUrlPattern(): string {
@@ -36,7 +36,7 @@ class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^wikidata:?(?:entity)?=q([0-9]+)$/i', 'https://wikidata.org/entity/Q$1');
+        return array ('/^wikidata:?(?:entity)?=q([0-9]+)$/i', $this->getNamespace() . 'Q$1');
     }
 
     protected function getUrlToIdPatternArray(): array {
@@ -44,7 +44,7 @@ class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getIdToUrlPatternArray(): array {
-        return array ('/^Q([0-9]+)$/i', 'https://wikidata.org/entity/Q$1',);
+        return array ('/^Q([0-9]+)$/i', $this->getNamespace() . 'Q$1',);
     }
 
 }
