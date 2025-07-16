@@ -15,7 +15,7 @@ class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
 
     public function getNamespace(): string
     {
-        return 'http://imperium.ahlfeldt.se/places/';
+        return 'https://www.mithraeum.eu/';
     }
 
 
@@ -36,7 +36,7 @@ class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^mithraeum:(monument|person|book)\s*=\s*([0-9]+)$/i', 'https://www.mithraeum.eu/$1/$2');
+        return array ('/^mithraeum:(monument|person|book)\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1/$2');
     }
 
     protected function getUrlToIdPatternArray(): array
@@ -45,7 +45,7 @@ class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getIdToUrlPatternArray(): array {
-        return array ('/^(monument|person|book)\s*=\s*([0-9]+)$/i', 'https://www.mithraeum.eu/$1/$2');
+        return array ('/^(monument|person|book)\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1/$2');
     }
 
 }

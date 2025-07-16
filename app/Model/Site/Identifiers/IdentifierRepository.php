@@ -8,7 +8,6 @@ use Vici\Model\Site\Identifiers\Identifier;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
 
 use Vici\Identifiers\NormalizersIndex;
-use Vici\Identifiers\Normalizers\Livius;
 use Vici\Identifiers\ExternalIdentifiers;
 
 class IdentifierRepository
@@ -37,34 +36,37 @@ class IdentifierRepository
     {
         $identifiers = [];
         if ($row['pmeta_pleiades']) {
+            $normalizer = NormalizersIndex::getIndexedNormalizer('pleiades');
             $identifier = new Identifier();
-            $identifier->prefix = 'pleiades';
-            $identifier->namespace = 'https://pleiades.stoa.org/places/';
+            $identifier->prefix = $normalizer->getPrefix();
+            $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_pleiades'];
             $identifiers[] = $identifier;
         }
 
         if ($row['pmeta_livius']) {
-            $normalizer = new Livius();
+            $normalizer = NormalizersIndex::getIndexedNormalizer('livius');
             $identifier = new Identifier();
-            $identifier->prefix = 'livius';
-            $identifier->namespace = 'https://livius.org/articles/';
+            $identifier->prefix = $normalizer->getPrefix();
+            $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $normalizer->idToUrl($row['pmeta_livius']);
             $identifiers[] = $identifier;
         }
 
         if ($row['pmeta_romaq']) {
+            $normalizer = NormalizersIndex::getIndexedNormalizer('romaq');
             $identifier = new Identifier();
-            $identifier->prefix = 'romaq';
-            $identifier->namespace = 'https://www.romaq.org/the-project/aqueducts/';
+            $identifier->prefix = $normalizer->getPrefix();
+            $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_romaq'];
             $identifiers[] = $identifier;
         }
 
         if ($row['pmeta_dare']) {
+            $normalizer = NormalizersIndex::getIndexedNormalizer('dare');
             $identifier = new Identifier();
-            $identifier->prefix = 'dare';
-            $identifier->namespace = 'http://imperium.ahlfeldt.se/places/';
+            $identifier->prefix = $normalizer->getPrefix();
+            $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_dare'];
             $identifiers[] = $identifier;
         }
