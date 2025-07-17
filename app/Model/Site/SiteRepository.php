@@ -10,6 +10,7 @@ use Vici\Model\Users\User;
 use Vici\Model\Users\UserRepository;
 use Vici\Model\Site\Identifiers\Identifier;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
+use Vici\Model\Site\Line\LineCollection;
 
 class SiteRepository
 {
