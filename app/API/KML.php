@@ -74,9 +74,9 @@ class KML extends APICall
 
 
         $i = 1;
-        foreach ($site->lines as $index => $line) {
+        foreach ($site->lines as $line) {
             $placemark = $dom->createElement('Placemark');
-            $placemark->appendChild($dom->createElement('name', $name . ', line part ' . $index + 1));
+            $placemark->appendChild($dom->createElement('name', $name . ', line part ' . $i++));
 
             $descStr = "Line data from $url - ";
             // $descStr .= $kmlline->getLicense() . ', by ' . $kmlline->getAuthor();
@@ -86,7 +86,7 @@ class KML extends APICall
 
             $linestring = $dom->createElement('LineString');
             $linestring->appendChild($dom->createElement('tessellate', '1'));
-            $linestring->appendChild($dom->createElement('coordinates', $line->getCoordinatesAsKML()));
+            $linestring->appendChild($dom->createElement('coordinates', $this->coordinatesArrayToKML($line->coordinates)));
             $placemark->appendChild($linestring);
 
             $folder->appendChild($placemark);
@@ -95,12 +95,25 @@ class KML extends APICall
         // Output als string (je kunt dit als response teruggeven)
         echo $dom->saveXML();
 
+    }
 
-
-
-
-
-
+    /**
+     * Zet een array van [lat, lng] of [lng, lat] punten om naar een KML-coördinatenstring
+     * @param array $coordinates
+     * @return string
+     */
+    private function coordinatesArrayToKML(array $coordinates): string
+    {
+        $kml = '';
+        foreach ($coordinates as $point) {
+            // Neem aan: [lat, lng] of [lng, lat].
+            // In de oude Line::getCoordinatesAsKML werd $point[1],$point[0],0 gebruikt (dus lat, lng)
+            // KML verwacht: lng,lat,0
+            if (isset($point[1]) && isset($point[0])) {
+                $kml .= $point[1] . "," . $point[0] . ",0 ";
+            }
+        }
+        return trim($kml);
     }
 
 }
