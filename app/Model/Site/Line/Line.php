@@ -11,17 +11,5 @@ class Line
     public ?int $uploaderId = null;
     public ?int $licenseId = null;
     public array $coordinates = [];
-    private string $coordinatesAsKML = '';
-
-    public function getCoordinatesAsKML(): string
-    {
-        if (empty($this->coordinatesAsKML)) {  
-            foreach ($this->coordinates as $point) {
-                $this->coordinatesAsKML .= $point[1].",".$point[0].",0 ";
-            }
-        }
-        return $this->coordinatesAsKML;
-    }
-
 
 }
