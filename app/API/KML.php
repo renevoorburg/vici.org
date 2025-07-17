@@ -71,31 +71,29 @@ class KML extends APICall
         $folder->appendChild($placemark);
 
         // <Placemark> voor elke lijn
-        $kmlline = new LineData($id);
-        $kmlArr = $kmlline->getKML();
-        foreach ($kmlArr as $i => $line) {
-            $placemark = $dom->createElement('Placemark');
-            $placemark->appendChild($dom->createElement('name', $name . ', line part ' . ($i + 1)));
 
-            if ($kmlline->isFree()) {
-                $descStr = "Line data from $url - ";
-                $descStr .= $kmlline->getLicense() . ', by ' . $kmlline->getAuthor();
-                $descStr .= $kmlline->getAttribution() ? ' - ' . $kmlline->getAttribution() : '';
-            } else {
-                $descStr = 'Line data is not available under a free license. Included is a simplified representation.';
-            }
+
+        $i = 1;
+        foreach ($site->lines as $index => $line) {
+            $placemark = $dom->createElement('Placemark');
+            $placemark->appendChild($dom->createElement('name', $name . ', line part ' . $index + 1));
+
+            $descStr = "Line data from $url - ";
+            // $descStr .= $kmlline->getLicense() . ', by ' . $kmlline->getAuthor();
+            // $descStr .= $kmlline->getAttribution() ? ' - ' . $kmlline->getAttribution() : '';
+  
             $placemark->appendChild($dom->createElement('description', htmlspecialchars($descStr)));
 
             $linestring = $dom->createElement('LineString');
             $linestring->appendChild($dom->createElement('tessellate', '1'));
-            $linestring->appendChild($dom->createElement('coordinates', $line));
+            $linestring->appendChild($dom->createElement('coordinates', $line->getCoordinatesAsKML()));
             $placemark->appendChild($linestring);
 
             $folder->appendChild($placemark);
         }
 
         // Output als string (je kunt dit als response teruggeven)
-        $this->kmlString = $dom->saveXML();
+        echo $dom->saveXML();
 
 
 
