@@ -4,10 +4,15 @@ namespace Vici\Model\Site\Line;
 
 use Vici\Model\AbstractCollection;
 use Vici\Model\LazyLoadTrait;
+use Vici\Model\Users\User;
+use Vici\Model\License\License;
 
 class LineCollection extends AbstractCollection
 {
     use LazyLoadTrait;
+
+    public User $uploader;
+    public License $license;
 
     public function offsetGet($offset): ?Line
     {

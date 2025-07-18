@@ -68,7 +68,7 @@ class Session
     {
         if (isset($_SESSION['user_id'])) {
             $userRepository = new UserRepository($this->getDBConnector());
-            $this->user = $userRepository->getById($_SESSION['user_id']);
+            $this->user = $userRepository->findById($_SESSION['user_id']);
         }
     }
 

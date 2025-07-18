@@ -79,7 +79,7 @@ class KML extends APICall
             $placemark->appendChild($dom->createElement('name', $name . ', line part ' . $i++));
 
             $descStr = "Line data from $url - ";
-            // $descStr .= $kmlline->getLicense() . ', by ' . $kmlline->getAuthor();
+            $descStr .= $site->lines->license->name . ', by ' . $site->lines->uploader->getRealName();
             // $descStr .= $kmlline->getAttribution() ? ' - ' . $kmlline->getAttribution() : '';
   
             $placemark->appendChild($dom->createElement('description', htmlspecialchars($descStr)));

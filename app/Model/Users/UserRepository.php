@@ -13,7 +13,7 @@ class UserRepository
         $this->db = $db;
     }
 
-    public function getById(int $id): ?User
+    public function findById(int $id): ?User
     {
         $query = "SELECT * FROM accounts WHERE acc_id = :id";
         $stmt = $this->db->prepare($query);
@@ -39,7 +39,7 @@ class UserRepository
     public function authenticateUser(string $identity, string $password): ?User
     {
         $query = "SELECT * FROM accounts WHERE acc_name = :username OR acc_email = :email";
-        $stmt = $this->dbdb->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->execute([
             'username' => $identity,
             'email' => $identity
