@@ -1,4 +1,5 @@
 /public/vendor/
+/vendor/
 /public/smarty/cache/
 /public/smarty/templates_c/
 /.idea/
