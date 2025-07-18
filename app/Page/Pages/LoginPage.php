@@ -4,7 +4,7 @@ namespace Vici\Page\Pages;
 
 use Vici\Page\PageRenderer;
 use Vici\Session\Session;
-use Vici\Model\Users\UserRepository;
+use Vici\Model\User\UserRepository;
 use Vici\Security\Turnstile;
 
 class LoginPage extends PageRenderer

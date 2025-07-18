@@ -34,7 +34,7 @@ class KML extends APICall
     {
 
         $siteRepo = new SiteRepository($this->db);
-        $site = $siteRepo->getById($this->session->getRequestedItem());
+        $site = $siteRepo->findById($this->session->getRequestedItem());
 
 
         $id = $site->id;
