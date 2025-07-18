@@ -6,11 +6,12 @@ use PDO;
 use Vici\DB\DBConnector;
 use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Site\SiteCollection;
-use Vici\Model\Users\User;
-use Vici\Model\Users\UserRepository;
+use Vici\Model\User\User;
+use Vici\Model\User\UserRepository;
 use Vici\Model\License\LicenseRepository;
-use Vici\Model\Site\Identifiers\Identifier;
-use Vici\Model\Site\Identifiers\IdentifierCollection;
+use Vici\Model\Site\Identifier\IdentifierRepository;
+use Vici\Model\Site\Identifier\Identifier;
+use Vici\Model\Site\Identifier\IdentifierCollection;
 use Vici\Model\Site\Line\LineCollection;
 
 class SiteRepository
@@ -45,7 +46,7 @@ class SiteRepository
         $this->db = $db;
     }
 
-    public function getById(int $id): ?Site
+    public function findById(int $id): ?Site
     {
         $stmt = $this->db->prepare(
             self::BASE_SELECT . " WHERE p.pnt_id = :id"
@@ -145,9 +146,9 @@ class SiteRepository
             $collection->addLoadedItems(iterator_to_array($images));
         });
 
-        $site->identifiers = new Identifiers\IdentifierCollection();
+        $site->identifiers = new IdentifierCollection();
         $site->identifiers->setLazyLoader(function(IdentifierCollection $collection) use ($site, $db) {
-            $identifierRepo = new Identifiers\IdentifierRepository($db);
+            $identifierRepo = new IdentifierRepository($db);
             $identifiers = $identifierRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($identifiers));
         });
@@ -158,7 +159,7 @@ class SiteRepository
             $lines = $lineRepo->getLinesForSite($site->id);
             $collection->addLoadedItems(iterator_to_array($lines));
 
-            $userRepo = new UserRepository($db);
+            $userRepo = new \Vici\Model\User\UserRepository($db);
             $licenseRepo = new LicenseRepository($db);
             if (count($lines) > 0) {
                 $uploader = null;
@@ -175,7 +176,7 @@ class SiteRepository
             }
         });
 
-        $userRepo = new UserRepository($this->db);
+        $userRepo = new \Vici\Model\User\UserRepository($this->db);
         $site->creator = $userRepo->findById($row['creator']);
         $site->updater = $userRepo->findById($row['updater']);
         $site->createDate = $row['createDate'];

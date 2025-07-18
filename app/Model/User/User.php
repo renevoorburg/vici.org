@@ -1,6 +1,6 @@
 <?php
 
-namespace Vici\Model\Users;
+namespace Vici\Model\User;
 
 class User
 {

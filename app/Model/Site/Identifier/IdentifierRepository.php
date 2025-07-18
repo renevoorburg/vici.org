@@ -1,11 +1,11 @@
 <?php
 
-namespace Vici\Model\Site\Identifiers;
+namespace Vici\Model\Site\Identifier;
 
 use Vici\DB\DBConnector;
 use PDO;
-use Vici\Model\Site\Identifiers\Identifier;
-use Vici\Model\Site\Identifiers\IdentifierCollection;
+use Vici\Model\Site\Identifier\Identifier;
+use Vici\Model\Site\Identifier\IdentifierCollection;
 
 use Vici\Identifiers\NormalizersIndex;
 use Vici\Identifiers\ExternalIdentifiers;

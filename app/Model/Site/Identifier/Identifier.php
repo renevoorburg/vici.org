@@ -1,6 +1,6 @@
 <?php
 
-namespace Vici\Model\Site\Identifiers;
+namespace Vici\Model\Site\Identifier;
 
 class Identifier
 {

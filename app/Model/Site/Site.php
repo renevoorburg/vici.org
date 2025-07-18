@@ -8,8 +8,9 @@ use Vici\Model\Site\Point;
 use Vici\Model\Site\Toponym;
 use Vici\Model\Site\Period;
 use Vici\Model\Site\Image\ImageCollection;
-use Vici\Model\Users\User;
-use Vici\Model\Site\Identifiers\IdentifierCollection;
+use Vici\Model\User\User;
+use Vici\Model\Site\Identifier\Identifier;
+use Vici\Model\Site\Identifier\IdentifierCollection;
 use Vici\Model\Site\Line\LineCollection;
 
 class Site

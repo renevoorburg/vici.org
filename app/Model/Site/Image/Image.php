@@ -2,7 +2,7 @@
 
 namespace Vici\Model\Site\Image;
 
-use Vici\Model\Users\User;
+use Vici\Model\User\User;
 use Vici\Model\License\License;
 
 class Image

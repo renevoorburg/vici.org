@@ -4,7 +4,7 @@ namespace Vici\Model\Site\Line;
 
 use Vici\Model\AbstractCollection;
 use Vici\Model\LazyLoadTrait;
-use Vici\Model\Users\User;
+use Vici\Model\User\User;
 use Vici\Model\License\License;
 
 class LineCollection extends AbstractCollection

@@ -5,8 +5,8 @@ namespace Vici\Session;
 use Vici\Negotiator\LanguageNegotiator;
 use Vici\I18n\Translator;
 use Vici\DB\DBConnector;
-use Vici\Model\Users\User;
-use Vici\Model\Users\UserRepository;
+use Vici\Model\User\User;
+use Vici\Model\User\UserRepository;
 
 const VICIBASE = 'https://vici.org';
 

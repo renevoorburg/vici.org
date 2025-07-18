@@ -6,7 +6,7 @@ use Dotenv\Dotenv;
 use Vici\Session\Session;
 use Vici\Page\Pages;
 use Vici\API;
-use Vici\Model\Users\User;
+use Vici\Model\User\User;
 use Vici\Security\AccessControl;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
