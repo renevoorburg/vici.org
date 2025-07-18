@@ -8,6 +8,7 @@ use Vici\Model\Site\Image\ImageCollection;
 use Vici\Model\Site\SiteCollection;
 use Vici\Model\Users\User;
 use Vici\Model\Users\UserRepository;
+use Vici\Model\License\LicenseRepository;
 use Vici\Model\Site\Identifiers\Identifier;
 use Vici\Model\Site\Identifiers\IdentifierCollection;
 use Vici\Model\Site\Line\LineCollection;
@@ -156,11 +157,27 @@ class SiteRepository
             $lineRepo = new Line\LineRepository($db);
             $lines = $lineRepo->getLinesForSite($site->id);
             $collection->addLoadedItems(iterator_to_array($lines));
+
+            $userRepo = new UserRepository($db);
+            $licenseRepo = new LicenseRepository($db);
+            if (count($lines) > 0) {
+                $uploader = null;
+                $license = null;
+                foreach ($lines as $line) {
+                    if ($line->uploaderId !== null) {
+                        $uploader = $userRepo->findById($line->uploaderId);
+                        $license = $licenseRepo->findById($line->licenseId);
+                        break;
+                    }
+                }
+                $collection->uploader = $uploader;
+                $collection->license = $license;
+            }
         });
 
         $userRepo = new UserRepository($this->db);
-        $site->creator = $userRepo->getById($row['creator']);
-        $site->updater = $userRepo->getById($row['updater']);
+        $site->creator = $userRepo->findById($row['creator']);
+        $site->updater = $userRepo->findById($row['updater']);
         $site->createDate = $row['createDate'];
         $site->updateDate = $row['updateDate'];
         return $site;
