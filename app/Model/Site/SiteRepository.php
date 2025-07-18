@@ -5,14 +5,17 @@ namespace Vici\Model\Site;
 use PDO;
 use Vici\DB\DBConnector;
 use Vici\Model\Site\Image\ImageCollection;
+use Vici\Model\Site\Image\ImageRepository;
+use Vici\Model\Site\Identifier\IdentifierCollection;
+use Vici\Model\Site\Identifier\IdentifierRepository;
+use Vici\Model\Site\Line\LineCollection;
+use Vici\Model\Site\Line\LineRepository;
 use Vici\Model\Site\SiteCollection;
-use Vici\Model\User\User;
 use Vici\Model\User\UserRepository;
 use Vici\Model\License\LicenseRepository;
-use Vici\Model\Site\Identifier\IdentifierRepository;
-use Vici\Model\Site\Identifier\Identifier;
-use Vici\Model\Site\Identifier\IdentifierCollection;
-use Vici\Model\Site\Line\LineCollection;
+use Vici\Model\Site\SiteTypeRepository;
+use Vici\Model\Site\Locale\LocaleCollection;
+use Vici\Model\Site\Locale\LocaleRepository;
 
 class SiteRepository
 {
@@ -131,17 +134,17 @@ class SiteRepository
         $site->period->startQualifier = $row['startQualifier'];
         $site->period->endQualifier = $row['endQualifier'];
 
-        $localeRepo = new Locale\LocaleRepository($this->db);
+        $localeRepo = new LocaleRepository($this->db);
         $locales = $localeRepo->getBySiteId($id);
-        $site->locales = new Locale\LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary);
+        $site->locales = new LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary);
 
         $site->toponym = new Toponym($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
         $db = $this->db;
 
-        $site->images = new Image\ImageCollection();
+        $site->images = new ImageCollection();
         $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $db) {
-            $imageRepo = new Image\ImageRepository($db);
+            $imageRepo = new ImageRepository($db);
             $images = $imageRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($images));
         });
@@ -153,13 +156,13 @@ class SiteRepository
             $collection->addLoadedItems(iterator_to_array($identifiers));
         });
 
-        $site->lines = new Line\LineCollection();
+        $site->lines = new LineCollection();
         $site->lines->setLazyLoader(function(LineCollection $collection) use ($site, $db) {
-            $lineRepo = new Line\LineRepository($db);
+            $lineRepo = new LineRepository($db);
             $lines = $lineRepo->getLinesForSite($site->id);
             $collection->addLoadedItems(iterator_to_array($lines));
 
-            $userRepo = new \Vici\Model\User\UserRepository($db);
+            $userRepo = new UserRepository($db);
             $licenseRepo = new LicenseRepository($db);
             if (count($lines) > 0) {
                 $uploader = null;
@@ -176,7 +179,7 @@ class SiteRepository
             }
         });
 
-        $userRepo = new \Vici\Model\User\UserRepository($this->db);
+        $userRepo = new UserRepository($this->db);
         $site->creator = $userRepo->findById($row['creator']);
         $site->updater = $userRepo->findById($row['updater']);
         $site->createDate = $row['createDate'];
