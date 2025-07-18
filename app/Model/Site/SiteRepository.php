@@ -67,7 +67,7 @@ class SiteRepository
         return $this->mapRowToSite($row, $id);
     }
 
-    public function getNearbySites(float $lat, float $lng, int $number = 5): SiteCollection
+    public function findNearbySites(float $lat, float $lng, int $number = 5): SiteCollection
     {
         $number = (int) $number;
         $query = self::BASE_SELECT . "
@@ -84,7 +84,7 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
-    public function getRelevantMuseums(float $lat, float $lng): SiteCollection
+    public function findRelevantMuseums(float $lat, float $lng): SiteCollection
     {
         $stmt = $this->db->prepare(
             self::BASE_SELECT . "

@@ -22,8 +22,8 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->findById($session->getRequestedItem());
 
-        $nearbySites = $siteRepo->getNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
-        $relevantMuseums = $siteRepo->getRelevantMuseums($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+        $nearbySites = $siteRepo->findNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+        $relevantMuseums = $siteRepo->findRelevantMuseums($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
         $preferredLocaleLanguage = $site->locales->preferredLocaleLanguage($session->getLanguage());
 
