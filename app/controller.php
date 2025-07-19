@@ -40,6 +40,7 @@ switch ($session->getRequestedAction()) {
                 $action = fn() => (new API\KML($session))->get();
                 break;
             default:
+                $accessControl->setIsRateLimited(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
                 break;
         }
@@ -49,21 +50,16 @@ switch ($session->getRequestedAction()) {
         $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':
-        $accessControl->setRequiresToken(true);
+        $accessControl->setRequiresAuthentication(true);
         $action = fn() => (new API\Highlights($session))->get();
         break;
     case 'login':
+        $accessControl->setIsPossibleBot(true);
         $action = fn() => (new Pages\LoginPage($session))->display();
         break;
     case 'logout':
         $session->clearUser();
         $action = fn() => (new Pages\HomePage($session))->display();
-        break;
-    case 'new':
-        $action = fn() => (new Pages\HomePage($session))->display();
-        break;
-    case 'texts':
-        echo $session->translator->getTranslationsJson(null, 'markerdef.');
         break;
     default:
         http_response_code(404);

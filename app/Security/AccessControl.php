@@ -8,6 +8,8 @@ class AccessControl
 {
 
     public const RATE_LIMIT_SECONDS = 60;
+    public const MAX_REQUESTS = 8;
+    public const MAX_BOTLIKE_REQUESTS = 3;
     public const BLOCK_TIME_SECONDS = 900;
 
     private string $ip;
@@ -21,6 +23,7 @@ class AccessControl
     private bool $is_trap_link = false;
     private bool $is_whitelist_link = false;
     private bool $is_rate_limited = false;
+    private bool $is_possible_bot = false;
 
 
     public function __construct(string $ip, string $requested_action, bool $is_logged_in)
@@ -60,28 +63,13 @@ class AccessControl
         $this->is_rate_limited = $value;
     }
 
-
-    private function hasBlockedIP(): bool
+    public function setIsPossibleBot(bool $value): void
     {
-        return apcu_exists("ip_blocked_{$this->ip}");
+        $this->is_possible_bot = $value;
     }
-
-    private function blockIP(): void
-    {
-        apcu_store("ip_blocked_{$this->ip}", true, self::BLOCK_TIME_SECONDS);
-    }
-
-    private function unblockIP(): void
-    {
-        if (apcu_exists("ip_blocked_{$this->ip}")) {
-            apcu_delete("ip_blocked_{$this->ip}");
-        }
-    }
-
 
     public function enforceAndRun(callable $requested_action): void
     {
-
         if ($this->is_whitelist_link) {
             $this->unblockIP();
         }
@@ -101,52 +89,64 @@ class AccessControl
             self::denyAccess();
         }
 
-        // if ($this->is_trap_link) {
-        //     if (!$this->isCaptchaPassed()) {
-        //         header("Location: /captcha-check");
-        //         exit;
-        //     } else {
-        //         apcu_store("ip_blocked_$ip", true, 900); 
-        //         http_response_code(403);
-        //         echo "Je bent tijdelijk geblokkeerd vanwege verdacht gedrag.";
-        //         exit;
-        //     }
-        // }
+        if ($this->is_rate_limited) {
+            if (!$this->is_logged_in && !$this->hasValidToken()) {
+                $key = "anon_ip_" . $this->requested_action . "_" . $this->ip;
+                $hits = apcu_fetch($key) ?: 0;
+                
+                if ($hits > self::MAX_REQUESTS) {
+                    self::denyAccessTemporarily();
+                } else {
+                    $hits++;
+                    apcu_store($key, $hits, self::RATE_LIMIT_SECONDS);
+                }
+            }
+        }
 
-        // if ($this->isBlocked()) {
-        //     http_response_code(403);
-        //     echo "Je bent tijdelijk geblokkeerd vanwege verdacht gedrag.";
-        //     exit;
-        // }
+        if ($this->is_possible_bot) {
+            if ($this->is_logged_in && !$this->hasValidToken()) {
+                $key = "botlike_ip_" . $this->ip;
+                $hits = apcu_fetch($key) ?: 0;
+                
+                if ($hits > self::MAX_BOTLIKE_REQUESTS) {
+                    self::denyAccessTemporarily();
+                } else {
+                    $hits++;
+                    apcu_store($key, $hits, self::BLOCK_TIME_SECONDS);
+                }
+            }
+        }
 
-        // if (!$this->is_logged_in && $this->requires_login) {
-        //     if ($this->tooManyLoginPromptsWithoutLogin()) {
-        //         header("Location: /captcha-check");
-        //         exit;
-        //     }
-        //     $this->logLoginPrompt();
-        //     header("Location: /login");
-        //     exit;
-        // }
-
-        // if (!$this->is_logged_in && $this->anonymous_access_suspicious && $this->isAnonymousAccessSuspicious()) {
-        //     header("Location: /captcha-check");
-        //     exit;
-        // }
-
-        // if ($this->requires_token && !$this->hasValidToken()) {
-        //     http_response_code(403);
-        //     echo "Geen geldige toegangstoken.";
-        //     exit;
-        // }
-
-        // Alles oké, voer de actie uit
         $requested_action();
     }
 
-    private function isBlocked(): bool
+
+    private function isBot() : bool
+    {
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
+            return strpos($userAgent, 'bot') !== false || 
+                strpos($userAgent, 'crawler') !== false || 
+                strpos($userAgent, 'spider') !== false;
+        }
+        return false;
+    }
+
+    private function hasBlockedIP(): bool
     {
         return apcu_exists("ip_blocked_{$this->ip}");
+    }
+
+    private function blockIP(): void
+    {
+        apcu_store("ip_blocked_{$this->ip}", true, self::BLOCK_TIME_SECONDS);
+    }
+
+    private function unblockIP(): void
+    {
+        if (apcu_exists("ip_blocked_{$this->ip}")) {
+            apcu_delete("ip_blocked_{$this->ip}");
+        }
     }
 
     private function hasValidToken(): bool
@@ -188,51 +188,6 @@ class AccessControl
         return $token_match || $useragent_match || $ext_secret_match;
     }
 
-    private function isSuspiciousAnonymousUsage(): bool
-    {
-        $key = "fragile_hit_{$this->requested_action}_{$this->ip}";
-        $hits = apcu_fetch($key) ?: [];
-        $now = time();
-        $hits = array_filter($hits, fn($ts) => $ts > $now - 600);
-        $hits[] = $now;
-        apcu_store($key, $hits, 660);
-
-        return count($hits) > 2;
-    }
-
-    private function tooManyLoginPromptsWithoutLogin(): bool
-    {
-        $key = "login_prompts_{$this->ip}";
-        $hits = apcu_fetch($key) ?: [];
-        $now = time();
-        $hits = array_filter($hits, fn($ts) => $ts > $now - 900);
-        $hits[] = $now;
-        apcu_store($key, $hits, 930);
-
-        return count($hits) > 2;
-    }
-
-    private function logLoginPrompt(): void
-    {
-        $key = "login_prompts_{$this->ip}";
-        $hits = apcu_fetch($key) ?: [];
-        $now = time();
-        $hits[] = $now;
-        apcu_store($key, $hits, 930);
-    }
-
-    private function isBot() : bool
-    {
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
-            return strpos($userAgent, 'bot') !== false || 
-                strpos($userAgent, 'crawler') !== false || 
-                strpos($userAgent, 'spider') !== false;
-        }
-        return false;
-    }
-
-
     public function denyAccess(): void 
     {
         header('HTTP/1.1 403 Forbidden');
@@ -241,7 +196,6 @@ class AccessControl
         exit;
     }
     
-
     public static function enforceUserLogin() : void { 
         $uri = $_SERVER['REQUEST_URI'];
 
