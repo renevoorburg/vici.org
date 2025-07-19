@@ -20,9 +20,23 @@ switch ($session->getRequestedAction()) {
     case '':
         $action = fn() => (new Pages\HomePage($session))->display();
         break;
+    case 'data-access':
+        $accessControl->setIsTrapLink(true);
+        $action = fn() => null;
+        break;
+    case 'favicon.ico':
+        $accessControl->setIsWhitelistLink(true);
+        $action = function () {
+            $path = __DIR__ . '/assets/favicon.ico';
+            header('Content-Type: image/x-icon');
+            header('Content-Length: ' . filesize($path));
+            readfile($path);
+        };
+        break;
     case 'vici':
         switch ($session->getRequestedVariant()) {
             case 'kml':
+                $accessControl->setRequiresAuthentication(true);
                 $action = fn() => (new API\KML($session))->get();
                 break;
             default:
@@ -31,11 +45,11 @@ switch ($session->getRequestedAction()) {
         }
         break;
     case 'geojson.php':
-        $accessControl->setRequiresToken(true);
+        $accessControl->setRequiresAuthentication(true);
         $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':
-        $accessControl->setRequiresToken(false);
+        $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
         break;
     case 'login':
@@ -45,10 +59,6 @@ switch ($session->getRequestedAction()) {
         $session->clearUser();
         $action = fn() => (new Pages\HomePage($session))->display();
         break;
-    case 'data-access':
-        $accessControl->setIsTrapLink(true);
-        $action = fn() => (new Pages\HomePage($session))->display();
-        break;  
     case 'new':
         $action = fn() => (new Pages\HomePage($session))->display();
         break;
@@ -56,9 +66,7 @@ switch ($session->getRequestedAction()) {
         echo $session->translator->getTranslationsJson(null, 'markerdef.');
         break;
     default:
-        echo "Hello World";
-        echo "Language: " . $session->getLanguage();
-        echo "Action: " . $session->getRequestedAction();
+        http_response_code(404);
         break;
 }
 
