@@ -255,6 +255,26 @@ a.hover:hover {
     text-decoration: underline;
 }
 
+.image-column {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5em;
+}
+
+figure {
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    max-width: 100%;
+}
+
 @media (max-width: 1600px) {
     .sitelist-container-flex {
         flex-direction: column;
@@ -263,22 +283,25 @@ a.hover:hover {
     .sitelist-container {
         gap: 1rem;
     }
+
+    .image-column {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 }
 
 
-
 @media (min-width: 768px) {
-    /* .maincontent {
-        width: 60%;    
-
-    }
-    .imageColumn {
-        width: 40%;
-    } */
 
     main.item {
         grid-template-columns: 2fr 1fr;
         align-items: start;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .image-column {
+        grid-template-columns: 1fr 1fr;
     }
 }
 
