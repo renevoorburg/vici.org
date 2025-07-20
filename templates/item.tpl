@@ -284,25 +284,42 @@ figure img {
         gap: 1rem;
     }
 
-    .image-column {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
 }
 
 
 @media (min-width: 768px) {
 
+    {if $images->count() > 0}
     main.item {
         grid-template-columns: 2fr 1fr;
         align-items: start;
     }
+    {/if}
 }
 
-
 @media (min-width: 1024px) {
-    .image-column {
+    {if $images->count() > 2}
+        main.item {
+            grid-template-columns: 3fr 2fr;
+            align-items: start;
+        }
+        .image-column {
+            grid-template-columns: 1fr 1fr;
+        }
+    {/if}
+}
+
+@media (min-width: 1800px) {
+    {if $images->count() > 3}
+
+    main.item {
         grid-template-columns: 1fr 1fr;
+        align-items: start;
     }
+    .image-column {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    {/if}
 }
 
 </style>
@@ -443,11 +460,13 @@ figure img {
 
         </div> 
 
-        <div class="image-column">
-            {foreach from=$images item=image}
-                <figure><img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}" alt="{$image->title} {$image->description}" title="{$image->title}" data-pswp-uid="{$image->id}"></figure>
-            {/foreach}
-        </div> 
+        {if $images->count() > 0}
+            <div class="image-column">
+                {foreach from=$images item=image}
+                    <figure><img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}" alt="{$image->title} {$image->description}" title="{$image->title}" data-pswp-uid="{$image->id}"></figure>
+                {/foreach}
+            </div> 
+        {/if}
 
     </main>
 {/block}
