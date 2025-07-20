@@ -336,6 +336,18 @@ figure img {
     <meta name="citation_access_date" content="{$smarty.now|date_format:"%Y-%m-%d"}">
 {/block}
 
+{block name=headscripts}
+    <link rel="stylesheet" href="/js/photoswipe/dist/photoswipe.css">
+    <script type="module">
+    import PhotoSwipeLightbox from '/js/photoswipe/dist/photoswipe-lightbox.esm.js';
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: '#my-gallery',
+      children: 'a',
+      pswpModule: () => import('/js/photoswipe/dist/photoswipe.esm.js')
+    });
+    lightbox.init();
+    </script>
+{/block}
 
 {block name=main}
     <main class="item">
@@ -444,11 +456,21 @@ figure img {
         </div> 
 
         {if $images->count() > 0}
-            <div class="image-column">
+            <div class="image-column" id="my-gallery">
                 {foreach from=$images item=image}
-                    <figure><img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}" alt="{$image->title} {$image->description}" title="{$image->title}" data-pswp-uid="{$image->id}"></figure>
+                    <a href="//images.vici.org/auto{$image->filepath}"
+                    data-pswp-width="{$image->width|default:1200}"
+                    data-pswp-height="{$image->height|default:900}"
+                    target="_blank"
+                    title="{$image->title}">
+                        <figure>
+                            <img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}"
+                                alt="{$image->title} {$image->description}"
+                                title="{$image->title}" data-pswp-uid="{$image->id}">
+                        </figure>
+                    </a>
                 {/foreach}
-            </div> 
+            </div>
         {/if}
 
     </main>
