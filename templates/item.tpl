@@ -8,16 +8,16 @@
   top: -9999px;
 }
 main.item {
-      display: flex;
-      flex: none;
-      width: 100%;
-
-.maincontent {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+/* .maincontent {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto; 
     width: 100%;  
-}
+} */
 
 .maincontent > * + * {
     margin-top: 1rem;
@@ -39,7 +39,6 @@ main.item {
     justify-content: space-between;
     align-items: stretch;
     gap: 0.5rem;
-    /* color: white; */
 }
 
 .meta-left {
@@ -230,6 +229,31 @@ a.hover:hover {
     text-decoration: underline;
 }
 
+.identifier-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.identifier-list li {
+    background: #f2f2f2;
+    border-radius: 0.5em;
+    padding: 0.1em 0.5em;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+.identifier-list li a {
+    color: #333;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.8em;
+}
+.identifier-list li a:hover {
+    text-decoration: underline;
+}
 
 @media (max-width: 1600px) {
     .sitelist-container-flex {
@@ -244,12 +268,17 @@ a.hover:hover {
 
 
 @media (min-width: 768px) {
-    .maincontent {
-        width: 70%;    
+    /* .maincontent {
+        width: 60%;    
 
     }
     .imageColumn {
-        width: 30%;
+        width: 40%;
+    } */
+
+    main.item {
+        grid-template-columns: 2fr 1fr;
+        align-items: start;
     }
 }
 
@@ -308,7 +337,7 @@ a.hover:hover {
                         {if $identifiers->count() > 0}
                             <div>
                                 <h3>{$identifier_metadata|default:"Identifiers"}</h3>
-                                <ul>
+                                <ul class="identifier-list">
                                 {foreach $identifiers as $id}
                                 <li><a href="{$id->uri}" class="hover">{$id->getQname()}</a></li>
                                 {/foreach}
@@ -391,13 +420,10 @@ a.hover:hover {
 
         </div> 
 
-        <div class="highlights-column">
-            <div class="highlights-scroll">
+        <div class="image-column">
             {foreach from=$images item=image}
                 <figure><img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}" alt="{$image->title} {$image->description}" title="{$image->title}" data-pswp-uid="{$image->id}"></figure>
             {/foreach}
-            </div>
-    
         </div> 
 
     </main>
