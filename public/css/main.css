@@ -318,7 +318,7 @@ strong {
 footer {
     font-size: 0.875rem;
     color: #718096;
-    /* max-width: 768px;  */
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 0.5rem;
