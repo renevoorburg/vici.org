@@ -441,23 +441,6 @@ figure img {
                 </div>
             </div> 
 
-            <div class="attributions">
-               <h2>{$use_and_reuse_label|default:"Use and reuse"}</h2>
-                <p>
-                    <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} {$creator->getRealName()} ({$createDate|date_format:"%Y-%m-%d"})
-                    {if $creator->getId() != $updater->getId()}, {$updated_label|default:"last updated by"} {$updater->getRealName()} ({$updateDate|date_format:"%Y-%m-%d"}){/if},
-                    {$with_others_label|default:"with possible contributions by others"}.
-                    <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>, metadata <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0</a>.<br>
-                    <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$id}">https://vici.org/vici/{$id}</a><br>
-
-                    <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$id}/kml">KML</a><br>
-
-                    <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$creator->getLastName()}, {$creator->getInitials()}
-                            {if $creator->getId() != $updater->getId()}{$and_label|default:"and"} {$updater->getLastName()}, {$updater->getInitials()}{/if},
-                            {$title}.</em> <span class="underline">https://vici.org/vici/{$id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
-                </p>
-            </div>
-
         </div> 
 
         {if $images->count() > 0}
@@ -469,6 +452,25 @@ figure img {
         {/if}
 
     </main>
+
+
+    <div class="attributions">
+        <h2>{$use_and_reuse_label|default:"Use and reuse"}</h2>
+        <p>
+            <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} {$creator->getRealName()} ({$createDate|date_format:"%Y-%m-%d"})
+            {if $creator->getId() != $updater->getId()}, {$updated_label|default:"last updated by"} {$updater->getRealName()} ({$updateDate|date_format:"%Y-%m-%d"}){/if},
+            {$with_others_label|default:"with possible contributions by others"}.
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>, metadata <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0</a>.<br>
+            <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$id}">https://vici.org/vici/{$id}</a><br>
+
+            <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$id}/kml">KML</a><br>
+
+            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$creator->getLastName()}, {$creator->getInitials()}
+                    {if $creator->getId() != $updater->getId()}{$and_label|default:"and"} {$updater->getLastName()}, {$updater->getInitials()}{/if},
+                    {$title}.</em> <span class="underline">https://vici.org/vici/{$id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
+        </p>
+    </div>
+
 {/block}
 
 {block name=footerscripts}
