@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="/js/ol/v4.6.5/css/ol.css">
     <script src="/js/ol/v4.6.5/ol.js"></script>
     <script src="/js/vici.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
-
-    {block name=metadata}{/block}
+    {block name=headscripts}{/block}
 </head>
 
 <body>
