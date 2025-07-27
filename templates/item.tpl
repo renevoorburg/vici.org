@@ -265,6 +265,7 @@ figure {
     margin: 0;
     width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 figure img {
@@ -273,6 +274,18 @@ figure img {
     display: block;
     object-fit: contain;
     max-width: 100%;
+}
+
+#my-gallery a img {
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.2s;
+    cursor: pointer;
+}
+
+#my-gallery a:hover img,
+#my-gallery a:focus img {
+    transform: scale(1.1); 
+    /* box-shadow: 0 2px 12px rgba(0,0,0,0.10);  */
+    z-index: 2;
 }
 
 @media (max-width: 1600px) {
