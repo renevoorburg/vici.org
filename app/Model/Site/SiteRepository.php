@@ -126,7 +126,7 @@ class SiteRepository
         $site->representativeLocation = new Point();
         $site->representativeLocation->latitude = (float)$row['pnt_lat'];
         $site->representativeLocation->longitude = (float)$row['pnt_lng'];
-        $site->representativeLocation->qualifier = $row['locationAccuracy'];
+        $site->representativeLocation->qualifier = $row['locationAccuracy'] ?? '';  # 'fixes' some rare ? data errors
 
         $site->period = new Period();
         $site->period->startYear = $row['startYear'];

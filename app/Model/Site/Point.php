@@ -6,5 +6,5 @@ class Point
 {
     public float $latitude;
     public float $longitude;
-    public string $qualifier; // bv. 'exact', 'approximate', 'uncertain'
+    public string $qualifier; 
 }

@@ -6,14 +6,20 @@ use Vici\DB\DBConnector;
 use PDO;
 use Vici\Model\Site\Image\Image;
 use Vici\Model\Site\Image\ImageCollection;
+use Vici\Model\User\UserRepository;
+use Vici\Model\License\LicenseRepository;
 
 class ImageRepository
 {
     private DBConnector $db;
+    private UserRepository $userRepo;
+    private LicenseRepository $licenseRepo;
 
     public function __construct(DBConnector $db)
     {
         $this->db = $db;
+        $this->userRepo = new UserRepository($db);
+        $this->licenseRepo = new LicenseRepository($db);
     }
 
     public function findById(int $id, bool $isPublished = true ): ?Image
@@ -72,8 +78,8 @@ class ImageRepository
         $image->height = (int)$row['imgd_height'];
 
         $image->data = $row['imgd_data'];
-        // $image->license = ... // moet apart worden opgehaald of geconstrueerd
-        // $image->uploader = ... // moet apart worden opgehaald
+        $image->license = $this->licenseRepo->findById((int)$row['imgd_license']);
+        $image->uploader = $this->userRepo->findById((int)$row['imgd_uploader']);
         return $image;
     }
 }
