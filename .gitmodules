@@ -1,0 +1,6 @@
+[submodule "public/js/photoswipe-dynamic-caption-plugin"]
+	path = public/js/photoswipe-dynamic-caption-plugin
+	url = https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin.git
+[submodule "public/js/photoswipe"]
+	path = public/js/photoswipe
+	url = https://github.com/dimsemenov/photoswipe.git
