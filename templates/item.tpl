@@ -12,13 +12,6 @@ main.item {
     grid-template-columns: 1fr;
     gap: 1rem;
 }
-/* .maincontent {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto; 
-    width: 100%;  
-} */
-
 .maincontent > * + * {
     margin-top: 1rem;
 }
@@ -142,6 +135,7 @@ article.disabled {
     font-weight: 600;
     text-decoration: none;
 }
+.pswp__dynamic-caption a:hover,
 .sitelist a:hover {
     text-decoration: underline;
 }
@@ -278,7 +272,7 @@ figure img {
 
 #my-gallery a img {
     transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.2s;
-    cursor: pointer;
+    cursor: zoom-in;
 }
 
 #my-gallery a:hover img,
@@ -352,7 +346,6 @@ figure img {
 {block name=headscripts}
     <link rel="stylesheet" href="/js/photoswipe/dist/photoswipe.css">
     <link rel="stylesheet" href="/js/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css">
-    {literal}
     <script type="module">
     import PhotoSwipeLightbox from '/js/photoswipe/dist/photoswipe-lightbox.esm.js';
     import PhotoSwipeDynamicCaption from '/js/photoswipe-dynamic-caption-plugin/dist/photoswipe-dynamic-caption-plugin.esm.min.js';
@@ -368,13 +361,15 @@ figure img {
         type: 'auto',
         captionContent: (slide) => {
             const el = slide.data.element.querySelector('img')
-            return el.getAttribute('alt') + "\n" + el.getAttribute('data-caption-creator') + "\n" +  el.getAttribute('data-caption-license') + "\n" + el.getAttribute('data-caption-link');
+            let html = el.getAttribute('alt') + '<br>'
+            html += el.getAttribute('data-caption-creator') + ', ' + el.getAttribute('data-caption-license') + '<br>'
+            html += '[ <a href="' + el.getAttribute('data-caption-link') + '">{$more_info_label|default:"more info"}</a> ]'
+            return html;
         }
     });
 
     lightbox.init();
     </script>
-    {/literal}
 {/block}
 
 {block name=main}
@@ -493,7 +488,7 @@ figure img {
                         title="{$image->title}">
                         <figure>
                             <img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}"
-                                alt="{$image->title} {$image->title}"
+                                alt="{$image->title}"
                                 data-caption-link="https://vici.org/image/{$image->id}"
                                 data-caption-license="{$image->license->shortName}"
                                 data-caption-creator="{if $image->isOwnWork} {$image->uploader->getRealName()}{else} {$image->creator}{/if }"

@@ -21,10 +21,9 @@ class UserRepository
         $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$userData) {
-            return null; // Gebruiker niet gevonden
+            return null;
         }
         
-        // Maak User object
         $user = new User(
             $userData['acc_id'],
             $userData['acc_name'],
@@ -48,10 +47,9 @@ class UserRepository
         $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$userData) {
-            return null; // Gebruiker niet gevonden
+            return null;
         }
         
-        // Maak User object
         $user = new User(
             $userData['acc_id'],
             $userData['acc_name'],
@@ -60,11 +58,10 @@ class UserRepository
             $userData['acc_passwd']
         );
         
-        // Controleer wachtwoord
         if ($user->verifyPassword($password)) {
             return $user;
         }
         
-        return null; // Wachtwoord onjuist
+        return null;
     }
 }

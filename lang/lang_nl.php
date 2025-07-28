@@ -113,5 +113,6 @@ return [
     "and" => "en",
     "accessed" => "opgevraagd op",
     "not yet provided" => "niet nog ingevoerd",
+    "more info" => "meer informatie",
 
 ];
