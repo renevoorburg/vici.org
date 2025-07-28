@@ -43,7 +43,7 @@ class LicenseRepository
         $license->id = (int)$row['license_id'];
         $license->name = $row['license_short'];
         $license->shortName = $row['license_abbr'];
-        $license->uri = $row['license_uri'];
+        $license->uri = $row['license_url'];
         $license->isUserSelectable = (bool)$row['license_uploadable'];
         return $license;
     }

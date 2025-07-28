@@ -1,6 +1,6 @@
 {extends file="base.tpl"}
 {block name=stylesheets}
-    <style>
+<style>
 
 .access-link {
   position: absolute;
@@ -120,36 +120,6 @@ article.disabled {
     justify-content: flex-start;
 }
 
-.sitelist ul {
-    list-style: none;
-    margin-left: 0;
-    margin-top: 0.5rem;
-    padding-left: 0;
-}
-.sitelist li {
-    margin-bottom: 0.5rem;
-}
-
-.sitelist a {
-    color: #1e3a8a;
-    font-weight: 600;
-    text-decoration: none;
-}
-.pswp__dynamic-caption a:hover,
-.sitelist a:hover {
-    text-decoration: underline;
-}
-
-.marker-row {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 0.5em;
-}
-.marker-text {
-    display: inline-block;
-    vertical-align: top;
-}
-
 .sitelist-container-flex {
     display: flex;
     flex-direction: row;
@@ -164,31 +134,7 @@ article.disabled {
     margin: 0;
     gap: 0;
 }
-.sitelist {
-    flex: 1 1 0;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    background: none;
-    box-shadow: none;
-    border-radius: 0;
-}
-.marker-row {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 0.5em;
-}
-.marker-icon {
-    display: inline-block;
 
-}
-.marker-text {
-    flex: 1 1 0;
-    min-width: 0;
-    display: block;
-    word-break: break-word;
-}
 .attributions {
     background-color: #f8fafc;
     border-radius: 0.5rem;
@@ -466,7 +412,7 @@ figure img {
                                 alt="{$image->title}"
                                 data-caption-link="/image/{$image->id}"
                                 data-caption-license="{$image->license->shortName}"
-                                data-caption-creator="{if $image->isOwnWork} {$image->uploader->getRealName()}{else} {$image->creator}{/if }"
+                                data-caption-creator="{$image->getCreator()}"
                                 >
                         </figure>
                     </a>
