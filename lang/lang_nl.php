@@ -115,4 +115,6 @@ return [
     "not yet provided" => "niet nog ingevoerd",
     "more info" => "meer informatie",
 
+    // defaults from image.tpl:
+    "Used in" => "Wordt getoond bij",
 ];

@@ -25,4 +25,9 @@ class Image
     public string $md5sum;
     public SiteCollection $sites;
 
+    public function getCreator(): string
+    {
+        return $this->isOwnWork ? $this->uploader->getRealName() : $this->creator;
+    }
+
 }
