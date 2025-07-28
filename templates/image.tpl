@@ -31,5 +31,17 @@
     {$image->height}
     <br>
     {$image->md5sum}
+
+
+    {if $image->sites->count() > 0}
+        <br>
+        <br>
+        <h2>Sites</h2>
+        <ul>
+            {foreach $image->sites as $site}
+                <li>{$site->defaultTitle}</li>
+            {/foreach}
+        </ul>
+    {/if}
     </main>
 {/block}
