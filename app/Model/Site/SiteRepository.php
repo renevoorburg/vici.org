@@ -43,10 +43,24 @@ class SiteRepository
         ";
 
     private DBConnector $db;
+    private SiteTypeRepository $typeRepo;
+    private LocaleRepository $localeRepo;
+    private UserRepository $userRepo;
+    private LicenseRepository $licenseRepo;
+    private IdentifierRepository $identifierRepo;
+    private LineRepository $lineRepo;
+    private ?ImageRepository $imageRepo = null;
 
     public function __construct(DBConnector $db)
     {
         $this->db = $db;
+        $this->typeRepo = new SiteTypeRepository($this->db);
+        $this->localeRepo = new LocaleRepository($this->db);
+        $this->userRepo = new UserRepository($this->db);
+        $this->licenseRepo = new LicenseRepository($this->db);
+        $this->identifierRepo = new IdentifierRepository($this->db);
+        $this->lineRepo = new LineRepository($this->db);
+        /* imageRepo is not yet set to prevent circular dependency with SiteRepository */
     }
 
     public function findById(int $id): ?Site
@@ -110,6 +124,20 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
+    public function findByImage(int $imageId, bool $isPublished = true): SiteCollection
+    {
+        $stmt = $this->db->prepare(
+            self::BASE_SELECT . " 
+            WHERE pnt_id IN (SELECT pil_pnt FROM pnt_img_lnk WHERE pil_img = :imageId)"
+        );
+        $stmt->execute(['imageId' => $imageId]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sites = [];
+        foreach ($result as $row) {
+            $sites[] = $this->mapRowToSite($row, $row['pnt_id']);
+        }
+        return new SiteCollection($sites);
+    }
 
     private function mapRowToSite(array $row, int $id): Site
     {
@@ -120,8 +148,7 @@ class SiteRepository
         $site->isVisible = (bool)$row['isVisible'];
         $site->isPublished = (bool)$row['isPublished'];
 
-        $typeRepo = new SiteTypeRepository($this->db);
-        $site->type = $typeRepo->getById((int)$row['pnt_kind']);
+        $site->type = $this->typeRepo->getById((int)$row['pnt_kind']);
 
         $site->representativeLocation = new Point();
         $site->representativeLocation->latitude = (float)$row['pnt_lat'];
@@ -134,36 +161,34 @@ class SiteRepository
         $site->period->startQualifier = $row['startQualifier'];
         $site->period->endQualifier = $row['endQualifier'];
 
-        $localeRepo = new LocaleRepository($this->db);
-        $locales = $localeRepo->getBySiteId($id);
+        $locales = $this->localeRepo->getBySiteId($id);
         $site->locales = new LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary);
 
         $site->toponym = new Toponym($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 
-        $db = $this->db;
+        $identifierRepo = $this->identifierRepo;
+        $lineRepo = $this->lineRepo;
+        $userRepo = $this->userRepo;
+        $licenseRepo = $this->licenseRepo;
+        $imageRepo = $this->getImageRepo();
 
         $site->images = new ImageCollection();
-        $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $db) {
-            $imageRepo = new ImageRepository($db);
+        $site->images->setLazyLoader(function(ImageCollection $collection) use ($site, $imageRepo) {
             $images = $imageRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($images));
         });
 
         $site->identifiers = new IdentifierCollection();
-        $site->identifiers->setLazyLoader(function(IdentifierCollection $collection) use ($site, $db) {
-            $identifierRepo = new IdentifierRepository($db);
+        $site->identifiers->setLazyLoader(function(IdentifierCollection $collection) use ($site, $identifierRepo) {
             $identifiers = $identifierRepo->findBySite($site->id);
             $collection->addLoadedItems(iterator_to_array($identifiers));
         });
 
         $site->lines = new LineCollection();
-        $site->lines->setLazyLoader(function(LineCollection $collection) use ($site, $db) {
-            $lineRepo = new LineRepository($db);
+        $site->lines->setLazyLoader(function(LineCollection $collection) use ($site, $lineRepo, $userRepo, $licenseRepo) {
             $lines = $lineRepo->getLinesForSite($site->id);
             $collection->addLoadedItems(iterator_to_array($lines));
 
-            $userRepo = new UserRepository($db);
-            $licenseRepo = new LicenseRepository($db);
             if (count($lines) > 0) {
                 $uploader = null;
                 $license = null;
@@ -179,13 +204,20 @@ class SiteRepository
             }
         });
 
-        $userRepo = new UserRepository($this->db);
         $site->creator = $userRepo->findById($row['creator']);
         $site->updater = $userRepo->findById($row['updater']);
         $site->createDate = $row['createDate'];
         $site->updateDate = $row['updateDate'];
         return $site;
     }
+
+    private function getImageRepo(): ImageRepository
+    {
+        if ($this->imageRepo === null) {
+            $this->imageRepo = new ImageRepository($this->db);
+        }
+        return $this->imageRepo;
+    }   
 
 }
 

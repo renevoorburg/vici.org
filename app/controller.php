@@ -45,6 +45,10 @@ switch ($session->getRequestedAction()) {
                 break;
         }
         break;
+    case 'image':
+        $accessControl->setIsRateLimited(true);
+        $action = fn() => (new Pages\ImagePage($session))->display();
+        break;
     case 'geojson.php':
         $accessControl->setRequiresAuthentication(true);
         $action = fn() => (new API\GeoJSON($session))->get();
