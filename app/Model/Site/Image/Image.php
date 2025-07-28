@@ -4,6 +4,7 @@ namespace Vici\Model\Site\Image;
 
 use Vici\Model\User\User;
 use Vici\Model\License\License;
+use Vici\Model\Site\SiteCollection;
 
 class Image
 {
@@ -22,5 +23,6 @@ class Image
     public int $width;
     public int $height;
     public string $md5sum;
+    public SiteCollection $sites;
 
 }

@@ -6,6 +6,8 @@ use Vici\DB\DBConnector;
 use PDO;
 use Vici\Model\Site\Image\Image;
 use Vici\Model\Site\Image\ImageCollection;
+use Vici\Model\Site\SiteCollection;
+use Vici\Model\Site\SiteRepository;
 use Vici\Model\User\UserRepository;
 use Vici\Model\License\LicenseRepository;
 
@@ -14,12 +16,14 @@ class ImageRepository
     private DBConnector $db;
     private UserRepository $userRepo;
     private LicenseRepository $licenseRepo;
+    private ?SiteRepository $siteRepo = null;
 
     public function __construct(DBConnector $db)
     {
         $this->db = $db;
         $this->userRepo = new UserRepository($db);
         $this->licenseRepo = new LicenseRepository($db);
+        /* siteRepo is not yet set to prevent circular dependency with ImageRepository */
     }
 
     public function findById(int $id, bool $isPublished = true ): ?Image
@@ -80,6 +84,23 @@ class ImageRepository
         $image->data = $row['imgd_data'];
         $image->license = $this->licenseRepo->findById((int)$row['imgd_license']);
         $image->uploader = $this->userRepo->findById((int)$row['imgd_uploader']);
+
+        $siteRepo = $this->getSiteRepo();
+        $image->sites = new SiteCollection();
+        $image->sites->setLazyLoader(function(SiteCollection $collection) use ($image, $siteRepo) {
+            $sites = $siteRepo->findByImage($image->id);
+            $collection->addLoadedItems(iterator_to_array($sites));
+        });
+
         return $image;
     }
-}
+
+    private function getSiteRepo(): SiteRepository
+    {
+        if ($this->siteRepo === null) {
+            $this->siteRepo = new SiteRepository($this->db);
+        }
+        return $this->siteRepo;
+    }
+
+    }
