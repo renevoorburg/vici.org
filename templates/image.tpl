@@ -9,6 +9,8 @@
           border-collapse: collapse;
           border-spacing: 0 0.25em;
           width: 100%;
+          margin-top: 1em;
+          margin-bottom: 1em;
         }
         .image-meta td {
           padding: 0.2em 0.6em 0.2em 0.2em;
@@ -27,35 +29,53 @@
           border-radius: 0 0.3em 0.3em 0;
         }
 
-        .image-meta a {
+        .image-meta td a {
             color: #64748b;
+            word-break: break-all;
+            overflow-wrap: anywhere;
         }
 
         .image-meta a:hover {
             text-decoration: underline;
         }
 
+        .main-image {
+            display: block;
+            max-width: 100%;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin-bottom: 1em;
+        }
+
     </style>
 {/block}
 
+{block name=headscripts}
+    {include file="include/lightbox_init.tpl"}
+{/block}
 
 {block name=main}
     <main class="image">
 
     <h1>{$image->title}</h1>
+
+    <div id="my-gallery" class="main-image">
+        {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="size/w800"}
+    </div>
+
     {$image->description}
-    <br>
     <table class="image-meta">
         <tr>
-            <td>Creator</td>
+            <td>{$creator_label|default:"Creator"}</td>
             <td>{$image->getCreator()}</td>
         </tr>
         <tr>
-            <td>Source</td>
+            <td>{$source_label|default:"Source"}</td>
             <td>{if $image->source}<a href="{$image->source}">{$image->source}</a>{/if}</td>
         </tr>
         <tr>
-            <td>License</td>
+            <td>{$license_label|default:"License"}</td>
             <td>
             {if $image->license->uri}
             <a href="{$image->license->uri}">{$image->license->name}</a>
@@ -65,7 +85,7 @@
             </td>
         </tr>
         <tr>
-            <td>Date added</td>
+            <td>{$date_added_label|default:"Date added"}</td>
             <td>{$image->dateAdded}</td>
         </tr>
     </table>

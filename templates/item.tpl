@@ -201,33 +201,6 @@ a.hover:hover {
     gap: 0.5em;
 }
 
-figure {
-    margin: 0;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-figure img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    max-width: 100%;
-}
-
-#my-gallery a img {
-    transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.2s;
-    cursor: zoom-in;
-}
-
-#my-gallery a:hover img,
-#my-gallery a:focus img {
-    transform: scale(1.1); 
-    /* box-shadow: 0 2px 12px rgba(0,0,0,0.10);  */
-    z-index: 2;
-}
-
 @media (max-width: 1600px) {
     .sitelist-container-flex {
         flex-direction: column;
@@ -290,7 +263,7 @@ figure img {
 {/block}
 
 {block name=headscripts}
-    {include file="include/lightbox.tpl"}
+    {include file="include/lightbox_init.tpl"}
 {/block}
 
 {block name=main}
@@ -402,20 +375,7 @@ figure img {
         {if $images->count() > 0}
             <div class="image-column" id="my-gallery">
                 {foreach from=$images item=image}
-                    <a href="//images.vici.org/auto{$image->filepath}"
-                        data-pswp-width="{$image->width|default:1200}"
-                        data-pswp-height="{$image->height|default:900}"
-                        target="_blank"
-                        title="{$image->title}">
-                        <figure>
-                            <img loading="lazy" src="//images.vici.org/cover/w268xh268{$image->filepath}"
-                                alt="{$image->title}"
-                                data-caption-link="/image/{$image->id}"
-                                data-caption-license="{$image->license->shortName}"
-                                data-caption-creator="{$image->getCreator()}"
-                                >
-                        </figure>
-                    </a>
+                    {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="cover/w268xh268"}
                 {/foreach}
             </div>
         {/if}
