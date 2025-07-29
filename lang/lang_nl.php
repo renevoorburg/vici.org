@@ -117,4 +117,8 @@ return [
 
     // defaults from image.tpl:
     "Used in" => "Wordt getoond bij",
+    "Creator" => "Maker",
+    "Source" => "Bron",
+    "License" => "Licentie",
+    "Date added" => "Toegevoegd op",
 ];
