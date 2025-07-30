@@ -3,11 +3,6 @@
 {block name=stylesheets}
     <style>
 
-        .hr {
-            height: 1px;
-            background: #ccc;
-            width: 100%;
-        }
     </style>
 {/block}
 

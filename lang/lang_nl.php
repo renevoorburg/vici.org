@@ -120,5 +120,7 @@ return [
     "Creator" => "Maker",
     "Source" => "Bron",
     "License" => "Licentie",
+    "Attribution" => "Toeschrijving",
+    "Added by" => "Toegevoegd door",
     "Date added" => "Toegevoegd op",
 ];
