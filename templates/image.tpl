@@ -49,12 +49,6 @@
             height: auto;
             margin-bottom: 1em;
         }
-
-        .hr {
-            height: 1px;
-            background: #ccc;
-            width: 100%;
-        }
     </style>
 {/block}
 
@@ -78,10 +72,12 @@
             <td>{$creator_label|default:"Creator"}</td>
             <td>{$image->getCreator()}</td>
         </tr>
+        {if !$image->isOwnWork && $image->source}
         <tr>
             <td>{$source_label|default:"Source"}</td>
             <td>{if $image->source}<a href="{$image->source}">{$image->source}</a>{/if}</td>
         </tr>
+        {/if}
         <tr>
             <td>{$license_label|default:"License"}</td>
             <td>
@@ -91,6 +87,16 @@
             {$image->license->name}
             {/if}
             </td>
+        </tr>
+        {if !$image->isOwnWork && $image->attribution}
+        <tr>
+            <td>{$attribution_label|default:"Attribution"}</td>
+            <td>{$image->attribution}</td>
+        </tr>
+        {/if}
+        <tr>
+            <td>{$uploader_label|default:"Added by"}</td>
+            <td>{$image->uploader->getRealName()}</td>
         </tr>
         <tr>
             <td>{$date_added_label|default:"Date added"}</td>

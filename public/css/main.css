@@ -588,3 +588,9 @@ figure img {
     /* box-shadow: 0 2px 12px rgba(0,0,0,0.10);  */
     z-index: 2;
 }
+
+.hr {
+    height: 1px;
+    background: #ccc;
+    width: 100%;
+}
