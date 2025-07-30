@@ -16,7 +16,6 @@ class ImagePage extends PageRenderer
         $this->session = $session;
         parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
-        // $this->assign('js_translations', $this->session->translator->getTranslationsJson(['more', 'show on map'], 'markerdef.'));
 
         $db = $session->getDBConnector();
         $imageRepo = new \Vici\Model\Site\Image\ImageRepository($db);
