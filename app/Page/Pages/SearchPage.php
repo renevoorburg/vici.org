@@ -5,11 +5,11 @@ namespace Vici\Page\Pages;
 use Vici\Page\PageRenderer;
 use Vici\Session\Session;
 
-class ImagePage extends PageRenderer
+class SearchPage extends PageRenderer
 {
 
     private Session $session;
-    private string $template = 'image.tpl';
+    private string $template = 'search.tpl';
 
     public function __construct(Session $session)
     {
@@ -18,11 +18,10 @@ class ImagePage extends PageRenderer
         $this->assignTranslatedTemplateVars($this->template);
 
         $db = $session->getDBConnector();
-        $imageRepo = new \Vici\Model\Site\Image\ImageRepository($db);
-        $image = $imageRepo->findById($session->getRequestedItem());
+        $siteRepo = new \Vici\Model\Site\SiteRepository($db);
+        $sites = $siteRepo->search($session->getRequestedItem()); 
 
-
-        $this->assign('image', $image);
+        $this->assign('sites', $sites);
 
     }
 
