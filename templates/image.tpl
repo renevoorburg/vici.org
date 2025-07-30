@@ -21,7 +21,9 @@
           background: #f7f7f7;
           border-radius: 0.3em 0 0 0.3em;
           font-weight: 500;
-          min-width: 90px;
+          min-width: 140px;
+          max-width: 180px;
+          width: 1%;
         }
         .image-meta td:last-child {
           color: #222;
@@ -48,6 +50,11 @@
             margin-bottom: 1em;
         }
 
+        .hr {
+            height: 1px;
+            background: #ccc;
+            width: 100%;
+        }
     </style>
 {/block}
 
@@ -56,6 +63,7 @@
 {/block}
 
 {block name=main}
+    <div class="hr"></div>
     <main class="image">
 
     <h1>{$image->title}</h1>
