@@ -594,3 +594,7 @@ figure img {
     background: #ccc;
     width: 100%;
 }
+
+main.margin {
+    margin: 1.5rem;
+}
