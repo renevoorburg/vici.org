@@ -19,28 +19,30 @@ use Vici\Model\Site\Locale\LocaleRepository;
 
 class SiteRepository
 {
-    private const BASE_SELECT = "   
-        SELECT DISTINCT
-            p.pnt_id, 
-            p.pnt_name, 
-            p.pnt_dflt_short, 
-            p.pnt_kind, 
-            p.pnt_lat, 
-            p.pnt_lng, 
-            p.pnt_visible AS isVisible, 
-            p.pnt_hide AS isPublished, 
-            m.pmeta_loc_accuracy AS locationAccuracy, 
-            m.pmeta_startyr AS startYear, 
-            m.pmeta_endyr AS endYear, 
-            m.pmeta_startyr_str AS startQualifier, 
-            m.pmeta_endyr_str AS endQualifier,
-            m.pmeta_creator AS creator,
-            m.pmeta_editor AS updater,
-            m.pmeta_create_date AS createDate,
-            m.pmeta_edit_date AS updateDate
-        FROM points p    
-        LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id 
-        ";
+    private const BASE_COLUMNS = "
+        p.pnt_id, 
+        p.pnt_name, 
+        p.pnt_dflt_short, 
+        p.pnt_kind, 
+        p.pnt_lat, 
+        p.pnt_lng, 
+        p.pnt_visible AS isVisible, 
+        p.pnt_hide AS isPublished, 
+        m.pmeta_loc_accuracy AS locationAccuracy, 
+        m.pmeta_startyr AS startYear, 
+        m.pmeta_endyr AS endYear, 
+        m.pmeta_startyr_str AS startQualifier, 
+        m.pmeta_endyr_str AS endQualifier,
+        m.pmeta_creator AS creator,
+        m.pmeta_editor AS updater,
+        m.pmeta_create_date AS createDate,
+        m.pmeta_edit_date AS updateDate
+    ";
+
+    private static function getBaseSelect(): string {
+        return "SELECT DISTINCT " . self::BASE_COLUMNS . 
+            " FROM points p LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id ";
+    }
 
     private DBConnector $db;
     private SiteTypeRepository $typeRepo;
@@ -60,13 +62,13 @@ class SiteRepository
         $this->licenseRepo = new LicenseRepository($this->db);
         $this->identifierRepo = new IdentifierRepository($this->db);
         $this->lineRepo = new LineRepository($this->db);
-        /* imageRepo is not yet set to prevent circular dependency with SiteRepository */
+        /* imageRepo is not set at this point to prevent circular dependency with SiteRepository */
     }
 
     public function findById(int $id): ?Site
     {
         $stmt = $this->db->prepare(
-            self::BASE_SELECT . " WHERE p.pnt_id = :id"
+            self::getBaseSelect() . " WHERE p.pnt_id = :id"
         );
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -84,7 +86,7 @@ class SiteRepository
     public function findNearbySites(float $lat, float $lng, int $number = 5): SiteCollection
     {
         $number = (int) $number;
-        $query = self::BASE_SELECT . "
+        $query = self::getBaseSelect() . "
             WHERE 6371*acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat))) < ?
             ORDER BY acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat)))
             LIMIT $number";
@@ -101,7 +103,7 @@ class SiteRepository
     public function findRelevantMuseums(float $lat, float $lng): SiteCollection
     {
         $stmt = $this->db->prepare(
-            self::BASE_SELECT . "
+            self::getBaseSelect() . "
             JOIN pnt_img_lnk l ON l.pil_pnt = p.pnt_id
             WHERE p.pnt_kind = 8 AND l.pil_img IN (
                 SELECT pil_img  
@@ -127,10 +129,55 @@ class SiteRepository
     public function findByImage(int $imageId, bool $isPublished = true): SiteCollection
     {
         $stmt = $this->db->prepare(
-            self::BASE_SELECT . " 
+            self::getBaseSelect() . " 
             WHERE pnt_id IN (SELECT pil_pnt FROM pnt_img_lnk WHERE pil_img = :imageId)"
         );
         $stmt->execute(['imageId' => $imageId]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sites = [];
+        foreach ($result as $row) {
+            $sites[] = $this->mapRowToSite($row, $row['pnt_id']);
+        }
+        return new SiteCollection($sites);
+    }
+
+    public function search(string $query): SiteCollection
+    {
+        $query = "nehalennia";
+
+        $sql = "
+            SELECT 
+                " . self::BASE_COLUMNS . ",
+                rs.relevance_score
+            FROM points p
+            LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id
+            INNER JOIN (
+                SELECT pnt_id,
+                    (
+                        MATCH (pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE) * 4 +
+                        MATCH (psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE) * 2 +
+                        MATCH (ptxt_full) AGAINST (? IN BOOLEAN MODE) +
+                        MATCH (imgd_title, imgd_description) AGAINST (? IN BOOLEAN MODE)
+                    ) AS relevance_score
+                FROM points p
+                LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
+                LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
+                LEFT JOIN pmetadata m ON pnt_id = pmeta_pnt_id 
+                LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
+                LEFT JOIN img_data ON pil_img = imgd_imgid
+                WHERE pnt_hide=0  AND (
+                    MATCH (pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE)
+                    OR MATCH (psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE)
+                    OR MATCH (ptxt_full) AGAINST (? IN BOOLEAN MODE)
+                    OR MATCH (imgd_title, imgd_description) AGAINST (? IN BOOLEAN MODE)
+                )
+                GROUP BY pnt_id
+            ) rs ON p.pnt_id = rs.pnt_id
+            ORDER BY rs.relevance_score DESC
+            LIMIT 100
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$query, $query, $query, $query, $query, $query, $query, $query]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
         foreach ($result as $row) {
@@ -220,4 +267,3 @@ class SiteRepository
     }   
 
 }
-
