@@ -18,7 +18,9 @@
     <div><a href="/">Vici.org</a><span class="subtitle">:: {$sitesubtitle|default:"archaeological atlas"}</span></div>
     <button id="menu-button">&#9776;</button>
     <nav id="main-menu">
-        <input type="text" placeholder="{$search_placeholder|default:"search"}..." />
+        <form action="/search" method="get" style="display:inline;">
+            <input type="text" name="q" placeholder="{$search_placeholder|default:"search"}..." />
+        </form>
         <a href="/add">{$add_menu_item|default:"Add"}</a>
         {if isset($username)}
             <a href="/logout">{$logout_menu_item|default:"Logout"}</a>
@@ -31,7 +33,9 @@
 <div id="mobile-menu">
     <a href="/add">{$add_menu_item|default:"Add"}</a>
     <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
-    <input type="text" placeholder="{$search_placeholder|default:"search"}..." />
+    <form action="/search" method="get" style="display:inline;">
+        <input type="text" name="q" placeholder="{$search_placeholder|default:"search"}..." />
+    </form>
 </div>
 
 {block name=main}{/block}
