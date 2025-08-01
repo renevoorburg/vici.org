@@ -2,9 +2,6 @@
 
 {block name=stylesheets}
     <style>
-        main.image {
-            margin: 1.5rem;
-        }
         .image-meta {
           border-collapse: collapse;
           border-spacing: 0 0.25em;
@@ -58,7 +55,7 @@
 
 {block name=main}
     <div class="hr"></div>
-    <main class="image">
+    <main class="margin">
 
     <h1>{$image->title}</h1>
 

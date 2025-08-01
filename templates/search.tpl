@@ -9,13 +9,11 @@
 
 {block name=main}
     <div class="hr"></div>
-    <main>
-
-    search work in progress
+    <main class="margin">
 
     {if $sites->count() > 0}
         <div class="sitelist">
-            <h2>{$nearby_sites_label|default:"Nearby sites"}</h2>
+            <h2>{$search_results_label|default:"Search results"}</h2>
             <ul>
                 {foreach from=$sites item=site}
                     <li>

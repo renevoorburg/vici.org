@@ -17,11 +17,16 @@ class SearchPage extends PageRenderer
         parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
 
+        $q = isset($_GET['q']) ? trim($_GET['q']) : '';
         $db = $session->getDBConnector();
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
-        $sites = $siteRepo->search($session->getRequestedItem()); 
-
+        if (mb_strlen($q) < 2) {
+            $sites = [];
+        } else {
+            $sites = $siteRepo->search($q);
+        }
         $this->assign('sites', $sites);
+        $this->assign('query', $q);
 
     }
 

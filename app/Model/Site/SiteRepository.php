@@ -143,8 +143,6 @@ class SiteRepository
 
     public function search(string $query): SiteCollection
     {
-        $query = "nehalennia";
-
         $sql = "
             SELECT 
                 " . self::BASE_COLUMNS . ",

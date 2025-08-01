@@ -19,7 +19,10 @@
     <button id="menu-button">&#9776;</button>
     <nav id="main-menu">
         <form action="/search" method="get" style="display:inline;">
-            <input type="text" name="q" placeholder="{$search_placeholder|default:"search"}..." />
+            <input type="text" name="q"
+                value="{$query|default:''|escape:'html'}"
+                placeholder="{$search_placeholder|default:"search"}..." 
+            />
         </form>
         <a href="/add">{$add_menu_item|default:"Add"}</a>
         {if isset($username)}
@@ -34,7 +37,10 @@
     <a href="/add">{$add_menu_item|default:"Add"}</a>
     <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
     <form action="/search" method="get" style="display:inline;">
-        <input type="text" name="q" placeholder="{$search_placeholder|default:"search"}..." />
+        <input type="text" name="q"
+            value="{$query|default:''|escape:'html'}"
+            placeholder="{$search_placeholder|default:"search"}..."
+        />
     </form>
 </div>
 
