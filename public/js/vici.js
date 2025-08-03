@@ -847,7 +847,11 @@ function ViciWidget(element, options) {
                 requrl += "&exclude=" + session.selectedMarkerId;
             }
 
-            fetch(requrl)
+            fetch(requrl, {
+                headers: {
+                    'X-Vici-Token': options.viciToken
+                }
+            })
             .then(response => response.json())
             .then(showHighlights);
         }
