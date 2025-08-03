@@ -172,7 +172,7 @@ class SiteRepository
                 GROUP BY pnt_id
             ) rs ON p.pnt_id = rs.pnt_id
             ORDER BY rs.relevance_score DESC
-            LIMIT 100
+            LIMIT 500
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$query, $query, $query, $query, $query, $query, $query, $query]);

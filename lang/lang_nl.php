@@ -123,4 +123,7 @@ return [
     "Attribution" => "Toeschrijving",
     "Added by" => "Toegevoegd door",
     "Date added" => "Toegevoegd op",
+
+    // defaults from search.tpl:
+    "Results" => "Zoekresultaten",
 ];

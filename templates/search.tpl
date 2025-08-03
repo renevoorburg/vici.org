@@ -13,7 +13,7 @@
 
     {if $sites->count() > 0}
         <div class="sitelist">
-            <h2>{$search_results_label|default:"Search results"}</h2>
+            <h2>{$search_results_label|default:"Results"}</h2>
             <ul>
                 {foreach from=$sites item=site}
                     <li>
