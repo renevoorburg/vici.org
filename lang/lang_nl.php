@@ -112,7 +112,7 @@ return [
     "Suggested citation" => "Voorgestelde citatiewijze",
     "and" => "en",
     "accessed" => "opgevraagd op",
-    "not yet provided" => "niet nog ingevoerd",
+    "not yet provided" => "nog niet ingevoerd",
     "more info" => "meer informatie",
 
     // defaults from image.tpl:

@@ -93,7 +93,7 @@ function updateHighlightsBox(highlights) {
                         <div class="font-semibold">${title}</div>
                         <div>
                             ${summary}
-                            ${id ? `<a href="javascript:void(0)" onclick="mapObj.selectMarkerAndPan('${id}'); return false;" class="underline">[${trl('show on map')}]</a>` : ''}</div>
+                            ${id ? `<button type="button" class="show-on-map-btn" data-marker-id="${id}">${trl('show on map')}</button>` : ''}</div>
                     </div>
                     <div class="centered-flex">
                         ${iconHtml(highlight.properties.kind || 1)}
@@ -103,6 +103,16 @@ function updateHighlightsBox(highlights) {
 
     }
     highlightsContainer.innerHTML = highlightHTML;
+
+    const showOnMapButtons = highlightsContainer.querySelectorAll('.show-on-map-btn');
+    showOnMapButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            mapObj.selectMarkerAndPan(this.dataset.markerId);
+        });
+        btn.addEventListener('touchstart', function(e) {
+            mapObj.selectMarkerAndPan(this.dataset.markerId);
+        }, {passive: true});
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
