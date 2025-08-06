@@ -458,16 +458,9 @@ function ViciWidget(element, options) {
         source: vectorSourceMarkers
     });
 
-    vectorLayerMarkers.setZIndex(10);
-    vectorLayerLines.setZIndex(9);
-
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
     map.addOverlay(geotracking);
-
-    console.log(vectorLayerLines.getZIndex());
-    console.log(vectorLayerMarkers.getZIndex());
-    console.log(geotracking.getZIndex());
 
     // change mouse cursor when over marker or line
     map.on('pointermove', function(evt) {
@@ -672,24 +665,23 @@ function ViciWidget(element, options) {
     }
 
     map.on('click', function(evt) {
-        let feature = map.forEachFeatureAtPixel(evt.pixel,
-            function(feature, layer) {
-                if (layer === geotracking) {
-                    return null;
-                } else {
-                    return feature;
-                }
-            });
+        let foundFeature = null;
+        map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            // Sla geotracking over, kies eerste vici-feature
+            if (layer !== geotracking && feature && feature.vici) {
+                foundFeature = feature;
+                return true; // stop zoeken
+            }
+            // Anders doorgaan
+            return false;
+        });
 
-        if (feature && feature.vici) {
-            if (feature.vici.markerId) {
-                // a line was clicked:
-
-                let marker = vectorSourceMarkers.getFeatureById(feature.vici.markerId);
+        if (foundFeature) {
+            if (foundFeature.vici.markerId) {
+                let marker = vectorSourceMarkers.getFeatureById(foundFeature.vici.markerId);
                 updateInfobox(marker);
             } else {
-                // a marker was clicked:
-                updateInfobox(feature);
+                updateInfobox(foundFeature);
             }
         }
         getHighlights();
