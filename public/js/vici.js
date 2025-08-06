@@ -17,7 +17,10 @@ function ViciWidget(element, options) {
     function snapZoom(zoom) {
         return Math.floor(zoom + 0.5);
     }
-    class FocusLocationControl extends  ol.control.Control {
+    // FocusLocationControl alleen definieren als geolocatie beschikbaar is
+    let FocusLocationControl = null;
+    if (navigator.geolocation) {
+        FocusLocationControl = class extends ol.control.Control {
         /**
          * @param {Object} [opt_options] Control options.
          */
@@ -287,7 +290,9 @@ function ViciWidget(element, options) {
                 }
             });
 
-            control.extend([new FocusLocationControl()]);
+            if (FocusLocationControl) {
+                control.extend([new FocusLocationControl()]);
+            }
 
             if (options.showScale) {
                 let scaleLineControl = new ol.control.ScaleLine();
