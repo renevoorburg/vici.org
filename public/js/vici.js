@@ -67,7 +67,7 @@ function ViciWidget(element, options) {
                         });
                     },
                     (error) => {
-                        alert('Locatie ophalen mislukt: ' + error.message);
+                        // Geen foutmelding tonen
                     },
                     {
                         enableHighAccuracy: false,
