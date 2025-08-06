@@ -668,7 +668,11 @@ function ViciWidget(element, options) {
     map.on('click', function(evt) {
         let feature = map.forEachFeatureAtPixel(evt.pixel,
             function(feature, layer) {
-                return feature;
+                if (layer === geotracking) {
+                    return null;
+                } else {
+                    return feature;
+                }
             });
 
         if (feature) {
