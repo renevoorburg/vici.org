@@ -43,7 +43,7 @@ function ViciWidget(element, options) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     this.getMap().getView().animate({
                         center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
-                        duration: 1000
+                        duration: 500
                     });
                 });
             }
@@ -150,8 +150,7 @@ function ViciWidget(element, options) {
         mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
         center: { lat: 41.895, lng: 12.485},
         filter: { visibility: "anyVisibility", era: "anyEra" },
-        overlays: options.enableOverlays ? options.enableOverlays : [],
-        moveHere: options.moveHere
+        overlays: options.enableOverlays ? options.enableOverlays : []
     };
     if (options.center) {
         session.center.lat = options.center.lat;
@@ -171,7 +170,6 @@ function ViciWidget(element, options) {
         // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
-            session.moveHere = false;
             let center = parts[1].split(",");
             session.zoomlevel = Number(parts[0]);
             session.center.lat = Number(center[0]);
@@ -1109,16 +1107,13 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (session.moveHere && 'geolocation' in navigator) {
+    if (options.moveHere && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
-            if (position.coords.longitude > -10.1 && position.coords.longitude < 49.1 && position.coords.latitude > 29.5 && position.coords.latitude < 57.7) {
-                map.getView().animate({
-                    center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
-                    duration: 1500
-                });
-            }
+            map.getView().animate({
+                center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
+                duration: 1500
+            });
         });
-        session.moveHere = false;
     }
 
     // expose functions:
