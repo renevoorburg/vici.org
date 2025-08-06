@@ -465,6 +465,10 @@ function ViciWidget(element, options) {
     map.addOverlay(vectorLayerMarkers);
     map.addOverlay(geotracking);
 
+    console.log(vectorLayerLines.getZIndex());
+    console.log(vectorLayerMarkers.getZIndex());
+    console.log(geotracking.getZIndex());
+
     // change mouse cursor when over marker or line
     map.on('pointermove', function(evt) {
         let pixel = map.getEventPixel(evt.originalEvent);
