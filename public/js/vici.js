@@ -21,38 +21,36 @@ function ViciWidget(element, options) {
     let FocusLocationControl = null;
     if (navigator.geolocation) {
         FocusLocationControl = class extends ol.control.Control {
-        /**
-         * @param {Object} [opt_options] Control options.
-         */
-        constructor(opt_options) {
-            const options = opt_options || {};
+            constructor(opt_options) {
+                const options = opt_options || {};
 
-            const button = document.createElement('button');
-            button.innerHTML = '◎';
+                const button = document.createElement('button');
+                button.innerHTML = '◎';
 
-            const element = document.createElement('div');
-            element.className = 'focus-location ol-unselectable ol-control';
-            element.appendChild(button);
+                const element = document.createElement('div');
+                element.className = 'focus-location ol-unselectable ol-control';
+                element.appendChild(button);
 
-            super({
-                element: element,
-                target: options.target,
-            });
-
-            button.addEventListener('click', this.handleFocusLocation.bind(this), false);
-        }
-
-        handleFocusLocation() {
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.getMap().getView().animate({
-                    center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
-                    duration: 1000
+                super({
+                    element: element,
+                    target: options.target,
                 });
-            });
 
+                button.addEventListener('click', this.handleFocusLocation.bind(this), false);
+            }
+
+            handleFocusLocation() {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    this.getMap().getView().animate({
+                        center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
+                        duration: 1000
+                    });
+                });
+            }
         }
     }
 
+    
     // use the element as an anchor but don't override absolute positioning:
     const elementStyle = document.getElementById(element).style;
     if (elementStyle.position !== "absolute") {
