@@ -26,7 +26,7 @@ function updateSelectionBox(feature) {
 
     let selectionHTML = '';
     if (hasImage) {
-        const imageUrl = `https://images.vici.org/crop/w220xh124${feature.picture}`;
+        const imageUrl = `https://images.vici.org/crop/w440xh248${feature.picture}`;
         selectionHTML = `
                 <div class="relative">
                     <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
