@@ -80,9 +80,7 @@ function updateHighlightsBox(highlights) {
         const highlight = highlights[i];
         const title = highlight.properties.title || 'Onbekende locatie';
         const summary = highlight.properties.summary || '';
-        const imageUrl = highlight.properties.img
-            ? `https://images.vici.org/crop/w220xh124${highlight.properties.img}`
-            : 'https://images.vici.org/crop/w220xh124/uploads/no_image.png';
+        const imageUrl = `https://images.vici.org/crop/w440xh248${highlight.properties.img}`;
         const id = highlight.properties.id || '';
 
         highlightHTML += `
