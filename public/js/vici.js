@@ -286,9 +286,6 @@ function ViciWidget(element, options) {
                 }
             });
 
-            if (FocusLocationControl) {
-                control.extend([new FocusLocationControl()]);
-            }
 
             if (options.showScale) {
                 let scaleLineControl = new ol.control.ScaleLine();
@@ -299,6 +296,15 @@ function ViciWidget(element, options) {
         })(),
         view: view
     });
+
+    // FocusLocationControl pas toevoegen na succesvolle geolocatie
+    let focusLocationControlInstance = null;
+    if (FocusLocationControl) {
+        focusLocationControlInstance = new FocusLocationControl();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            map.addControl(focusLocationControlInstance);
+        });
+    }
 
     // see https://openlayers.org/en/latest/examples/geolocation.html
     const geolocation = new ol.Geolocation({
