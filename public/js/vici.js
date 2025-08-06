@@ -1,5 +1,14 @@
 function ViciWidget(element, options) {
 
+    // Globale variabele voor laatst bekende locatie
+    let lastLocation = null;
+    function updateLastLocation(position) {
+        lastLocation = {
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude
+        };
+    }
+
     function getGridSize(zoom) {
         if (zoom >= 13) return 0.125;
         if (zoom >= 10) return 0.25;
@@ -40,12 +49,32 @@ function ViciWidget(element, options) {
             }
 
             handleFocusLocation() {
-                navigator.geolocation.getCurrentPosition((position) => {
+                // Eerst pannen naar de laatst bekende locatie (indien beschikbaar)
+                if (lastLocation) {
                     this.getMap().getView().animate({
-                        center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
+                        center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
                         duration: 500
                     });
-                });
+                }
+                // Vraag daarna de actuele positie op
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        updateLastLocation(position);
+                        // Pannen naar de nieuwe locatie (optioneel, als je altijd wilt updaten)
+                        this.getMap().getView().animate({
+                            center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                            duration: 500
+                        });
+                    },
+                    (error) => {
+                        alert('Locatie ophalen mislukt: ' + error.message);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 3000,
+                        maximumAge: 0
+                    }
+                );
             }
         }
     }
@@ -303,6 +332,7 @@ function ViciWidget(element, options) {
         focusLocationControlInstance = new FocusLocationControl();
         navigator.geolocation.getCurrentPosition(function(position) {
             map.addControl(focusLocationControlInstance);
+            updateLastLocation(position);
         });
     }
 
@@ -1117,9 +1147,17 @@ function ViciWidget(element, options) {
 
     if (options.moveHere && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
+            updateLastLocation(position);
             map.getView().animate({
-                center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
+                center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
                 duration: 1500
+            });
+            navigator.geolocation.getCurrentPosition((position) => {
+                updateLastLocation(position);
+                map.getView().animate({
+                    center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                    duration: 1500
+                });
             });
         });
     }
