@@ -675,7 +675,7 @@ function ViciWidget(element, options) {
                 }
             });
 
-        if (feature) {
+        if (feature && feature.vici) {
             if (feature.vici.markerId) {
                 // a line was clicked:
 
