@@ -375,7 +375,7 @@ a.hover:hover {
         {if $images->count() > 0}
             <div class="image-column" id="my-gallery">
                 {foreach from=$images item=image}
-                    {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="cover/w268xh268"}
+                    {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="crop/w440xh248"}
                 {/foreach}
             </div>
         {/if}
