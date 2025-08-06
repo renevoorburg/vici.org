@@ -458,9 +458,11 @@ function ViciWidget(element, options) {
         source: vectorSourceMarkers
     });
 
+    vectorLayerMarkers.setZIndex(10);
+    vectorLayerLines.setZIndex(9);
+
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
-
     map.addOverlay(geotracking);
 
     // change mouse cursor when over marker or line
