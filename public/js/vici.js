@@ -1047,12 +1047,12 @@ function ViciWidget(element, options) {
 
         let selectorHtml = '';
         if (options.showFilter) {
-            selectorHtml = '<div style="margin-top:8px"><strong>' + txt["touristic_vs_archeological"] + ':</strong></div><input type="radio" name="era" value="contemporaryEra" id="contemporaryEra"><label for="contemporaryEra"> ' + txt["museums_etc"] + '</label><br/><input type="radio" name="era" value="anyEra" id="anyEra"><label for="anyEra"> ' + txt["museums_and_archeological"] + '</label><br/><input type="radio" name="era" value="historicalEra" id="historicalEra"><label for="historicalEra"> ' + txt["roman_only"] + '</label><br/><div style="margin-top:8px"><strong>' + txt["visibility_of_sites"] + ':</strong></div><input type="radio" name="visibility" value="onlyVisible" id="onlyVisible"><label for="onlyVisible"> ' + txt["visible_sites"] + '</label><br/><input type="radio" name="visibility" value="anyVisibility" id="anyVisibility"><label for="anyVisibility"> ' + txt["visible_and_invisible"] + '</label><br/>';
+            selectorHtml = '<div style="margin-top:8px"><strong style="color:#fff">' + txt["touristic_vs_archeological"] + ':</strong></div><input type="radio" name="era" value="contemporaryEra" id="contemporaryEra"><label for="contemporaryEra"> ' + txt["museums_etc"] + '</label><br/><input type="radio" name="era" value="anyEra" id="anyEra"><label for="anyEra"> ' + txt["museums_and_archeological"] + '</label><br/><input type="radio" name="era" value="historicalEra" id="historicalEra"><label for="historicalEra"> ' + txt["roman_only"] + '</label><br/><div style="margin-top:8px"><strong style="color:#fff">' + txt["visibility_of_sites"] + ':</strong></div><input type="radio" name="visibility" value="onlyVisible" id="onlyVisible"><label for="onlyVisible"> ' + txt["visible_sites"] + '</label><br/><input type="radio" name="visibility" value="anyVisibility" id="anyVisibility"><label for="anyVisibility"> ' + txt["visible_and_invisible"] + '</label><br/>';
         }
 
         let mapsHtml = '';
         if (options.useMaps.length > 1) {
-            mapsHtml = '<div style="margin-top:8px"><strong>' + txt["Map_background"] + ':</strong></div>';
+            mapsHtml = '<div style="margin-top:8px"><strong style="color:#fff">' + txt["Map_background"] + ':</strong></div>';
             options.useMaps.forEach(function (mapId) {
                 let checked = (mapId === session.mapId) ? ' checked' : '';
                 mapsHtml += '<input type="radio" name="map" value="' + mapId + '" id="' + mapId + '"' + checked + '><label for="' + mapId + '"> ' + mapLayers.find(function(layer){ return layer.get('id') === mapId }).get('name') + '</label><br/>'
@@ -1061,7 +1061,7 @@ function ViciWidget(element, options) {
 
         let overlaysHtml = '';
         if (overlays.length > 0) {
-            overlaysHtml = '<div style="margin-top:8px"><strong> Overlays:</strong></div>';
+            overlaysHtml = '<div style="margin-top:8px"><strong style="color:#fff"> Overlays:</strong></div>';
             overlays.forEach(function (overlay) {
                 let checked = (session.overlays.indexOf(overlay.get('id')) > -1) ? ' checked' : '';
                 overlaysHtml += '<input type="checkbox" name="overlay" value="' + overlay.get('id') + '" id="' + overlay.get('id') + '"' + checked + '><label for="' + overlay.get('id') + '"> ' + overlay.get('name') + '</label><br/>'
