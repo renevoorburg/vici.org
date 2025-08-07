@@ -179,7 +179,8 @@ function ViciWidget(element, options) {
         mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
         center: { lat: 41.895, lng: 12.485},
         filter: { visibility: "anyVisibility", era: "anyEra" },
-        overlays: options.enableOverlays ? options.enableOverlays : []
+        overlays: options.enableOverlays ? options.enableOverlays : [],
+        moveHere: options.moveHere ? options.moveHere : false,
     };
     if (options.center) {
         session.center.lat = options.center.lat;
@@ -199,6 +200,7 @@ function ViciWidget(element, options) {
         // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
+            session.moveHere = false;
             let center = parts[1].split(",");
             session.zoomlevel = Number(parts[0]);
             session.center.lat = Number(center[0]);
@@ -1145,19 +1147,12 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (options.moveHere && 'geolocation' in navigator) {
+    if (session.moveHere && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
             updateLastLocation(position);
             map.getView().animate({
                 center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
                 duration: 1500
-            });
-            navigator.geolocation.getCurrentPosition((position) => {
-                updateLastLocation(position);
-                map.getView().animate({
-                    center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
-                    duration: 1500
-                });
             });
         });
     }
