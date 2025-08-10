@@ -51,8 +51,8 @@
         <div id="footerhead">{$footer_title|default:"More about Vici.org"}<span id="footer-arrow">↓</span></div>
         <div class="footercontent">
             <div class="footerline">
-                <a href="/new" class="flex items-center gap-2">{$footer_new|default:"Recently added"}</a>
-                <a href="/changed" class="flex items-center gap-2">{$footer_changed|default:"Recently changed"}</a>
+                <a href="/additions" class="flex items-center gap-2">{$footer_new|default:"Recently added"}</a>
+                <a href="/changes" class="flex items-center gap-2">{$footer_changed|default:"Recently changed"}</a>
                 <a href="/about" class="flex items-center gap-2">{$footer_about|default:"About Vici.org"}</a>
             </div>
             <div class="footerline">

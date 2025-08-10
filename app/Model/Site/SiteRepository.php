@@ -184,6 +184,42 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
+    public function getRecentlyAdded(): SiteCollection
+    {
+        $stmt = $this->db->prepare(
+            self::getBaseSelect() . "
+            WHERE pnt_hide=0
+            ORDER BY m.pmeta_create_date DESC
+            LIMIT 50"
+        );
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sites = [];
+        foreach ($result as $row) {
+            $sites[] = $this->mapRowToSite($row, $row['pnt_id']);
+        }
+        return new SiteCollection($sites);
+    }
+
+    public function getRecentlyChanged(): SiteCollection
+    {
+        $stmt = $this->db->prepare(
+            self::getBaseSelect() . "
+            WHERE pnt_hide=0
+            ORDER BY m.pmeta_edit_date DESC
+            LIMIT 50"
+        );
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sites = [];
+        foreach ($result as $row) {
+            $sites[] = $this->mapRowToSite($row, $row['pnt_id']);
+        }
+        return new SiteCollection($sites);
+    }
+
+
+
     private function mapRowToSite(array $row, int $id): Site
     {
         $site = new Site();
