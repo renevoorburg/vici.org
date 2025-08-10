@@ -215,7 +215,7 @@ a.hover:hover {
 
 @media (min-width: 768px) {
 
-    {if $images->count() > 0}
+    {if $mainSite->images->count() > 0}
     main.item {
         grid-template-columns: 2fr 1fr;
         align-items: start;
@@ -224,7 +224,7 @@ a.hover:hover {
 }
 
 @media (min-width: 1024px) {
-    {if $images->count() > 2}
+    {if $mainSite->images->count() > 2}
         main.item {
             grid-template-columns: 3fr 2fr;
             align-items: start;
@@ -236,7 +236,7 @@ a.hover:hover {
 }
 
 @media (min-width: 1800px) {
-    {if $images->count() > 3}
+    {if $mainSite->images->count() > 3}
 
     main.item {
         grid-template-columns: 1fr 1fr;
@@ -252,13 +252,13 @@ a.hover:hover {
 {/block}
 
 {block name=metadata}
-    <meta name="citation_title" content="{$title}">
-    <meta name="citation_author" content="{$creator->getLastName()}, {$creator->getInitials()}">
-    {if $creator->getId() != $updater->getId()}<meta name="citation_author" content="{$updater->getLastName()}, {$updater->getInitials()}">{/if}
+    <meta name="citation_title" content="{$mainSite->locales[$preferredLocaleLanguage]->title}">
+    <meta name="citation_author" content="{$mainSite->creator->getLastName()}, {$mainSite->creator->getInitials()}">
+    {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getLastName()}, {$mainSite->updater->getInitials()}">{/if}
     
-    <meta name="citation_publication_date" content="{$createDate|date_format:"%Y-%m-%d"}">
-    <meta name="citation_online_date" content="{$updateDate|date_format:"%Y-%m-%d"}">
-    <meta name="citation_public_url" content="https://vici.org/vici/{$id}">
+    <meta name="citation_publication_date" content="{$mainSite->createDate|date_format:"%Y-%m-%d"}">
+    <meta name="citation_online_date" content="{$mainSite->updateDate|date_format:"%Y-%m-%d"}">
+    <meta name="citation_public_url" content="https://vici.org/vici/{$mainSite->id}">
     <meta name="citation_access_date" content="{$smarty.now|date_format:"%Y-%m-%d"}">
 {/block}
 
@@ -275,22 +275,22 @@ a.hover:hover {
             
                 <div class="meta-container">
                     <div class="meta-left">
-                        <div class="marker-icon" id="myIcon" data-icon-type="{$site_type->id}" title="{$classification_description}"></div>
+                        <div class="marker-icon" id="myIcon" data-icon-type="{$mainSite->type->id}" title="{$classification_description}"></div>
                     </div>
                     <div class="meta-right">
                         <div>
                             <h3>{$location_metadata|default:"Location"}</h3>
                             <ul>
-                            <li>{$toponym->countryName[$sessionLanguage]}, {$toponym->placeName[$sessionLanguage]}</li>
-                            <li>geo:{$location->latitude},{$location->longitude}</li>
-                            <li>{include file="include/location_accuracy.tpl" accuracy=$location->qualifier}</li>
+                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}</li>
+                            <li>geo:{$mainSite->representativeLocation->latitude},{$mainSite->representativeLocation->longitude}</li>
+                            <li>{include file="include/location_accuracy.tpl" accuracy=$mainSite->representativeLocation->qualifier}</li>
                             </ul>
                         </div>
-                        {if !$site_type->isContemporary}
+                        {if !$mainSite->type->isContemporary}
                             <div>
                                 <h3>{$period_metadata|default:"Period or year"}</h3>
                                 <ul>
-                                <li>{if $period->startQualifier || $period->endQualifier} {$period->startQualifier} / {$period->endQualifier}{else}{$not_yet_provided_label|default:"not yet provided"}{/if}</li>
+                                <li>{if $mainSite->period->startQualifier || $mainSite->period->endQualifier} {$mainSite->period->startQualifier} / {$mainSite->period->endQualifier}{else}{$not_yet_provided_label|default:"not yet provided"}{/if}</li>
                                 </ul>
                             </div>
                         {/if}
@@ -298,17 +298,17 @@ a.hover:hover {
                             <h3>{$classification_metadata|default:"Classification"}</h3>
                             <ul>
                             <li title="{$classification_description}">{$classification_title}</li>
-                            {if !$site_type->isContemporary}
-                                <li>{include file="include/is_visible.tpl" isVisible=$isVisible}</li>
+                            {if !$mainSite->type->isContemporary}
+                                <li>{include file="include/is_visible.tpl" isVisible=$mainSite->isVisible}</li>
                             {/if}
                             </ul>
                         </div>
-                        {if $identifiers->count() > 0}
+                        {if $mainSite->identifiers->count() > 0}
                             <div>
                                 <h3>{$identifier_metadata|default:"Identifiers"}</h3>
                                 <ul class="identifier-list">
-                                {foreach $identifiers as $id}
-                                <li><a href="{$id->uri}" class="hover">{$id->getQname()}</a></li>
+                                {foreach $mainSite->identifiers as $identifier}
+                                <li><a href="{$identifier->uri}" class="hover">{$identifier->getQname()}</a></li>
                                 {/foreach}
                                 </ul>
                             </div>
@@ -317,7 +317,7 @@ a.hover:hover {
                 </div>
 
                 <div class="lang-header-row">
-                    <h1>{$title}</h1>
+                    <h1>{$mainSite->locales[$preferredLocaleLanguage]->title}</h1>
                     <nav id="langSelBox">
                         <ul>
                             {foreach from=$locales key=langKey item=langVal}
@@ -329,12 +329,12 @@ a.hover:hover {
                     </nav>
                 </div>
 
-                <a href="/data-access/{$id}" class="access-link">data access {$id}</a>
+                <a href="/data-access/{$mainSite->id}" class="access-link">data access {$mainSite->id}</a>
 
-                {foreach from=$locales key=langKey item=langVal}
+                {foreach from=$mainSite->locales key=langKey item=langVal}
                     {if $langVal->description}
                         <article id="txt_{$langKey}" class="{if $langKey == $preferredLocaleLanguage}selected{else}disabled{/if}">
-                            {$langVal->description}
+                            {$mainSite->descriptionAsHtml($langVal->description)}
                         </article>
                     {/if}
                 {/foreach}
@@ -358,7 +358,7 @@ a.hover:hover {
                             <h2>{$nearby_sites_label|default:"Nearby sites"}</h2>
                             <ul>
                                 {foreach from=$nearbySites item=site}
-                                    {if $site->id != $id}
+                                    {if $site->id != $mainSite->id}
                                         <li>
                                             {include file="include/site_list_item.tpl"}
                                         </li>
@@ -372,9 +372,9 @@ a.hover:hover {
 
         </div> 
 
-        {if $images->count() > 0}
+        {if $mainSite->images->count() > 0}
             <div class="image-column" id="my-gallery">
-                {foreach from=$images item=image}
+                {foreach from=$mainSite->images item=image}
                     {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="cover/w440xh248"}
                 {/foreach}
             </div>
@@ -382,21 +382,20 @@ a.hover:hover {
 
     </main>
 
-
     <div class="attributions">
         <h2>{$use_and_reuse_label|default:"Use and reuse"}</h2>
         <p>
-            <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} {$creator->getRealName()} ({$createDate|date_format:"%Y-%m-%d"})
-            {if $creator->getId() != $updater->getId()}, {$updated_label|default:"last updated by"} {$updater->getRealName()} ({$updateDate|date_format:"%Y-%m-%d"}){/if},
+            <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} {$mainSite->creator->getRealName()} ({$mainSite->createDate|date_format:"%Y-%m-%d"})
+            {if $mainSite->creator->getId() != $mainSite->updater->getId()}, {$updated_label|default:"last updated by"} {$mainSite->updater->getRealName()} ({$mainSite->updateDate|date_format:"%Y-%m-%d"}){/if},
             {$with_others_label|default:"with possible contributions by others"}.
             <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>, metadata <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0</a>.<br>
-            <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$id}">https://vici.org/vici/{$id}</a><br>
+            <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$mainSite->id}">https://vici.org/vici/{$mainSite->id}</a><br>
 
-            <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$id}/kml">KML</a><br>
+            <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a><br>
 
-            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$creator->getLastName()}, {$creator->getInitials()}
-                    {if $creator->getId() != $updater->getId()}{$and_label|default:"and"} {$updater->getLastName()}, {$updater->getInitials()}{/if},
-                    {$title}.</em> <span class="underline">https://vici.org/vici/{$id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
+            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getLastName()}, {$mainSite->creator->getInitials()}
+                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getLastName()}, {$mainSite->updater->getInitials()}{/if},
+                    {$mainSite->locales[$preferredLocaleLanguage]->title}.</em> <span class="underline">https://vici.org/vici/{$mainSite->id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
         </p>
     </div>
 
