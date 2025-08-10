@@ -127,4 +127,10 @@ return [
 
     // defaults from search.tpl:
     "Results" => "Zoekresultaten",
+
+    // defaults from recently_changed.tpl:
+    "Recently edited" => "Onlangs aangepast",
+
+    // defaults from recently_added.tpl:
+    "Recently added" => "Onlangs toegevoegd",
 ];

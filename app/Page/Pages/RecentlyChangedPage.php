@@ -21,6 +21,7 @@ class RecentlyChangedPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $sites = $siteRepo->getRecentlyChanged();
         $this->assign('sites', $sites);
+        $this->assign('search_results_label', $this->session->translator->get('Recently edited'));
     }
 
 }

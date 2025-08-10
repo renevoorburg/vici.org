@@ -17,7 +17,7 @@
             <ul>
                 {foreach from=$sites item=site}
                     <li>
-                        {include file="include/site_list_item.tpl"}
+                        {include file="include/site_list_item_extended.tpl"}
                     </li>
                 {/foreach}
             </ul>
