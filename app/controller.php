@@ -53,6 +53,14 @@ switch ($session->getRequestedAction()) {
         $accessControl->setIsRateLimited(true);
         $action = fn() => (new Pages\SearchPage($session))->display();
         break;
+    case 'additions':
+        $accessControl->setIsRateLimited(true);
+        $action = fn() => (new Pages\RecentlyAddedPage($session))->display();
+        break;
+    case 'changes':
+        $accessControl->setIsRateLimited(true);
+        $action = fn() => (new Pages\RecentlyChangedPage($session))->display();
+        break;
     case 'geojson.php':
         $accessControl->setRequiresAuthentication(true);
         $action = fn() => (new API\GeoJSON($session))->get();
