@@ -130,6 +130,8 @@ return [
 
     // defaults from recently_changed.tpl:
     "Recently edited" => "Onlangs aangepast",
+    "by" => "door",
+    "Last edit" => "Laatst aangepast op",
 
     // defaults from recently_added.tpl:
     "Recently added" => "Onlangs toegevoegd",

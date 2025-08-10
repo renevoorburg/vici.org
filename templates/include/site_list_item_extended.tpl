@@ -7,9 +7,9 @@
         
         {if $site->updateDate ne $site->createDate}
             <br>
-            {$site->updateDate|date_format:"%Y-%m-%d"}
+            {$last_edit_date_label|default:"Last edit"} {$site->updateDate|date_format:"%Y-%m-%d"} {$by_label|default:"by"} {$site->updater->getRealName()}
         {/if}
         <br>
-        {$site_create_date_label|default:"Date added"}: {$site->createDate|date_format:"%Y-%m-%d"}
+        {$site_create_date_label|default:"Date added"} {$site->createDate|date_format:"%Y-%m-%d"} {$by_label|default:"by"} {$site->creator->getRealName()}
     </span>
 </span>
