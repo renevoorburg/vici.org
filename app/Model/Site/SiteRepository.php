@@ -205,7 +205,7 @@ class SiteRepository
     {
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
-            WHERE pnt_hide=0
+            WHERE pnt_hide=0 AND m.pmeta_create_date != m.pmeta_edit_date
             ORDER BY m.pmeta_edit_date DESC
             LIMIT 50"
         );
