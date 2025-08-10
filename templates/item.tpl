@@ -109,6 +109,16 @@ article.disabled {
     display: none;
 }
 
+article a {
+    text-decoration: underline;
+    color: #1e3a8a;
+}
+
+article blockquote {
+    font-variant: small-caps;
+    font-family: 'Times New Roman', Times, serif
+}
+
 .imagecolumn {
     width: 100%;
     min-width: 240px;
@@ -320,7 +330,7 @@ a.hover:hover {
                     <h1>{$mainSite->locales[$preferredLocaleLanguage]->title}</h1>
                     <nav id="langSelBox">
                         <ul>
-                            {foreach from=$locales key=langKey item=langVal}
+                            {foreach from=$mainSite->locales key=langKey item=langVal}
                                 {if $langVal->description}
                                     <li class="{if $langKey == $preferredLocaleLanguage}selected{else}disabled{/if}" id="xt_{$langKey}">{$langKey|upper}</li>
                                 {/if}
@@ -334,7 +344,7 @@ a.hover:hover {
                 {foreach from=$mainSite->locales key=langKey item=langVal}
                     {if $langVal->description}
                         <article id="txt_{$langKey}" class="{if $langKey == $preferredLocaleLanguage}selected{else}disabled{/if}">
-                            {$mainSite->descriptionAsHtml($langVal->description)}
+                            {$langVal->description|description_as_html}
                         </article>
                     {/if}
                 {/foreach}
