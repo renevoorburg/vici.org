@@ -114,6 +114,7 @@ return [
     "accessed" => "opgevraagd op",
     "not yet provided" => "nog niet ingevoerd",
     "more info" => "meer informatie",
+    "References" => "Bronnen",
 
     // defaults from image.tpl:
     "Used in" => "Wordt getoond bij",
