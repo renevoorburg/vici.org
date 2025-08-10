@@ -43,6 +43,21 @@ class ItemPage extends PageRenderer
 
     }
 
+    public static function link_urls($text) {
+        // based on http://stackoverflow.com/questions/1188129/replace-urls-in-text-with-html-links
+        $rexProtocol = '(https?://)';
+        $rexDomain   = '((?:[-a-zA-Z0-9]{1,63}\.)+[-a-zA-Z0-9]{2,63}|(?:[0-9]{1,3}\.){3}[0-9]{1,3})';
+        $rexPort     = '(:[0-9]{1,5})?';
+        $rexPath     = '(/[!$-/0-9:;=@_\':;!a-zA-Z\x7f-\xff]*?)?';
+        $rexQuery    = '(\?[!$-/0-9:;=@_\':;!a-zA-Z\x7f-\xff\|]+?)?';
+        $rexFragment = '(#[!$-/0-9:;=@_\':;!a-zA-Z\x7f-\xff\|]+?)?';
+
+        return preg_replace_callback("&$rexProtocol$rexDomain$rexPort$rexPath$rexQuery$rexFragment(?=[?.!,;:\"]?(\s|$|((</)[^aA])))&",
+            function ($match) {
+                return '<a href="' . $match[0] . '">'. $match[1] . $match[2] . $match[3] . $match[4] . $match[5] . '</a>';
+            }, $text);
+    }
+
     public function descriptionAsHtml(string $description): string
     {
         $html = $description;
@@ -63,6 +78,7 @@ class ItemPage extends PageRenderer
 
         $html = preg_replace("/&(?!\S+;)/", "&amp;", $html);
 
+        $html = self::link_urls($html);
         // still loadhtml complains.. , so keep silent:
         libxml_use_internal_errors(true);
         $annotation = new DOMDocument();
