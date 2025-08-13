@@ -26,59 +26,6 @@ function ViciWidget(element, options) {
     function snapZoom(zoom) {
         return Math.floor(zoom + 0.5);
     }
-    // FocusLocationControl alleen definieren als geolocatie beschikbaar is
-    let FocusLocationControl = null;
-    if (navigator.geolocation) {
-        FocusLocationControl = class extends ol.control.Control {
-            constructor(opt_options) {
-                const options = opt_options || {};
-
-                const button = document.createElement('button');
-                button.innerHTML = '◎';
-
-                const element = document.createElement('div');
-                element.className = 'focus-location ol-unselectable ol-control';
-                element.appendChild(button);
-
-                super({
-                    element: element,
-                    target: options.target,
-                });
-
-                button.addEventListener('click', this.handleFocusLocation.bind(this), false);
-            }
-
-            handleFocusLocation() {
-                // Eerst pannen naar de laatst bekende locatie (indien beschikbaar)
-                if (lastLocation) {
-                    this.getMap().getView().animate({
-                        center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
-                        duration: 500
-                    });
-                }
-                // Vraag daarna de actuele positie op
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        updateLastLocation(position);
-                        // Pannen naar de nieuwe locatie (optioneel, als je altijd wilt updaten)
-                        this.getMap().getView().animate({
-                            center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
-                            duration: 500
-                        });
-                    },
-                    (error) => {
-                        // Geen foutmelding tonen
-                    },
-                    {
-                        enableHighAccuracy: false,
-                        timeout: 3000,
-                        maximumAge: 0
-                    }
-                );
-            }
-        }
-    }
-
     
     // use the element as an anchor but don't override absolute positioning:
     const elementStyle = document.getElementById(element).style;
@@ -328,9 +275,62 @@ function ViciWidget(element, options) {
         view: view
     });
 
+    // FocusLocationControl alleen definieren als geolocatie beschikbaar is
+    let FocusLocationControl = null;
+    if (options.useGeolocationAPI && navigator.geolocation) {
+        FocusLocationControl = class extends ol.control.Control {
+            constructor(opt_options) {
+                const options = opt_options || {};
+
+                const button = document.createElement('button');
+                button.innerHTML = '◎';
+
+                const element = document.createElement('div');
+                element.className = 'focus-location ol-unselectable ol-control';
+                element.appendChild(button);
+
+                super({
+                    element: element,
+                    target: options.target,
+                });
+
+                button.addEventListener('click', this.handleFocusLocation.bind(this), false);
+            }
+
+            handleFocusLocation() {
+                // Eerst pannen naar de laatst bekende locatie (indien beschikbaar)
+                if (lastLocation) {
+                    this.getMap().getView().animate({
+                        center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                        duration: 500
+                    });
+                }
+                // Vraag daarna de actuele positie op
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        updateLastLocation(position);
+                        // Pannen naar de nieuwe locatie (optioneel, als je altijd wilt updaten)
+                        this.getMap().getView().animate({
+                            center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                            duration: 500
+                        });
+                    },
+                    (error) => {
+                        // Geen foutmelding tonen
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 3000,
+                        maximumAge: 0
+                    }
+                );
+            }
+        }
+    }
+
     // FocusLocationControl pas toevoegen na succesvolle geolocatie
     let focusLocationControlInstance = null;
-    if (FocusLocationControl) {
+    if (options.useGeolocationAPI && FocusLocationControl) {
         focusLocationControlInstance = new FocusLocationControl();
         navigator.geolocation.getCurrentPosition(function(position) {
             map.addControl(focusLocationControlInstance);
