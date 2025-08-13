@@ -180,7 +180,7 @@ function ViciWidget(element, options) {
         center: { lat: 41.895, lng: 12.485},
         filter: { visibility: "anyVisibility", era: "anyEra" },
         overlays: options.enableOverlays ? options.enableOverlays : [],
-        moveHere: options.moveHere ? options.moveHere : false,
+        panToUserGeolocation: options.panToUserGeolocation ? options.panToUserGeolocation : false,
     };
     if (options.center) {
         session.center.lat = options.center.lat;
@@ -200,7 +200,7 @@ function ViciWidget(element, options) {
         // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
-            session.moveHere = false;
+            session.panToUserGeolocation = false;
             let center = parts[1].split(",");
             session.zoomlevel = Number(parts[0]);
             session.center.lat = Number(center[0]);
@@ -869,16 +869,13 @@ function ViciWidget(element, options) {
             let zoomlevel = map.getView().getZoom();
             let grid = getGridSize(zoomlevel);
             
-            let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
-            let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
-            
-            let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
-            let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
-            let snappedZoom = snapZoom(zoomlevel);
-            
-            let bounds = snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1];
+            // no snapping for highlights
+            let SW = ol.proj.toLonLat([extent[0], extent[1]]);
+            let NE = ol.proj.toLonLat([extent[2], extent[3]]);
+            let bounds = SW[1] + "," + SW[0] + "," + NE[1] + "," + NE[0];
 
-            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + snappedZoom + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
+            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + zoomlevel + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
+            
             if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId)) {
                 let extent = ol.proj.toLonLat(vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent());
                 let lat = extent[1];
@@ -1147,7 +1144,7 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (session.moveHere && 'geolocation' in navigator) {
+    if (session.panToUserGeolocation && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
             updateLastLocation(position);
             map.getView().animate({
