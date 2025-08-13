@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         center: { lat: window.lat, lng: window.lng },
         followFocus: true,
         focus: parseInt(window.siteId),
+        useGeolocationAPI: false,
         showScale: "metric"
     }
 
