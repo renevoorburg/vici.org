@@ -6,7 +6,7 @@
         {if isset($site->locales[$sessionLanguage]->summary) && $site->locales[$sessionLanguage]->summary ne ''}{$site->locales[$sessionLanguage]->summary}{else}{$site->defaultSummary}{/if}
         
             <div class="sitelistmetadata">
-        {if $site->updateDate ne $site->createDate}
+        {if ($site->updateDate|date_format:"%Y-%m-%d") ne ($site->createDate|date_format:"%Y-%m-%d")}
             {$last_edit_date_label|default:"Last edit"} {$site->updateDate|date_format:"%Y-%m-%d"} {$by_label|default:"by"} {$site->updater->getRealName()}
             <br>
         {/if}
@@ -14,4 +14,3 @@
             </div>
     </span>
 </span>
-
