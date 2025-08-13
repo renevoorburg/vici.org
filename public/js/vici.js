@@ -726,36 +726,39 @@ function ViciWidget(element, options) {
     });
 
 
+    let moveendTimer;
     map.on("moveend", function() {
-
-        if (hasPrefbox()) {
-            const viciform = document.getElementById('viciform');
-            if (viciform) {
-                viciform.style.display = 'none';
+        clearTimeout(moveendTimer);
+        moveendTimer = setTimeout(() => {
+            if (hasPrefbox()) {
+                const viciform = document.getElementById('viciform');
+                if (viciform) {
+                    viciform.style.display = 'none';
+                }
             }
-        }
 
-        let zoomlevel = map.getView().getZoom();
-        let extent = map.getView().calculateExtent();
-        let center = ol.proj.toLonLat(map.getView().getCenter());
+            let zoomlevel = map.getView().getZoom();
+            let extent = map.getView().calculateExtent();
+            let center = ol.proj.toLonLat(map.getView().getCenter());
 
-        session.center.lat = center[1];
-        session.center.lng = center[0];
+            session.center.lat = center[1];
+            session.center.lng = center[0];
 
-        if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId) && !options.followFocus) {
-            if (! ol.extent.containsExtent(extent, vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent())) {
-                deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+            if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId) && !options.followFocus) {
+                if (! ol.extent.containsExtent(extent, vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent())) {
+                    deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+                }
             }
-        }
 
-        if (zoomlevel !== session.zoomlevel) {
-            //we're zoomed in or out
-            session.zoomlevel = zoomlevel;
-            redrawMarkers();
-        }
-        updateDataLayer();
-        getHighlights();
-        storeSession();
+            if (zoomlevel !== session.zoomlevel) {
+                //we're zoomed in or out
+                session.zoomlevel = zoomlevel;
+                redrawMarkers();
+            }
+            updateDataLayer();
+            getHighlights();
+            storeSession();
+        }, 500);
     });
 
     function redrawMarkers() {
