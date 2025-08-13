@@ -194,6 +194,10 @@ main.homepage {
     flex-direction: column;
 }
 
+.highlights-scroll h2 {
+    margin-top: 0;
+}
+
 #selectionbox-content {
     padding: 0.5rem;
 }

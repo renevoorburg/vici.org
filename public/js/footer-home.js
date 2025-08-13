@@ -24,10 +24,10 @@ function updateSelectionBox(feature) {
     const id = feature.id || '';
     const hasImage = feature.picture && feature.picture !== '';
 
-    let selectionHTML = '';
+    let selectionHTML = `<h2>${window.selectionTitle}:</h2>`;
     if (hasImage) {
         const imageUrl = `https://images.vici.org/crop/w440xh248${feature.picture}`;
-        selectionHTML = `
+        selectionHTML += `
                 <div class="relative">
                     <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
                     <div class="absolute selection-overlay">
@@ -44,7 +44,7 @@ function updateSelectionBox(feature) {
                 </div>
             `;
     } else {
-        selectionHTML = `
+        selectionHTML += `
                 <div class="selection-no-image">
                     <div class="selection-overlay-content">
                         <div>
