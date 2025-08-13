@@ -1,10 +1,5 @@
 {extends file="base.tpl"}
 
-{block name=stylesheets}
-    <style>
-
-    </style>
-{/block}
 
 
 {block name=main}
