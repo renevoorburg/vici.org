@@ -211,6 +211,17 @@ a.hover:hover {
     gap: 0.5em;
 }
 
+.refanchor {
+    margin-left: 0.5em;
+}
+
+.siteref {
+    margin-right: 0.25em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+
 @media (max-width: 1600px) {
     .sitelist-container-flex {
         flex-direction: column;

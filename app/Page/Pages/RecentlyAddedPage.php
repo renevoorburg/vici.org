@@ -19,7 +19,7 @@ class RecentlyAddedPage extends PageRenderer
 
         $db = $session->getDBConnector();
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
-        $sites = $siteRepo->getRecentlyAdded();
+        $sites = $siteRepo->findRecentlyAdded();
         $this->assign('sites', $sites);
         $this->assign('search_results_label', $this->session->translator->get('Recently added'));
     }

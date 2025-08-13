@@ -94,9 +94,9 @@ class ItemPage extends PageRenderer
             preg_match('/\[(.*)\]/', $node->nodeValue, $matches);
             $anchorText = isset($matches[1]) ? $matches[1] : '';
             if (is_object($node) && is_object($node->attributes) && is_object($node->attributes->getNamedItem('href')) && $node->attributes->getNamedItem('href')->nodeValue) {
-                $refs .= '<li><a href="#cite_ref-' . $count . '">↑</a><a href="' . $node->attributes->getNamedItem('href')->nodeValue . '">' . $anchorText . '</a></li>';
+                $refs .= '<li><a class="siteref" href="#cite_ref-' . $count . '">↑</a> <a href="' . $node->attributes->getNamedItem('href')->nodeValue . '">' . $anchorText . '</a></li>';
             } else {
-                $refs .= '<li><a href="#cite_ref-' . $count . '">↑</a>' . $anchorText . '</li>';
+                $refs .= '<li><a class="siteref" href="#cite_ref-' . $count . '">↑</a>' . $anchorText . '</li>';
             }
 
             // replace node with a reference link:
@@ -104,6 +104,7 @@ class ItemPage extends PageRenderer
             $refLink->setAttribute('id', '#cite_note-' . $count);
             $refAnchor = $annotation->createElement('a', (string)$count);
             $refAnchor->setAttribute('href', '#cite_note-' . $count);
+            $refAnchor->setAttribute('class', 'refanchor');
             $refLink->appendChild($refAnchor);
             $node->parentNode->replaceChild($refLink, $node);
 
