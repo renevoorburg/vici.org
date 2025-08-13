@@ -184,7 +184,7 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
-    public function getRecentlyAdded(): SiteCollection
+    public function findRecentlyAdded(): SiteCollection
     {
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
@@ -201,11 +201,11 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
-    public function getRecentlyChanged(): SiteCollection
+    public function findRecentlyChanged(): SiteCollection
     {
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
-            WHERE pnt_hide=0 AND m.pmeta_create_date != m.pmeta_edit_date
+            WHERE pnt_hide=0 AND DATE(m.pmeta_create_date) != DATE(m.pmeta_edit_date)
             ORDER BY m.pmeta_edit_date DESC
             LIMIT 50"
         );
