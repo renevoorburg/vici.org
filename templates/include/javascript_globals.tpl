@@ -14,4 +14,5 @@
     {if isset($js_translations)}
         window.viciTranslations = {$js_translations};
     {/if}
+    window.selectionTitle = "{$selection_title|default:"Selected"}";
 </script>
