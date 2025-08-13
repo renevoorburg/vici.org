@@ -727,7 +727,7 @@ function ViciWidget(element, options) {
 
 
     let moveendTimer;
-    map.on("moveend", function() {
+    map.on("moveend", function() { 
         clearTimeout(moveendTimer);
         moveendTimer = setTimeout(() => {
             if (hasPrefbox()) {
