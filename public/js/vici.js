@@ -710,11 +710,17 @@ function ViciWidget(element, options) {
         let foundFeature = null;
         map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
             // Sla geotracking over, kies eerste vici-feature
-            if (layer !== geotracking && feature && feature.vici) {
-                foundFeature = feature;
-                return true; // stop zoeken
+            if (geotracking) {
+                if (layer !== geotracking && feature && feature.vici) {
+                    foundFeature = feature;
+                    return true; // stop zoeken
+                }
+            } else {
+                if (feature && feature.vici) {
+                    foundFeature = feature;
+                    return true; // stop zoeken
+                }
             }
-            // Anders doorgaan
             return false;
         });
 
