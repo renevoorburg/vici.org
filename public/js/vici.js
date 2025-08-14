@@ -339,49 +339,47 @@ function ViciWidget(element, options) {
     }
 
     // see https://openlayers.org/en/latest/examples/geolocation.html
-    let geotracking = null;
-    if (options.useGeolocationAPI) {
-        const geolocation = new ol.Geolocation({
-            // enableHighAccuracy must be set to true to have the heading value.
-            trackingOptions: {
-                enableHighAccuracy: true,
-            },
-            tracking: true,
-            projection: view.getProjection()
-        });
+    const geolocation = new ol.Geolocation({
+        // enableHighAccuracy must be set to true to have the heading value.
+        trackingOptions: {
+            enableHighAccuracy: true,
+        },
+        tracking: true,
+        projection: view.getProjection()
+    });
 
-        const accuracyFeature = new ol.Feature();
-        geolocation.on('change:accuracyGeometry', function () {
-            accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-        });
+    const accuracyFeature = new ol.Feature();
+    geolocation.on('change:accuracyGeometry', function () {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+    });
 
-        const positionFeature = new ol.Feature();
-        positionFeature.setStyle(
-            new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 6,
-                    fill: new ol.style.Fill({
-                        color: '#3399CC',
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: '#fff',
-                        width: 2,
-                    }),
+    const positionFeature = new ol.Feature();
+    positionFeature.setStyle(
+        new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({
+                    color: '#3399CC',
                 }),
-            })
-        );
-
-        geolocation.on('change:position', function () {
-            const coordinates = geolocation.getPosition();
-            positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
-        });
-
-        geotracking = new ol.layer.Vector({
-            source: new ol.source.Vector({
-                features: [accuracyFeature, positionFeature],
+                stroke: new ol.style.Stroke({
+                    color: '#fff',
+                    width: 2,
+                }),
             }),
-        });
-    }
+        })
+    );
+
+    geolocation.on('change:position', function () {
+        const coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+    });
+
+    let geotracking = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [accuracyFeature, positionFeature],
+        }),
+    });
+
     // end: see https://openlayers.org/en/latest/examples/geolocation.html
 
 
@@ -500,9 +498,7 @@ function ViciWidget(element, options) {
 
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
-    if (options.useGeolocationAPI && geotracking) {
-        map.addOverlay(geotracking);
-    }
+    map.addOverlay(geotracking);
 
     // change mouse cursor when over marker or line
     map.on('pointermove', function(evt) {
@@ -710,17 +706,11 @@ function ViciWidget(element, options) {
         let foundFeature = null;
         map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
             // Sla geotracking over, kies eerste vici-feature
-            if (geotracking) {
-                if (layer !== geotracking && feature && feature.vici) {
-                    foundFeature = feature;
-                    return true; // stop zoeken
-                }
-            } else {
-                if (feature && feature.vici) {
-                    foundFeature = feature;
-                    return true; // stop zoeken
-                }
+            if (layer !== geotracking && feature && feature.vici) {
+                foundFeature = feature;
+                return true; // stop zoeken
             }
+            // Anders doorgaan
             return false;
         });
 
@@ -737,7 +727,7 @@ function ViciWidget(element, options) {
 
 
     let moveendTimer;
-    map.on("moveend", function() { 
+    map.on("moveend", function() {
         clearTimeout(moveendTimer);
         moveendTimer = setTimeout(() => {
             if (hasPrefbox()) {
