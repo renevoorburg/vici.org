@@ -339,47 +339,49 @@ function ViciWidget(element, options) {
     }
 
     // see https://openlayers.org/en/latest/examples/geolocation.html
-    const geolocation = new ol.Geolocation({
-        // enableHighAccuracy must be set to true to have the heading value.
-        trackingOptions: {
-            enableHighAccuracy: true,
-        },
-        tracking: true,
-        projection: view.getProjection()
-    });
+    let geotracking = null;
+    if (options.useGeolocationAPI) {
+        const geolocation = new ol.Geolocation({
+            // enableHighAccuracy must be set to true to have the heading value.
+            trackingOptions: {
+                enableHighAccuracy: true,
+            },
+            tracking: true,
+            projection: view.getProjection()
+        });
 
-    const accuracyFeature = new ol.Feature();
-    geolocation.on('change:accuracyGeometry', function () {
-        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-    });
+        const accuracyFeature = new ol.Feature();
+        geolocation.on('change:accuracyGeometry', function () {
+            accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+        });
 
-    const positionFeature = new ol.Feature();
-    positionFeature.setStyle(
-        new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 6,
-                fill: new ol.style.Fill({
-                    color: '#3399CC',
+        const positionFeature = new ol.Feature();
+        positionFeature.setStyle(
+            new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 6,
+                    fill: new ol.style.Fill({
+                        color: '#3399CC',
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff',
+                        width: 2,
+                    }),
                 }),
-                stroke: new ol.style.Stroke({
-                    color: '#fff',
-                    width: 2,
-                }),
+            })
+        );
+
+        geolocation.on('change:position', function () {
+            const coordinates = geolocation.getPosition();
+            positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+        });
+
+        let geotracking = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [accuracyFeature, positionFeature],
             }),
-        })
-    );
-
-    geolocation.on('change:position', function () {
-        const coordinates = geolocation.getPosition();
-        positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
-    });
-
-    let geotracking = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: [accuracyFeature, positionFeature],
-        }),
-    });
-
+        });
+    }
     // end: see https://openlayers.org/en/latest/examples/geolocation.html
 
 
@@ -498,7 +500,9 @@ function ViciWidget(element, options) {
 
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
-    map.addOverlay(geotracking);
+    if (options.useGeolocationAPI && geotracking) {
+        map.addOverlay(geotracking);
+    }
 
     // change mouse cursor when over marker or line
     map.on('pointermove', function(evt) {
