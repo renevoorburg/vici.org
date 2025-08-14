@@ -376,7 +376,7 @@ function ViciWidget(element, options) {
             positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
         });
 
-        let geotracking = new ol.layer.Vector({
+        geotracking = new ol.layer.Vector({
             source: new ol.source.Vector({
                 features: [accuracyFeature, positionFeature],
             }),
