@@ -142,6 +142,13 @@ function ViciWidget(element, options) {
     if (options.filter) {
         session.filter = options.filter;
     }
+    options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
+    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.useGeolocationAPI) ? true : false; 
+
+
+    if (options.panToUserGeolocation) {
+        session.panToUserGeolocation = options.panToUserGeolocation;
+    }
 
     if (options.setUrl) {
         // url will override zoomlevel, center and selectedMarkerId
