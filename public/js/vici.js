@@ -131,7 +131,7 @@ function ViciWidget(element, options) {
             center: { lat: 41.895, lng: 12.485},
             filter: { visibility: "anyVisibility", era: "anyEra" },
             overlays: options.enableOverlays ? options.enableOverlays : [],
-            panToUserGeolocation: options.panToUserGeolocation ? options.panToUserGeolocation : false,
+            panToUserGeolocation: (options.panToUserGeolocation === true) ? true : false,
         };
         console.log("new session")
     }
@@ -153,8 +153,6 @@ function ViciWidget(element, options) {
 
     options.setUrl = (options.setUrl === true) ? true : false; 
     options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
-    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.useGeolocationAPI && 'geolocation' in navigator) ? true : false; 
-    session.panToUserGeolocation = options.panToUserGeolocation;
 
     if (options.setUrl) {
         // url will override zoomlevel, center and selectedMarkerId
