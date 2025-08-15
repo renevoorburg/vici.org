@@ -120,15 +120,22 @@ function ViciWidget(element, options) {
         options.useMaps = ["OSM", "AWMC"];
     }
 
-    let session = (sessionStorage.getItem('session'))  ? JSON.parse(sessionStorage.getItem('session')) : {
-        selectedMarkerId: null,
-        zoomlevel: options.zoomlevel ? options.zoomlevel : 13,
-        mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
-        center: { lat: 41.895, lng: 12.485},
-        filter: { visibility: "anyVisibility", era: "anyEra" },
-        overlays: options.enableOverlays ? options.enableOverlays : [],
-        panToUserGeolocation: options.panToUserGeolocation ? options.panToUserGeolocation : false,
-    };
+    let session;
+    if (sessionStorage.getItem('session')) {
+        session = JSON.parse(sessionStorage.getItem('session'));
+    } else {
+        session = {
+            selectedMarkerId: null,
+            zoomlevel: options.zoomlevel ? options.zoomlevel : 13,
+            mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
+            center: { lat: 41.895, lng: 12.485},
+            filter: { visibility: "anyVisibility", era: "anyEra" },
+            overlays: options.enableOverlays ? options.enableOverlays : [],
+            panToUserGeolocation: options.panToUserGeolocation ? options.panToUserGeolocation : false,
+        };
+        console.log("new session")
+    }
+
     console.log(session.panToUserGeolocation);
     if (options.center) {
         session.center.lat = options.center.lat;
