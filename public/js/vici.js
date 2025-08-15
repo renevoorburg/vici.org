@@ -142,13 +142,11 @@ function ViciWidget(element, options) {
     if (options.filter) {
         session.filter = options.filter;
     }
+
+    options.setUrl = (options.setUrl === true) ? true : false; 
     options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
-    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.useGeolocationAPI) ? true : false; 
-
-
-    if (options.panToUserGeolocation) {
-        session.panToUserGeolocation = options.panToUserGeolocation;
-    }
+    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.useGeolocationAPI && 'geolocation' in navigator) ? true : false; 
+    session.panToUserGeolocation = options.panToUserGeolocation;
 
     if (options.setUrl) {
         // url will override zoomlevel, center and selectedMarkerId
@@ -1164,7 +1162,7 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (session.panToUserGeolocation && 'geolocation' in navigator) {
+    if (session.panToUserGeolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
             updateLastLocation(position);
             map.getView().animate({
