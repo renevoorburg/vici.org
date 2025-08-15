@@ -423,5 +423,5 @@ a.hover:hover {
 {/block}
 
 {block name=footerscripts}
-    <script src="/js/footer-item.js"></script>
+    <script src="/js/footer-item.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
 {/block}
