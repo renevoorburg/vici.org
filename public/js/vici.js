@@ -1170,6 +1170,8 @@ function ViciWidget(element, options) {
                 duration: 1500
             });
         });
+        session.panToUserGeolocation = false;
+        storeSession();
     }
 
     // expose functions:
