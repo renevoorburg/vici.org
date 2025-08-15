@@ -129,6 +129,7 @@ function ViciWidget(element, options) {
         overlays: options.enableOverlays ? options.enableOverlays : [],
         panToUserGeolocation: options.panToUserGeolocation ? options.panToUserGeolocation : false,
     };
+    console.log(session.panToUserGeolocation);
     if (options.center) {
         session.center.lat = options.center.lat;
         session.center.lng = options.center.lng;
