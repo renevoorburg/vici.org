@@ -164,7 +164,7 @@ header .subtitle {
 main.homepage {
     display: flex;
     flex: none;
-    height: calc(100dvh - 5.5rem);
+    height: calc(100dvh - 6rem);
 }
 
 #map {
