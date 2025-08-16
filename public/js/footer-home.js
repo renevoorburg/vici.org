@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         lang: window.sessionLanguage,
         setUrl: true,
         showScale: "metric",
-        useGeolocationAPI: true,
+        showUserGeolocation: true,
         panToUserGeolocation: true,
         highlightFunc: updateHighlightsBox,
         selectionFunc: updateSelectionBox
