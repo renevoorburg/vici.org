@@ -125,6 +125,7 @@ function ViciWidget(element, options) {
 
     let session;
     if (sessionStorage.getItem('session')) {
+        options.panToUserGeolocation = false;   
         session = JSON.parse(sessionStorage.getItem('session'));
     } else {
         session = {
@@ -135,7 +136,6 @@ function ViciWidget(element, options) {
             filter: { visibility: "anyVisibility", era: "anyEra" },
             overlays: options.enableOverlays ? options.enableOverlays : [],
         };
-        options.panToUserGeolocation = false;
     }
 
     if (options.center) {
@@ -152,10 +152,7 @@ function ViciWidget(element, options) {
         session.filter = options.filter;
     }
 
-
-
     if (options.setUrl) {
-        // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
             options.panToUserGeolocation = false;
@@ -168,7 +165,6 @@ function ViciWidget(element, options) {
             }
         }
     }
-
 
     // mapState bundles parameters related to the state of the map that should not be stored in session storage:
     let mapState = {
