@@ -118,7 +118,7 @@ function ViciWidget(element, options) {
 
     options.useMaps = (options.useMaps) ? options.useMaps : ["OSM", "AWMC"];
     options.setUrl = (options.setUrl === true) ? true : false; 
-    options.hasGeolocationAPI = (navigator.geolocation) ? true : false;
+    options.hasGeolocationAPI = ('geolocation' in navigator) && (location.protocol === 'https:');
     options.showUserGeolocation = (options.showUserGeolocation === true && options.hasGeolocationAPI) ? true : false; 
     options.panToUserGeolocation = (options.panToUserGeolocation === true && options.hasGeolocationAPI) ? true : false;
 
