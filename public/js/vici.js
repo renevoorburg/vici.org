@@ -131,7 +131,6 @@ function ViciWidget(element, options) {
             center: { lat: 41.895, lng: 12.485},
             filter: { visibility: "anyVisibility", era: "anyEra" },
             overlays: options.enableOverlays ? options.enableOverlays : [],
-            panToUserGeolocation: (options.panToUserGeolocation === true) ? true : false,
         };
     }
 
@@ -151,12 +150,13 @@ function ViciWidget(element, options) {
 
     options.setUrl = (options.setUrl === true) ? true : false; 
     options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
+    options.panToUserGeolocation = (options.panToUserGeolocation === true) ? true : false;
 
     if (options.setUrl) {
         // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
-            session.panToUserGeolocation = false;
+            options.panToUserGeolocation = false;
             let center = parts[1].split(",");
             session.zoomlevel = Number(parts[0]);
             session.center.lat = Number(center[0]);
@@ -1166,7 +1166,7 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (session.panToUserGeolocation) {
+    if (options.panToUserGeolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
             updateLastLocation(position);
             map.getView().animate({
@@ -1175,8 +1175,7 @@ function ViciWidget(element, options) {
             });
         });
     }
-    session.panToUserGeolocation = false;
-    storeSession();
+    options.panToUserGeolocation = false;
 
     // expose functions:
     return { 
