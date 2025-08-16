@@ -116,12 +116,11 @@ function ViciWidget(element, options) {
         }
     }[lang];
 
-    if (!options.useMaps) {
-        options.useMaps = ["OSM", "AWMC"];
-    }
+    options.useMaps = (options.useMaps) ? options.useMaps : ["OSM", "AWMC"];
     options.setUrl = (options.setUrl === true) ? true : false; 
-    options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
-    options.panToUserGeolocation = (options.panToUserGeolocation === true) ? true : false;
+    options.hasGeolocationAPI = (navigator.geolocation) ? true : false;
+    options.showUserGeolocation = (options.showUserGeolocation === true && options.hasGeolocationAPI) ? true : false; 
+    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.hasGeolocationAPI) ? true : false;
 
     let session;
     if (sessionStorage.getItem('session')) {
@@ -137,7 +136,6 @@ function ViciWidget(element, options) {
             overlays: options.enableOverlays ? options.enableOverlays : [],
         };
     }
-
     if (options.center) {
         session.center.lat = options.center.lat;
         session.center.lng = options.center.lng;
@@ -284,7 +282,7 @@ function ViciWidget(element, options) {
 
     // FocusLocationControl alleen definieren als geolocatie beschikbaar is
     let FocusLocationControl = null;
-    if (options.useGeolocationAPI && navigator.geolocation) {
+    if (options.showUserGeolocation) {
         FocusLocationControl = class extends ol.control.Control {
             constructor(opt_options) {
                 const options = opt_options || {};
@@ -337,7 +335,7 @@ function ViciWidget(element, options) {
 
     // FocusLocationControl pas toevoegen na succesvolle geolocatie
     let focusLocationControlInstance = null;
-    if (options.useGeolocationAPI && FocusLocationControl) {
+    if (options.showUserGeolocation && FocusLocationControl) {
         focusLocationControlInstance = new FocusLocationControl();
         navigator.geolocation.getCurrentPosition(function(position) {
             map.addControl(focusLocationControlInstance);
@@ -347,7 +345,7 @@ function ViciWidget(element, options) {
 
     // see https://openlayers.org/en/latest/examples/geolocation.html
     let geotracking = null;
-    if (options.useGeolocationAPI) {
+    if (options.showUserGeolocation) {
         const geolocation = new ol.Geolocation({
             // enableHighAccuracy must be set to true to have the heading value.
             trackingOptions: {
@@ -507,7 +505,7 @@ function ViciWidget(element, options) {
 
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
-    if (options.useGeolocationAPI && geotracking) {
+    if (options.showUserGeolocation && geotracking) {
         map.addOverlay(geotracking);
     }
 
