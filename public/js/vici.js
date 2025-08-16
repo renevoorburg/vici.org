@@ -119,6 +119,9 @@ function ViciWidget(element, options) {
     if (!options.useMaps) {
         options.useMaps = ["OSM", "AWMC"];
     }
+    options.setUrl = (options.setUrl === true) ? true : false; 
+    options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
+    options.panToUserGeolocation = (options.panToUserGeolocation === true) ? true : false;
 
     let session;
     if (sessionStorage.getItem('session')) {
@@ -132,6 +135,7 @@ function ViciWidget(element, options) {
             filter: { visibility: "anyVisibility", era: "anyEra" },
             overlays: options.enableOverlays ? options.enableOverlays : [],
         };
+        options.panToUserGeolocation = false;
     }
 
     if (options.center) {
@@ -148,9 +152,7 @@ function ViciWidget(element, options) {
         session.filter = options.filter;
     }
 
-    options.setUrl = (options.setUrl === true) ? true : false; 
-    options.useGeolocationAPI = (options.useGeolocationAPI === true) ? true : false; 
-    options.panToUserGeolocation = (options.panToUserGeolocation === true) ? true : false;
+
 
     if (options.setUrl) {
         // url will override zoomlevel, center and selectedMarkerId
@@ -1175,7 +1177,6 @@ function ViciWidget(element, options) {
             });
         });
     }
-    options.panToUserGeolocation = false;
 
     // expose functions:
     return { 
