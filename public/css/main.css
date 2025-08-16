@@ -580,6 +580,7 @@ figure img {
     display: block;
     object-fit: contain;
     max-width: 100%;
+    border-radius: 0.25rem;
 }
 
 #my-gallery a img {

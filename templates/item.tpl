@@ -10,7 +10,7 @@
 main.item {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 .maincontent > * + * {
     margin-top: 1rem;
@@ -118,11 +118,11 @@ article blockquote {
     font-variant: small-caps;
     font-family: 'Times New Roman', Times, serif
 }
-
+/* 
 .imagecolumn {
     width: 100%;
     min-width: 240px;
-}
+} */
 
 .itemImages {
     display: flex;
@@ -209,6 +209,8 @@ a.hover:hover {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.5em;
+    margin-right:0.5rem;
+    margin-left:0.5rem;
 }
 
 .refanchor {
