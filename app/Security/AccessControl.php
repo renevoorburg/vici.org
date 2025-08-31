@@ -8,29 +8,30 @@ class AccessControl
 {
 
     public const RATE_LIMIT_SECONDS = 60;
-    public const MAX_REQUESTS = 8;
+    public const MAX_ANONYMOUS_REQUESTS = 8;
     public const MAX_BOTLIKE_REQUESTS = 3;
     public const BLOCK_TIME_SECONDS = 900;
 
     private string $ip;
     private string $requested_action;
-    private bool $is_logged_in;
+    private bool $has_authenticated_user;
 
     private bool $requires_token = false;
-    private bool $requires_login = false;
-    private bool $requires_authentication = false;
+    private bool $requires_authenticated_user = false;
 
-    private bool $is_trap_link = false;
+
+    private bool $is_bot_attracting_link = false;
+    private bool $is_bot_trap_link = false;
     private bool $is_whitelist_link = false;
-    private bool $is_rate_limited = false;
-    private bool $is_possible_bot = false;
+    private bool $is_rate_limited_anonymously = false;
 
 
-    public function __construct(string $ip, string $requested_action, bool $is_logged_in)
+
+    public function __construct(string $ip, string $requested_action, bool $has_authenticated_user)
     {
         $this->ip = $ip;
         $this->requested_action = $requested_action;
-        $this->is_logged_in = $is_logged_in;
+        $this->has_authenticated_user = $has_authenticated_user;
     }
 
     public function setRequiresToken(bool $value): void
@@ -38,19 +39,19 @@ class AccessControl
         $this->requires_token = $value;
     }
 
-    public function setRequiresLogin(bool $value): void
+    public function setRequiresAuthenticatedUser(bool $value): void
     {
-        $this->requires_login = $value;
+        $this->requires_authenticated_user = $value;
     }
 
-    public function setRequiresAuthentication(bool $value): void
+    public function setIsBotAttractingLink(bool $value): void
     {
-        $this->requires_authentication = $value;
-    }
+        $this->is_bot_attracting_link = $value;
+    }   
 
-    public function setIsTrapLink(bool $value): void
+    public function setIsBotTrapLink(bool $value): void
     {
-        $this->is_trap_link = $value;
+        $this->is_bot_trap_link = $value;
     }
 
     public function setIsWhitelistLink(bool $value): void
@@ -58,15 +59,11 @@ class AccessControl
         $this->is_whitelist_link = $value;
     }
 
-    public function setIsRateLimited(bool $value): void
+    public function setIsRateLimitedAnonymously(bool $value): void
     {
-        $this->is_rate_limited = $value;
+        $this->is_rate_limited_anonymously = $value;
     }
 
-    public function setIsPossibleBot(bool $value): void
-    {
-        $this->is_possible_bot = $value;
-    }
 
     public function enforceAndRun(callable $requested_action): void
     {
@@ -75,53 +72,52 @@ class AccessControl
         }
             
         if ($this->hasBlockedIP()) {
-            $this->denyAccess();
+            $this->denyAccess('IP blocked');
         }
 
-        if ($this->requires_authentication || $this->requires_token || $this->requires_login) {
-            if (!$this->is_logged_in && !$this->hasValidToken()) {
-                self::enforceUserLogin();
-            }
+        if ($this->requires_token && !$this->hasValidToken()) {
+            $this->denyAccess('Invalid token');
         }
 
-        if ($this->is_trap_link) {
+        if ($this->is_bot_trap_link) {
             $this->blockIP();
-            self::denyAccess();
+            $this->denyAccess('Blocked');
         }
 
-        if ($this->is_rate_limited) {
-            if (!$this->is_logged_in && !$this->hasValidToken()) {
-                $key = "anon_ip_" . $this->requested_action . "_" . $this->ip;
-                $hits = apcu_fetch($key) ?: 0;
-                
-                if ($hits > self::MAX_REQUESTS) {
-                    self::denyAccessTemporarily();
-                } else {
-                    $hits++;
-                    apcu_store($key, $hits, self::RATE_LIMIT_SECONDS);
-                }
+        if ($this->is_rate_limited_anonymously && !$this->has_authenticated_user) {
+            $key = "anon_rate_limited_" . $this->requested_action . "_" . $this->ip;
+            $hits = apcu_fetch($key) ?: 0;
+            
+            if ($hits > self::MAX_ANONYMOUS_REQUESTS) {
+                self::denyAccessTemporarily($key);
+            } else {
+                $hits++;
+                apcu_store($key, $hits, self::RATE_LIMIT_SECONDS);
             }
         }
 
-        if ($this->is_possible_bot) {
-            if ($this->is_logged_in && !$this->hasValidToken()) {
-                $key = "botlike_ip_" . $this->ip;
-                $hits = apcu_fetch($key) ?: 0;
-                
-                if ($hits > self::MAX_BOTLIKE_REQUESTS) {
-                    self::denyAccessTemporarily();
-                } else {
-                    $hits++;
-                    apcu_store($key, $hits, self::BLOCK_TIME_SECONDS);
-                }
+        if ($this->is_bot_attracting_link && 
+            !($this->has_authenticated_user || $this->has_valid_token))
+        {
+            $key = "botlike_rate_limited_" . $this->ip;
+            $hits = apcu_fetch($key) ?: 0;
+            
+            if ($hits > self::MAX_BOTLIKE_REQUESTS) {
+                self::denyAccessTemporarily($key);
+            } else {
+                $hits++;
+                apcu_store($key, $hits, self::BLOCK_TIME_SECONDS);
             }
+        }
+
+        if ($this->requires_authenticated_user && !$this->has_authenticated_user) {
+            self::enforceUserAuthentication();
         }
 
         $requested_action();
     }
 
-
-    private function isBot() : bool
+    private function isAdvertisingBot() : bool
     {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
@@ -188,18 +184,18 @@ class AccessControl
         return $token_match || $useragent_match || $ext_secret_match;
     }
 
-    public function denyAccess(): void 
+    public function denyAccess($message = ''): void 
     {
         header('HTTP/1.1 403 Forbidden');
         header('Content-Type: application/json');
-        echo json_encode(['error' => 'Access denied']);
+        echo json_encode(['error' => 'Access denied' . ($message ? ': ' . $message : '')]);
         exit;
     }
     
-    public static function enforceUserLogin() : void { 
+    public static function enforceUserAuthentication() : void { 
         $uri = $_SERVER['REQUEST_URI'];
 
-        if (self::isBot()) {
+        if (self::isAdvertisingBot()) {
             self::denyAccess();
         } else {
             header('Location: /login?loginrequired&return=' . urlencode($uri));
@@ -207,15 +203,26 @@ class AccessControl
         }
     }
 
-    public static function denyAccessTemporarily() : void
+    public static function denyAccessTemporarily(string $key) : void
     {
         $uri = $_SERVER['REQUEST_URI'];
             
-        if (self::isBot()) {
+        if (self::isAdvertisingBot()) {
             header('HTTP/1.1 429 Too Many Requests');
             header("Retry-After: " . self::RATE_LIMIT_SECONDS);
             exit;
         } else {
+            // Lower the hit counter by 2 (atomic) to give humans some slack without resetting TTL
+            if (function_exists('apcu_dec')) {
+                @apcu_dec($key, 2, $success);
+                if (isset($success) && !$success) {
+                    // Key might not exist; nothing to do
+                }
+            } else {
+                $hits = apcu_fetch($key) ?: 0;
+                $hits = max(0, $hits - 2);
+                apcu_store($key, $hits, self::RATE_LIMIT_SECONDS);
+            }
             header('Location: /login?wait=' . self::RATE_LIMIT_SECONDS . '&return=' . urlencode($uri));
             exit;
         }

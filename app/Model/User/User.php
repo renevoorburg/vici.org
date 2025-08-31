@@ -14,6 +14,13 @@ class User
     private string $password;
     private $level;
 
+    const LEVEL_DELETED = 0;        // deleted: record kept for integrity, acc. data flushed
+    const LEVEL_LOCKED = 1;         // locked: can do nothing until situation cleared
+    const LEVEL_NOT_CONFIRMED = 2;  // not confirmed: new account, waits for confirmation
+    const LEVEL_CONFIRMED = 3;      // confirmed, not trusted (postings need to be checked)
+    const LEVEL_TRUSTED = 4;        // trusted
+    const LEVEL_ADMIN = 5;          // admin  
+
     public function __construct($id, $accountName, $realName, $email, $password = null)
     {
         $this->id = $id;
@@ -21,11 +28,24 @@ class User
         $this->realName = $realName;
         $this->email = $email;
         $this->password = $password;
+        $this->level = self::LEVEL_NOT_CONFIRMED;
     }
 
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        if ($this->id > 0) {
+            throw new \LogicException('Cannot set ID for existing user');
+        }
+        if ($id < 1) {
+            throw new \InvalidArgumentException('Invalid ID');
+        }
+        $this->id = $id;
+        return $this;
     }
 
     public function getName()
@@ -92,6 +112,41 @@ class User
     {
         $this->level = $level;
         return $this;
+    }
+
+    public function isDeleted()
+    {
+        return $this->level === self::LEVEL_DELETED;
+    }
+
+    public function isLocked()
+    {
+        return $this->level === self::LEVEL_LOCKED;
+    }
+
+    public function isNotConfirmed()
+    {
+        return $this->level === self::LEVEL_NOT_CONFIRMED;
+    }
+
+    public function isConfirmed()
+    {
+        return $this->level >= self::LEVEL_CONFIRMED;
+    }
+
+    public function isTrusted()
+    {
+        return $this->level >= self::LEVEL_TRUSTED;
+    }
+
+    public function isAdmin()
+    {
+        return $this->level === self::LEVEL_ADMIN;
+    }
+
+    public function __toString()
+    {
+        return $this->accountName;
     }
 
     private function extractFirstName($realName)

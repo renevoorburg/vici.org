@@ -64,4 +64,44 @@ class UserRepository
         
         return null;
     }
+
+    public function isAccountNameTaken(string $accountName): bool
+    {
+        $query = "SELECT COUNT(*) FROM accounts WHERE acc_name = :account_name";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            'account_name' => $accountName
+        ]);
+
+        $count = $stmt->fetchColumn();
+        return $count > 0;
+    }
+
+    public function isEmailTaken(string $emailLower): bool
+    {
+        $query = "SELECT COUNT(*) FROM accounts WHERE LOWER(acc_email) = :email";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            'email' => $emailLower
+        ]);
+
+        $count = $stmt->fetchColumn();
+        return $count > 0;
+    }
+
+
+    public function save(User $user): int
+    {
+        $query = "INSERT INTO accounts (acc_name, acc_realname, acc_email, acc_passwd, acc_level) VALUES (:account_name, :real_name, :email, :password, :level)";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            'account_name' => $user->getName(),
+            'real_name' => $user->getRealName(),
+            'email' => $user->getEmail(),
+            'password' => $user->getPassword(),
+            'level' => $user->getLevel()
+        ]);
+        $user->setId((int)$this->db->lastInsertId());
+        return $user->getId();
+    }
 }

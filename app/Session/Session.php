@@ -119,17 +119,17 @@ class Session
         return isset($_SESSION['lang']);
     }
 
-    public function isRealUser() : bool
+    public function isVerifiedRealUser() : bool
     {
         return isset($_SESSION['is_real_user']) && $_SESSION['is_real_user'] === true;
     }
 
-    public function setIsRealUser(bool $isRealUser) : void
+    public function setIsVerifiedRealUser(bool $isVerifiedRealUser) : void
     {
-        $_SESSION['is_real_user'] = $isRealUser;
+        $_SESSION['is_real_user'] = $isVerifiedRealUser;
     }
 
-    public function unsetIsRealUser() : void
+    public function unsetIsVerifiedRealUser() : void
     {
         unset($_SESSION['is_real_user']);
     }

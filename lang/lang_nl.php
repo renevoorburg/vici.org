@@ -93,6 +93,7 @@ return [
     'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
     'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
     'Verifying you are human' => 'Controleren of je geen webrobot bent',
+    'ERROR: Page limit for anonymous users reached. Log in or wait %s seconds.' => 'FOUT: Paginalimiet voor anonieme gebruikers bereikt. Meld je aan of wacht %s seconden.',
 
     // defaults from item.tpl:
     "Annotation" => "Annotatie",
