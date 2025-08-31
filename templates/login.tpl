@@ -20,9 +20,7 @@
                         <label for="frm_password" style="color: #374151;">{$form_password|default:"Password"}:</label>
                         <input type="password" id="frm_password" name="password" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem;" />
                     </div>
-                    {if !$is_real_user}
-                        {include file="include/turnstile.tpl"}
-                    {/if}
+                    {include file="include/turnstile.tpl" is_real_user=$is_real_user turnstile_sitekey=$turnstile_sitekey bot_challenge_label=$bot_challenge_label}
                     <div style="margin-top: 0.5rem;">
                         <input type="submit" value="{$form_login|default:Login}" style="background-color: #1e3a8a; color: white; border: none; border-radius: 0.25rem; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer;">
                     </div>
