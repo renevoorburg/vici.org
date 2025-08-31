@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 use Vici\Session\Session;
 use Vici\Page\Pages;
 use Vici\API;
+use Vici\Page\Api as ApiPage;
 use Vici\Model\User\User;
 use Vici\Security\AccessControl;
 
@@ -36,42 +37,64 @@ switch ($session->getRequestedAction()) {
     case 'vici':
         switch ($session->getRequestedVariant()) {
             case 'kml':
-                $accessControl->setRequiresAuthentication(true);
+                $accessControl->setRequiresAuthenticatedUser(true);
                 $action = fn() => (new API\KML($session))->get();
                 break;
             default:
-                $accessControl->setIsRateLimited(true);
+                $accessControl->setIsRateLimitedAnonymously(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
                 break;
         }
         break;
+    case 'api':
+        switch ($session->getRequestedItem()) {
+            case 'users':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $accessControl->setIsBotAttractingLink(true);
+                    $accessControl->setIsRateLimitedAnonymously(true);
+                    $action = fn() => (new ApiPage\UserApiController($session))->postCreateUser();
+                } else {
+                    http_response_code(405);
+                    $action = fn() => null;
+                }
+                break;
+            default:
+                http_response_code(404);
+                $action = fn() => null;
+                break;
+        }
+        break;
     case 'image':
-        $accessControl->setIsRateLimited(true);
+        $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\ImagePage($session))->display();
         break;
     case 'search':
-        $accessControl->setIsRateLimited(true);
+        $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\SearchPage($session))->display();
         break;
     case 'additions':
-        $accessControl->setIsRateLimited(true);
+        $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\RecentlyAddedPage($session))->display();
         break;
     case 'changes':
-        $accessControl->setIsRateLimited(true);
+        $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\RecentlyChangedPage($session))->display();
         break;
     case 'geojson.php':
-        $accessControl->setRequiresAuthentication(true);
+        $accessControl->setRequiresToken(true);
         $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':
-        $accessControl->setRequiresAuthentication(true);
+        $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
         break;
     case 'login':
-        $accessControl->setIsPossibleBot(true);
+        $accessControl->setIsBotAttractingLink(true);
         $action = fn() => (new Pages\LoginPage($session))->display();
+        break;
+    case 'register':
+        $accessControl->setIsBotAttractingLink (true);
+        $action = fn() => (new Pages\RegisterPage($session))->display();
         break;
     case 'logout':
         $session->clearUser();
