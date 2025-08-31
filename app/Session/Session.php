@@ -119,6 +119,21 @@ class Session
         return isset($_SESSION['lang']);
     }
 
+    public function isRealUser() : bool
+    {
+        return isset($_SESSION['is_real_user']) && $_SESSION['is_real_user'] === true;
+    }
+
+    public function setIsRealUser(bool $isRealUser) : void
+    {
+        $_SESSION['is_real_user'] = $isRealUser;
+    }
+
+    public function unsetIsRealUser() : void
+    {
+        unset($_SESSION['is_real_user']);
+    }
+
     public function getRequestedAction() : string
     {
         return $this->requestedAction;
