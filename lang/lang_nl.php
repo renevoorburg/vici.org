@@ -92,6 +92,7 @@ return [
     'Password' => 'Wachtwoord',
     'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
     'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
+    'Verifying you are human' => 'Controleren of je geen webrobot bent',
 
     // defaults from item.tpl:
     "Annotation" => "Annotatie",
