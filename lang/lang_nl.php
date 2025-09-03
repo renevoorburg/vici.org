@@ -95,6 +95,13 @@ return [
     'Verifying you are human' => 'Controleren of je geen webrobot bent',
     'ERROR: Page limit for anonymous users reached. Log in or wait %s seconds.' => 'FOUT: Paginalimiet voor anonieme gebruikers bereikt. Meld je aan of wacht %s seconden.',
 
+    // defaults from register.tpl:
+    'Register account' => 'Registreer als gebruiker',
+    'Full name' => 'Volledige naam',
+    'Email' => 'E-mail adres',
+    'Confirm password' => 'Herhaal wachtwoord',
+    'Register' => 'Registreer',
+
     // defaults from item.tpl:
     "Annotation" => "Annotatie",
     "Location" => "Locatie",
