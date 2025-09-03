@@ -98,9 +98,12 @@ return [
     // defaults from register.tpl:
     'Register account' => 'Registreer als gebruiker',
     'Full name' => 'Volledige naam',
-    'Email' => 'E-mail adres',
+    'Email' => 'E-mailadres',
     'Confirm password' => 'Herhaal wachtwoord',
     'Register' => 'Registreer',
+    'janedoe' => 'mariekevandijk',
+    'Jane Doe' => 'Marieke van Dijk',
+    'jane.doe@example.com' => 'marieke.van.dijk@voorbeeld.nl',
 
     // defaults from item.tpl:
     "Annotation" => "Annotatie",
