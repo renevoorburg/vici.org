@@ -8,22 +8,16 @@ final class RegisterUserCommand
     public string $realName;
     public string $email;
     public string $password;
-    public string $ip;
-    public string $userAgent;
-
+    
     public function __construct(
         string $accountName,
         string $realName,
         string $email,
-        string $password,
-        string $ip,
-        string $userAgent
+        string $password
     ) {
         $this->accountName = $accountName;
         $this->realName = $realName;
         $this->email = $email;
         $this->password = $password;
-        $this->ip = $ip;
-        $this->userAgent = $userAgent;
     }
 }

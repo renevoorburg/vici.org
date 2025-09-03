@@ -50,8 +50,8 @@ switch ($session->getRequestedAction()) {
         switch ($session->getRequestedItem()) {
             case 'users':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $accessControl->setIsBotAttractingLink(true);
-                    $accessControl->setIsRateLimitedAnonymously(true);
+                    // $accessControl->setIsBotAttractingLink(true);
+                    // $accessControl->setIsRateLimitedAnonymously(true);
                     $action = fn() => (new ApiPage\UserApiController($session))->postCreateUser();
                 } else {
                     http_response_code(405);
@@ -89,11 +89,11 @@ switch ($session->getRequestedAction()) {
         $action = fn() => (new API\Highlights($session))->get();
         break;
     case 'login':
-        $accessControl->setIsBotAttractingLink(true);
+        // $accessControl->setIsBotAttractingLink(true);
         $action = fn() => (new Pages\LoginPage($session))->display();
         break;
     case 'register':
-        $accessControl->setIsBotAttractingLink (true);
+        // $accessControl->setIsBotAttractingLink (true);
         $action = fn() => (new Pages\RegisterPage($session))->display();
         break;
     case 'logout':

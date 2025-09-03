@@ -89,7 +89,12 @@ class UserApiController
         // Hand over to domain handler
         $repo = new UserRepository($this->session->getDBConnector());
         $handler = new RegisterUserHandler($repo, $this->session);
-        $cmd = new RegisterUserCommand($accountNameTrim, preg_replace('/\s+/', ' ', $realNameTrim), $emailTrim, $passwordStr, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '');
+        $cmd = new RegisterUserCommand(
+            $accountNameTrim,
+            preg_replace('/\s+/', ' ', $realNameTrim),
+            $emailTrim,
+            $passwordStr
+        );
 
         try {
             $result = $handler($cmd); // expected array: ['id' => ..., 'createdAt' => ...]
