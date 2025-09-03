@@ -16,31 +16,36 @@
                     <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: center;">
                         <label for="accountName" style="color: #374151;">{$account_name_label|default:"Account name"}:</label>
                         <div>
-                            <input type="text" id="accountName" name="accountName" value="{$form_accountname_previous|escape}" minlength="4" required style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
+                            <input type="text" id="accountName" name="accountName" value="{$form_accountname_previous|escape}" minlength="4" required placeholder="{$account_name_placeholder|default:"janedoe"}" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
                             <div class="field-error" data-error-for="accountName" style="color:#db3e17; font-size:0.9rem; margin-top:0.25rem;"></div>
                         </div>
 
                         <label for="realName" style="color: #374151;">{$realname_label|default:"Full name"}:</label>
                         <div>
-                            <input type="text" id="realName" name="realName" value="{$form_realname_previous|escape}" minlength="4" required placeholder="{$realname_placeholder|default:'Jane Doe'}" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
+                            <input type="text" id="realName" name="realName" value="{$form_realname_previous|escape}" minlength="4" 
+                                required 
+                                placeholder="{$realname_placeholder|default:"Jane Doe"}" 
+                                style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
                             <div class="field-error" data-error-for="realName" style="color:#db3e17; font-size:0.9rem; margin-top:0.25rem;"></div>
                         </div>
 
                         <label for="email" style="color: #374151;">{$email_label|default:"Email"}:</label>
                         <div>
-                            <input type="email" id="email" name="email" value="{$form_email_previous|escape}" required placeholder="{$email_placeholder|default:'jane.doe@example.com'}" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
+                            <input type="email" id="email" name="email" value="{$form_email_previous|escape}" required 
+                                placeholder="{$email_placeholder|default:"jane.doe@example.com"}" 
+                                style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
                             <div class="field-error" data-error-for="email" style="color:#db3e17; font-size:0.9rem; margin-top:0.25rem;"></div>
                         </div>
 
                         <label for="password" style="color: #374151;">{$password_label|default:"Password"}:</label>
                         <div>
-                            <input type="password" id="password" name="password" required style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
+                            <input type="password" id="password" name="password" required minlength="8" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
                             <div class="field-error" data-error-for="password" style="color:#db3e17; font-size:0.9rem; margin-top:0.25rem;"></div>
                         </div>
 
                         <label for="passwordConfirm" style="color: #374151;">{$password_confirm_label|default:"Confirm password"}:</label>
                         <div>
-                            <input type="password" id="passwordConfirm" name="passwordConfirm" required style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
+                            <input type="password" id="passwordConfirm" name="passwordConfirm" required minlength="8" style="border: 1px solid #e2e8f0; border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; width: 100%;">
                             <div class="field-error" data-error-for="passwordConfirm" style="color:#db3e17; font-size:0.9rem; margin-top:0.25rem;"></div>
                         </div>
                     </div>
