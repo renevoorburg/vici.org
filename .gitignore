@@ -6,3 +6,4 @@
 /var/templates_cache/
 /var/templates_compile/
 .env
+plan.md
