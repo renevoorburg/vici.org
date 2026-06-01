@@ -40,6 +40,7 @@ class RDF
 
         // load marker data:
         set_time_limit(60);
+        ini_set('memory_limit', '512M');
         $db = new DBConnector();
 
         $extraSql = ($this->pntId ? " AND pnt_id=" . $this->pntId : "");
@@ -66,18 +67,13 @@ class RDF
         header('Content-type: application/rdf+xml');
         echo '<?xml version="1.0"?>', "\n";
         echo '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"', "\n";
-        echo ' xmlns:dc="http://purl.org/dc/elements/1.1/"', "\n";
-        echo ' xmlns:dcterms="http://purl.org/dc/terms/"', "\n";
-        echo ' xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"', "\n";
+                echo ' xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"', "\n";
         echo ' xmlns:gis="http://www.opengis.net/ont/geosparql#"', "\n";
-        echo ' xmlns:lawd="http://lawd.info/ontology/"', "\n";
         echo ' xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"', "\n";
         echo ' xmlns:skos="http://www.w3.org/2004/02/skos/core#"', "\n";
         echo ' xmlns:vici="http://vici.org/ns/2015/07#"', "\n";
         echo ' xmlns:sf="http://www.opengis.net/ont/sf#"', "\n";
-        echo ' xmlns:foaf="http://xmlns.com/foaf/0.1/"', "\n";
-        echo ' xmlns:cc="http://creativecommons.org/ns#"', "\n";
-        echo ' xmlns:owl="http://www.w3.org/2002/07/owl#">', "\n";
+        echo ' xmlns:schema="http://schema.org/">', "\n";
 
 
         // print marker records:
@@ -101,7 +97,7 @@ class RDF
 
     private function printSite()
     {
-        echo '<lawd:Place rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '">', "\n";
+        echo '<schema:Place rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '">', "\n";
         echo '  <rdf:type rdf:resource="http://vici.org/ns/2015/07#', ucfirst($this->obj->pkind_name), '"/>', "\n";
         echo '  <rdfs:label>', htmlspecialchars($this->obj->pnt_name), '</rdfs:label>' . "\n";
         if ($this->obj->de_name) {
@@ -116,18 +112,18 @@ class RDF
         if ($this->obj->nl_name) {
             echo '  <rdfs:label xml:lang="nl">', htmlspecialchars($this->obj->nl_name), '</rdfs:label>', "\n";
         }
-        echo '  <dc:description>', htmlspecialchars($this->obj->pnt_dflt_short), '</dc:description>', "\n";
+        echo '  <schema:disambiguatingDescription>', htmlspecialchars($this->obj->pnt_dflt_short), '</schema:disambiguatingDescription>', "\n";
         if ($this->obj->de_short) {
-            echo '  <dc:description xml:lang="de">', htmlspecialchars($this->obj->de_short), '</dc:description>', "\n";
+            echo '  <schema:description xml:lang="de">', htmlspecialchars($this->obj->de_short), '</schema:description>', "\n";
         }
         if ($this->obj->en_short) {
-            echo '  <dc:description xml:lang="en">', htmlspecialchars($this->obj->en_short), '</dc:description>', "\n";
+            echo '  <schema:description xml:lang="en">', htmlspecialchars($this->obj->en_short), '</schema:description>', "\n";
         }
         if ($this->obj->fr_short) {
-            echo '  <dc:description xml:lang="fr">', htmlspecialchars($this->obj->fr_short), '</dc:description>', "\n";
+            echo '  <schema:description xml:lang="fr">', htmlspecialchars($this->obj->fr_short), '</schema:description>', "\n";
         }
         if ($this->obj->nl_short) {
-            echo '  <dc:description xml:lang="nl">', htmlspecialchars($this->obj->nl_short), '</dc:description>', "\n";
+            echo '  <schema:description xml:lang="nl">', htmlspecialchars($this->obj->nl_short), '</schema:description>', "\n";
         }
         echo '  <vici:isVisible>', $this->obj->pnt_visible, '</vici:isVisible>', "\n";
 
@@ -149,76 +145,69 @@ class RDF
 
         if ($this->obj->pmeta_startyr) {
 
-            if ($this->obj->pmeta_endyr> date("Y") ) {
-                echo '  <dcterms:date>'.$this->obj->pmeta_startyr.'</dcterms:date>', "\n";
+            if ($this->obj->pmeta_endyr > date("Y")) {
+                echo '  <schema:startDate>', $this->obj->pmeta_startyr, '</schema:startDate>', "\n";
             } else {
-
-                echo '  <dcterms:temporal>' . $this->obj->pmeta_startyr . '/' . $this->obj->pmeta_endyr . '</dcterms:temporal>', "\n";
-
+                echo '  <schema:temporalCoverage>', $this->obj->pmeta_startyr, '/', $this->obj->pmeta_endyr, '</schema:temporalCoverage>', "\n";
             }
         }
 
         while ($this->images->walk($this->obj->pnt_id)) {
-            echo '  <foaf:depiction rdf:resource="http://vici.org/image/' . $this->images->current()->getId() . '"/>', "\n";
+            echo '  <schema:image rdf:resource="http://vici.org/image/' . $this->images->current()->getId() . '"/>', "\n";
         }
 
 
-        // representative point:
-        echo '    <geo:location>', "\n";
-        echo '      <rdf:Description>', "\n";
-        echo '        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#double">', $this->obj->pnt_lat, '</geo:lat>', "\n";
-        echo '        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#double">', $this->obj->pnt_lng, '</geo:long>', "\n";
-        echo '        <vici:hasAccuracy>',$this->obj->pmeta_loc_accuracy,'</vici:hasAccuracy>',"\n";
-        echo '      </rdf:Description>', "\n";
-        echo '    </geo:location>', "\n";
-
-        // add linedata:
+        // add representative point and linedata:
         echo '  <gis:hasGeometry>', "\n";
+        echo '    <sf:Point>', "\n";
+        echo '      <rdfs:label xml:lang="en">Representative point</rdfs:label>', "\n";
+        echo '      <gis:asWKT rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">POINT (', $this->obj->pnt_lng, ' ', $this->obj->pnt_lat, ')</gis:asWKT>', "\n";
+        echo '    </sf:Point>', "\n";
+        echo '  </gis:hasGeometry>', "\n";
         while ($this->lines->walk($this->obj->pnt_id)) {
+            echo '  <gis:hasGeometry>', "\n";
             echo '    <sf:', $this->lines->current()->getOpengisLineKind(), '>', "\n";
+            echo '      <rdfs:label xml:lang="en">Structural geometry</rdfs:label>', "\n";
             echo '      <gis:asWKT rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">', $this->lines->current()->getLineParts('wkt'), '</gis:asWKT>', "\n";
-
-            echo '      <rdfs:isDefinedBy>', "\n";
-            echo '        <foaf:Document>', "\n";
-            if ($license = $this->lines->current()->getLicense()) { // TODO ugly, should be dealt with in getLicense()
-                echo '          <cc:license rdf:resource="', $license, '"/>', "\n";
-            } else {
-                echo '          <dcterms:rights>All rights reserved.</dcterms:rights>', "\n";
+            if ($license = $this->lines->current()->getLicense()) {
+                echo '      <schema:license rdf:resource="', $license, '"/>', "\n";
             }
             if ($owner = $this->lines->current()->getOwner()) {
-                echo '          <dc:creator>', htmlspecialchars($owner), '</dc:creator>', "\n";
+                echo '      <schema:creator>', htmlspecialchars($owner), '</schema:creator>', "\n";
             }
-            echo '        </foaf:Document>', "\n";
-            echo '      </rdfs:isDefinedBy>', "\n";
             echo '    </sf:', $this->lines->current()->getOpengisLineKind(), '>', "\n";
+            echo '  </gis:hasGeometry>', "\n";
         }
-        if ($this->lines->count() == 0) {
-            echo '      <sf:Point>', "\n";
-            echo '        <gis:asWKT rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">POINT (', $this->obj->pnt_lng, ' ', $this->obj->pnt_lat, ')</gis:asWKT>', "\n";
-            echo '      </sf:Point>', "\n";
-        }
-        echo '  </gis:hasGeometry>', "\n";
 
         echo '  <rdfs:isDefinedBy rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '/rdf"/>', "\n";
-        echo '  <foaf:isPrimaryTopicOf rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '/"/>', "\n";
-        echo '</lawd:Place>', "\n";
+        echo '  <schema:mainEntityOfPage rdf:resource="https://vici.org/vici/', $this->obj->pnt_id, '/"/>', "\n";
+        echo '</schema:Place>', "\n";
 
-        echo '<foaf:Document rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/rdf">', "\n";
-        echo '  <foaf:primaryTopic rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '"/>', "\n";
-        echo '  <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>', "\n";
-        echo '</foaf:Document>', "\n";
+        echo '<schema:Dataset rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/rdf">', "\n";
+        echo '  <schema:about rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '"/>', "\n";
+        echo '  <schema:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>', "\n";
+        echo '</schema:Dataset>', "\n";
+
+        echo '<schema:WebPage rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/">', "\n";
+        echo '  <schema:mainEntity rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '"/>', "\n";
+        echo '</schema:WebPage>', "\n";
 
     }
 
     private function printImage()
     {
-        echo '<foaf:image rdf:about="http://vici.org/image/', $this->images->current()->getId(), '">', "\n";
-        echo '  <dc:title>', htmlspecialchars($this->images->current()->getTitle()), '</dc:title>', "\n";
-        echo '  <dc:description>' . htmlspecialchars($this->images->current()->getDescription()) . '</dc:description>';
-        if ($license = $this->images->current()->getLicense()) {
-            echo '  <cc:license rdf:resource="', $license, '"/>', "\n";
+        echo '<schema:ImageObject rdf:about="http://vici.org/image/', $this->images->current()->getId(), '">', "\n";
+        echo '  <schema:name>', htmlspecialchars($this->images->current()->getTitle()), '</schema:name>', "\n";
+        $description = $this->images->current()->getDescription();
+        if (!empty($description)) {
+            echo '  <schema:description>', htmlspecialchars($description), '</schema:description>', "\n";
         }
-        echo '</foaf:image>', "\n";
+        echo '  <schema:contentUrl rdf:resource="https://images.vici.org/auto', $this->images->current()->getPath(), '"/>', "\n";
+        echo '  <schema:thumbnailUrl rdf:resource="https://images.vici.org/size/h200', $this->images->current()->getPath(), '"/>', "\n";
+        if ($license = $this->images->current()->getLicense()) {
+            echo '  <schema:license rdf:resource="', $license, '"/>', "\n";
+        }
+        echo '</schema:ImageObject>', "\n";
     }
 
 }
