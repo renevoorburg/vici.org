@@ -69,7 +69,7 @@ class RDF
         echo ' xmlns:gis="http://www.opengis.net/ont/geosparql#"', "\n";
         echo ' xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"', "\n";
         echo ' xmlns:skos="http://www.w3.org/2004/02/skos/core#"', "\n";
-        echo ' xmlns:vici="http://vici.org/ns/2015/07#"', "\n";
+        echo ' xmlns:vici="http://vici.org/ns/2026/06/"', "\n";
         echo ' xmlns:sf="http://www.opengis.net/ont/sf#"', "\n";
         echo ' xmlns:schema="http://schema.org/">', "\n";
 
@@ -132,7 +132,7 @@ class RDF
     private function printSite()
     {
         echo '<schema:Place rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '">', "\n";
-        echo '  <rdf:type rdf:resource="http://vici.org/ns/2015/07#', ucfirst($this->obj->pkind_name), '"/>', "\n";
+        echo '  <rdf:type rdf:resource="http://vici.org/ns/2026/06/', ucfirst($this->obj->pkind_name), '"/>', "\n";
         echo '  <rdfs:label>', htmlspecialchars($this->obj->pnt_name), '</rdfs:label>' . "\n";
         if ($this->obj->de_name) {
             echo '  <rdfs:label xml:lang="de">', htmlspecialchars($this->obj->de_name), '</rdfs:label>', "\n";
