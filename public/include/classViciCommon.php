@@ -171,7 +171,7 @@ class ViciCommon
 
     public static function getBaseUrlDeclaration()
     {
-        if ($_ENV['VICIBASE']) {
+        if (!empty($_ENV['VICIBASE'])) {
             return "
                 baseUrl: '" . $_ENV['VICIBASE'] . "',";
         } else {
@@ -181,7 +181,7 @@ class ViciCommon
 
     public static function getViciTokenDeclaration()
     {
-        if ($_ENV['VICITOKEN']) {
+        if (!empty($_ENV['VICITOKEN'])) {
             return "
                 viciToken: '" . $_ENV['VICITOKEN'] . "',";
         } else {

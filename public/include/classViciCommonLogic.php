@@ -36,7 +36,7 @@ class ViciCommonLogic extends ViciCommon
      */
     private static function getAcceptFormat($acceptable, $default = 'html') : string
     {
-        $accept = strtolower(str_replace(' ', '', $_SERVER['HTTP_ACCEPT']));
+        $accept = strtolower(str_replace(' ', '', $_SERVER['HTTP_ACCEPT'] ?? ''));
         $last = 99;
         $ret = $default;
         foreach ($acceptable as $current) {
