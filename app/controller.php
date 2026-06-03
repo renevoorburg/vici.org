@@ -24,7 +24,7 @@ switch ($session->getRequestedAction()) {
         $action = fn() => (new Pages\HomePage($session))->display();
         break;
     case 'data-access':
-        $accessControl->setIsTrapLink(true);
+        $accessControl->setIsBotTrapLink(true);
         $action = fn() => null;
         break;
     case 'favicon.ico':
