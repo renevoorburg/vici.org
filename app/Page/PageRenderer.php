@@ -27,6 +27,7 @@ class PageRenderer extends Smarty
         $this->assign('availableLanguages', $this->session->getAvailableLanguages());
         $this->assign('viciToken', $_ENV['VICITOKEN']);
         $this->assign('sessionLanguage', $this->session->getLanguage());
+        $this->assign('lang', $this->session->getLanguage());
         if (isset($_ENV['VICIBASE'])) {
             $this->assign('vicibase', $_ENV['VICIBASE']);
         }
