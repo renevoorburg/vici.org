@@ -38,6 +38,7 @@ class ItemPage extends PageRenderer
         $this->assign('preferredLocaleLanguage', $preferredLocaleLanguage);
         $this->assign('nearbySites', $nearbySites);
         $this->assign('relevantMuseums', $relevantMuseums);
+        $this->assign('site_type', $site->type);
         $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
 

@@ -151,14 +151,16 @@ class User
 
     private function extractFirstName($realName)
     {
-        $firstName = explode(' ', $realName)[0];
+        $parts = explode(' ', $realName);
+        $firstName = $parts[0] ?? '';
         $this->firstName = $firstName;
         return $firstName;
     }
 
     private function extractLastName($realName)
     {
-        $lastName = explode(' ', $realName)[1];
+        $parts = explode(' ', $realName);
+        $lastName = $parts[1] ?? '';
         $this->lastName = $lastName;
         return $lastName;
     }

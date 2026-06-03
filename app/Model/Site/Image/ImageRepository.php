@@ -81,7 +81,7 @@ class ImageRepository
         $image->width = (int)$row['imgd_width'];
         $image->height = (int)$row['imgd_height'];
 
-        $image->data = $row['imgd_data'];
+        $image->data = $row['imgd_data'] ?? null;
         $image->license = $this->licenseRepo->findById((int)$row['imgd_license']);
         $image->uploader = $this->userRepo->findById((int)$row['imgd_uploader']);
 
