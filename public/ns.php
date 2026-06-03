@@ -8,291 +8,291 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 
-<http://vici.org/ns/2015/07#>
+<http://vici.org/ns/2026/06/>
   a owl:Ontology ;
   rdfs:label "Ontology aimed to describe and support the model behind or used by http://vici.org/."@en ;
   dc:creator "René Voorburg" .
 
-<http://vici.org/ns/2015/07#Marker>
+<http://vici.org/ns/2026/06/Marker>
   a rdfs:Class ;
   rdfs:subClassOf foaf:Document ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:comment "A marker represents a #Site on a map."@en .
 
-<http://vici.org/ns/2015/07#Site>
+<http://vici.org/ns/2026/06/Site>
   a rdfs:Class ;
   rdfs:label "Site" ;
   rdfs:subClassOf <http://erlangen-crm.org/current/E27_Site>, <http://lawd.info/ontology/Place> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:comment "Core object type described by http://vici.org. "@en .
 
-<http://vici.org/ns/2015/07#Infrastructure>
+<http://vici.org/ns/2026/06/Infrastructure>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "Site of civic infrastructural objects or constructions"@en .
 
-<http://vici.org/ns/2015/07#Military>
+<http://vici.org/ns/2026/06/Military>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "Site of military buildings or infrastructure"@en .
 
-<http://vici.org/ns/2015/07#Settlement>
+<http://vici.org/ns/2026/06/Settlement>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "Site of civic or rural settlements. Primarily for non-military purposes or civic part of military settlement."@en .
 
-<http://vici.org/ns/2015/07#Construction>
+<http://vici.org/ns/2026/06/Construction>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "(Site of) Buildings or other larger fixed man made constructions."@en .
 
-<http://vici.org/ns/2015/07#Artefact>
+<http://vici.org/ns/2026/06/Artefact>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "Artefacts in situ or smaller remains of constructions."@en .
 
-<http://vici.org/ns/2015/07#Intangible>
+<http://vici.org/ns/2026/06/Intangible>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site>, <http://erlangen-crm.org/current/E2_Temporal_Entity> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site>, <http://erlangen-crm.org/current/E2_Temporal_Entity> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "Site of an event in time"@en .
 
-<http://vici.org/ns/2015/07#Touristic>
+<http://vici.org/ns/2026/06/Touristic>
   a rdfs:Class ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:label "A current day location related to historic sites, events or objects."@en .
 
-<http://vici.org/ns/2015/07#City>
+<http://vici.org/ns/2026/06/City>
   a rdfs:Class ;
   rdfs:label "City"@en, "Stad"@nl ;
   rdfs:comment "A city like a civitas or colonia, municipum."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Settlement> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Settlement> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300008389> .
 
-<http://vici.org/ns/2015/07#Vicus>
+<http://vici.org/ns/2026/06/Vicus>
   a rdfs:Class ;
   rdfs:label "Village"@en, "Dorp"@nl ;
   rdfs:comment "A village like a canabae or a vicus."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Settlement> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Settlement> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300000754> .
 
-<http://vici.org/ns/2015/07#Rural>
+<http://vici.org/ns/2026/06/Rural>
   a rdfs:Class ;
   rdfs:label "Farm"@en, "Hoeve"@nl ;
   rdfs:comment "A rural settlement, a farm or a small group of farms."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Settlement> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Settlement> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300008420> .
 
-<http://vici.org/ns/2015/07#Fort>
+<http://vici.org/ns/2026/06/Fort>
   a rdfs:Class ;
   rdfs:label "Castle"@en, "Fort"@nl ;
   rdfs:comment "A castle, fort, mini-fort or naval base. Construction aimed at housing military personel."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Military> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Military> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300006888> .
 
-<http://vici.org/ns/2015/07#Watchtower>
+<http://vici.org/ns/2026/06/Watchtower>
   a rdfs:Class ;
   rdfs:label "Watchtower"@en, "Wachtpost"@nl ;
   rdfs:comment "A watchtower, signaltower or comparable smaller military construction."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Military> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Military> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300134522> .
 
-<http://vici.org/ns/2015/07#Camp>
+<http://vici.org/ns/2026/06/Camp>
   a rdfs:Class ;
   rdfs:label "Camp"@en, "Mars- of oefenkamp"@nl ;
   rdfs:comment "A temporary military camp like a marching camp or practicing camp."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Military> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Military> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300164117> .
 
-<http://vici.org/ns/2015/07#Aquaduct>
+<http://vici.org/ns/2026/06/Aquaduct>
   a rdfs:Class ;
   rdfs:label "Aqueduct"@en, "Aquaduct"@nl ;
   rdfs:comment "An aqueduct, or a location where a part of an aqueduct is visible. Can be displayed on the map as a line."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Infrastructure> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Infrastructure> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300006165> .
 
-<http://vici.org/ns/2015/07#Road>
+<http://vici.org/ns/2026/06/Road>
   a rdfs:Class ;
   rdfs:label "Road"@en, "Weg"@nl ;
   rdfs:comment "A paved or hardened road. Can be displayed on the map as a line."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Infrastructure> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Infrastructure> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300008217> .
 
-<http://vici.org/ns/2015/07#Bridge>
+<http://vici.org/ns/2026/06/Bridge>
   a rdfs:Class ;
   rdfs:label "Bridge"@en, "Brug"@nl ;
   rdfs:comment "A bridge, usually as part of a road system."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Infrastructure> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Infrastructure> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300007836> .
 
-<http://vici.org/ns/2015/07#Villa>
+<http://vici.org/ns/2026/06/Villa>
   a rdfs:Class ;
   rdfs:label "Villa rustica"@en ;
   rdfs:comment "The central building or the complex of buildings of an agricultural estate."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300005518> .
 
-<http://vici.org/ns/2015/07#Mansio>
+<http://vici.org/ns/2026/06/Mansio>
   a rdfs:Class ;
   rdfs:label "Mansio"@en, "Herberg"@nl ;
   rdfs:comment "A resting place along a road, like a tavern or a small settlement related to it. Might be a mansio or mutatio."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300120555> .
 
-<http://vici.org/ns/2015/07#Theater>
+<http://vici.org/ns/2026/06/Theater>
   a rdfs:Class ;
   rdfs:label "Theatre"@en ;
   rdfs:comment "A theatre, amphitheatre, stadium, circus or similar."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300108449>, <http://vocab.getty.edu/aat/300007255>, <http://vocab.getty.edu/aat/300007271>, <http://vocab.getty.edu/aat/300007117> .
 
-<http://vici.org/ns/2015/07#Baths>
+<http://vici.org/ns/2026/06/Baths>
   a rdfs:Class ;
   rdfs:label "Baths"@en, "Thermen"@nl ;
   rdfs:comment "Public baths or a bath house that is part of a larger complex."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300080054> .
 
-<http://vici.org/ns/2015/07#Temple>
+<http://vici.org/ns/2026/06/Temple>
   a rdfs:Class ;
   rdfs:label "Temple"@en, "Tempel"@nl ;
   rdfs:comment "A temple, sanctuary or early church."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300120364> .
 
-<http://vici.org/ns/2015/07#Industry>
+<http://vici.org/ns/2026/06/Industry>
   a rdfs:Class ;
   rdfs:label "Workshop"@en, "Werkplaats"@nl ;
   rdfs:comment "A workshop or industry like a mine, port or pottery."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300004531> .
 
-<http://vici.org/ns/2015/07#Graves>
+<http://vici.org/ns/2026/06/Graves>
   a rdfs:Class ;
   rdfs:label "Grave"@en, "Graf"@nl ;
   rdfs:comment "A group of graves, a burial field or a significant grave monument."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300266755>, <http://vocab.getty.edu/aat/300005891>, <http://vocab.getty.edu/aat/300000372> .
 
-<http://vici.org/ns/2015/07#Building>
+<http://vici.org/ns/2026/06/Building>
   a rdfs:Class ;
   rdfs:label "Other building"@en, "Overig gebouw"@nl ;
   rdfs:comment "Stone remains of a building, not matching any other class. Fallback for more specific categories."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Construction> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Construction> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300004792> .
 
-<http://vici.org/ns/2015/07#Altar>
+<http://vici.org/ns/2026/06/Altar>
   a rdfs:Class ;
   rdfs:label "Altar"@en, "Altaar"@nl ;
   rdfs:comment "A relief, votiv stone, altar or similar monument. Excludes graves or burial monuments."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Artefact> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Artefact> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300003725>, <http://vocab.getty.edu/aat/300047090> .
 
-<http://vici.org/ns/2015/07#Milestone>
+<http://vici.org/ns/2026/06/Milestone>
   a rdfs:Class ;
   rdfs:label "Milestone"@en, "Mijlsteen"@nl ;
   rdfs:comment "The original location of a milestone."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Artefact> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Artefact> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300006973> .
 
-<http://vici.org/ns/2015/07#Shipwreck>
+<http://vici.org/ns/2026/06/Shipwreck>
   a rdfs:Class ;
   rdfs:label "Shipwreck"@en, "Scheepswrak"@nl ;
   rdfs:comment "Location where the remains of a ship were found."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Artefact> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Artefact> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300386973> .
 
-<http://vici.org/ns/2015/07#Object>
+<http://vici.org/ns/2026/06/Object>
   a rdfs:Class ;
   rdfs:label "Object or find"@en, "Object of vondst"@nl ;
   rdfs:comment "The location of smaller archaeological finds, artefacts like pottery or coins."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Artefact> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Artefact> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300266151> .
 
-<http://vici.org/ns/2015/07#Observation>
+<http://vici.org/ns/2026/06/Observation>
   a rdfs:Class ;
   rdfs:label "Observation"@en, "Observatie"@nl ;
   rdfs:comment "Location of an archaeological observation, for example traces of a ditch of a road. Fallback for more specific categories."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Artefact> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Artefact> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300266151> .
 
-<http://vici.org/ns/2015/07#Event>
+<http://vici.org/ns/2026/06/Event>
   a rdfs:Class ;
   rdfs:label "Site of historical event"@en, "Plaats van historische gebeurtenis"@nl ;
   rdfs:comment "The location of a significant historic event, for example a battlefield."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Intangible> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Intangible> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300069084> .
 
-<http://vici.org/ns/2015/07#Museum>
+<http://vici.org/ns/2026/06/Museum>
   a rdfs:Class ;
   rdfs:label "Museum"@en ;
   rdfs:comment "A museum about classical antiquity or that has artifacts from antiquity on display."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Touristic>, <http://wikidata.org/entity/Q33506> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Touristic>, <http://wikidata.org/entity/Q33506> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300005768> .
 
-<http://vici.org/ns/2015/07#Memorial>
+<http://vici.org/ns/2026/06/Memorial>
   a rdfs:Class ;
   rdfs:label "Memorial"@en ;
   rdfs:comment "A contemporary monument that reminds about the history related to the specific location by artistic means or with a replica."@en ;
-  rdfs:subClassOf <http://vici.org/ns/2015/07#Touristic>, <http://wikidata.org/wiki/Q4989906> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:subClassOf <http://vici.org/ns/2026/06/Touristic>, <http://wikidata.org/wiki/Q4989906> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   ns0:isIdentifiedByAuthority <http://vocab.getty.edu/aat/300006956> .
 
-<http://vici.org/ns/2015/07#smallZoom>
+<http://vici.org/ns/2026/06/smallZoom>
   a rdf:Property ;
   rdfs:label "Lowest zoomlevel for icons"@en ;
   rdfs:comment "Lowest zoomlevel at which a small icon is shown on the map."@en ;
-  rdfs:domain <http://vici.org/ns/2015/07#Marker> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:domain <http://vici.org/ns/2026/06/Marker> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:range xsd:int .
 
-<http://vici.org/ns/2015/07#bigZoom>
+<http://vici.org/ns/2026/06/bigZoom>
   a rdf:Property ;
   rdfs:label "Zoomlevel showing large icons."@en ;
   rdfs:comment "Lowest zoomlevel at which the big icon is shown on the map."@en ;
-  rdfs:domain <http://vici.org/ns/2015/07#Marker> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:domain <http://vici.org/ns/2026/06/Marker> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:range xsd:int .
 
-<http://vici.org/ns/2015/07#isVisible>
+<http://vici.org/ns/2026/06/isVisible>
   a rdf:Property ;
   rdfs:label "Visibility"@en ;
   rdfs:comment "Value 1 for sites that are visible either onsite or on current satellite imagery, otherwise 0."@en ;
-  rdfs:domain <http://vici.org/ns/2015/07#Site> ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:domain <http://vici.org/ns/2026/06/Site> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:range xsd:int .
 
-<http://vici.org/ns/2015/07#hasAccuracy>
+<http://vici.org/ns/2026/06/hasAccuracy>
   a rdf:Property ;
   rdfs:label "Accuracy"@en ;
   rdfs:comment """
@@ -305,5 +305,5 @@
             5 = 500 meters or worse.
         """@en ;
   rdfs:domain geo:location ;
-  rdfs:isDefinedBy <http://vici.org/ns/2015/07#> ;
+  rdfs:isDefinedBy <http://vici.org/ns/2026/06/> ;
   rdfs:range xsd:int .
