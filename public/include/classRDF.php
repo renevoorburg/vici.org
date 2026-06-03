@@ -16,6 +16,9 @@ require_once __DIR__ . '/../include/classDBConnector.php';
 require_once __DIR__ . '/../include/classExtIdRefs.php';
 require_once __DIR__ . '/../include/classSiteLineData.php';
 require_once __DIR__ . '/../include/classImageData.php';
+require_once __DIR__ . '/../include/classViciCommonLogic.php';
+require_once __DIR__ . '/../include/classViciCommon.php';
+require_once __DIR__ . '/../include/classLang.php';
 
 
 class RDF
@@ -26,6 +29,8 @@ class RDF
     private $obj;               // query results row
     private $images;
     private $lines;
+    private $printedImages = [];
+    private $lngObjs = [];
 
     /**
      * @param string $subjectKind For future use, currently only 'site's are serialised.
@@ -39,35 +44,28 @@ class RDF
         $this->pntId = ($idArr[0] != 'all' ? (integer)$idArr[0] : null);
 
         // load marker data:
-        set_time_limit(60);
-        ini_set('memory_limit', '512M');
+        set_time_limit(180);
+        foreach (['de', 'en', 'fr', 'nl'] as $lang) {
+            $_GET['lang'] = $lang;
+            $this->lngObjs[$lang] = new Lang();
+        }
         $db = new DBConnector();
 
-        $extraSql = ($this->pntId ? " AND pnt_id=" . $this->pntId : "");
-        $sql = "SELECT pnt_id, pnt_name, pnt_dflt_short, pnt_lat, pnt_lng, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pkind_name, pnt_visible, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr,
-            LOCATE('<span>wikidata=', pmeta_extids) as wikidata,
-            GROUP_CONCAT(if (psum_lang='de', `psum_short`, null)) as de_short,
-            GROUP_CONCAT(if (psum_lang='en', `psum_short`, null)) as en_short,
-            GROUP_CONCAT(if (psum_lang='fr', `psum_short`, null)) as fr_short,
-            GROUP_CONCAT(if (psum_lang='nl', `psum_short`, null)) as nl_short,
-            GROUP_CONCAT(if (psum_lang='de', `psum_pnt_name`, null)) as de_name,
-            GROUP_CONCAT(if (psum_lang='en', `psum_pnt_name`, null)) as en_name,
-            GROUP_CONCAT(if (psum_lang='fr', `psum_pnt_name`, null)) as fr_name,
-            GROUP_CONCAT(if (psum_lang='nl', `psum_pnt_name`, null)) as nl_name
-            FROM points
-            LEFT JOIN pmetadata on pnt_id=pmeta_pnt_id
-            LEFT JOIN psummaries on pnt_id=psum_pnt_id
-            LEFT JOIN pkinds on pnt_kind=pkind_id
-            WHERE pnt_hide=0 $extraSql GROUP BY pnt_id, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr";
-        $result = $db->query($sql);
-
-        $this->lines = new SiteLineData($this->pntId);
-        $this->images = new ImageData($this->pntId);
+        if ($this->pntId) {
+            $pntIds = [$this->pntId];
+        } else {
+            $pntIds = [];
+            $result = $db->query("SELECT pnt_id FROM points WHERE pnt_hide=0 ORDER BY pnt_id");
+            while ($row = $result->fetch_object()) {
+                $pntIds[] = $row->pnt_id;
+            }
+            $result->close();
+        }
 
         header('Content-type: application/rdf+xml');
         echo '<?xml version="1.0"?>', "\n";
         echo '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"', "\n";
-                echo ' xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"', "\n";
+        echo ' xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"', "\n";
         echo ' xmlns:gis="http://www.opengis.net/ont/geosparql#"', "\n";
         echo ' xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"', "\n";
         echo ' xmlns:skos="http://www.w3.org/2004/02/skos/core#"', "\n";
@@ -76,23 +74,59 @@ class RDF
         echo ' xmlns:schema="http://schema.org/">', "\n";
 
 
-        // print marker records:
-        if ($result) {
-            while ($this->obj = $result->fetch_object()) {
-                $this->printSite();
-            }
-
-            $result->close();
-        }
-
-
-        // print image records:
-        while ($this->images->walk()) {
-            $this->printImage();
+        // print site and image records in batches:
+        foreach (array_chunk($pntIds, 100) as $batch) {
+            $this->printBatch($db, $batch);
         }
 
         echo '</rdf:RDF>';
 
+    }
+
+    private function printBatch($db, array $batch)
+    {
+        $ids = implode(',', $batch);
+        $sql = "SELECT pnt_id, pnt_name, pnt_dflt_short, pnt_lat, pnt_lng, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pkind_name, pnt_visible, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr,
+            LOCATE('<span>wikidata=', pmeta_extids) as wikidata,
+            GROUP_CONCAT(DISTINCT if (psum_lang='de', `psum_short`, null)) as de_short,
+            GROUP_CONCAT(DISTINCT if (psum_lang='en', `psum_short`, null)) as en_short,
+            GROUP_CONCAT(DISTINCT if (psum_lang='fr', `psum_short`, null)) as fr_short,
+            GROUP_CONCAT(DISTINCT if (psum_lang='nl', `psum_short`, null)) as nl_short,
+            GROUP_CONCAT(DISTINCT if (psum_lang='de', `psum_pnt_name`, null)) as de_name,
+            GROUP_CONCAT(DISTINCT if (psum_lang='en', `psum_pnt_name`, null)) as en_name,
+            GROUP_CONCAT(DISTINCT if (psum_lang='fr', `psum_pnt_name`, null)) as fr_name,
+            GROUP_CONCAT(DISTINCT if (psum_lang='nl', `psum_pnt_name`, null)) as nl_name,
+            GROUP_CONCAT(DISTINCT if (ptxt_lang='de', `ptxt_full`, null)) as de_text,
+            GROUP_CONCAT(DISTINCT if (ptxt_lang='en', `ptxt_full`, null)) as en_text,
+            GROUP_CONCAT(DISTINCT if (ptxt_lang='fr', `ptxt_full`, null)) as fr_text,
+            GROUP_CONCAT(DISTINCT if (ptxt_lang='nl', `ptxt_full`, null)) as nl_text
+            FROM points
+            LEFT JOIN pmetadata on pnt_id=pmeta_pnt_id
+            LEFT JOIN psummaries on pnt_id=psum_pnt_id
+            LEFT JOIN pkinds on pnt_kind=pkind_id
+            LEFT JOIN ptexts on pnt_id=ptxt_pnt_id
+            WHERE pnt_hide=0 AND pnt_id IN ($ids) GROUP BY pnt_id, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr";
+        $result = $db->query($sql);
+        if (!$result) {
+            return;
+        }
+
+        while ($this->obj = $result->fetch_object()) {
+            $this->lines = new SiteLineData($this->obj->pnt_id);
+            $this->images = new ImageData($this->obj->pnt_id);
+
+            $this->printSite();
+
+            // print image records for this site:
+            while ($this->images->walk()) {
+                $imgId = $this->images->current()->getId();
+                if (!isset($this->printedImages[$imgId])) {
+                    $this->printedImages[$imgId] = true;
+                    $this->printImage();
+                }
+            }
+        }
+        $result->close();
     }
 
     private function printSite()
@@ -126,7 +160,6 @@ class RDF
             echo '  <schema:description xml:lang="nl">', htmlspecialchars($this->obj->nl_short), '</schema:description>', "\n";
         }
         echo '  <vici:isVisible>', $this->obj->pnt_visible, '</vici:isVisible>', "\n";
-
 
         if ($this->obj->pmeta_pleiades) {
             echo '  <skos:exactMatch rdf:resource="http://pleiades.stoa.org/places/' . $this->obj->pmeta_pleiades . '"/>', "\n";
@@ -169,7 +202,7 @@ class RDF
             echo '    <sf:', $this->lines->current()->getOpengisLineKind(), '>', "\n";
             echo '      <rdfs:label xml:lang="en">Structural geometry</rdfs:label>', "\n";
             echo '      <gis:asWKT rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">', $this->lines->current()->getLineParts('wkt'), '</gis:asWKT>', "\n";
-            if ($license = $this->lines->current()->getLicense()) {
+            if (($license = $this->lines->current()->getLicense()) && $license != 'http://creativecommons.org/publicdomain/zero/1.0/') {
                 echo '      <schema:license rdf:resource="', $license, '"/>', "\n";
             }
             if ($owner = $this->lines->current()->getOwner()) {
@@ -180,7 +213,7 @@ class RDF
         }
 
         echo '  <rdfs:isDefinedBy rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '/rdf"/>', "\n";
-        echo '  <schema:mainEntityOfPage rdf:resource="https://vici.org/vici/', $this->obj->pnt_id, '/"/>', "\n";
+        echo '  <schema:mainEntityOfPage rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '/"/>', "\n";
         echo '</schema:Place>', "\n";
 
         echo '<schema:Dataset rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/rdf">', "\n";
@@ -190,6 +223,19 @@ class RDF
 
         echo '<schema:WebPage rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/">', "\n";
         echo '  <schema:mainEntity rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '"/>', "\n";
+        echo '  <schema:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/"/>', "\n";
+
+        foreach ($this->lngObjs as $lang => $lngObj) {
+            $field = $lang . '_text';
+            if ($this->obj->$field) {
+                $text = ViciCommon::link_urls(ViciCommonLogic::parseAnnotation($this->obj->$field, $lngObj));
+                echo '  <schema:text xml:lang="', $lang, '"><![CDATA[', $text, ']]></schema:text>', "\n";
+            }
+        }
+
+
+        # http://vici.local/vici/49/rdf
+
         echo '</schema:WebPage>', "\n";
 
     }
