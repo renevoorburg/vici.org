@@ -98,6 +98,10 @@ switch ($session->getRequestedAction()) {
         // $accessControl->setIsBotAttractingLink (true);
         $action = fn() => (new Pages\RegisterPage($session))->display();
         break;
+    case 'add':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\AddPage($session))->display();
+        break;
     case 'logout':
         $session->clearUser();
         $action = fn() => (new Pages\HomePage($session))->display();
