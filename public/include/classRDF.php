@@ -212,7 +212,7 @@ class RDF
             echo '  </gis:hasGeometry>', "\n";
         }
         
-        echo '  <schema:description>',"\n";
+
 
 
 
@@ -222,11 +222,13 @@ class RDF
             $field = $lang . '_text';
             if ($this->obj->$field) {
                 $text = ViciCommon::link_urls(ViciCommonLogic::parseAnnotation($this->obj->$field, $lngObj));
-                
-                echo '    <schema:TextObject>', "\n";
+                echo '  <schema:description>', "\n";
+                echo '    <rdf:Description>', "\n";
+                echo '      <rdf:type rdf:resource="http://schema.org/TextObject"/>', "\n";
                 echo '      <schema:text xml:lang="', $lang, '"><![CDATA[', $text, ']]></schema:text>', "\n";
                 echo '      <schema:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/"/>', "\n";
-                echo '    </schema:TextObject>', "\n";
+                echo '    </rdf:Description>', "\n";
+                echo '  </schema:description>', "\n";
             }
         }
 
@@ -234,7 +236,7 @@ class RDF
         # http://vici.local/vici/49/rdf
 
 
-        echo '  </schema:description>',"\n";
+ 
 
 
         echo '  <rdfs:isDefinedBy rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '/rdf"/>', "\n";
