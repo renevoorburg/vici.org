@@ -17,6 +17,8 @@ $session = new Session();
 
 $accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser());
 
+$action = null; // Initialize to prevent undefined variable error
+
 switch ($session->getRequestedAction()) {
     case '':
         $action = fn() => (new Pages\HomePage($session))->display();

@@ -64,7 +64,7 @@ class LoginPage extends PageRenderer
             $msg = "<p>".sprintf($this->session->translator->get("ERROR: Page limit for anonymous users reached. Log in or wait %s seconds."), $sec)."</p>";
         }
         if (isset($_GET['loginrequired'])) {
-            $msg = "<p>" . sprintf($this->session->translator->get("ERROR: You need to log in to access this dataservice."), $sec) . "</p>";
+            $msg = "<p>" . $this->session->translator->get("ERROR: You need to log in to access this dataservice.") . "</p>";
         }
         return $msg;
     }
