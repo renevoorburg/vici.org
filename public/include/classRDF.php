@@ -86,7 +86,7 @@ class RDF
     private function printBatch($db, array $batch)
     {
         $ids = implode(',', $batch);
-        $sql = "SELECT pnt_id, pnt_name, pnt_dflt_short, pnt_lat, pnt_lng, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pkind_name, pnt_visible, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr,
+        $sql = "SELECT pnt_id, pnt_name, pnt_dflt_short, pnt_lat, pnt_lng, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pkind_name, pnt_visible, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr, pmeta_create_date, pmeta_edit_date,
             LOCATE('<span>wikidata=', pmeta_extids) as wikidata,
             GROUP_CONCAT(DISTINCT if (psum_lang='de', `psum_short`, null)) as de_short,
             GROUP_CONCAT(DISTINCT if (psum_lang='en', `psum_short`, null)) as en_short,
@@ -225,6 +225,7 @@ class RDF
                 echo '  <schema:description>', "\n";
                 echo '    <rdf:Description>', "\n";
                 echo '      <rdf:type rdf:resource="http://schema.org/TextObject"/>', "\n";
+                echo '      <schema:inLanguage>', $lang, '</schema:inLanguage>', "\n";
                 echo '      <schema:text xml:lang="', $lang, '"><![CDATA[', $text, ']]></schema:text>', "\n";
                 echo '      <schema:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/"/>', "\n";
                 echo '    </rdf:Description>', "\n";
@@ -249,6 +250,12 @@ class RDF
 
         echo '<schema:Dataset rdf:about="http://vici.org/vici/', $this->obj->pnt_id, '/rdf">', "\n";
         echo '  <schema:about rdf:resource="http://vici.org/vici/', $this->obj->pnt_id, '"/>', "\n";
+        if ($this->obj->pmeta_create_date) {
+            echo '  <schema:dateCreated rdf:datatype="http://www.w3.org/2001/XMLSchema#date">', substr($this->obj->pmeta_create_date, 0, 10), '</schema:dateCreated>', "\n";
+        }
+        if ($this->obj->pmeta_edit_date) {
+            echo '  <schema:dateModified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">', substr($this->obj->pmeta_edit_date, 0, 10), '</schema:dateModified>', "\n";
+        }
         echo '  <schema:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>', "\n";
         echo '</schema:Dataset>', "\n";
 
