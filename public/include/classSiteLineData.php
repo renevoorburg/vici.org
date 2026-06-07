@@ -30,10 +30,11 @@ class SiteLineData implements Dataset
         $db = new DBConnector();
 
         $restrictSql = is_null($pntId) ? '' : 'AND  line_pnt_id=' . $pntId . ' ';
-        $sql = "select line_pnt_id, line_id, pldata_id, line_kind, line_sw_lat, line_sw_lng, line_ne_lat, line_ne_lng, line_note, line_uploader, line_owner, line_date, license_url, line_attribution, pldata_points "
+        $sql = "select line_pnt_id, line_id, pldata_id, line_kind, line_sw_lat, line_sw_lng, line_ne_lat, line_ne_lng, line_note, line_uploader, acc_realname as uploader_name, line_owner, line_date, license_url, line_attribution, pldata_points "
             . "from plines "
             . "left join pline_data on line_id=pldata_pline_id "
             . "left join licenses on line_license=license_id "
+            . "left join accounts on line_uploader=acc_id "
             . "where pldata_tozoom=99 and line_hide=0 " . $restrictSql
             . "order by line_pnt_id, line_id";
 
@@ -46,7 +47,8 @@ class SiteLineData implements Dataset
                 $siteLine = new SiteLine($currPnt);
                 $this->siteLineArr[$currPnt] = $siteLine;
                 $siteLine->setNote($obj->line_note);
-                $siteLine->setUploader($obj->line_uploader);
+                $siteLine->setUploaderId($obj->line_uploader);
+                $siteLine->setUploaderName($obj->uploader_name);
                 $siteLine->setOwner($obj->line_owner);
                 $siteLine->setLicense($obj->license_url);
                 $siteLine->setAttribution($obj->line_attribution);
