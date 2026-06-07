@@ -23,12 +23,16 @@ class Image
     private $licenseAbbr;
     private $width;
     private $height;
+    private $ownWork;
+    private $date;
+    private $source;
+    private $uploaderId;
 
     public function __construct($id = null, $loadFromDB = false)
     {
         if ($loadFromDB) {
             $db = new DBConnector();
-            $sql = "select pil_pnt, pil_img, pil_dflt, img_path, imgd_title, imgd_description, imgd_creator, license_url, acc_realname, "
+            $sql = "select pil_pnt, pil_img, pil_dflt, img_path, imgd_title, imgd_description, imgd_creator, imgd_ownwork, imgd_date, imgd_source, license_url, acc_realname, "
                 . "license_abbr, imgd_width, imgd_height "
                 . "from pnt_img_lnk "
                 . "left join images on pil_img=img_id "
@@ -47,6 +51,9 @@ class Image
             $this->setLicense($obj->license_url);
             $this->setCreatorName($obj->imgd_creator);
             $this->setUploaderName($obj->acc_realname);
+            $this->ownWork = (bool)$obj->imgd_ownwork;
+            $this->setDate($obj->imgd_date);
+            $this->setSource($obj->imgd_source);
             $this->setWidth($obj->imgd_width);
             $this->setHeight($obj->imgd_height);
             $result->close();
@@ -90,6 +97,26 @@ class Image
     public function getUploaderName()
     {
         return $this->uploader;
+    }
+
+    public function getUploaderId()
+    {
+        return $this->uploaderId;
+    }
+
+    public function isOwnWork()
+    {
+        return $this->ownWork;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function getSource()
+    {
+        return $this->source;
     }
 
     function getOwnerName()
@@ -149,6 +176,11 @@ class Image
         $this->uploader = $uploaderName;
     }
 
+    public function setOwnWork($ownWork)
+    {
+        $this->ownWork = (bool)$ownWork;
+    }
+
     public function setWidth($width)
     {
             $this->width = $width;
@@ -162,6 +194,21 @@ class Image
     public function setLicenseAbbr($licenseAbbr)
     {
         $this->licenseAbbr = $licenseAbbr;
+    }
+
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    public function setSource($source)
+    {
+        $this->source = $source;
+    }
+
+    public function setUploaderId($id)
+    {
+        $this->uploaderId = $id;
     }
 
     /* other: */
