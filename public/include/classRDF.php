@@ -2,13 +2,7 @@
 
 /**
  * RDF class outputs RDF for all data or a specific site.
- *
- *
- * @package Vici.org
- * @license http://www.gnu.org/licenses/gpl-3.0
- * @author  René Voorburg
- * @version 1.2.2 - 2015-09-16
- */
+*/
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -152,14 +146,28 @@ class RDF
     {
         echo '<http://vici.org/dataset>', "\n";
         echo '  a sdo:Dataset ;', "\n";
-        echo '  rdfs:label "Vici.org dataset"@en ;', "\n";
-        echo '  rdfs:label "Vici.org dataset"@nl ;', "\n";
-        echo '  sdo:description "Archaeological atlas of antiquity. Open dataset of ancient sites."@en ;', "\n";
-        echo '  sdo:url <https://vici.org/> ;', "\n";
+        echo '  sdo:name "Vici.org - archeologische atlas"@nl , "Vici.org - archaeological atlas"@en ;', "\n";
+        echo '  sdo:identifier "http://vici.org/dataset" ;', "\n";
+        echo '  sdo:inLanguage "nl", "en";', "\n";
+
+        echo '  sdo:description "Vici.org is a community-driven archaeological atlas, primarily focused on Western Antiquity, including the Classical, Hellenistic, and Roman periods."@en ;', "\n";
+        echo '  sdo:description "Vici.org is een door de gemeenschap gedreven archeologische atlas, voornamelijk gericht op de westerse oudheid, inclusief de klassieke, hellenistische en Romeinse perioden."@nl ;', "\n";
+        echo '  sdo:url <https://data.digitopia.nl/uri:http://vici.org/dataset> ;', "\n";
         echo '  sdo:creator <http://vici.org/user/1> ;', "\n";
+        echo '  sdo:publisher <http://vici.org/user/1> ;', "\n";
+        echo '  sdo:dateCreated "2011-11-30"^^xsd:date ;', "\n";
+        echo '  sdo:datePublished "2012-01-23"^^xsd:date ;', "\n";
         echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/> ;', "\n";
         echo '  rdfs:comment "Some nodes in this dataset are licensed differently. Check the RDF of CreativeWork entities for local licensing information."@en ;', "\n";
         echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ;', "\n";
+
+        echo '  sdo:temporalCoverage "-2000/1500" ;', "\n";
+        echo '  sdo:about <http://www.wikidata.org/entity/Q1252>, <http://www.wikidata.org/entity/Q1253>, <http://www.wikidata.org/entity/Q1254>, <http://www.wikidata.org/entity/Q1255>, <http://www.wikidata.org/entity/Q831054>,  <http://www.wikidata.org/entity/Q21166>, <http://www.wikidata.org/entity/Q43229>, <http://www.wikidata.org/entity/Q831055>, <http://www.wikidata.org/entity/Q44613>, <http://www.wikidata.org/entity/Q178061> ;', "\n";
+        echo '  sdo:keywords "cultural heritage, antiquity, prehistory, archaeological sites, artifacts, ancient settlements, burial sites, temples, roads, trade routes, history, museum, museums, Romans, Germans, Greeks, Celts, Egyptians"@en ;', "\n";
+        echo '  sdo:keywords "cultureel erfgoed, oudheid, prehistorie, vroege middeleeuwen, archeologische vindplaatsen, artefacten, oude nederzettingen, begraafplaatsen, tempels, wegen, handelroutes, oude kaarten, geschiedenis, museum, musea, Romeinen, Germanen, Kelten, Grieken, Egyptenaren"@nl ;', "\n";
+        echo '  sdo:spatialCoverage  <http://www.wikidata.org/enity/Q2>, <http://www.wikidata.org/entity/Q46>, <http://www.wikidata.org/entity/Q55>, <http://www.wikidata.org/entity/Q4918> ;', "\n";
+
+
         // echo '  rdfs:isDefinedBy <http://vici.org/dataset/rdf>', "\n";
         echo ".\n\n";
         // echo '<http://vici.org/dataset/rdf>', "\n";
