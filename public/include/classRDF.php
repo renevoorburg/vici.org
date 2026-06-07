@@ -72,7 +72,7 @@ class RDF
         echo '@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .', "\n";
         echo '@prefix gis:    <http://www.opengis.net/ont/geosparql#> .', "\n";
         echo '@prefix sf:     <http://www.opengis.net/ont/sf#> .', "\n";
-        echo '@prefix schema: <http://schema.org/> .', "\n";
+        echo '@prefix sdo:    <https://schema.org/> .', "\n";
         echo '@prefix vici:   <http://vici.org/ns/2026/06/> .', "\n";
         echo "\n";
 
@@ -152,13 +152,13 @@ class RDF
     private function printRootDataset()
     {
         echo '<http://vici.org/dataset>', "\n";
-        echo '  a schema:Dataset ;', "\n";
+        echo '  a sdo:Dataset ;', "\n";
         echo '  rdfs:label "Vici.org dataset"@en ;', "\n";
         echo '  rdfs:label "Vici.org dataset"@nl ;', "\n";
-        echo '  schema:description "Archaeological atlas of antiquity. Open dataset of ancient sites."@en ;', "\n";
-        echo '  schema:url <https://vici.org/> ;', "\n";
-        echo '  schema:creator <http://vici.org/user/1> ;', "\n";
-        echo '  schema:license <http://creativecommons.org/publicdomain/zero/1.0/> ;', "\n";
+        echo '  sdo:description "Archaeological atlas of antiquity. Open dataset of ancient sites."@en ;', "\n";
+        echo '  sdo:url <https://vici.org/> ;', "\n";
+        echo '  sdo:creator <http://vici.org/user/1> ;', "\n";
+        echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/> ;', "\n";
         echo '  rdfs:comment "Some nodes in this dataset are licensed differently. Check the RDF of CreativeWork entities for local licensing information."@en ;', "\n";
         echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ', "\n";
         echo ".\n\n";
@@ -169,7 +169,7 @@ class RDF
         $id = $this->obj->pnt_id;
 
         echo '<http://vici.org/vici/', $id, '>', "\n";
-        echo '  a schema:Place, vici:', ucfirst($this->obj->pkind_name), " ;\n";
+        echo '  a sdo:Place, vici:', ucfirst($this->obj->pkind_name), " ;\n";
         echo '  rdfs:label ', $this->ttlLiteral($this->obj->pnt_name), " ;\n";
         if ($this->obj->de_name) {
             echo '  rdfs:label ', $this->ttlLiteral($this->obj->de_name, 'de'), " ;\n";
@@ -183,18 +183,18 @@ class RDF
         if ($this->obj->nl_name) {
             echo '  rdfs:label ', $this->ttlLiteral($this->obj->nl_name, 'nl'), " ;\n";
         }
-        echo '  schema:disambiguatingDescription ', $this->ttlLiteral($this->obj->pnt_dflt_short), " ;\n";
+        echo '  sdo:disambiguatingDescription ', $this->ttlLiteral($this->obj->pnt_dflt_short), " ;\n";
         if ($this->obj->de_short) {
-            echo '  schema:description ', $this->ttlLiteral($this->obj->de_short, 'de'), " ;\n";
+            echo '  sdo:description ', $this->ttlLiteral($this->obj->de_short, 'de'), " ;\n";
         }
         if ($this->obj->en_short) {
-            echo '  schema:description ', $this->ttlLiteral($this->obj->en_short, 'en'), " ;\n";
+            echo '  sdo:description ', $this->ttlLiteral($this->obj->en_short, 'en'), " ;\n";
         }
         if ($this->obj->fr_short) {
-            echo '  schema:description ', $this->ttlLiteral($this->obj->fr_short, 'fr'), " ;\n";
+            echo '  sdo:description ', $this->ttlLiteral($this->obj->fr_short, 'fr'), " ;\n";
         }
         if ($this->obj->nl_short) {
-            echo '  schema:description ', $this->ttlLiteral($this->obj->nl_short, 'nl'), " ;\n";
+            echo '  sdo:description ', $this->ttlLiteral($this->obj->nl_short, 'nl'), " ;\n";
         }
         echo '  vici:isVisible ', (int)$this->obj->pnt_visible, " ;\n";
 
@@ -215,14 +215,14 @@ class RDF
 
         if ($this->obj->pmeta_startyr) {
             if ($this->obj->pmeta_endyr > date("Y")) {
-                echo '  schema:startDate ', $this->ttlLiteral($this->obj->pmeta_startyr), " ;\n";
+                echo '  sdo:startDate ', $this->ttlLiteral($this->obj->pmeta_startyr), " ;\n";
             } else {
-                echo '  schema:temporalCoverage ', $this->ttlLiteral($this->obj->pmeta_startyr . '/' . $this->obj->pmeta_endyr), " ;\n";
+                echo '  sdo:temporalCoverage ', $this->ttlLiteral($this->obj->pmeta_startyr . '/' . $this->obj->pmeta_endyr), " ;\n";
             }
         }
 
         while ($this->images->walk($this->obj->pnt_id)) {
-            echo '  schema:image <http://vici.org/image/', $this->images->current()->getId(), '> ;', "\n";
+            echo '  sdo:image <http://vici.org/image/', $this->images->current()->getId(), '> ;', "\n";
         }
 
         // representative point:
@@ -238,10 +238,10 @@ class RDF
             echo '    rdfs:label "Structural geometry"@en ;', "\n";
             echo '    gis:asWKT ', $this->ttlLiteral($this->lines->current()->getLineParts('wkt'), null, 'gis:wktLiteral');
             if (($license = $this->lines->current()->getLicense()) && $license != 'http://creativecommons.org/publicdomain/zero/1.0/') {
-                echo " ;\n    schema:license <", $license, '>';
+                echo " ;\n    sdo:license <", $license, '>';
             }
             if ($owner = $this->lines->current()->getOwner()) {
-                echo " ;\n    schema:creator ", $this->ttlLiteral($owner);
+                echo " ;\n    sdo:creator ", $this->ttlLiteral($owner);
             }
             echo "\n  ] ;\n";
         }
@@ -255,54 +255,54 @@ class RDF
                 $text = ViciCommon::link_urls(ViciCommonLogic::parseAnnotation($this->obj->$field, $lngObj));
                 $editorField = $lang . '_editor';
                 $editDateField = $lang . '_edit_date';
-                echo '  schema:description [', "\n";
-                echo '    a schema:TextObject ;', "\n";
+                echo '  sdo:description [', "\n";
+                echo '    a sdo:TextObject ;', "\n";
                 echo '    rdfs:label "Extended ', $langNamesEn[$lang], ' description in HTML"@en ;', "\n";
                 echo '    rdfs:label "Uitgebreide ', $langNamesNl[$lang], ' beschrijving in HTML"@nl ;', "\n";
-                echo '    schema:inLanguage "', $lang, '" ;', "\n";
-                echo '    schema:text ', $this->ttlLiteral($text, $lang, 'rdf:HTML'), " ;\n";
+                echo '    sdo:inLanguage "', $lang, '" ;', "\n";
+                echo '    sdo:text ', $this->ttlLiteral($text, $lang, 'rdf:HTML'), " ;\n";
                 $editorIdField = $lang . '_editor_id';
                 if ($this->obj->$editorField && $this->obj->$editorIdField) {
                     $personUri = $this->personUri($this->obj->$editorIdField, $this->obj->$editorField);
-                    echo '    schema:contributor <', $personUri, '> ;', "\n";
+                    echo '    sdo:contributor <', $personUri, '> ;', "\n";
                 }
                 if ($this->obj->$editDateField) {
-                    echo '    schema:dateModified "', substr($this->obj->$editDateField, 0, 10), '"^^xsd:date ;', "\n";
+                    echo '    sdo:dateModified "', substr($this->obj->$editDateField, 0, 10), '"^^xsd:date ;', "\n";
                 }
-                echo '    schema:license <http://creativecommons.org/licenses/by-sa/3.0/>', "\n";
+                echo '    sdo:license <http://creativecommons.org/licenses/by-sa/3.0/>', "\n";
                 echo '  ] ;', "\n";
             }
         }
 
         echo '  rdfs:isDefinedBy <http://vici.org/vici/', $id, '/rdf> ;', "\n";
-        echo '  schema:mainEntityOfPage <https://vici.org/vici/', $id, '/>', "\n";
+        echo '  sdo:mainEntityOfPage <https://vici.org/vici/', $id, '/>', "\n";
         echo ".\n\n";
         $this->flushPersons();
 
         // Dataset:
         echo '<http://vici.org/vici/', $id, '/rdf>', "\n";
-        echo '  a schema:Dataset ;', "\n";
-        echo '  schema:about <http://vici.org/vici/', $id, '> ;', "\n";
+        echo '  a sdo:Dataset ;', "\n";
+        echo '  sdo:about <http://vici.org/vici/', $id, '> ;', "\n";
         echo '  rdfs:label "Meta resource for http://vici.org/vici/', $id, '"@en ;', "\n";
         echo '  rdfs:label "Meta-resource voor http://vici.org/vici/', $id, '"@nl ;', "\n";
         echo '  rdfs:comment "Anonymous subnodes of the target resource may be licensed differently. Check the RDF of CreativeWork entities for local licensing information."@en ;', "\n";
         echo '  rdfs:comment "Anonieme subnodes van de doel-resource kunnen onder een andere licentie vallen. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ;', "\n";
         if ($this->obj->pmeta_create_date) {
-            echo '  schema:dateCreated "', substr($this->obj->pmeta_create_date, 0, 10), '"^^xsd:date ;', "\n";
+            echo '  sdo:dateCreated "', substr($this->obj->pmeta_create_date, 0, 10), '"^^xsd:date ;', "\n";
         }
         if ($this->obj->pmeta_edit_date) {
-            echo '  schema:dateModified "', substr($this->obj->pmeta_edit_date, 0, 10), '"^^xsd:date ;', "\n";
+            echo '  sdo:dateModified "', substr($this->obj->pmeta_edit_date, 0, 10), '"^^xsd:date ;', "\n";
         }
         if ($this->obj->metacreator_name && $this->obj->metacreator_id) {
             $personUri = $this->personUri($this->obj->metacreator_id, $this->obj->metacreator_name);
-            echo '  schema:creator <', $personUri, '> ;', "\n";
+            echo '  sdo:creator <', $personUri, '> ;', "\n";
         }
         if ($this->obj->metaeditor_name && $this->obj->metaeditor_id && $this->obj->metaeditor_id !== $this->obj->metacreator_id) {
             $personUri = $this->personUri($this->obj->metaeditor_id, $this->obj->metaeditor_name);
-            echo '  schema:editor <', $personUri, '> ;', "\n";
+            echo '  sdo:editor <', $personUri, '> ;', "\n";
         }
-        echo '  schema:isPartOf <http://vici.org/dataset> ;', "\n";
-        echo '  schema:license <http://creativecommons.org/publicdomain/zero/1.0/>', "\n";
+        echo '  sdo:isPartOf <http://vici.org/dataset> ;', "\n";
+        echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/>', "\n";
         echo ".\n\n";
         $this->flushPersons();
     }
@@ -311,40 +311,40 @@ class RDF
     {
         $img = $this->images->current();
         echo '<http://vici.org/image/', $img->getId(), '>', "\n";
-        echo '  a schema:ImageObject ;', "\n";
-        echo '  schema:name ', $this->ttlLiteral($img->getTitle()), " ;\n";
+        echo '  a sdo:ImageObject ;', "\n";
+        echo '  sdo:name ', $this->ttlLiteral($img->getTitle()), " ;\n";
         if ($description = $img->getDescription()) {
-            echo '  schema:description ', $this->ttlLiteral($description), " ;\n";
+            echo '  sdo:description ', $this->ttlLiteral($description), " ;\n";
         }
-        echo '  schema:contentUrl <', $this->sanitizeUri('https://images.vici.org/auto' . $img->getPath()), '> ;', "\n";
-        echo '  schema:thumbnailUrl <', $this->sanitizeUri('https://images.vici.org/size/h200' . $img->getPath()), '> ;', "\n";
+        echo '  sdo:contentUrl <', $this->sanitizeUri('https://images.vici.org/auto' . $img->getPath()), '> ;', "\n";
+        echo '  sdo:thumbnailUrl <', $this->sanitizeUri('https://images.vici.org/size/h200' . $img->getPath()), '> ;', "\n";
         if ($license = $img->getLicense()) {
-            echo '  schema:license <', $this->sanitizeUri($license), '> ;', "\n";
+            echo '  sdo:license <', $this->sanitizeUri($license), '> ;', "\n";
         }
         if ($date = $img->getDate()) {
-            echo '  schema:uploadDate "', substr($date, 0, 10), '"^^xsd:date ;', "\n";
+            echo '  sdo:uploadDate "', substr($date, 0, 10), '"^^xsd:date ;', "\n";
         }
         if (!$img->isOwnWork() && $source = $img->getSource()) {
             if (preg_match('#^https?://#i', $source)) {
-                echo '  schema:isBasedOn <', $this->sanitizeUri($source), '> ;', "\n";
+                echo '  sdo:isBasedOn <', $this->sanitizeUri($source), '> ;', "\n";
             } else {
-                echo '  schema:isBasedOn ', $this->ttlLiteral($source), " ;\n";
+                echo '  sdo:isBasedOn ', $this->ttlLiteral($source), " ;\n";
             }
         }
         if ($img->isOwnWork() && $img->getUploaderName() && $img->getUploaderId()) {
             $personUri = $this->personUri($img->getUploaderId(), $img->getUploaderName());
-            echo '  schema:creator <', $personUri, '>', "\n";
+            echo '  sdo:creator <', $personUri, '>', "\n";
         } else {
             $last = '';
             if ($creator = $img->getCreatorName()) {
-                $last = '  schema:copyrightNotice ' . $this->ttlLiteral('© ' . $creator);
+                $last = '  sdo:copyrightNotice ' . $this->ttlLiteral('© ' . $creator);
             }
             if ($img->getUploaderName() && $img->getUploaderId()) {
                 if ($last) {
                     echo $last, " ;\n";
                 }
                 $personUri = $this->personUri($img->getUploaderId(), $img->getUploaderName());
-                $last = '  schema:contributor <' . $personUri . '>';
+                $last = '  sdo:contributor <' . $personUri . '>';
             }
             echo $last, "\n";
         }
@@ -358,10 +358,10 @@ class RDF
         if (!isset($this->printedPersons[$uri])) {
             $this->printedPersons[$uri] = true;
             $this->personBuffer .= '<' . $uri . '>' . "\n";
-            $this->personBuffer .= '  a schema:Person ;' . "\n";
+            $this->personBuffer .= '  a sdo:Person ;' . "\n";
             $this->personBuffer .= '  rdfs:comment "The real or fictious name of a user registered at Vici.org."@en ;' . "\n";
-            $this->personBuffer .= '  rdfs:comment "Echte of fictieve naam van een op vici.org geregistreerde gebruiker."@en ;' . "\n";
-            $this->personBuffer .= '  schema:name ' . $this->ttlLiteral($name) . " .\n\n";
+            $this->personBuffer .= '  rdfs:comment "Echte of fictieve naam van een op vici.org geregistreerde gebruiker."@nl ;' . "\n";
+            $this->personBuffer .= '  sdo:name ' . $this->ttlLiteral($name) . " .\n\n";
         }
         return $uri;
     }
