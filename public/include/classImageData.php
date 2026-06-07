@@ -28,8 +28,8 @@ class ImageData implements Dataset
         $db = new DBConnector();
 
         $restrictSql = is_null($pntId) ? '' : 'AND  pil_pnt=' . $pntId . ' ';
-        $sql = "select pil_pnt, pil_img, pil_dflt, img_path, imgd_title, imgd_description, imgd_creator, license_url, "
-            . "license_abbr, imgd_width, imgd_height, imgd_ownwork, acc_realname "
+        $sql = "select pil_pnt, pil_img, pil_dflt, img_path, imgd_title, imgd_description, imgd_creator, imgd_source, imgd_date, license_url, "
+            . "license_abbr, imgd_width, imgd_height, imgd_ownwork, acc_id, acc_realname "
             . "from pnt_img_lnk "
             . "left join images on pil_img=img_id "
             . "left join img_data on pil_img=imgd_imgid "
@@ -45,6 +45,11 @@ class ImageData implements Dataset
             $this->imgArr[$obj->pil_pnt][$i]->setPath($obj->img_path);
             $this->imgArr[$obj->pil_pnt][$i]->setTitle($obj->imgd_title);
             $this->imgArr[$obj->pil_pnt][$i]->setDescription($obj->imgd_description);
+            $this->imgArr[$obj->pil_pnt][$i]->setUploaderName($obj->acc_realname);
+            $this->imgArr[$obj->pil_pnt][$i]->setUploaderId($obj->acc_id);
+            $this->imgArr[$obj->pil_pnt][$i]->setOwnWork($obj->imgd_ownwork);
+            $this->imgArr[$obj->pil_pnt][$i]->setDate($obj->imgd_date);
+            $this->imgArr[$obj->pil_pnt][$i]->setSource($obj->imgd_source);
             if ($obj->imgd_ownwork) {
                 $this->imgArr[$obj->pil_pnt][$i]->setCreatorName($obj->acc_realname);
             } else {
