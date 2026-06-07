@@ -89,7 +89,6 @@ class RDF
     {
         $ids = implode(',', $batch);
         $sql = "SELECT pnt_id, pnt_name, pnt_dflt_short, pnt_lat, pnt_lng, pmeta_extids, pmeta_pleiades, pmeta_livius, pmeta_dare, pkind_name, pnt_visible, pmeta_loc_accuracy, pmeta_startyr, pmeta_endyr, pmeta_create_date, pmeta_edit_date, creator.acc_id as metacreator_id, creator.acc_realname as metacreator_name, editor.acc_id as metaeditor_id, editor.acc_realname as metaeditor_name,
-            LOCATE('<span>wikidata=', pmeta_extids) as wikidata,
             GROUP_CONCAT(DISTINCT if (psum_lang='de', `psum_short`, null)) as de_short,
             GROUP_CONCAT(DISTINCT if (psum_lang='en', `psum_short`, null)) as en_short,
             GROUP_CONCAT(DISTINCT if (psum_lang='fr', `psum_short`, null)) as fr_short,
@@ -160,8 +159,16 @@ class RDF
         echo '  sdo:creator <http://vici.org/user/1> ;', "\n";
         echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/> ;', "\n";
         echo '  rdfs:comment "Some nodes in this dataset are licensed differently. Check the RDF of CreativeWork entities for local licensing information."@en ;', "\n";
-        echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ', "\n";
+        echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ;', "\n";
+        // echo '  rdfs:isDefinedBy <http://vici.org/dataset/rdf>', "\n";
         echo ".\n\n";
+        // echo '<http://vici.org/dataset/rdf>', "\n";
+        // echo '  a sdo:Dataset ;', "\n";
+        // echo '  rdfs:label "Meta resource for http://vici.org/dataset"@en ;', "\n";
+        // echo '  rdfs:label "Meta-resource voor http://vici.org/dataset"@nl ;', "\n";
+        // echo '  sdo:about <http://vici.org/dataset> ;', "\n";
+        // echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/>', "\n";
+        // echo ".\n\n";
     }
 
     private function printSite()
@@ -208,8 +215,8 @@ class RDF
         if ($this->obj->pmeta_dare) {
             echo '  skos:exactMatch <http://dare.ht.lu.se/places/', $this->obj->pmeta_dare, '> ;', "\n";
         }
-        if ($this->obj->wikidata) {
-            $ref = new ExtIdRefs($this->obj->pmeta_extids);
+        $ref = new ExtIdRefs($this->obj->pmeta_extids);
+        if ($ref->getWikidata()) {
             echo '  skos:exactMatch <http://www.wikidata.org/entity/', $ref->getWikidata(), '> ;', "\n";
         }
 
@@ -242,6 +249,16 @@ class RDF
             }
             if ($owner = $this->lines->current()->getOwner()) {
                 echo " ;\n    sdo:creator ", $this->ttlLiteral($owner);
+            }
+            if ($this->lines->current()->getUploaderId() && $this->lines->current()->getUploaderName()) {
+                $personUri = $this->personUri($this->lines->current()->getUploaderId(), $this->lines->current()->getUploaderName());
+                echo " ;\n    sdo:contributor <", $personUri, '>';
+            }
+            if ($attribution = $this->lines->current()->getAttribution()) {
+                echo " ;\n    sdo:copyrightNotice ", $this->ttlLiteral($attribution, null, 'rdf:HTML');
+            }
+            if ($lineDate = $this->lines->current()->getDate()) {
+                echo ' ;', "\n    sdo:dateCreated \"", substr($lineDate, 0, 10), '"^^xsd:date';
             }
             echo "\n  ] ;\n";
         }
@@ -312,6 +329,7 @@ class RDF
         $img = $this->images->current();
         echo '<http://vici.org/image/', $img->getId(), '>', "\n";
         echo '  a sdo:ImageObject ;', "\n";
+        echo '  rdfs:isDefinedBy <http://vici.org/image/', $img->getId(), '/rdf> ;', "\n";
         echo '  sdo:name ', $this->ttlLiteral($img->getTitle()), " ;\n";
         if ($description = $img->getDescription()) {
             echo '  sdo:description ', $this->ttlLiteral($description), " ;\n";
@@ -349,6 +367,14 @@ class RDF
             echo $last, "\n";
         }
         echo ".\n\n";
+        echo '<http://vici.org/image/', $img->getId(), '/rdf>', "\n";
+        echo '  a sdo:Dataset ;', "\n";
+        echo '  rdfs:label "Meta resource for http://vici.org/image/', $img->getId(), '"@en ;', "\n";
+        echo '  rdfs:label "Meta-resource voor http://vici.org/image/', $img->getId(), '"@nl ;', "\n";
+        echo '  sdo:about <http://vici.org/image/', $img->getId(), '> ;', "\n";
+        echo '  sdo:isPartOf <http://vici.org/dataset> ;', "\n";
+        echo '  sdo:license <', $this->sanitizeUri($img->getLicense() ?: 'http://creativecommons.org/publicdomain/zero/1.0/'), '>', "\n";
+        echo ".\n\n";
         $this->flushPersons();
     }
 
@@ -361,7 +387,15 @@ class RDF
             $this->personBuffer .= '  a sdo:Person ;' . "\n";
             $this->personBuffer .= '  rdfs:comment "The real or fictious name of a user registered at Vici.org."@en ;' . "\n";
             $this->personBuffer .= '  rdfs:comment "Echte of fictieve naam van een op vici.org geregistreerde gebruiker."@nl ;' . "\n";
-            $this->personBuffer .= '  sdo:name ' . $this->ttlLiteral($name) . " .\n\n";
+            $this->personBuffer .= '  sdo:name ' . $this->ttlLiteral($name) . ' ;' . "\n";
+            $this->personBuffer .= '  rdfs:isDefinedBy <' . $uri . '/rdf> .' . "\n\n";
+            $this->personBuffer .= '<' . $uri . '/rdf>' . "\n";
+            $this->personBuffer .= '  a sdo:Dataset ;' . "\n";
+            $this->personBuffer .= '  rdfs:label "Meta resource for ' . $uri . '"@en ;' . "\n";
+            $this->personBuffer .= '  rdfs:label "Meta-resource voor ' . $uri . '"@nl ;' . "\n";
+            $this->personBuffer .= '  sdo:about <' . $uri . '> ;' . "\n";
+            $this->personBuffer .= '  sdo:isPartOf <http://vici.org/dataset> ;' . "\n";
+            $this->personBuffer .= '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/> .' . "\n\n";
         }
         return $uri;
     }

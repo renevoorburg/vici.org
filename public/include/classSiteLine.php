@@ -16,7 +16,8 @@ class SiteLine
     private $siteId;
     private $note;
     private $owner;
-    private $uploader;
+    private $uploaderId;
+    private $uploaderName;
     private $license;
     private $attribution;
     private $date;
@@ -43,9 +44,14 @@ class SiteLine
         $this->owner = $owner;
     }
 
-    public function setUploader($uploader)
+    public function setUploaderId($id)
     {
-        $this->uploader = $uploader;
+        $this->uploaderId = $id;
+    }
+
+    public function setUploaderName($name)
+    {
+        $this->uploaderName = $name;
     }
 
     public function setLicense($license)
@@ -73,6 +79,16 @@ class SiteLine
     public function getId()
     {
         return $this->siteId;
+    }
+
+    public function getUploaderId()
+    {
+        return $this->uploaderId;
+    }
+
+    public function getUploaderName()
+    {
+        return $this->uploaderName;
     }
 
     public function getOwner()
@@ -108,6 +124,11 @@ class SiteLine
         return '';
     }
 
+    public function getDate()
+    {
+        return $this->date;
+    }
+
     public function getLicense()
     {
         return $this->license;
@@ -118,7 +139,7 @@ class SiteLine
         if ($this->owner) {
             return $this->owner;
         } else {
-            return $this->uploader;
+            return $this->uploaderName;
         }
     }
 
