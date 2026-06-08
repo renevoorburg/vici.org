@@ -232,7 +232,8 @@ class RDF
             if ($this->obj->pmeta_endyr > date("Y")) {
                 echo '  sdo:startDate ', $this->ttlLiteral($this->obj->pmeta_startyr), " ;\n";
             } else {
-                echo '  sdo:temporalCoverage ', $this->ttlLiteral($this->obj->pmeta_startyr . '/' . $this->obj->pmeta_endyr), " ;\n";
+                $endyr = $this->obj->pmeta_endyr ? $this->obj->pmeta_endyr : '..';
+                echo '  sdo:temporalCoverage ', $this->ttlLiteral($this->obj->pmeta_startyr . '/' . $endyr), " ;\n";
             }
         }
 
