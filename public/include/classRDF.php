@@ -157,19 +157,30 @@ class RDF
         echo '  sdo:publisher <http://vici.org/user/1> ;', "\n";
         echo '  sdo:dateCreated "2011-11-30"^^xsd:date ;', "\n";
         echo '  sdo:datePublished "2012-01-23"^^xsd:date ;', "\n";
+        echo '  sdo:dateModified "', date('Y-m-d'), '"^^xsd:date ;', "\n";
         echo '  sdo:license <http://creativecommons.org/publicdomain/zero/1.0/> ;', "\n";
         echo '  rdfs:comment "Some nodes in this dataset are licensed differently. Check the RDF of CreativeWork entities for local licensing information."@en ;', "\n";
         echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ;', "\n";
 
         echo '  sdo:temporalCoverage "-2000/1500" ;', "\n";
-        echo '  sdo:about <http://www.wikidata.org/entity/Q1252>, <http://www.wikidata.org/entity/Q1253>, <http://www.wikidata.org/entity/Q1254>, <http://www.wikidata.org/entity/Q1255>, <http://www.wikidata.org/entity/Q831054>,  <http://www.wikidata.org/entity/Q21166>, <http://www.wikidata.org/entity/Q43229>, <http://www.wikidata.org/entity/Q831055>, <http://www.wikidata.org/entity/Q44613>, <http://www.wikidata.org/entity/Q178061> ;', "\n";
+        echo '  sdo:about <http://www.wikidata.org/entity/Q1669589>, <http://www.wikidata.org/entity/Q1747689>, <http://vocab.getty.edu/page/aat/300054328>, <https://data.cultureelerfgoed.nl/term/id/cht/05d4bfa9-4afd-49b6-a700-2ee517fa1857>  ;', "\n";
         echo '  sdo:keywords "cultural heritage, antiquity, prehistory, archaeological sites, artifacts, ancient settlements, burial sites, temples, roads, trade routes, history, museum, museums, Romans, Germans, Greeks, Celts, Egyptians"@en ;', "\n";
         echo '  sdo:keywords "cultureel erfgoed, oudheid, prehistorie, vroege middeleeuwen, archeologische vindplaatsen, artefacten, oude nederzettingen, begraafplaatsen, tempels, wegen, handelroutes, oude kaarten, geschiedenis, museum, musea, Romeinen, Germanen, Kelten, Grieken, Egyptenaren"@nl ;', "\n";
-        echo '  sdo:spatialCoverage  <http://www.wikidata.org/enity/Q2>, <http://www.wikidata.org/entity/Q46>, <http://www.wikidata.org/entity/Q55>, <http://www.wikidata.org/entity/Q4918> ;', "\n";
+        echo '  sdo:spatialCoverage  <http://www.wikidata.org/entity/Q2>, <http://www.wikidata.org/entity/Q46>, <http://www.wikidata.org/entity/Q55>, <http://www.wikidata.org/entity/Q4918> ;', "\n";
+
+        echo '  sdo:distribution [', "\n";
+        echo '      a sdo:DataDownload ; ', "\n";
+        echo '      sdo:contentUrl <https://data.digitopia.nl/sparql> ; ', "\n";
+        echo '      sdo:dateModified "', date('Y-m-d'), '"^^xsd:date ;', "\n";
+        echo '      sdo:description "sparql endpoint"^^xsd:string ; ', "\n";
+        echo '      sdo:usageInfo <https://www.w3.org/TR/sparql11-protocol/> ; ', "\n";
+        echo '      sdo:inLanguage "nl", "en"; ', "\n";
+        echo '      sdo:license <https://creativecommons.org/publicdomain/zero/1.0/> ', "\n";
+        echo '      ] .', "\n\n";
 
 
         // echo '  rdfs:isDefinedBy <http://vici.org/dataset/rdf>', "\n";
-        echo ".\n\n";
+        // echo ".\n\n";
         // echo '<http://vici.org/dataset/rdf>', "\n";
         // echo '  a sdo:Dataset ;', "\n";
         // echo '  rdfs:label "Meta resource for http://vici.org/dataset"@en ;', "\n";
