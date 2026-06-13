@@ -163,7 +163,7 @@ class RDF
         echo '  rdfs:comment "Sommige eniteiten in deze dataset vallen onder een andere licentie. Controleer de RDF van CreativeWork-entiteiten op lokale licentie-informatie."@nl ;', "\n";
 
         echo '  sdo:temporalCoverage "-2000/1500" ;', "\n";
-        echo '  sdo:about <http://www.wikidata.org/entity/Q1669589>, <http://www.wikidata.org/entity/Q1747689>, <http://vocab.getty.edu/page/aat/300054328>, <https://data.cultureelerfgoed.nl/term/id/cht/05d4bfa9-4afd-49b6-a700-2ee517fa1857>  ;', "\n";
+        echo '  sdo:about <http://www.wikidata.org/entity/Q1669589>, <http://www.wikidata.org/entity/Q1747689>, <http://vocab.getty.edu/aat/300054328>, <https://data.cultureelerfgoed.nl/term/id/cht/05d4bfa9-4afd-49b6-a700-2ee517fa1857>, <http://vocab.getty.edu/aat/300387245>, <http://vocab.getty.edu/aat/300054331>  ;', "\n";
         echo '  sdo:keywords "cultural heritage, antiquity, prehistory, archaeological sites, artifacts, ancient settlements, burial sites, temples, roads, trade routes, history, museum, museums, Romans, Germans, Greeks, Celts, Egyptians"@en ;', "\n";
         echo '  sdo:keywords "cultureel erfgoed, oudheid, prehistorie, vroege middeleeuwen, archeologische vindplaatsen, artefacten, oude nederzettingen, begraafplaatsen, tempels, wegen, handelroutes, oude kaarten, geschiedenis, museum, musea, Romeinen, Germanen, Kelten, Grieken, Egyptenaren"@nl ;', "\n";
         echo '  sdo:spatialCoverage  <http://www.wikidata.org/entity/Q2>, <http://www.wikidata.org/entity/Q46>, <http://www.wikidata.org/entity/Q55>, <http://www.wikidata.org/entity/Q4918> ;', "\n";
