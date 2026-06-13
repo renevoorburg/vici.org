@@ -44,26 +44,26 @@ class ExtIdRefs
 
     // CONST:
     private $normalizersArr = array ( 
-        array ('^http:\/\/pleiades\.stoa\.org\/places\/([0-9]+).*$', 'pleiades:place=$1'),
+        array ('^https?:\/\/pleiades\.stoa\.org\/places\/([0-9]+).*$', 'pleiades:place=$1'),
         array ('^pleiades:places=([0-9]+).*$', 'pleiades:place=$1'),
         array ('^http:\/\/romaq\.org\/the-project\/aqueducts\/article\/([0-9]+).*$', 'romaq:aqid=$1'),
         array ('^romaq=([0-9]+).*$', 'romaq:aqid=$1'),
         array ('^wikidata=[Q|q]([0-9]+).*$', 'wikidata:entity=Q$1'),
-        array ('^http:\/\/(?:www\.)?livius\.org\/museum\/([^\/]*)\/?$', 'livius:museum=$1'),
-        array ('^http:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/?$', 'livius:$1=$2'),
-        array ('^http:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/?$', 'livius:$1=$2/$3'),
-        array ('^http:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$', 'livius:$1=$2/$3/$4'),
+        array ('^https?:\/\/(?:www\.)?livius\.org\/museum\/([^\/]*)\/?$', 'livius:museum=$1'),
+        array ('^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/?$', 'livius:$1=$2'),
+        array ('^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/?$', 'livius:$1=$2/$3'),
+        array ('^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$', 'livius:$1=$2/$3/$4'),
         array ('^.*TPPlace[^0-9]?([0-9]+)[^0-9]*$', 'tp:place=$1'),
         array ('^http:\/\/francia\.ahlfeldt\.se\/page\/places\/([0-9]*)\/?$', 'dare:id=$1'),
         array ('^http:\/\/(?:www\.)?openstreetmap\.org\/browse\/node\/([0-9]*)\/?$', 'osm:node=$1'),
         array ('^http:\/\/(?:www\.)?openstreetmap\.org\/browse\/relation\/([0-9]*)\/?$', 'osm:relation=$1'),
         array ('^http:\/\/(?:www\.)?openstreetmap\.org\/browse\/way\/([0-9]*)\/?$', 'osm:way=$1'),
         array ('^http:\/\/(?:www\.)?perseus\.tufts\.edu\/hopper\/text\?doc=Perseus:text:1999\.04\.0006:entry=(.*)$', 'pecs=$1'),
-        array ('^http:\/\/de\.structurae\.de\/structures\/data\/index\.cfm\?ID=(.*)$', 'structurae:id=$1'),
+        array ('^https?:\/\/de\.structurae\.de\/structures\/data\/index\.cfm\?ID=(.*)$', 'structurae:id=$1'),
         array ('^wikipedia=(.*)$', 'wikipedia:en=$1'),
-        array ('^http:\/\/([a-z]*)\.wikipedia\.org\/wiki\/(.*)$', 'wikipedia:$1=$2'),
-        array ('^http:\/\/(?:www\.)?wikidata\.org\/wiki\/(.*)$', 'wikidata:entity=$1'),
-        array ('^http:\/\/(?:www\.)?wikidata\.org\/entity\/(.*)$', 'wikidata:entity=$1')
+        array ('^https?:\/\/([a-z]*)\.wikipedia\.org\/wiki\/(.*)$', 'wikipedia:$1=$2'),
+        array ('^https?:\/\/(?:www\.)?wikidata\.org\/wiki\/(.*)$', 'wikidata:entity=$1'),
+        array ('^https?:\/\/(?:www\.)?wikidata\.org\/entity\/(.*)$', 'wikidata:entity=$1')
     );
     
     // constructor sets the private vars by normalizing the raw input
@@ -240,7 +240,7 @@ class ExtIdRefs
 
     public function getWikidataUrl() {
         if ($this->wikidata) {
-            return 'http://wikidata.org/entity/' . $this->wikidata;
+            return 'http://www.wikidata.org/entity/' . $this->wikidata;
         }
     }
 
