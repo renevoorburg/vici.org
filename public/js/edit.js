@@ -31,10 +31,10 @@ function MapWidget(canvas, positionField, lng, lat, markerType) {
         OSM: {
             name: "OpenStreetMap",
             url: "https://tiles.vici.org/osm/{z}/{x}/{y}.png",
-            attributions: "© <a href=\"https://www.openstreetmap.org/copyright\">Open Streetmap Contributors</a> CC BY-SA"
+            attributions: "© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap contributors</a> CC BY-SA"
         },
         ESRI: {
-            name: "Esri WorldImagery",
+            name: "Esri World Imagery",
             url: "https://tiles.vici.org/world/{z}/{y}/{x}",
             attributions: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
         }

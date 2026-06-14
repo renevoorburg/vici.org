@@ -33,7 +33,7 @@ $viciCall = "<script type=\"text/javascript\">
                         maxZoom: 11
                     },
                     ESRI: {
-                        name: 'Esri WorldImagery',
+                        name: 'Esri World Imagery',
                         url: \"https://tiles.vici.org/world/{z}/{y}/{x}\",
                         attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
                     }
