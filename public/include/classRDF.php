@@ -238,6 +238,10 @@ class RDF
         if ($ref->getWikidata()) {
             echo '  skos:exactMatch <http://www.wikidata.org/entity/', $ref->getWikidata(), '> ;', "\n";
         }
+        if ($ref->getOmnesViae()) {
+            echo '  skos:exactMatch <https://omnesviae.org/#TPPlace', $ref->getOmnesViae(), '> ;', "\n";
+        }
+
 
         if ($this->obj->pmeta_startyr) {
             if ($this->obj->pmeta_endyr > date("Y")) {

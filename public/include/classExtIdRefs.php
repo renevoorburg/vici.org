@@ -233,6 +233,10 @@ class ExtIdRefs
     public function getDareTag() {
         return 'dare:id='.$this->dare;
     }
+
+    public function getOmnesViae() {
+        return $this->omnesviae;
+    }
     
     public function getWikidata() {
         return $this->wikidata;
