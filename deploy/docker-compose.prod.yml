@@ -1,0 +1,52 @@
+services:
+  php:
+    build: .
+    container_name: vici-php
+    ports:
+      - "${NGINX_PORT:-8080}:80"  # Production port
+    volumes:
+      - ./public:/var/www/org.vici/public:ro  # Read-only for production
+      - ./nginx:/etc/nginx/sites-available:ro
+      - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./logs:/var/log/nginx  # Logs volume
+      - ./.env.prod:/var/www/org.vici/.env:ro
+    env_file:
+      - .env.prod
+    depends_on:
+      - mysql
+    networks:
+      - vici-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mysql:
+    image: mariadb:10.6
+    container_name: vici-mysql
+    ports:
+      - "127.0.0.1:${DB_PORT:-3306}:3306"  # Only bind to localhost
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backups:/backups  # Backup volume
+    env_file:
+      - .env.prod
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - vici-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+
+networks:
+  vici-network:
+    driver: bridge
