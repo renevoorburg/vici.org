@@ -173,7 +173,7 @@ class ViciCommon
     {
         if (!empty($_ENV['VICIBASE'])) {
             return "
-                baseUrl: '" . $_ENV['VICIBASE'] . "',";
+                baseUrl: " . json_encode(rtrim($_ENV['VICIBASE'], '/'), JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ",";
         } else {
             return "";
         }
@@ -183,7 +183,7 @@ class ViciCommon
     {
         if (!empty($_ENV['VICITOKEN'])) {
             return "
-                viciToken: '" . $_ENV['VICITOKEN'] . "',";
+                viciToken: " . json_encode($_ENV['VICITOKEN'], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ",";
         } else {
             return "";
         }
@@ -191,22 +191,36 @@ class ViciCommon
 
     public static function getSiteBase(): string
     {
+        if (!empty($_ENV['VICIBASE'])) {
+            return rtrim($_ENV['VICIBASE'], '/');
+        }
+
         $site_base = "http://";
-        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === "on") {
+        $is_https = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === "on");
+        if ($is_https) {
             $site_base = "https://";
         }
-        return $site_base . $_SERVER["SERVER_NAME"];
+
+        $site_url = $site_base . $_SERVER["SERVER_NAME"];
+        $port = $_SERVER["SERVER_PORT"] ?? '';
+        $default_port = $is_https ? '443' : '80';
+        if ($port && $port !== $default_port) {
+            $site_url .= ':' . $port;
+        }
+
+        return $site_url;
     }
 
     public static function captchaCheck() : void
     {
-        if (getenv('CAPTCHA_SEC')) {
-            $response = $_POST["g-recaptcha-response"];
-            $secret = getenv('CAPTCHA_SEC');
-            $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}&remoteip={$_SERVER['REMOTE_ADDR']}");
+        $secret = $_ENV['CAPTCHA_SEC'] ?? getenv('CAPTCHA_SEC') ?: '';
+        if ($secret) {
+            $response = $_POST["g-recaptcha-response"] ?? '';
+            $remoteip = $_SERVER['REMOTE_ADDR'] ?? '';
+            $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . urlencode($secret) . "&response=" . urlencode($response) . "&remoteip=" . urlencode($remoteip));
             $captcha_success = json_decode($verify);
 
-            if ($captcha_success->success == false) {
+            if ($captcha_success && $captcha_success->success == false) {
                 echo "<p>You are a bot! Go away!</p>";
                 exit;
             }
@@ -215,7 +229,7 @@ class ViciCommon
 
     public static function captchaInclude() : string
     {
-        if  (getenv('CAPTCHA_SITE')) {
+        if (!empty($_ENV['CAPTCHA_SITE'] ?? getenv('CAPTCHA_SITE'))) {
             return '<script src="https://www.google.com/recaptcha/api.js" async defer></script>'."\n";
         } else {
             return '';
@@ -224,8 +238,9 @@ class ViciCommon
 
     public static function captchaDisplay() : string
     {
-        if  (getenv('CAPTCHA_SITE')) {
-            return '<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="' . getenv('CAPTCHA_SITE') . '"></div>'."\n";
+        $siteKey = $_ENV['CAPTCHA_SITE'] ?? getenv('CAPTCHA_SITE') ?: '';
+        if ($siteKey) {
+            return '<div style="margin-left:160px;margin-top:16px;" class="g-recaptcha" data-sitekey="' . htmlspecialchars($siteKey, ENT_QUOTES, 'UTF-8') . '"></div>'."\n";
         } else {
             return '';
         }

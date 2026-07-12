@@ -1,0 +1,37 @@
+services:
+  php:
+    build: .
+    container_name: vici-php
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./public:/var/www/org.vici/public
+      - ./nginx:/etc/nginx/sites-available
+      - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+      - ./.env:/var/www/org.vici/.env:ro
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    networks:
+      - vici-network
+
+  mysql:
+    image: mariadb:10.6
+    container_name: vici-mysql
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    networks:
+      - vici-network
+
+volumes:
+  mysql_data:
+
+networks:
+  vici-network:
+    driver: bridge
