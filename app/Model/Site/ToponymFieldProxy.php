@@ -25,6 +25,7 @@ class ToponymFieldProxy implements ArrayAccess
         return isset($this->valuesPerLang[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->ensureLoaded($offset);

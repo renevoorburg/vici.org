@@ -25,6 +25,7 @@ abstract class AbstractCollection implements ArrayAccess, IteratorAggregate, Cou
         return isset($this->items[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->ensureLoaded();
