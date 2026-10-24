@@ -41,7 +41,15 @@ Setup on the server:
 
 1. Check out this repository.
 2. `cp .env.preview.example .env.preview` and fill in real values.
-3. Choose a database mode:
+3. Install the PHP dependencies (composer runs inside the php image, so
+   its platform check always matches the runtime — the host's own PHP
+   version is irrelevant):
+
+   ```
+   docker compose -f docker-compose.preview.yml run --rm php \
+     composer install --no-dev --prefer-dist
+   ```
+4. Choose a database mode:
 
    **a) Use the production database on the host** — set
    `DB_HOST=host.docker.internal`. The compose file maps that name to the
@@ -63,7 +71,7 @@ Setup on the server:
    importing a full dump takes a while. To re-import, remove the
    `vici-preview-db-data` volume.
 
-4. Uploaded images can go to two places:
+5. Uploaded images can go to two places:
 
    **a) S3-compatible object storage** (e.g. TransIP Object Store) — set
    `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY` and
@@ -85,7 +93,7 @@ Setup on the server:
    Either way the HTML only ever references `//images.vici.org` URLs;
    there is no client-side fallback to the storage location.
 
-5. Migrate existing images to object storage — `img_path` values in the
+6. Migrate existing images to object storage — `img_path` values in the
    database are not all `/uploads/...`: a large set is `/livius/...` (with
    subdirectories). The static root is bind-mounted read-only at
    `/srv/static` in the php container (`PROD_STATIC_DIR`), so one command
@@ -104,7 +112,7 @@ Setup on the server:
    any unrelated static files). Objects that already exist are skipped,
    so the run is resumable. Re-run it after fixing any `FAILED` lines.
 
-6. Account-activation mails are sent via `mail()` → `msmtp` inside the php
+7. Account-activation mails are sent via `mail()` → `msmtp` inside the php
    container. Mount an `msmtprc` at `/etc/msmtprc` (commented-out example in
    `docker-compose.preview.yml`) so it can reach an SMTP relay, and set
    `MAIL_FROM` in `.env.preview`. Without it, registration still succeeds
