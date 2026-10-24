@@ -3,6 +3,9 @@
 namespace Vici\Model\Site\Image;
 
 use Vici\DB\DBConnector;
+use Vici\Storage\ImageStorage;
+use Vici\Storage\LocalImageStorage;
+use Vici\Storage\S3ImageStorage;
 
 class ImageUploader
 {
@@ -10,6 +13,14 @@ class ImageUploader
     public const DEFAULT_LICENSE = 4; // CC BY-SA 3.0
 
     private string $errorMessage = '';
+
+    private function storage(): ImageStorage
+    {
+        if (!empty($_ENV['S3_BUCKET'])) {
+            return new S3ImageStorage();
+        }
+        return new LocalImageStorage();
+    }
 
     private function slug(string $string): string
     {
@@ -54,8 +65,8 @@ class ImageUploader
             return false;
         }
 
-        $uploadBase = self::uploadBaseDir();
-        if (file_exists($uploadBase . '/' . $filename)) {
+        $storage = $this->storage();
+        if ($storage->exists($filename)) {
             $filename = $md5sum . '_' . $filename;
         }
 
@@ -136,25 +147,25 @@ class ImageUploader
             $stmt = $db->prepare("INSERT INTO pnt_img_lnk (pil_pnt, pil_img, pil_dflt) VALUES (:site_id, :image_id, :dflt)");
             $stmt->execute(['site_id' => $siteId, 'image_id' => $imageId, 'dflt' => $isDefault]);
 
+            // store the object before committing, so a storage failure
+            // does not leave DB rows pointing at a missing file
+            if (!$storage->put($filename, $tmpPath)) {
+                $db->rollBack();
+                $this->errorMessage = 'Error: could not store image file.';
+                return false;
+            }
+
             $db->commit();
         } catch (\Throwable $e) {
             $db->rollBack();
             $this->errorMessage = 'Error: could not save image data.';
             return false;
         }
-
-        rename($tmpPath, $uploadBase . '/' . $filename);
-        chmod($uploadBase . '/' . $filename, 0644);
         return true;
     }
 
     public function getErrorMessage(): string
     {
         return $this->errorMessage;
-    }
-
-    public static function uploadBaseDir(): string
-    {
-        return dirname(__DIR__, 4) . '/public/' . self::UPLOAD_DIR;
     }
 }

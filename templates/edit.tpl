@@ -48,7 +48,7 @@
                             <h3>{$k.title|escape}</h3>
                         </div>
                         <div class="kind-imgwrap">
-                            <img src="//images.vici.org/crop/w220xh124/{$k.image}" onerror="this.onerror=null;this.src='/{$k.image}'" alt="{$k.title|escape}" loading="lazy">
+                            <img src="//images.vici.org/crop/w220xh124/{$k.image}" alt="{$k.title|escape}" loading="lazy">
                             {if $k.desc}<p class="kind-desc">{$k.desc|escape}</p>{/if}
                         </div>
                     </a>

@@ -56,10 +56,14 @@ services:
     volumes:
       - ./:/var/www/local.vici.novo
       - ./.env.preview:/var/www/local.vici.novo/.env:ro
-      # production uploads dir, read-write: ImageUploader writes via
-      # uploadBaseDir() = public/uploads, landing files where main and
-      # images.vici.org serve them
+      # production uploads dir, read-write: only used in local-storage
+      # mode (no S3_BUCKET set). With S3 enabled uploads go to object
+      # storage and this mount is unused by the uploader.
       - ${PROD_UPLOADS_DIR:-/var/www/org.vici.static/public/uploads}:/var/www/local.vici.novo/public/uploads
+      # whole static root, read-only: source for the S3 migration
+      # (bin/sync-images-to-s3.php /srv/static — covers uploads/, livius/
+      # and any other img_path prefix)
+      - ${PROD_STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro
       # account-activation mails are sent via msmtp (sendmail emulation);
       # mount a real msmtprc so mail() can reach an SMTP relay
       # - ./docker/php/msmtprc:/etc/msmtprc:ro
