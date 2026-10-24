@@ -10,7 +10,7 @@
  *
  * Existing objects are skipped, so the script is resumable.
  *
- * Usage: php bin/sync-images-to-s3.php [--dry-run] <source-root> [subdir...]
+ * Usage: php bin/sync-images-to-s3.php [--dry-run] [--jobs=N] <source-root> [subdir...]
  *
  * Without subdir arguments everything under source-root is synced;
  * pass e.g. "uploads livius" to restrict it to those top-level dirs.
@@ -27,6 +27,13 @@ $dotenv->safeLoad();
 $args = $argv;
 array_shift($args);
 $dryRun = in_array('--dry-run', $args, true);
+$jobs = 20;
+foreach ($args as $i => $a) {
+    if (str_starts_with($a, '--jobs=')) {
+        $jobs = max(1, (int)substr($a, 7));
+        unset($args[$i]);
+    }
+}
 $args = array_values(array_diff($args, ['--dry-run']));
 $sourceRoot = $args[0] ?? null;
 $subdirs = array_slice($args, 1);
@@ -103,31 +110,58 @@ foreach ($prefixes as $prefix) {
 }
 echo count($existing) . " objects already in bucket\n";
 
-$done = $skipped = $failed = 0;
+$pending = [];
+$skipped = 0;
 foreach ($paths as [$pathname, $key]) {
     if (isset($existing[$key])) {
         $skipped++;
-    } elseif ($dryRun) {
-        $done++;
     } else {
-        try {
-            $client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $key,
-                'SourceFile' => $pathname,
-                'ContentType' => mime_content_type($pathname) ?: 'application/octet-stream',
-            ]);
-            $done++;
-        } catch (\Throwable $e) {
-            $failed++;
-            fwrite(STDERR, "FAILED {$key}: {$e->getMessage()}\n");
-        }
-    }
-    $n = $done + $skipped + $failed;
-    if ($n % 250 === 0 || $n === $total) {
-        echo "{$n}/{$total}: {$done} uploaded, {$skipped} skipped, {$failed} failed\n";
+        $pending[] = [$pathname, $key];
     }
 }
+$total = count($pending);
+echo "{$total} files to upload, {$skipped} already present\n";
 
-echo ($dryRun ? '[dry-run] ' : '') . "done: {$done} uploaded, {$skipped} already present, {$failed} failed\n";
+if ($dryRun) {
+    echo "[dry-run] would upload {$total} files, {$skipped} already present\n";
+    exit(0);
+}
+
+$done = $failed = 0;
+$progress = function () use (&$done, &$failed, $total) {
+    $n = $done + $failed;
+    if ($n % 250 === 0 || $n === $total) {
+        echo "{$n}/{$total}: {$done} uploaded, {$failed} failed\n";
+    }
+};
+
+// lazy generator: commands are built as the pool drains, keeping
+// memory flat over 100k+ files
+$commands = (function () use ($pending, $client, $bucket) {
+    foreach ($pending as [$pathname, $key]) {
+        yield $key => $client->getCommand('PutObject', [
+            'Bucket' => $bucket,
+            'Key' => $key,
+            'SourceFile' => $pathname,
+            'ContentType' => mime_content_type($pathname) ?: 'application/octet-stream',
+        ]);
+    }
+})();
+
+$pool = new Aws\CommandPool($client, $commands, [
+    'concurrency' => $jobs,
+    'fulfilled' => function ($result, $key) use (&$done, $progress) {
+        $done++;
+        $progress();
+    },
+    'rejected' => function ($reason, $key) use (&$failed, $progress) {
+        $failed++;
+        $msg = $reason instanceof \Throwable ? $reason->getMessage() : var_export($reason, true);
+        fwrite(STDERR, "FAILED {$key}: {$msg}\n");
+        $progress();
+    },
+]);
+$pool->promise()->wait();
+
+echo "done: {$done} uploaded, {$skipped} already present, {$failed} failed\n";
 exit($failed > 0 ? 1 : 0);
