@@ -2,10 +2,10 @@
   function $(sel, root){ return (root||document).querySelector(sel); }
   function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
   function setFieldError(field, msg){
-    var el = document.querySelector('.field-error[data-error-for="'+field+'"]');
+    var el = document.querySelector('.vici-field-error[data-error-for="'+field+'"]');
     if (el) el.textContent = msg || '';
   }
-  function clearErrors(){ $all('.field-error').forEach(function(e){ e.textContent=''; }); var formErr=$('#form-error'); if(formErr) formErr.textContent=''; }
+  function clearErrors(){ $all('.vici-field-error').forEach(function(e){ e.textContent=''; }); var formErr=$('#form-error'); if(formErr) formErr.textContent=''; }
   function getTurnstileToken(){
     // Prefer hidden input produced by include/turnstile.tpl
     var hidden = document.querySelector('input[name="cf-turnstile-response"]');

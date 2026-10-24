@@ -1,42 +1,16 @@
 {extends file="base.tpl"}
 
-{block name=stylesheets}
-<style>
-.edit-tabs { display: flex; gap: 0.5rem; margin: 1rem 0; border-bottom: 1px solid #dee2e6; }
-.edit-tabs a { padding: 0.5rem 1rem; text-decoration: none; color: #1e3a8a; border: 1px solid transparent; border-bottom: none; }
-.edit-tabs a.selected { border-color: #dee2e6; background: #f8f9fa; font-weight: bold; }
-.edit-tabs a.disabled { color: #aaa; cursor: default; }
-#editcanvas { width: 100%; height: 260px; background-color: #5f9cc5; border-radius: 0.25rem; }
-.datenotation { border: 1px dotted #1e3a8a; color: #1e3a8a; margin: 10px 0; font-size: 0.85rem; }
-#periodbox { display: contents; }
-#periodbox .datenotation { grid-column: 2; }
-#periodbox .datenotation caption { text-align: left; }
-@media (max-width: 768px) {
-    #periodbox .datenotation { grid-column: 1 / -1; }
-}
-.datenotation td { padding: 0 0.5rem; }
-.kind-group { display: grid; grid-template-columns: repeat(auto-fill, 240px); gap: 0.75rem 1rem; }
-.kind-card { width: 240px; }
-.kind-card a { text-decoration: none; color: inherit; }
-.kind-head { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem; }
-.kind-head h3 { font-size: 1rem; margin: 0; color: #1e3a8a; }
-.kind-card .kind-imgwrap { position: relative; width: 220px; height: 124px; }
-.kind-card .kind-imgwrap img { position: absolute; top: 0; right: 0; left: 0; border-radius: 0.25rem; }
-.kind-card .kind-desc { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 4px; color: #000; background: rgba(255,255,255,0.75); font-size: 0.8rem; }
-</style>
-{/block}
-
 {block name=main}
 <main>
     {if isset($edit_fatal)}
         <div class="vici-error">{$edit_fatal}</div>
     {else}
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; z-index: 1000; overflow-y: auto;">
-    <div class="vici-card vici-card--wide" style="margin: auto; position: relative;">
+    <div class="vici-overlay">
+    <div class="vici-card vici-card--wide">
     {if $is_new}
-        <a href="/" title="{$close|default:"Close"}" aria-label="{$close|default:"Close"}" style="position: absolute; top: 0.5rem; right: 0.5rem; text-decoration: none; color: #888; font-size: 1.5rem; font-weight: bold; line-height: 1; cursor: pointer; z-index: 10;">×</a>
+        <a href="/" class="vici-close" title="{$close|default:"Close"}" aria-label="{$close|default:"Close"}">×</a>
     {else}
-        <a href="/vici/{$pntid}" title="{$close|default:"Close"}" aria-label="{$close|default:"Close"}" style="position: absolute; top: 0.5rem; right: 0.5rem; text-decoration: none; color: #888; font-size: 1.5rem; font-weight: bold; line-height: 1; cursor: pointer; z-index: 10;">×</a>
+        <a href="/vici/{$pntid}" class="vici-close" title="{$close|default:"Close"}" aria-label="{$close|default:"Close"}">×</a>
     {/if}
     {if $is_new}
         <h1>{$edit_new_title|default:"Add a new site"}</h1>
@@ -143,7 +117,7 @@
             <label class="vici-label vici-full-row">{$edit_label_extids|default:"External identifiers (URIs)"}</label>
             <div class="vici-full-row" id="extids">
                 {foreach from=$ext_ids key=i item=url}
-                    <input class="vici-input" type="text" name="extid{$i}" value="{$url|escape}" placeholder="external URI" style="margin-bottom:0.25rem;">
+                    <input class="vici-input vici-input--compact" type="text" name="extid{$i}" value="{$url|escape}" placeholder="external URI">
                 {/foreach}
             </div>
         </div>
@@ -175,7 +149,7 @@
                 <label class="vici-label"><input type="checkbox" id="frm_agree" name="frm_agree"> {$edit_img_agree|default:"I agree to publish this image under the selected license"}</label>
             </div>
 
-            <div class="vici-full-row" id="otherwork_block" style="display:none">
+            <div class="vici-full-row" id="otherwork_block" hidden>
                 <div class="vici-form-grid">
                     <label class="vici-label" for="frm_owner">{$edit_img_ownername|default:"Owner name"}</label>
                     <input class="vici-input" type="text" id="frm_owner" name="frm_owner">
@@ -246,8 +220,8 @@
 <script>
 document.getElementById('frm_ownership')?.addEventListener('change', function () {
     var own = this.value === '1';
-    document.getElementById('ownwork_block').style.display = own ? 'block' : 'none';
-    document.getElementById('otherwork_block').style.display = own ? 'none' : 'block';
+    document.getElementById('ownwork_block').hidden = !own;
+    document.getElementById('otherwork_block').hidden = own;
 });
 </script>
 {if $edit_tab == 'data' && !(isset($show_kind_chooser) && $show_kind_chooser)}

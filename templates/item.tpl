@@ -339,7 +339,7 @@ a.hover:hover {
                     </div>
                 </div>
 
-                <nav class="edit-menu" style="font-size:0.85rem;margin:0.5rem 0;">
+                <nav class="edit-menu">
                     <a href="/edit/{$mainSite->id}">{$edit_menu_edit|default:"Edit"}</a>
                     · <a href="/edit/{$mainSite->id}/image">{$edit_menu_image|default:"Add image"}</a>
                     · <a href="/edit/{$mainSite->id}/lines">{$edit_menu_lines|default:"Add lines"}</a>
