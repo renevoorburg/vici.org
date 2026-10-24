@@ -73,41 +73,59 @@ $client = new Aws\S3\S3Client([
 ]);
 $bucket = $_ENV['S3_BUCKET'];
 
-$files = new AppendIterator();
+echo "Scanning {$sourceRoot}…\n";
+$paths = [];
 foreach ($roots as $root) {
-    $files->append(new RecursiveIteratorIterator(
+    $it = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
-    ));
+    );
+    foreach ($it as $file) {
+        if ($file->isFile() && !str_starts_with($file->getFilename(), '.')) {
+            $pathname = $file->getPathname();
+            $paths[] = [$pathname, ltrim(substr($pathname, strlen($sourceRoot)), '/')];
+        }
+    }
 }
+$total = count($paths);
+echo "{$total} candidate files\n";
+
+// prefetch existing keys: one paginated listing is much faster than a
+// HEAD request per file
+echo "Listing existing objects in {$bucket}…\n";
+$existing = [];
+$prefixes = $subdirs ? array_map(fn($s) => trim($s, '/') . '/', $subdirs) : [''];
+foreach ($prefixes as $prefix) {
+    foreach ($client->getPaginator('ListObjectsV2', ['Bucket' => $bucket, 'Prefix' => $prefix]) as $page) {
+        foreach ($page['Contents'] ?? [] as $obj) {
+            $existing[$obj['Key']] = true;
+        }
+    }
+}
+echo count($existing) . " objects already in bucket\n";
 
 $done = $skipped = $failed = 0;
-foreach ($files as $file) {
-    if (!$file->isFile() || str_starts_with($file->getFilename(), '.')) {
-        continue;
-    }
-    $key = ltrim(substr($file->getPathname(), strlen($sourceRoot)), '/');
-    if ($client->doesObjectExistV2($bucket, $key)) {
+foreach ($paths as [$pathname, $key]) {
+    if (isset($existing[$key])) {
         $skipped++;
-        continue;
-    }
-    if ($dryRun) {
+    } elseif ($dryRun) {
         $done++;
-        continue;
+    } else {
+        try {
+            $client->putObject([
+                'Bucket' => $bucket,
+                'Key' => $key,
+                'SourceFile' => $pathname,
+                'ContentType' => mime_content_type($pathname) ?: 'application/octet-stream',
+            ]);
+            $done++;
+        } catch (\Throwable $e) {
+            $failed++;
+            fwrite(STDERR, "FAILED {$key}: {$e->getMessage()}\n");
+        }
     }
-    try {
-        $client->putObject([
-            'Bucket' => $bucket,
-            'Key' => $key,
-            'SourceFile' => $file->getPathname(),
-            'ContentType' => mime_content_type($file->getPathname()) ?: 'application/octet-stream',
-        ]);
-        $done++;
-    } catch (\Throwable $e) {
-        $failed++;
-        fwrite(STDERR, "FAILED {$key}: {$e->getMessage()}\n");
-    }
-    if (($done + $skipped + $failed) % 500 === 0) {
-        echo "{$done} uploaded, {$skipped} skipped, {$failed} failed\n";
+    $n = $done + $skipped + $failed;
+    if ($n % 250 === 0 || $n === $total) {
+        echo "{$n}/{$total}: {$done} uploaded, {$skipped} skipped, {$failed} failed\n";
     }
 }
 
