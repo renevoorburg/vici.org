@@ -10,7 +10,10 @@
  *
  * Existing objects are skipped, so the script is resumable.
  *
- * Usage: php bin/sync-images-to-s3.php [--dry-run] <source-root>
+ * Usage: php bin/sync-images-to-s3.php [--dry-run] <source-root> [subdir...]
+ *
+ * Without subdir arguments everything under source-root is synced;
+ * pass e.g. "uploads livius" to restrict it to those top-level dirs.
  *
  * Reads S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_ACCESS_KEY and
  * S3_SECRET_KEY from the environment (or .env).
@@ -26,12 +29,26 @@ array_shift($args);
 $dryRun = in_array('--dry-run', $args, true);
 $args = array_values(array_diff($args, ['--dry-run']));
 $sourceRoot = $args[0] ?? null;
+$subdirs = array_slice($args, 1);
 
 if (!$sourceRoot || !is_dir($sourceRoot)) {
-    fwrite(STDERR, "Usage: php bin/sync-images-to-s3.php [--dry-run] <source-root>\n");
+    fwrite(STDERR, "Usage: php bin/sync-images-to-s3.php [--dry-run] <source-root> [subdir...]\n");
     exit(1);
 }
 $sourceRoot = rtrim($sourceRoot, '/');
+
+$roots = [$sourceRoot];
+if ($subdirs) {
+    $roots = [];
+    foreach ($subdirs as $sub) {
+        $dir = sprintf('%s/%s', $sourceRoot, trim($sub, '/'));
+        if (!is_dir($dir)) {
+            fwrite(STDERR, "Subdir not found: {$dir}\n");
+            exit(1);
+        }
+        $roots[] = $dir;
+    }
+}
 
 foreach (['S3_ENDPOINT', 'S3_BUCKET', 'S3_ACCESS_KEY', 'S3_SECRET_KEY'] as $var) {
     if (empty($_ENV[$var])) {
@@ -56,9 +73,12 @@ $client = new Aws\S3\S3Client([
 ]);
 $bucket = $_ENV['S3_BUCKET'];
 
-$files = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($sourceRoot, FilesystemIterator::SKIP_DOTS)
-);
+$files = new AppendIterator();
+foreach ($roots as $root) {
+    $files->append(new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
+    ));
+}
 
 $done = $skipped = $failed = 0;
 foreach ($files as $file) {

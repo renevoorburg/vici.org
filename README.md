@@ -94,13 +94,15 @@ Setup on the server:
 
    ```
    docker compose -f docker-compose.preview.yml exec php \
-     php bin/sync-images-to-s3.php --dry-run /srv/static
+     php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
    docker compose -f docker-compose.preview.yml exec php \
-     php bin/sync-images-to-s3.php /srv/static
+     php bin/sync-images-to-s3.php /srv/static uploads livius
    ```
 
-   Objects that already exist are skipped, so the run is resumable.
-   Re-run it after fixing any `FAILED` lines.
+   The subdir arguments restrict the sync to those top-level trees;
+   without them everything under the source root is copied (including
+   any unrelated static files). Objects that already exist are skipped,
+   so the run is resumable. Re-run it after fixing any `FAILED` lines.
 
 6. Account-activation mails are sent via `mail()` → `msmtp` inside the php
    container. Mount an `msmtprc` at `/etc/msmtprc` (commented-out example in
