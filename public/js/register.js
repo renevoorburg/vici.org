@@ -49,8 +49,8 @@
         return res.json().catch(function(){ return {}; }).then(function(json){ return { status: res.status, body: json }; });
       }).then(function(resp){
         if (resp.status === 201) {
-          // success; redirect to login
-          window.location.href = '/login';
+          // success; login page explains the activation email
+          window.location.href = '/login?registered=1';
           return;
         }
         if (resp.status === 422 || resp.status === 409) {

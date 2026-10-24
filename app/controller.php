@@ -53,7 +53,7 @@ switch ($session->getRequestedAction()) {
         }
         break;
     case 'api':
-        switch ($session->getRequestedItem()) {
+        switch ($session->getRequestedItemRaw()) {
             case 'users':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // $accessControl->setIsBotAttractingLink(true);
@@ -101,6 +101,18 @@ switch ($session->getRequestedAction()) {
     case 'login':
         // $accessControl->setIsBotAttractingLink(true);
         $action = fn() => (new Pages\LoginPage($session))->display();
+        break;
+    case 'confirm':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\ConfirmPage($session))->display();
+        break;
+    case 'lostpw':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\LostPwPage($session))->display();
+        break;
+    case 'reset':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\ResetPwPage($session))->display();
         break;
     case 'register':
         // $accessControl->setIsBotAttractingLink (true);

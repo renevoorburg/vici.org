@@ -1,24 +1,98 @@
 # Vici.org
 
-Codebase for [https://vici.org)](https://vici.org).
+Codebase for [https://vici.org](https://vici.org).
 
-## Installation
+## Running with Docker
 
-To run this on a local machine, you need a database (MariaDB / MySQL) and a webserver (I use nginx) and PHP (should work on 7.4). See the included nginx config for details.
+Two compose setups are included:
 
-In `/db` you'll find sql dumps of two databases:
-* `geo.sql.gz`
-* `vici.sql.gz`
+- `docker-compose.yml` — local development stack (nginx + PHP-FPM + MariaDB
+  seeded from `db/`), reachable at http://localhost:8080.
+- `docker-compose.preview.yml` — preview stack for e.g. preview.vici.org on
+  the production server (nginx + PHP-FPM, no own database by default).
 
-`geo.sql` is used for the reverse geocoder, that displays the name of the location on the `/vici/{item}` pages. This data is derived from geonames. This dump is not the complete database, it only includes places from a few European countries, like DE, NL, BE, IT, FR, ES.
+### Local development
 
-`vici.sql` is a complete (October 2023) dump of all data from vici.org, with anonymized used data.
+```
+docker compose up -d --build
+```
 
-Load both into MariaDB / MySQL.
+This starts three containers: `web` (nginx), `php` (PHP-FPM) and `mysql`
+(MariaDB). On first start MariaDB loads the dumps mounted from `db/`:
 
-The vici.org PHP codes gets the required credentials from environment variables. See `fastcgi_params` in the nginx folder for an example. 
+* `geo.sql.gz` — data for the reverse geocoder (place names on `/vici/{id}`
+  pages), derived from geonames; a subset covering European countries like
+  DE, NL, BE, IT, FR, ES.
+* `vici.sql.gz` — a dump of the vici.org data with anonymized user data.
 
-If set, the environment variable `VICIBASE`, is passed to the `vici.js` javascript widget. This will use it for the base url for data requests it needs to make. So if your local instance runs as http://vici.local, set `VICIBASE` accordingly.
+Configuration for the stack lives in `.env.docker` (mounted into the php
+container as `.env`). It contains development-only values, including the
+Cloudflare Turnstile test keys that always pass.
+
+A development account is seeded: username `user1`, password `vici-dev`.
+
+### Preview on the production server
+
+`docker-compose.preview.yml` runs the site behind the host nginx that
+terminates TLS for preview.vici.org (see `nginx/preview.vici.org.conf`,
+which proxies to `127.0.0.1:8081`).
+
+Setup on the server:
+
+1. Check out this repository.
+2. `cp .env.preview.example .env.preview` and fill in real values.
+3. Choose a database mode:
+
+   **a) Use the production database on the host** — set
+   `DB_HOST=host.docker.internal`. The compose file maps that name to the
+   docker bridge gateway. This requires mysqld to also listen on the bridge
+   interface; a `bind-address` of `127.0.0.1` only will not work. Widen it
+   (e.g. `0.0.0.0` or the docker0 address) or point `DB_HOST` at an address
+   MySQL listens on.
+
+   **b) Use a containerized database with a fresh dump** — put `.sql` or
+   `.sql.gz` files in `./db-preview/` (gitignored; they run in alphabetical
+   order on first init), set `DB_HOST=mysql` plus matching credentials in
+   `.env.preview`, and start with the `localdb` profile:
+
+   ```
+   docker compose -f docker-compose.preview.yml --profile localdb up -d --build
+   ```
+
+   Wait until `vici-preview-mysql` reports healthy before browsing;
+   importing a full dump takes a while. To re-import, remove the
+   `vici-preview-db-data` volume.
+
+4. Image uploads are bind-mounted into `public/uploads` from
+   `PROD_UPLOADS_DIR` (default `/var/www/org.vici.static/public/uploads`,
+   where main and images.vici.org serve them). The php container writes as
+   `www-data` (uid 33), so that dir must be writable by it. For full
+   isolation from production, point `PROD_UPLOADS_DIR` at a local dir.
+
+5. Account-activation mails are sent via `mail()` → `msmtp` inside the php
+   container. Mount an `msmtprc` at `/etc/msmtprc` (commented-out example in
+   `docker-compose.preview.yml`) so it can reach an SMTP relay, and set
+   `MAIL_FROM` in `.env.preview`. Without it, registration still succeeds
+   but the mail failure is only logged.
+
+Start without the containerized database (mode a):
+
+```
+docker compose -f docker-compose.preview.yml up -d --build
+```
+
+## Running without Docker
+
+You need a database (MariaDB / MySQL), a webserver (nginx config examples
+in `nginx/`) and PHP 8. Load the `db/` dumps into the database.
+
+The PHP code reads its configuration from environment variables or a `.env`
+file in the repo root (via phpdotenv). See `.env.docker` for the required
+keys; `nginx/fastcgi_params` shows the older fastcgi-param style.
+
+If set, the environment variable `VICIBASE` is passed to the `vici.js`
+javascript widget, which uses it as the base url for data requests. So if
+your local instance runs as http://vici.local, set `VICIBASE` accordingly.
 
 ## Tiles
 
@@ -27,5 +101,3 @@ The tiles used in Vici.org are served by [tileproxy](https://github.com/renevoor
 ## Images
 
 The images served by Vici.org are processed and cached by [imageserver](https://github.com/renevoorburg/imageserver).
-
-

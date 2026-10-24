@@ -24,6 +24,7 @@
                     <div>
                         <input type="submit" class="vici-btn" value="{$login_title_label}">
                     </div>
+                    <div class="vici-hint"><a href="/lostpw">{$lostpw_link|default:"Forgot your password?"}</a></div>
                 </form>
             </div>
         </div>

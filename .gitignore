@@ -6,6 +6,8 @@
 /var/templates_cache/
 /var/templates_compile/
 .env
+/.env.preview
+/db-preview/
 plan.md
 /tmp/
 /public/uploads/*

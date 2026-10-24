@@ -4,6 +4,7 @@ namespace Vici\Model\User\Command;
 
 use Vici\Model\User\UserRepository;
 use Vici\Model\User\User;
+use Vici\Mail\Mailer;
 use Vici\Session\Session;
 
 final class RegisterUserHandler
@@ -46,6 +47,10 @@ final class RegisterUserHandler
 
  
         $newId = $this->repo->save($user);
+
+        // activation mail with one-time code (as on the old site)
+        $code = $this->repo->createConfirmationCode($newId);
+        (new Mailer($this->session))->sendActivation($cmd->email, $cmd->realName, $code);
 
         $createdAt = gmdate('c');
         return ['id' => $newId, 'createdAt' => $createdAt];

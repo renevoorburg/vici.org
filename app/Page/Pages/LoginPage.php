@@ -4,6 +4,7 @@ namespace Vici\Page\Pages;
 
 use Vici\Page\PageRenderer;
 use Vici\Session\Session;
+use Vici\Model\User\User;
 use Vici\Model\User\UserRepository;
 use Vici\Security\Turnstile;
 
@@ -31,7 +32,11 @@ class LoginPage extends PageRenderer
                     $userRepository = new UserRepository($this->session->getDBConnector());
                     $user = $userRepository->authenticateUser($accountname, $password);
         
-                    if ($user) {    
+                    if ($user && $user->getLevel() < User::LEVEL_CONFIRMED) {
+                        $this->error_message = $user->getLevel() === User::LEVEL_NOT_CONFIRMED
+                            ? $this->session->translator->get("Your account has not been activated yet. Please follow the activation link in the email you received.")
+                            : $this->session->translator->get("This account is disabled.");
+                    } elseif ($user) {
                         $this->session->setIsVerifiedRealUser(true);
                         $this->session->setUser($user);
                         $return = $_GET['return'] ?? '';
@@ -60,6 +65,9 @@ class LoginPage extends PageRenderer
     private function getMessage() : string
     {
         $msg = "";
+        if (isset($_GET['registered'])) {
+            $msg = "<p>" . $this->session->translator->get("Account created. Please check your email for the activation link.") . "</p>";
+        }
         if (isset($_GET['wait'])) {
             $sec = (int)$_GET['wait'];
             $msg = "<p>".sprintf($this->session->translator->get("ERROR: Page limit for anonymous users reached. Log in or wait %s seconds."), $sec)."</p>";
