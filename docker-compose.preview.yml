@@ -18,16 +18,19 @@ name: vici-novo-preview
 #     proxies preview.vici.org here (see nginx/preview.vici.org.conf)
 #
 # Before first start on the server:
-#   1. cp .env.preview.example .env.preview  and fill in real values
+#   1. cp .env.preview.example .env.preview  and fill in real values.
+#      Note: compose does NOT read .env.preview automatically — pass
+#      --env-file .env.preview so ${…} interpolations (PROD_STATIC_DIR,
+#      PROD_UPLOADS_DIR, PREVIEW_PORT) resolve from it.
 #   2. (mode a) make sure the host MySQL listens on the docker bridge as
 #      well — a bind-address of 127.0.0.1 only will NOT work
 #      (mode b) place dump files in ./db-preview/
 #   3. make sure the uploads dir (PROD_UPLOADS_DIR) is writable by the
 #      php-fpm user in the container (www-data, uid 33 — same as Debian's)
 #
-# Start:             docker compose -f docker-compose.preview.yml up -d --build
-# Start with db:     docker compose -f docker-compose.preview.yml --profile localdb up -d --build
-# Logs:              docker compose -f docker-compose.preview.yml logs -f php
+# Start:             docker compose -f docker-compose.preview.yml --env-file .env.preview up -d --build
+# Start with db:     docker compose -f docker-compose.preview.yml --env-file .env.preview --profile localdb up -d --build
+# Logs:              docker compose -f docker-compose.preview.yml --env-file .env.preview logs -f php
 # Note: with --profile localdb, wait for vici-preview-mysql to become
 # healthy (importing a full dump takes a while) before browsing.
 

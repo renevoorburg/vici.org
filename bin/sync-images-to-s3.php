@@ -19,6 +19,10 @@
  * S3_SECRET_KEY from the environment (or .env).
  */
 
+// 100k+ file paths plus the prefetched object-key set need more than
+// the default 128M
+ini_set('memory_limit', '512M');
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
@@ -88,8 +92,7 @@ foreach ($roots as $root) {
     );
     foreach ($it as $file) {
         if ($file->isFile() && !str_starts_with($file->getFilename(), '.')) {
-            $pathname = $file->getPathname();
-            $paths[] = [$pathname, ltrim(substr($pathname, strlen($sourceRoot)), '/')];
+            $paths[] = $file->getPathname();
         }
     }
 }
@@ -112,13 +115,16 @@ echo count($existing) . " objects already in bucket\n";
 
 $pending = [];
 $skipped = 0;
-foreach ($paths as [$pathname, $key]) {
+$rootLen = strlen($sourceRoot);
+foreach ($paths as $pathname) {
+    $key = ltrim(substr($pathname, $rootLen), '/');
     if (isset($existing[$key])) {
         $skipped++;
     } else {
         $pending[] = [$pathname, $key];
     }
 }
+unset($paths);
 $total = count($pending);
 echo "{$total} files to upload, {$skipped} already present\n";
 
@@ -135,33 +141,39 @@ $progress = function () use (&$done, &$failed, $total) {
     }
 };
 
-// lazy generator: commands are built as the pool drains, keeping
-// memory flat over 100k+ files
-$commands = (function () use ($pending, $client, $bucket) {
-    foreach ($pending as [$pathname, $key]) {
-        yield $key => $client->getCommand('PutObject', [
-            'Bucket' => $bucket,
-            'Key' => $key,
-            'SourceFile' => $pathname,
-            'ContentType' => mime_content_type($pathname) ?: 'application/octet-stream',
-        ]);
+// upload in batches of $jobs concurrent requests; CommandPool retains
+// every result and OOMs over 100k+ files, batching keeps memory flat
+$batch = [];
+$flush = function () use (&$batch, &$done, &$failed, $progress) {
+    if (!$batch) {
+        return;
     }
-})();
+    foreach (\GuzzleHttp\Promise\Utils::settle($batch)->wait() as $key => $res) {
+        if ($res['state'] === 'fulfilled') {
+            $done++;
+        } else {
+            $failed++;
+            $reason = $res['reason'];
+            $msg = $reason instanceof \Throwable ? $reason->getMessage() : var_export($reason, true);
+            fwrite(STDERR, "FAILED {$key}: {$msg}\n");
+        }
+        $progress();
+    }
+    $batch = [];
+};
 
-$pool = new Aws\CommandPool($client, $commands, [
-    'concurrency' => $jobs,
-    'fulfilled' => function ($result, $key) use (&$done, $progress) {
-        $done++;
-        $progress();
-    },
-    'rejected' => function ($reason, $key) use (&$failed, $progress) {
-        $failed++;
-        $msg = $reason instanceof \Throwable ? $reason->getMessage() : var_export($reason, true);
-        fwrite(STDERR, "FAILED {$key}: {$msg}\n");
-        $progress();
-    },
-]);
-$pool->promise()->wait();
+foreach ($pending as [$pathname, $key]) {
+    $batch[$key] = $client->putObjectAsync([
+        'Bucket' => $bucket,
+        'Key' => $key,
+        'SourceFile' => $pathname,
+        'ContentType' => mime_content_type($pathname) ?: 'application/octet-stream',
+    ]);
+    if (count($batch) >= $jobs) {
+        $flush();
+    }
+}
+$flush();
 
 echo "done: {$done} uploaded, {$skipped} already present, {$failed} failed\n";
 exit($failed > 0 ? 1 : 0);
