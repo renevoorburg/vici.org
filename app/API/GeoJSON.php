@@ -27,7 +27,17 @@ class GeoJSON extends APICall
         //  A 'perspective' shows only markers that have a specified external identifier.
         //  Links to the related external site are added to the output. 
         //  Perspectives are only applied when a boundary / zoom based subset is requested.
-        $perspective = (isset($_GET['perspective']) ? $_GET['perspective'] : '');
+        // set specific (SQL) modifiers for when using a perspective:
+        $perspectiveArr = array (
+            ''         => array ( "",                         ""),
+            'pleiades' => array ( " AND pmeta_pleiades > 0 ",   ", pmeta_pleiades AS extid "),
+            'livius'   => array ( " AND pmeta_livius > '' ",    ", pmeta_livius AS extid "),
+            'mithraeum'=> array ( " AND pmeta_mithraeum > '' ", ", pmeta_mithraeum AS extid "),
+            'romaq'    => array ( " AND pmeta_romaq > 0 ",      ", pmeta_romaq AS extid "),
+            'dare'     => array ( " AND pmeta_dare > 0 ",       ", pmeta_dare AS extid ")
+        );
+        $perspective = (isset($_GET['perspective']) && isset($perspectiveArr[$_GET['perspective']]))
+                ? $_GET['perspective'] : '';
 
         if ($perspective) {
             $normalizer = NormalizersIndex::getIndexedNormalizer($perspective);
@@ -37,14 +47,6 @@ class GeoJSON extends APICall
         $perspectiveLineJoinSQL = ($perspective ? " LEFT JOIN pmetadata ON line_pnt_id=pmeta_pnt_id " : "");
         $perspectivePointJoinSQL = " LEFT JOIN pmetadata ON pnt_id=pmeta_pnt_id ";
 
-        // set specific (SQL) modifiers for when using a perspective: 
-        $perspectiveArr = array ( 
-            ''         => array ( "",                         ""),
-            'pleiades' => array ( " AND pmeta_pleiades > 0 ",   ", pmeta_pleiades AS extid "),
-            'livius'   => array ( " AND pmeta_livius > '' ",    ", pmeta_livius AS extid "),
-            'mithraeum'=> array ( " AND pmeta_mithraeum > '' ", ", pmeta_mithraeum AS extid "),
-            'romaq'    => array ( " AND pmeta_romaq > 0 ",      ", pmeta_romaq AS extid ")
-        );
         $perspectiveRestrictSQL = $perspectiveArr[$perspective][0];
         $perspectiveSelectSQL   = $perspectiveArr[$perspective][1];
 
@@ -116,7 +118,7 @@ class GeoJSON extends APICall
         // points:
 
         $isFlat = isset($_GET['flat']);
-        $zoomRestrictSQL = $isFlat ? "" : "AND pkind_low <= $zoom ";
+        $zoomRestrictSQL = ($isFlat || !$showZoomedArea) ? "" : "AND pkind_low <= $zoom ";
 
         if ($showZoomedArea) {
             // create SQL to assure all points related to selected lines (code above) are included:

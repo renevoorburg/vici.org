@@ -8,3 +8,7 @@
 .env
 plan.md
 /tmp/
+/public/uploads/*
+!/public/uploads/.gitkeep
+/public/kml/*
+!/public/kml/.gitkeep

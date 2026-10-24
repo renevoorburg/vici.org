@@ -298,6 +298,186 @@ class SiteRepository
             $this->imageRepo = new ImageRepository($this->db);
         }
         return $this->imageRepo;
-    }   
+    }
+
+    /**
+     * Persist a site edit in one transaction over points, pmetadata,
+     * psummaries and ptexts (same write model as the legacy editor).
+     * Rows are only updated when values actually changed; editor and
+     * edit_date fields are only bumped on a real change.
+     *
+     * @return int the site id
+     */
+    public function save(\Vici\Model\Site\Edit\SiteFormData $data, int $userId, string $lang): int
+    {
+        $this->db->beginTransaction();
+        try {
+            $this->savePoint($data);
+            $id = (int)$data->id;
+            $changed = $this->saveMetadata($id, $data, $userId);
+            $changed = $this->saveSummary($id, $data, $lang) || $changed;
+            $changed = $this->saveText($id, $data, $userId, $lang) || $changed;
+            if ($changed && $data->id !== null) {
+                $this->touchEditStamp($id, $userId);
+            }
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+        return $id;
+    }
+
+    /**
+     * Bump pmeta_editor/edit_date so the site shows up in 'recently changed'.
+     * Called when any part of the site data changed, and after uploads.
+     */
+    public function touchEditStamp(int $siteId, int $userId): void
+    {
+        $this->db->prepare("UPDATE pmetadata SET pmeta_editor = :editor, pmeta_edit_date = NOW() WHERE pmeta_pnt_id = :id")
+            ->execute(['editor' => $userId, 'id' => $siteId]);
+    }
+
+    private function savePoint(\Vici\Model\Site\Edit\SiteFormData $data): bool
+    {
+        $values = [
+            'pnt_name' => $data->title,
+            'pnt_kind' => $data->kind,
+            'pnt_visible' => $data->isVisible,
+            'pnt_lat' => $data->lat,
+            'pnt_lng' => $data->lng,
+            'pnt_dflt_short' => $data->summary,
+        ];
+
+        if ($data->id === null) {
+            $stmt = $this->db->prepare(
+                "INSERT INTO points (pnt_name, pnt_kind, pnt_visible, pnt_lat, pnt_lng, pnt_dflt_short)
+                 VALUES (:pnt_name, :pnt_kind, :pnt_visible, :pnt_lat, :pnt_lng, :pnt_dflt_short)"
+            );
+            $stmt->execute($values);
+            $data->id = (int)$this->db->lastInsertId();
+            return true;
+        }
+
+        return $this->updateIfChanged('points', $values, 'pnt_id = :id', ['id' => $data->id]);
+    }
+
+    private function saveMetadata(int $siteId, \Vici\Model\Site\Edit\SiteFormData $data, int $userId): bool
+    {
+        $values = [
+            'pmeta_loc_accuracy' => $data->locationAccuracy,
+            'pmeta_extids' => $data->extIds->getAllUrlsSpanned(),
+            'pmeta_pleiades' => (int)$data->extIds->getId('pleiades') ?: null,
+            'pmeta_livius' => $data->extIds->getId('livius') ?: null,
+            'pmeta_romaq' => (int)$data->extIds->getId('romaq') ?: null,
+            'pmeta_dare' => (int)$data->extIds->getId('dare') ?: null,
+            'pmeta_mithraeum' => $data->extIds->getId('mithraeum') ?: null,
+            'pmeta_startyr' => $data->startYear,
+            'pmeta_endyr' => $data->endYear,
+            'pmeta_startyr_str' => $data->startYearStr,
+            'pmeta_endyr_str' => $data->endYearStr,
+        ];
+
+        $stmt = $this->db->prepare("SELECT pmeta_id, pmeta_creator FROM pmetadata WHERE pmeta_pnt_id = :id LIMIT 1");
+        $stmt->execute(['id' => $siteId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            $values['pmeta_pnt_id'] = $siteId;
+            $values['pmeta_creator'] = $userId;
+            $values['pmeta_editor'] = $userId;
+            $values['pmeta_create_date'] = date('Y-m-d H:i:s');
+            $values['pmeta_edit_date'] = date('Y-m-d H:i:s');
+            $cols = implode(', ', array_keys($values));
+            $placeholders = ':' . implode(', :', array_keys($values));
+            $this->db->prepare("INSERT INTO pmetadata ($cols) VALUES ($placeholders)")->execute($values);
+            return true;
+        }
+
+        return $this->updateIfChanged('pmetadata', $values, 'pmeta_id = :id', ['id' => $row['pmeta_id']]);
+    }
+
+    private function saveSummary(int $siteId, \Vici\Model\Site\Edit\SiteFormData $data, string $lang): bool
+    {
+        $values = [
+            'psum_pnt_name' => $data->title,
+            'psum_short' => $data->summary,
+        ];
+        $where = 'psum_pnt_id = :pnt_id AND psum_lang = :lang';
+        $params = ['pnt_id' => $siteId, 'lang' => $lang];
+
+        if ($this->rowExists('psummaries', $where, $params)) {
+            return $this->updateIfChanged('psummaries', $values, $where, $params);
+        }
+        $this->db->prepare(
+            "INSERT INTO psummaries (psum_pnt_id, psum_lang, psum_pnt_name, psum_short)
+             VALUES (:pnt_id, :lang, :psum_pnt_name, :psum_short)"
+        )->execute($params + $values);
+        return true;
+    }
+
+    private function saveText(int $siteId, \Vici\Model\Site\Edit\SiteFormData $data, int $userId, string $lang): bool
+    {
+        $values = ['ptxt_full' => $data->annotation];
+        $where = 'ptxt_pnt_id = :pnt_id AND ptxt_lang = :lang';
+        $params = ['pnt_id' => $siteId, 'lang' => $lang];
+
+        if ($this->rowExists('ptexts', $where, $params)) {
+            $changed = $this->updateIfChanged('ptexts', $values, $where, $params);
+            if ($changed) {
+                $this->db->prepare("UPDATE ptexts SET ptxt_editor = :editor, ptxt_edit_date = NOW() WHERE $where")
+                    ->execute(['editor' => $userId] + $params);
+            }
+            return $changed;
+        }
+        $this->db->prepare(
+            "INSERT INTO ptexts (ptxt_pnt_id, ptxt_lang, ptxt_full, ptxt_editor, ptxt_edit_date)
+             VALUES (:pnt_id, :lang, :ptxt_full, :editor, NOW())"
+        )->execute($params + $values + ['editor' => $userId]);
+        return true;
+    }
+
+    private function rowExists(string $table, string $where, array $params): bool
+    {
+        $stmt = $this->db->prepare("SELECT 1 FROM $table WHERE $where LIMIT 1");
+        $stmt->execute($params);
+        return (bool)$stmt->fetch();
+    }
+
+    /**
+     * UPDATE only the columns whose values differ from the current row.
+     * Returns true when an update was executed.
+     */
+    private function updateIfChanged(string $table, array $values, string $where, array $params): bool
+    {
+        $stmt = $this->db->prepare("SELECT * FROM $table WHERE $where LIMIT 1");
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return false;
+        }
+
+        $changed = [];
+        foreach ($values as $col => $value) {
+            $current = $row[$col];
+            if ((string)$current !== (string)$value) {
+                if (!($current === null && ($value === null || $value === ''))) {
+                    $changed[$col] = $value;
+                }
+            }
+        }
+
+        if (count($changed) === 0) {
+            return false;
+        }
+
+        $set = implode(', ', array_map(fn($col) => "$col = :set_$col", array_keys($changed)));
+        $bind = [];
+        foreach ($changed as $col => $value) {
+            $bind['set_' . $col] = $value;
+        }
+        $this->db->prepare("UPDATE $table SET $set WHERE $where")->execute($bind + $params);
+        return true;
+    }
 
 }

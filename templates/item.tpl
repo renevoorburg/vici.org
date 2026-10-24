@@ -339,6 +339,12 @@ a.hover:hover {
                     </div>
                 </div>
 
+                <nav class="edit-menu" style="font-size:0.85rem;margin:0.5rem 0;">
+                    <a href="/edit/{$mainSite->id}">{$edit_menu_edit|default:"Edit"}</a>
+                    · <a href="/edit/{$mainSite->id}/image">{$edit_menu_image|default:"Add image"}</a>
+                    · <a href="/edit/{$mainSite->id}/lines">{$edit_menu_lines|default:"Add lines"}</a>
+                </nav>
+
                 <div class="lang-header-row">
                     <h1>{$mainSite->locales[$preferredLocaleLanguage]->title}</h1>
                     <nav id="langSelBox">
@@ -414,7 +420,7 @@ a.hover:hover {
             <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>, metadata <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0</a>.<br>
             <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$mainSite->id}">https://vici.org/vici/{$mainSite->id}</a><br>
 
-            <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a><br>
+            <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a>, <a href="https://data.digitopia.nl/uri:http://vici.org/vici/{$mainSite->id}">RDF</a><br>
 
             <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getLastName()}, {$mainSite->creator->getInitials()}
                     {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getLastName()}, {$mainSite->updater->getInitials()}{/if},

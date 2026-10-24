@@ -34,7 +34,8 @@ class LoginPage extends PageRenderer
                     if ($user) {    
                         $this->session->setIsVerifiedRealUser(true);
                         $this->session->setUser($user);
-                        header("Location: /");
+                        $return = $_GET['return'] ?? '';
+                        header("Location: " . (preg_match('#^/[^/]#', $return) ? $return : '/'));
                         exit;
                     } else {
                         $this->error_message = $this->session->translator->get("Invalid username or password.");

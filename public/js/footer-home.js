@@ -29,7 +29,7 @@ function updateSelectionBox(feature) {
         const imageUrl = `https://images.vici.org/crop/w440xh248${feature.picture}`;
         selectionHTML += `
                 <div class="relative">
-                    <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
+                    <img src="${imageUrl}" onerror="this.onerror=null;this.src='${feature.picture}'" loading="lazy" class="highlight-image" alt="${title}" />
                     <div class="absolute selection-overlay">
                         <div class="selection-overlay-content">
                             <div>
@@ -80,12 +80,15 @@ function updateHighlightsBox(highlights) {
         const highlight = highlights[i];
         const title = highlight.properties.title || 'Onbekende locatie';
         const summary = highlight.properties.summary || '';
-        const imageUrl = `https://images.vici.org/crop/w440xh248${highlight.properties.img}`;
+        const img = highlight.properties.img;
+        const imageTag = img
+            ? `<img src="https://images.vici.org/crop/w440xh248${img}" onerror="this.onerror=null;this.src='${img}'" class="highlight-image" alt="${title}" />`
+            : '';
         const id = highlight.properties.id || '';
 
         highlightHTML += `
             <div class="highlight-box">
-                <img src="${imageUrl}" class="highlight-image" alt="${title}" />
+                ${imageTag}
                 <div class="highlight-info">
                     <div class="highlight-content">
                         <div class="font-semibold">${title}</div>

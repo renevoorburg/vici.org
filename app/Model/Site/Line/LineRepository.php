@@ -16,7 +16,7 @@ class LineRepository
     public function getLinesForSite(int $siteId): LineCollection
     {
         $stmt = $this->db->prepare("
-            SELECT line_id, line_kind, line_owner, line_attribution, line_uploader, line_license, pldata_points 
+            SELECT line_id, line_kind, line_owner, line_attribution, line_uploader, line_license, line_date, pldata_points 
             FROM plines 
             LEFT JOIN pline_data ON pline_data.pldata_pline_id = plines.line_id AND pline_data.pldata_tozoom = 99
             WHERE plines.line_hide=0 AND plines.line_pnt_id=:site_id"
@@ -39,6 +39,7 @@ class LineRepository
         $line->attribution = $row['line_attribution'] ?? null;
         $line->uploaderId = $row['line_uploader'] ?? null;
         $line->licenseId = $row['line_license'] ?? null;
+        $line->date = $row['line_date'] ?? null;
         $line->coordinates = json_decode($row['pldata_points']);
         return $line;
     }

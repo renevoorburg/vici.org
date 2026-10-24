@@ -5,6 +5,7 @@ target="_blank"
 title="{$image->title}">
     <figure>
         <img src="//images.vici.org/{$imageSizeUrlPrefix}{$image->filepath}"
+            onerror="this.onerror=null;this.src='{$image->filepath}'"
             alt="{$image->title}"
             data-caption-link="/image/{$image->id}"
             data-caption-license="{$image->license->shortName}"

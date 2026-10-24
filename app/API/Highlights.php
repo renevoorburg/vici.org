@@ -24,6 +24,10 @@ class Highlights extends APICall
     {
         $lng = $this->session->getLanguage();
 
+        if (!isset($_GET['zoom'], $_GET['bounds'])) {
+            echo '{ "type": "FeatureCollection", "features": [] }';
+            return;
+        }
         $zoom = (int)$_GET['zoom'];
         $exclude = isset($_GET['exclude']) ? (int)$_GET['exclude'] : 0;
         $n = (isset($_GET['n']) ? (int)$_GET['n'] : 2);
@@ -73,8 +77,13 @@ class Highlights extends APICall
             'pleiades' => array ( " AND pmeta_pleiades > 0 ", ", pmeta_pleiades AS extid ", "http://pleiades.stoa.org/places/$1"),
             'livius'   => array ( " AND pmeta_livius > '' ",  ", pmeta_livius AS extid ",   "http://livius.org/place/$1"),
             'mithraeum'=> array ( " AND pmeta_mithraeum > '' ",  ", pmeta_mithraeum AS extid ",   "http://livius.org/place/$1"),
-            'romaq'    => array ( " AND pmeta_romaq > 0 ",    ", pmeta_romaq AS extid ",    "http://romaq.org/the-project/aqueducts/article/$1")
+            'romaq'    => array ( " AND pmeta_romaq > 0 ",    ", pmeta_romaq AS extid ",    "http://romaq.org/the-project/aqueducts/article/$1"),
+            'dare'     => array ( " AND pmeta_dare > 0 ",     ", pmeta_dare AS extid ",     "https://dh.gu.se/dare/#/atlas/places/$1")
         );
+        if (!isset($perspectiveArr[$perspective])) {
+            $perspective = '';
+            $perspectivePointJoinSQL = "";
+        }
         $perspectiveRestrictSQL = $perspectiveArr[$perspective][0];
         $perspectiveSelectSQL   = $perspectiveArr[$perspective][1];
         $perspectiveLinkTempl   = $perspectiveArr[$perspective][2];

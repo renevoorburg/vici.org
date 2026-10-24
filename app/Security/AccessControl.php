@@ -117,7 +117,7 @@ class AccessControl
         $requested_action();
     }
 
-    private function isAdvertisingBot() : bool
+    private static function isAdvertisingBot() : bool
     {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);

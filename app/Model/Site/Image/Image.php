@@ -18,7 +18,7 @@ class Image
     public bool $isOwnWork = false;
     public string $source;
     public string $creator;
-    public License $license;
+    public ?License $license = null;
     public string $dateAdded;
     public int $width;
     public int $height;

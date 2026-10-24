@@ -42,6 +42,10 @@ switch ($session->getRequestedAction()) {
                 $accessControl->setRequiresAuthenticatedUser(true);
                 $action = fn() => (new API\KML($session))->get();
                 break;
+            case 'rdf':
+                $accessControl->setRequiresAuthenticatedUser(true);
+                $action = fn() => (new API\RDF($session))->get();
+                break;
             default:
                 $accessControl->setIsRateLimitedAnonymously(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
@@ -82,6 +86,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\RecentlyChangedPage($session))->display();
         break;
+    case 'about':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\AboutPage($session))->display();
+        break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\GeoJSON($session))->get();
@@ -100,7 +108,11 @@ switch ($session->getRequestedAction()) {
         break;
     case 'add':
         $accessControl->setRequiresAuthenticatedUser(true);
-        $action = fn() => (new Pages\AddPage($session))->display();
+        $action = fn() => (new Pages\EditPage($session))->display();
+        break;
+    case 'edit':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\EditPage($session, $session->getRequestedItem()))->display();
         break;
     case 'logout':
         $session->clearUser();

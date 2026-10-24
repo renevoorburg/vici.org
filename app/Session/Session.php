@@ -142,7 +142,12 @@ class Session
     public function getRequestedItem() : int    
     {
         return (int)$this->requestedItem;
-    }  
+    }
+
+    public function getRequestedItemRaw() : ?string
+    {
+        return $this->requestedItem;
+    }
 
     public function getRequestedVariant() : string    
     {

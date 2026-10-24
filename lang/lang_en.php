@@ -45,5 +45,18 @@ return [
     'markerdef.24' => 'A place of a historical event',
     'markerdef.25' => 'A military structure of temporary nature',
 
-
+    // site edit form:
+    'accuracy_0' => 'Exact location',
+    'accuracy_1' => 'Location ± 0-5 m.',
+    'accuracy_2' => 'Location ± 5-25 m.',
+    'accuracy_3' => 'Location ± 25-100 m.',
+    'accuracy_4' => 'Location ± 100-500 m.',
+    'accuracy_5' => 'Location uncertain',
+    'New object' => 'Add new object or location',
+    'Settlements' => 'Settlements',
+    'Military buildings' => 'Military buildings or objects',
+    'Infrastructural' => 'Infrastructural objects',
+    'Roman buildings' => 'Roman buildings',
+    'Smaller objects' => 'Objects or observations',
+    'Current day objects or locations' => 'Museums etcetera',
 ];

@@ -10,6 +10,7 @@ class Line
     public ?string $attribution = null;
     public ?int $uploaderId = null;
     public ?int $licenseId = null;
+    public ?string $date = null;
     public array $coordinates = [];
 
 }

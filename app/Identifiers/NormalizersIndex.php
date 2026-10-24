@@ -35,6 +35,6 @@ class NormalizersIndex
             case 'mithraeum':
                 return new Mithraeum();
         }
-        return self;
+        throw new \InvalidArgumentException("Unknown normalizer: $key");
     }
 }

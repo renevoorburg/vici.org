@@ -25,6 +25,8 @@ class Line
                 return '"wall"';
             case 5:
                 return '"other"';
+            default:
+                return '"other"';
         }
     }
     
