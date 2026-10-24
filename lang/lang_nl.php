@@ -170,6 +170,7 @@ return [
     'Site not found.' => 'Site niet gevonden.',
     'Data' => 'Gegevens',
     'Add image' => 'Afbeelding toevoegen',
+    'Edit' => 'Bewerken',
     'Add lines' => 'Lijnen toevoegen',
     'Title' => 'Titel',
     'required' => 'verplicht',

@@ -150,6 +150,7 @@ return [
     'Site not found.' => 'Stätte nicht gefunden.',
     'Data' => 'Daten',
     'Add image' => 'Bild hinzufügen',
+    'Edit' => 'Bearbeiten',
     'Add lines' => 'Linien hinzufügen',
     'Title' => 'Titel',
     'required' => 'erforderlich',

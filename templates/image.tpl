@@ -1,53 +1,5 @@
 {extends file="base.tpl"}
 
-{block name=stylesheets}
-    <style>
-        .image-meta {
-          border-collapse: collapse;
-          border-spacing: 0 0.25em;
-          width: 100%;
-          margin-top: 1em;
-          margin-bottom: 1em;
-        }
-        .image-meta td {
-          padding: 0.2em 0.6em 0.2em 0.2em;
-          vertical-align: top;
-        }
-        .image-meta td:first-child {
-          color: #555;
-          background: #f7f7f7;
-          border-radius: 0.3em 0 0 0.3em;
-          font-weight: 500;
-          min-width: 140px;
-          max-width: 180px;
-          width: 1%;
-        }
-        .image-meta td:last-child {
-          color: #222;
-          background: #fff;
-          border-radius: 0 0.3em 0.3em 0;
-        }
-
-        .image-meta td a {
-            color: #64748b;
-            word-break: break-all;
-            overflow-wrap: anywhere;
-        }
-
-        .image-meta a:hover {
-            text-decoration: underline;
-        }
-
-        .main-image {
-            display: block;
-            max-width: 100%;
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            margin-bottom: 1em;
-        }
-    </style>
-{/block}
 
 {block name=headscripts}
     {include file="include/lightbox_init.tpl"}

@@ -1,16 +1,5 @@
 {extends file="base.tpl"}
 
-{block name=stylesheets}
-    <style>
-
-    .sitelistmetadata {
-        font-size: 0.8em; 
-        color: #6b7280; 
-        margin-bottom: 0.25em;
-}
-
-    </style>
-{/block}
 
 
 {block name=main}
