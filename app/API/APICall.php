@@ -19,28 +19,12 @@ abstract class APICall
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + 300) . " GMT");
     }
 
-    private function corsHeaders()
-    {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: X-Requested-With, X-Vici-Token');
-    }
-
-    private function preflight()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']) && $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'GET') {
-              $this->corsHeaders();
-            }
-            exit;
-          } 
-    }
+    // CORS (incl. OPTIONS preflight) is handled by the fronting nginx,
+    // which is the single entry point for the app.
 
     public function get()
     {
-        $this->preflight();
-
         ob_start();
-        $this->corsHeaders();
         $this->headers();
         $this->payload();
         ob_end_flush();
