@@ -14,9 +14,16 @@ function iconHtml(icon_type) {
 
 function updateSelectionBox(feature) {
     const selectionBox = document.getElementById('selectionbox-content');
+    const highlightsScroll = document.querySelector('.highlights-scroll');
     if (feature === null || feature === undefined) {
         selectionBox.innerHTML = '';
+        if (highlightsScroll) {
+            highlightsScroll.classList.remove('has-selection');
+        }
         return;
+    }
+    if (highlightsScroll) {
+        highlightsScroll.classList.add('has-selection');
     }
 
     const title = feature.title || 'Onbekende locatie';
@@ -61,7 +68,6 @@ function updateSelectionBox(feature) {
     selectionBox.innerHTML = selectionHTML;
 
     // Scroll de highlights-scroll div naar boven
-    const highlightsScroll = document.querySelector('.highlights-scroll');
     if (highlightsScroll) {
         highlightsScroll.scrollTop = 0;
     }
@@ -69,10 +75,17 @@ function updateSelectionBox(feature) {
 
 function updateHighlightsBox(highlights) {
     const highlightsContainer = document.getElementById('highlights-items');
+    const highlightsScroll = document.querySelector('.highlights-scroll');
 
     if (!highlights || highlights.length === 0) {
         highlightsContainer.innerHTML = '<div class="empty-message"></div>';
+        if (highlightsScroll) {
+            highlightsScroll.classList.remove('has-highlights');
+        }
         return;
+    }
+    if (highlightsScroll) {
+        highlightsScroll.classList.add('has-highlights');
     }
 
     let highlightHTML = '';

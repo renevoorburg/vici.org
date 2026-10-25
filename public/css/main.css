@@ -31,7 +31,7 @@ body {
 }
 
 header {
-    height: 3rem;
+    height: 2.8125rem;
     flex-shrink: 0;
     background-color: white;
     padding-left: 0.5rem;
@@ -137,7 +137,7 @@ header .subtitle {
 main.homepage {
     display: flex;
     flex: none;
-    height: calc(100dvh - 6rem);
+    height: calc(100dvh - 5.625rem);
 }
 
 #map {
@@ -173,6 +173,11 @@ main.homepage {
 
 #selectionbox-content {
     padding: 0.5rem;
+}
+.highlights-scroll:not(.has-selection) #selectionbox-content,
+.highlights-scroll:not(.has-selection) .highlights-content h2,
+.highlights-scroll:not(.has-highlights) .highlights-content h2 {
+    display: none;
 }
 
 
@@ -311,7 +316,7 @@ footer {
 #footerhead {
     text-align: center;
     font-weight: 600;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.3125rem;
     cursor: pointer;
 }
 

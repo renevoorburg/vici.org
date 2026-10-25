@@ -65,11 +65,6 @@ class ImageUploader
             return false;
         }
 
-        $storage = $this->storage();
-        if ($storage->exists($filename)) {
-            $filename = $md5sum . '_' . $filename;
-        }
-
         $size = getimagesize($tmpPath);
         if ($size === false) {
             $this->errorMessage = 'Error: not a valid image file.';
@@ -77,6 +72,17 @@ class ImageUploader
         }
         $width = $size[0];
         $height = $size[1];
+
+        // canonical extension from the detected image type — the
+        // user-supplied filename decides only the base name, never the
+        // extension (prevents e.g. an image stored as ".php" or ".html")
+        $base = trim(preg_replace('/\.[a-z0-9]+$/i', '', $filename), '.');
+        $filename = ($base === '' ? 'image' : $base) . image_type_to_extension($size[2], true);
+
+        $storage = $this->storage();
+        if ($storage->exists($filename)) {
+            $filename = $md5sum . '_' . $filename;
+        }
 
         $exifText = '';
         $lat = null;
