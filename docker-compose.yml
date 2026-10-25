@@ -1,8 +1,10 @@
 name: vici-novo-preview
 
-# Preview stack for preview.vici.org on the production server.
+# Server stack: preview or production depending on the env file passed
+# with --env-file (.env.preview, or a prod .env later). The host nginx
+# terminates TLS and proxies the vhost to 127.0.0.1:$PORT.
 #
-# Two database modes, selected via .env.preview:
+# Two database modes, selected via the env file:
 #   a) production DB on the host: DB_HOST=host.docker.internal (default)
 #      — requires mysqld to also listen on the docker bridge
 #   b) dockerized DB with a fresh dump: DB_HOST=mysql and start with
@@ -10,17 +12,17 @@ name: vici-novo-preview
 #      (that dir is gitignored; files run in alphabetical order on first
 #      init, like db/*.sql.gz does for the dev stack)
 #
-# Other differences with docker-compose.yml (local dev):
+# Differences with docker-compose.local.yml (local dev):
 #   - the real uploads dir is bind-mounted into public/uploads, so uploads
 #     land exactly where main / images.vici.org expect them (set
 #     PROD_UPLOADS_DIR to a local dir instead if you want full isolation)
 #   - web publishes on 127.0.0.1 only; the host nginx terminates TLS and
-#     proxies preview.vici.org here (see nginx/preview.vici.org.conf)
+#     proxies the vhost here (see nginx/preview.vici.org.conf)
 #
 # Before first start on the server:
 #   1. cp .env.preview.example .env.preview  and fill in real values.
-#      Note: compose does NOT read .env.preview automatically — pass
-#      --env-file .env.preview so ${…} interpolations (PROD_STATIC_DIR,
+#      Note: compose only reads .env automatically — pass the env file
+#      with --env-file so ${…} interpolations (PROD_STATIC_DIR,
 #      PROD_UPLOADS_DIR, PORT) resolve from it.
 #   2. (mode a) make sure the host MySQL listens on the docker bridge as
 #      well — a bind-address of 127.0.0.1 only will NOT work
@@ -28,9 +30,9 @@ name: vici-novo-preview
 #   3. make sure the uploads dir (PROD_UPLOADS_DIR) is writable by the
 #      php-fpm user in the container (www-data, uid 33 — same as Debian's)
 #
-# Start:             docker compose -f docker-compose.preview.yml --env-file .env.preview up -d --build
-# Start with db:     docker compose -f docker-compose.preview.yml --env-file .env.preview --profile localdb up -d --build
-# Logs:              docker compose -f docker-compose.preview.yml --env-file .env.preview logs -f php
+# Start:             docker compose --env-file .env.preview up -d --build
+# Start with db:     docker compose --env-file .env.preview --profile localdb up -d --build
+# Logs:              docker compose --env-file .env.preview logs -f php
 # Note: with --profile localdb, wait for vici-preview-mysql to become
 # healthy (importing a full dump takes a while) before browsing.
 
@@ -60,7 +62,7 @@ services:
     container_name: vici-preview-php
     volumes:
       - ./:/var/www/local.vici.novo
-      - ./.env.preview:/var/www/local.vici.novo/.env:ro
+      - ./${ENV_FILE:-.env.preview}:/var/www/local.vici.novo/.env:ro
       # production uploads dir, read-write: only used in local-storage
       # mode (no S3_BUCKET set). With S3 enabled uploads go to object
       # storage and this mount is unused by the uploader.

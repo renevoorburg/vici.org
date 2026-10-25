@@ -6,15 +6,17 @@ Codebase for [https://vici.org](https://vici.org).
 
 Two compose setups are included:
 
-- `docker-compose.yml` — local development stack (nginx + PHP-FPM + MariaDB
-  seeded from `db/`), reachable at http://localhost:8080.
-- `docker-compose.preview.yml` — preview stack for e.g. preview.vici.org on
-  the production server (nginx + PHP-FPM, no own database by default).
+- `docker-compose.local.yml` — local development stack (nginx + PHP-FPM +
+  MariaDB seeded from `db/`), reachable at http://localhost:8080.
+- `docker-compose.yml` — server stack for e.g. preview.vici.org or
+  production on the host (nginx + PHP-FPM, no own database by default).
+  Preview vs production is selected purely by the env file passed via
+  `--env-file`.
 
 ### Local development
 
 ```
-docker compose up -d --build
+docker compose -f docker-compose.local.yml up -d --build
 ```
 
 This starts three containers: `web` (nginx), `php` (PHP-FPM) and `mysql`
@@ -33,7 +35,7 @@ A development account is seeded: username `user1`, password `vici-dev`.
 
 ### Preview on the production server
 
-`docker-compose.preview.yml` runs the site behind the host nginx that
+`docker-compose.yml` runs the site behind the host nginx that
 terminates TLS for preview.vici.org (see `nginx/preview.vici.org.conf`,
 which proxies to `127.0.0.1:8081`).
 
@@ -46,7 +48,7 @@ Setup on the server:
    version is irrelevant):
 
    ```
-   docker compose -f docker-compose.preview.yml run --rm php \
+   docker compose run --rm php \
      composer install --no-dev --prefer-dist
    ```
 4. Choose a database mode:
@@ -64,7 +66,7 @@ Setup on the server:
    `.env.preview`, and start with the `localdb` profile:
 
    ```
-   docker compose -f docker-compose.preview.yml --profile localdb up -d --build
+   docker compose --env-file .env.preview --profile localdb up -d --build
    ```
 
    Wait until `vici-preview-mysql` reports healthy before browsing;
@@ -101,9 +103,9 @@ Setup on the server:
    i.e. `img_path` minus the leading slash:
 
    ```
-   docker compose -f docker-compose.preview.yml exec php \
+   docker compose --env-file .env.preview run --rm php \
      php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
-   docker compose -f docker-compose.preview.yml exec php \
+   docker compose --env-file .env.preview run --rm php \
      php bin/sync-images-to-s3.php /srv/static uploads livius
    ```
 
@@ -113,15 +115,19 @@ Setup on the server:
    so the run is resumable. Re-run it after fixing any `FAILED` lines.
 
 7. Account-activation mails are sent via `mail()` → `msmtp` inside the php
-   container. Mount an `msmtprc` at `/etc/msmtprc` (commented-out example in
-   `docker-compose.preview.yml`) so it can reach an SMTP relay, and set
-   `MAIL_FROM` in `.env.preview`. Without it, registration still succeeds
-   but the mail failure is only logged.
+   container. The image carries a default `/etc/msmtprc` that relays to
+   the Postfix on the host via `host.docker.internal:25` — for that, the
+   host Postfix must listen beyond loopback (`inet_interfaces`) and allow
+   relay from the docker subnet (`mynetworks`, e.g. `172.16.0.0/12`).
+   Mount a custom `msmtprc` over `/etc/msmtprc` for an authenticated
+   SMTP relay instead (see the commented mount in `docker-compose.yml`),
+   and set `MAIL_FROM` in `.env.preview`. Without a reachable relay,
+   registration still succeeds but the mail failure is only logged.
 
 Start without the containerized database (mode a):
 
 ```
-docker compose -f docker-compose.preview.yml up -d --build
+docker compose --env-file .env.preview up -d --build
 ```
 
 ## Running without Docker

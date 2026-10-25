@@ -6,7 +6,8 @@
 /var/templates_cache/
 /var/templates_compile/
 .env
-/.env.preview
+/.env.*
+!/.env.*.example
 /db-preview/
 plan.md
 /tmp/
