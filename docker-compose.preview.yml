@@ -54,7 +54,9 @@ services:
       - vici-preview-net
 
   php:
-    build: ./docker/php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     container_name: vici-preview-php
     volumes:
       - ./:/var/www/local.vici.novo
