@@ -843,7 +843,7 @@ function ViciWidget(element, options) {
                 let highlightText='';
                 if (highlights.length > 0) {
 
-                    highlightText += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_high_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+                    highlightText += '<div id="vici_high_close" style="float:right; width:18px; height:18px; margin-right:2px; margin-top:2px; cursor:pointer"><svg viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></div>';
                     highlightText += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>"+txt["Featured"]+":</div>";
 
                     for (let i in highlights) {
@@ -1026,7 +1026,7 @@ function ViciWidget(element, options) {
         if(typeof options.selectionFunc === 'function') {
             options.selectionFunc(markerData);
         } else {
-            contents += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_sel_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+            contents += '<div id="vici_sel_close" style="float:right; width:18px; height:18px; margin-right:2px; margin-top:2px; cursor:pointer"><svg viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></div>';
             contents += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>" + txt["selection"] + ":</div>";
             contents += '<div style="padding:5px; min-height: 36px;"><a href="'+markerData.url+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+markerData.kind+'" width="32" height="37"></a><div style="font-weight:bold">'+markerData.title+'</div>';
             if (markerData.picture) {
