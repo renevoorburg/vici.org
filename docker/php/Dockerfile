@@ -29,4 +29,6 @@ RUN chmod +x /usr/local/bin/vici-entrypoint.sh
 
 WORKDIR /var/www/local.vici.novo
 
+# note: setting ENTRYPOINT resets the base image's CMD — redeclare it
 ENTRYPOINT ["/usr/local/bin/vici-entrypoint.sh"]
+CMD ["php-fpm"]
