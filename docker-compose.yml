@@ -90,9 +90,11 @@ services:
     command: --character-set-server=utf8 --collation-server=utf8_general_ci
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: vici
-      MYSQL_USER: vici
-      MYSQL_PASSWORD: vici
+      # app credentials are reused so DB_USER/DB_PASS/DB_MAIN in the env
+      # file always match the account the entrypoint creates
+      MYSQL_DATABASE: ${DB_MAIN:-vici}
+      MYSQL_USER: ${DB_USER:-vici}
+      MYSQL_PASSWORD: ${DB_PASS:-vici}
     volumes:
       - vici-preview-db-data:/var/lib/mysql
       - ./db-preview:/docker-entrypoint-initdb.d:ro
