@@ -51,27 +51,21 @@ Setup on the server:
    docker compose run --rm php \
      composer install --no-dev --prefer-dist
    ```
-4. Choose a database mode:
+4. Put the database dumps in `./db-preview/` (gitignored): `.sql` or
+   `.sql.gz` files, imported in alphabetical order on first init —
+   typically a `vici` dump, a `geo` dump and a `zz-grants.sql` granting
+   the app user read access to `geo`:
 
-   **a) Use the production database on the host** — set
-   `DB_HOST=host.docker.internal`. The compose file maps that name to the
-   docker bridge gateway. This requires mysqld to also listen on the bridge
-   interface; a `bind-address` of `127.0.0.1` only will not work. Widen it
-   (e.g. `0.0.0.0` or the docker0 address) or point `DB_HOST` at an address
-   MySQL listens on.
-
-   **b) Use a containerized database with a fresh dump** — put `.sql` or
-   `.sql.gz` files in `./db-preview/` (gitignored; they run in alphabetical
-   order on first init), set `DB_HOST=mysql` plus matching credentials in
-   `.env.preview`, and start with the `localdb` profile:
-
-   ```
-   docker compose --env-file .env.preview --profile localdb up -d --build
+   ```sql
+   GRANT SELECT ON `geo`.* TO 'vici'@'%';
+   FLUSH PRIVILEGES;
    ```
 
-   Wait until `vici-preview-mysql` reports healthy before browsing;
-   importing a full dump takes a while. To re-import, remove the
-   `vici-preview-db-data` volume.
+   The stack always runs its own MariaDB (`DB_HOST=mysql`); the mysql
+   service reuses `DB_USER`/`DB_PASS`/`DB_MAIN` from the env file for the
+   account it creates. Wait until `vici-preview-mysql` reports healthy
+   before browsing; importing a full dump takes a while. To re-import,
+   remove the `vici-preview-db-data` volume.
 
 5. Uploaded images can go to two places:
 
@@ -124,7 +118,7 @@ Setup on the server:
    and set `MAIL_FROM` in `.env.preview`. Without a reachable relay,
    registration still succeeds but the mail failure is only logged.
 
-Start without the containerized database (mode a):
+Start the stack:
 
 ```
 docker compose --env-file .env.preview up -d --build

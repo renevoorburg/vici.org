@@ -4,13 +4,10 @@ name: vici-novo-preview
 # with --env-file (.env.preview, or a prod .env later). The host nginx
 # terminates TLS and proxies the vhost to 127.0.0.1:$PORT.
 #
-# Two database modes, selected via the env file:
-#   a) production DB on the host: DB_HOST=host.docker.internal (default)
-#      — requires mysqld to also listen on the docker bridge
-#   b) dockerized DB with a fresh dump: DB_HOST=mysql and start with
-#      --profile localdb; drop .sql/.sql.gz dumps in ./db-preview/ first
-#      (that dir is gitignored; files run in alphabetical order on first
-#      init, like db/*.sql.gz does for the dev stack)
+# The stack always runs its own MariaDB (the app uses DB_HOST=mysql).
+# On first init it imports every .sql/.sql.gz in ./db-preview/ in
+# alphabetical order (that dir is gitignored), so drop dumps there
+# before the first `up`.
 #
 # Differences with docker-compose.local.yml (local dev):
 #   - the real uploads dir is bind-mounted into public/uploads, so uploads
@@ -24,17 +21,14 @@ name: vici-novo-preview
 #      Note: compose only reads .env automatically — pass the env file
 #      with --env-file so ${…} interpolations (PROD_STATIC_DIR,
 #      PROD_UPLOADS_DIR, PORT) resolve from it.
-#   2. (mode a) make sure the host MySQL listens on the docker bridge as
-#      well — a bind-address of 127.0.0.1 only will NOT work
-#      (mode b) place dump files in ./db-preview/
+#   2. place dump files in ./db-preview/
 #   3. make sure the uploads dir (PROD_UPLOADS_DIR) is writable by the
 #      php-fpm user in the container (www-data, uid 33 — same as Debian's)
 #
 # Start:             docker compose --env-file .env.preview up -d --build
-# Start with db:     docker compose --env-file .env.preview --profile localdb up -d --build
 # Logs:              docker compose --env-file .env.preview logs -f php
-# Note: with --profile localdb, wait for vici-preview-mysql to become
-# healthy (importing a full dump takes a while) before browsing.
+# Note: on first start, wait for vici-preview-mysql to become healthy
+# (importing a full dump takes a while) before browsing.
 
 services:
   web:
@@ -76,15 +70,15 @@ services:
       # Mount a custom msmtprc here for an authenticated SMTP relay instead:
       # - /etc/vici/msmtprc:/etc/msmtprc:ro
     extra_hosts:
-      # makes DB_HOST=host.docker.internal resolve to the host
+      # lets msmtp reach the Postfix on the host for outgoing mail
       - "host.docker.internal:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - vici-preview-net
 
-  # Optional containerized database (mode b above). Only starts with
-  # --profile localdb; set DB_HOST=mysql in .env.preview in that case.
   mysql:
-    profiles: ["localdb"]
     image: mariadb:11.4
     container_name: vici-preview-mysql
     command: --character-set-server=utf8 --collation-server=utf8_general_ci
