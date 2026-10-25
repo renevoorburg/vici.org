@@ -67,9 +67,10 @@ services:
       # (bin/sync-images-to-s3.php /srv/static — covers uploads/, livius/
       # and any other img_path prefix)
       - ${PROD_STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro
-      # account-activation mails are sent via msmtp (sendmail emulation);
-      # mount a real msmtprc so mail() can reach an SMTP relay
-      # - ./docker/php/msmtprc:/etc/msmtprc:ro
+      # mail() works out of the box: /etc/msmtprc is baked into the image
+      # and relays to the Postfix on this host via host.docker.internal:25.
+      # Mount a custom msmtprc here for an authenticated SMTP relay instead:
+      # - /etc/vici/msmtprc:/etc/msmtprc:ro
     extra_hosts:
       # makes DB_HOST=host.docker.internal resolve to the host
       - "host.docker.internal:host-gateway"

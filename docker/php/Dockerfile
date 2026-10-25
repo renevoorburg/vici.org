@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-enable apcu \
     && echo 'sendmail_path = "/usr/bin/msmtp -t -i"' > /usr/local/etc/php/conf.d/msmtp.ini
 
+# default mail relay: Postfix on the docker host (no credentials baked in;
+# mount a custom file over /etc/msmtprc for authenticated relay setups)
+COPY docker/php/msmtprc /etc/msmtprc
+
 # composer inside the image runs on the same PHP as the runtime,
 # so platform checks always match (vendor/ lives on the repo mount)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
