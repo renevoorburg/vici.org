@@ -15,7 +15,10 @@ Two compose setups are included:
 
 ### Local development
 
+After a fresh checkout, init the photoswipe submodules first:
+
 ```
+git submodule update --init --recursive
 docker compose -f docker-compose.local.yml up -d --build
 ```
 
@@ -41,7 +44,9 @@ which proxies to `127.0.0.1:8081`).
 
 Setup on the server:
 
-1. Check out this repository.
+1. Check out this repository and the submodules:
+   `git submodule update --init --recursive` (photoswipe assets under
+   `public/js/` are submodules).
 2. `cp .env.preview.example .env.preview` and fill in real values.
 3. Install the PHP dependencies (composer runs inside the php image, so
    its platform check always matches the runtime — the host's own PHP
