@@ -11,6 +11,7 @@
 /db-preview/
 plan.md
 /tmp/
+/public/js/vici-2.latest.js
 /public/uploads/*
 !/public/uploads/.gitkeep
 /public/kml/*
