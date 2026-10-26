@@ -39,11 +39,11 @@ switch ($session->getRequestedAction()) {
     case 'vici':
         switch ($session->getRequestedVariant()) {
             case 'kml':
-                $accessControl->setRequiresAuthenticatedUser(true);
+                $accessControl->setRequiresAuthOrToken(true);
                 $action = fn() => (new API\KML($session))->get();
                 break;
             case 'rdf':
-                $accessControl->setRequiresAuthenticatedUser(true);
+                $accessControl->setRequiresAuthOrToken(true);
                 $action = fn() => (new API\RDF($session))->get();
                 break;
             default:

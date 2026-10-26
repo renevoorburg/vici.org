@@ -18,6 +18,7 @@ class AccessControl
 
     private bool $requires_token = false;
     private bool $requires_authenticated_user = false;
+    private bool $requires_auth_or_token = false;
 
 
     private bool $is_bot_attracting_link = false;
@@ -42,6 +43,15 @@ class AccessControl
     public function setRequiresAuthenticatedUser(bool $value): void
     {
         $this->requires_authenticated_user = $value;
+    }
+
+    // dataservice endpoints: session login OR a valid partner token
+    // (X-Vici-Token / CUST / UA / EXTSECRET). Interactive pages like
+    // add/edit keep setRequiresAuthenticatedUser — tokens must not
+    // grant edit rights.
+    public function setRequiresAuthOrToken(bool $value): void
+    {
+        $this->requires_auth_or_token = $value;
     }
 
     public function setIsBotAttractingLink(bool $value): void
@@ -97,7 +107,7 @@ class AccessControl
         }
 
         if ($this->is_bot_attracting_link && 
-            !($this->has_authenticated_user || $this->has_valid_token))
+            !($this->has_authenticated_user || $this->hasValidToken()))
         {
             $key = "botlike_rate_limited_" . $this->ip;
             $hits = apcu_fetch($key) ?: 0;
@@ -111,6 +121,12 @@ class AccessControl
         }
 
         if ($this->requires_authenticated_user && !$this->has_authenticated_user) {
+            self::enforceUserAuthentication();
+        }
+
+        if ($this->requires_auth_or_token &&
+            !($this->has_authenticated_user || $this->hasValidToken()))
+        {
             self::enforceUserAuthentication();
         }
 
