@@ -24,6 +24,8 @@ COPY docker/php/msmtprc /etc/msmtprc
 # so platform checks always match (vendor/ lives on the repo mount)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
 COPY docker/php/entrypoint.sh /usr/local/bin/vici-entrypoint.sh
 RUN chmod +x /usr/local/bin/vici-entrypoint.sh
 

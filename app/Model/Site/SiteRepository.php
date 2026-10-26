@@ -86,12 +86,18 @@ class SiteRepository
     public function findNearbySites(float $lat, float $lng, int $number = 5): SiteCollection
     {
         $number = (int) $number;
+        $latDelta = 25 / 111.0;
+        $lngDelta = min(25 / (111.0 * max(cos(deg2rad($lat)), 0.1)), 180.0);
         $query = self::getBaseSelect() . "
-            WHERE 6371*acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat))) < ?
+            WHERE pnt_lat BETWEEN ? AND ? AND pnt_lng BETWEEN ? AND ?
+            AND 6371*acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat))) < ?
             ORDER BY acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat)))
             LIMIT $number";
         $stmt = $this->db->prepare($query);
-        $stmt->execute([$lat, $lng, $lat, 25, $lat, $lng, $lat]);
+        $stmt->execute([
+            $lat - $latDelta, $lat + $latDelta, $lng - $lngDelta, $lng + $lngDelta,
+            $lat, $lng, $lat, 25, $lat, $lng, $lat
+        ]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
         foreach ($result as $row) {
@@ -102,6 +108,8 @@ class SiteRepository
 
     public function findRelevantMuseums(float $lat, float $lng): SiteCollection
     {
+        $latDelta = 25 / 111.0;
+        $lngDelta = min(25 / (111.0 * max(cos(deg2rad($lat)), 0.1)), 180.0);
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
             JOIN pnt_img_lnk l ON l.pil_pnt = p.pnt_id
@@ -113,11 +121,15 @@ class SiteRepository
                 WHERE 
                     pnt_hide=0 AND 
                     pnt_kind != 8 AND 
+                    pnt_lat BETWEEN ? AND ? AND pnt_lng BETWEEN ? AND ? AND
                     6371*acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat))) < ?
             ) 
             ORDER BY acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat)))"
         );
-        $stmt->execute([$lat, $lng, $lat, 25, $lat, $lng, $lat]);
+        $stmt->execute([
+            $lat - $latDelta, $lat + $latDelta, $lng - $lngDelta, $lng + $lngDelta,
+            $lat, $lng, $lat, 25, $lat, $lng, $lat
+        ]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
         foreach ($result as $row) {
