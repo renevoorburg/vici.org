@@ -81,7 +81,10 @@ services:
   mysql:
     image: mariadb:11.4
     container_name: vici-preview-mysql
-    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci --innodb-buffer-pool-size=1G
+    ports:
+      # loopback only: for admin tools over an SSH tunnel (e.g. DBeaver → localhost:3307)
+      - "127.0.0.1:${DB_PORT:-3307}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
       # app credentials are reused so DB_USER/DB_PASS/DB_MAIN in the env
