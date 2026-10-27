@@ -267,6 +267,6 @@ return [
     'Display name' => 'Weergavenaam',
     'Display name must be at least 4 characters.' => 'De weergavenaam moet minstens 4 tekens bevatten.',
     'This name is shown publicly on the pages and images you contribute to.' => 'Deze naam wordt publiek getoond bij de pagina\'s en afbeeldingen waaraan u bijdraagt.',
-    'Format: Jane Doe or Doe, Jane' => 'Formaat: Jan Jansen of Jansen, Jan',
+    'Format: Doe, J.' => 'Formaat: Jansen, J.',
     'In suggested citations this name appears as' => 'In voorgestelde bronvermeldingen wordt deze naam weergegeven als',
 ];

@@ -251,6 +251,6 @@ return [
     'Display name' => "Nom d'affichage",
     'Display name must be at least 4 characters.' => "Le nom d'affichage doit contenir au moins 4 caractères.",
     'This name is shown publicly on the pages and images you contribute to.' => "Ce nom est affiché publiquement sur les pages et images auxquelles vous contribuez.",
-    'Format: Jane Doe or Doe, Jane' => 'Format : Jeanne Dupont ou Dupont, Jeanne',
+    'Format: Doe, J.' => 'Format : Dupont, J.',
     'In suggested citations this name appears as' => "Dans les citations suggérées, ce nom apparaît comme",
 ];

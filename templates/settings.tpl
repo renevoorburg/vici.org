@@ -14,8 +14,7 @@
                         <input class="vici-input" type="text" id="realName" name="realName" value="{$settings_realname|escape}" minlength="4" required />
                     </div>
                     <div class="vici-hint vici-mb">
-                        {$displayname_explanation|default:"This name is shown publicly on the pages and images you contribute to."}<br>
-                        {$displayname_format|default:"Format: Jane Doe or Doe, Jane"}<br>
+                        {$displayname_explanation|default:"This name is shown publicly on the pages and images you contribute to."} {$displayname_format|default:"Format: Doe, J."}<br>
                         {$displayname_citation_label|default:"In suggested citations this name appears as"}: <em id="citation-preview"></em>
                     </div>
                     <div>
@@ -33,23 +32,16 @@
         const input = document.getElementById('realName');
         const preview = document.getElementById('citation-preview');
         function updateCitationPreview() {
-            const name = input.value.trim();
-            let last, given;
-            if (name.includes(',')) {
-                const i = name.indexOf(',');
-                last = name.slice(0, i).trim();
-                given = name.slice(i + 1).trim();
-            } else {
-                const parts = name.split(/\s+/).filter(Boolean);
-                given = parts[0] || '';
-                last = parts.slice(1).join(' ');
-            }
-            if (last) {
-                last = last.charAt(0).toUpperCase() + last.slice(1);
-            }
-            const initials = given.split(/\s+/).filter(Boolean)
+            const name = input.value.trim().replace(/\s+/g, ' ');
+            if (!name) { preview.textContent = '—'; return; }
+            if (name.includes(',')) { preview.textContent = name; return; }
+            const parts = name.split(' ');
+            const given = parts[0] || '';
+            const last = (parts.slice(1).join(' ') || '');
+            const initials = given.split(' ').filter(Boolean)
                 .map(w => w.charAt(0).toUpperCase() + '.').join('');
-            preview.textContent = (last && initials) ? last + ', ' + initials : '—';
+            const capLast = last ? last.charAt(0).toUpperCase() + last.slice(1) : '';
+            preview.textContent = (capLast && initials) ? capLast + ', ' + initials : name;
         }
         input.addEventListener('input', updateCitationPreview);
         updateCitationPreview();

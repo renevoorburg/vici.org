@@ -86,6 +86,24 @@ class User
         return $this->initials;
     }
 
+    /**
+     * Name as it should appear in citations. If the display name contains
+     * a comma it is already in "Last, First" citation form and is used
+     * verbatim (whitespace normalized). Otherwise "Last, I." is derived.
+     */
+    public function getCitationName(): string
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $this->realName));
+        if (str_contains($name, ',')) {
+            return $name;
+        }
+        $this->parseName();
+        if ($this->lastName === '' || trim($this->initials) === '') {
+            return $name;
+        }
+        return $this->lastName . ', ' . $this->initials;
+    }
+
     public function getEmail()
     {
         return $this->email;

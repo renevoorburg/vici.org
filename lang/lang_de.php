@@ -251,6 +251,6 @@ return [
     'Display name' => 'Anzeigename',
     'Display name must be at least 4 characters.' => 'Der Anzeigename muss mindestens 4 Zeichen enthalten.',
     'This name is shown publicly on the pages and images you contribute to.' => 'Dieser Name wird öffentlich bei den Seiten und Bildern angezeigt, zu denen Sie beitragen.',
-    'Format: Jane Doe or Doe, Jane' => 'Format: Erika Mustermann oder Mustermann, Erika',
+    'Format: Doe, J.' => 'Format: Mustermann, E.',
     'In suggested citations this name appears as' => 'In vorgeschlagenen Zitierungen wird dieser Name angezeigt als',
 ];
