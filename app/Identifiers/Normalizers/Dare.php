@@ -1,0 +1,48 @@
+<?php declare(strict_types=1);
+
+namespace Vici\Identifiers\Normalizers;
+
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Dare extends AbstractNormalizer implements UrlNormalizerInterface
+{
+    public function getPrefix(): string
+    {
+        return 'dare';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'http://imperium.ahlfeldt.se/places/';
+    }
+
+    protected function getValidUrlPattern(): string {
+        return '/^https?:\/\/(?:imperium\.ahlfeldt|dh\.gu|francia\.ahlfeldt|dare\.ht\.lu)\.se\/(?:dare\/)?(?:page\/)?(?:places)\/([1-9][0-9]*)(?:\.html)?$/i';
+    }
+
+    protected function getValidTagPattern(): string {
+        return '/^dare( |:)?(?:id|place)?=\s*[1-9][0-9]*$/i';
+    }
+
+    protected function getValidIdPattern(): string {
+        return '/^[1-9][0-9]*+$/i' ;
+    }
+
+    protected function getUrlToTagPatternArray(): array {
+        return array ('/^https?:\/\/(?:imperium\.ahlfeldt|dh\.gu|francia\.ahlfeldt|dare\.ht\.lu)\.se\/(?:dare\/)?(?:page\/)?(?:places)\/([1-9][0-9]*)(?:\.html)?$/i', 'dare:place=$1');
+    }
+
+    protected function getTagToUrlPatternArray() : array {
+        return array ('/^dare(?: |:)(?:place|id)?=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+    }
+
+    protected function getUrlToIdPatternArray(): array {
+        return array ('/^https?:\/\/(?:imperium\.ahlfeldt|dh\.gu|francia\.ahlfeldt|dare\.ht\.lu)\.se\/(?:dare\/)?(?:page\/)?(?:places)\/([1-9][0-9]*)(?:\.html)?$/i', '$1');
+    }
+
+    protected function getIdToUrlPatternArray(): array {
+        return array ('/^([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+    }
+
+}

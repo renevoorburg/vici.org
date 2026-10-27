@@ -1,11 +1,9 @@
-
-
 function editPage() {
 
     editorObj = CKEDITOR.replace( 'edit_full',
         {
             customConfig: '/ckeditor/config.js',
-            height: "480",
+            height: "260",
             stylesSet : 'my_styles',
             extraPlugins : 'vicicite,viciquote',
             toolbar :
@@ -25,7 +23,7 @@ function editPage() {
 }
 
 function MapWidget(canvas, positionField, lng, lat, markerType) {
-    let baseUrl = window.location.hostname.match(/\.local$/) === ".local" ? window.location.protocol + "//vici.local" : window.location.protocol + "//vici.org";
+    let baseUrl = window.location.origin;
 
     let defaultMaps = {
         OSM: {
@@ -40,6 +38,10 @@ function MapWidget(canvas, positionField, lng, lat, markerType) {
         }
     };
 
+    let session = {};
+    try {
+        session = JSON.parse(sessionStorage.getItem("session")) || {};
+    } catch (e) {}
     let selectedMap = (session.mapId === "ESRI") ? "ESRI" : "OSM";
 
     let mapLayer = new ol.layer.Tile({
@@ -106,14 +108,21 @@ function MapWidget(canvas, positionField, lng, lat, markerType) {
     }
 
     function setMarkerIcon(id) {
-        markerIcon.setStyle(
-            new ol.style.Style(
-                { image: markerIconStyleSets[id].normal } )
-        );
+        if (markerIconStyleSets[id]) {
+            markerIcon.setStyle(
+                new ol.style.Style(
+                    { image: markerIconStyleSets[id].normal } )
+            );
+        }
+    }
+
+    function setZoom(z) {
+        map.getView().setZoom(z);
     }
 
     return {
         moveMarker:     moveMarker,
-        setMarkerIcon:  setMarkerIcon
+        setMarkerIcon:  setMarkerIcon,
+        setZoom:        setZoom
     }
 }

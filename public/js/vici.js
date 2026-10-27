@@ -1,5 +1,13 @@
-
 function ViciWidget(element, options) {
+
+    // Globale variabele voor laatst bekende locatie
+    let lastLocation = null;
+    function updateLastLocation(position) {
+        lastLocation = {
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude
+        };
+    }
 
     function getGridSize(zoom) {
         if (zoom >= 13) return 0.125;
@@ -18,48 +26,17 @@ function ViciWidget(element, options) {
     function snapZoom(zoom) {
         return Math.floor(zoom + 0.5);
     }
-    class FocusLocationControl extends  ol.control.Control {
-        /**
-         * @param {Object} [opt_options] Control options.
-         */
-        constructor(opt_options) {
-            const options = opt_options || {};
-
-            const button = document.createElement('button');
-            button.innerHTML = '◎';
-
-            const element = document.createElement('div');
-            element.className = 'focus-location ol-unselectable ol-control';
-            element.appendChild(button);
-
-            super({
-                element: element,
-                target: options.target,
-            });
-
-            button.addEventListener('click', this.handleFocusLocation.bind(this), false);
-        }
-
-        handleFocusLocation() {
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.getMap().getView().animate({
-                    center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
-                    duration: 1000
-                });
-            });
-
-        }
-    }
-
+    
     // use the element as an anchor but don't override absolute positioning:
-    if ($("#"+element).css("position")  !== "absolute") {
-        document.getElementById(element).style.position = "relative";
+    const elementStyle = document.getElementById(element).style;
+    if (elementStyle.position !== "absolute") {
+        elementStyle.position = "relative";
     }
 
     let baseUrl = (options.baseUrl) ? options.baseUrl : "https://vici.org";
 
     let lang =  (options.lang) ? options.lang : (navigator.language || navigator.userLanguage).substring(0, 2) ;
-    if ($.inArray(lang,["de", "en", "fr", "nl"]) < 0) lang = "en";
+    if (["de", "en", "fr", "nl"].indexOf(lang) < 0) lang = "en";
     let txt = {
         de: {
             selection: "Selektion",
@@ -69,7 +46,7 @@ function ViciWidget(element, options) {
             Adjust_view: "Ansicht &auml;ndern",
             touristic_vs_archeological: "Touristische oder arch&auml;ologische St&auml;tten",
             museums_etc: "Museen und andere zeitgen&ouml;ssische St&auml;tten",
-            museums_and_archeological: "Sowohl zeitgen&ouml;ssische als r&ouml;mischen St&auml;tten",
+            museums_and_archeological: "Sowohl zeitgen&ouml;ssische als arch&auml;ologische St&auml;tten",
             roman_only: "Nur arch&auml;ologische St&auml;tten",
             visibility_of_sites: "Nur sichtbare oder alle Objekte zeigen",
             visible_sites: "Nur sichtbare Objekte",
@@ -86,10 +63,10 @@ function ViciWidget(element, options) {
             show: "show",
             Featured: "Featured",
             Adjust_view: 'View settings',
-            touristic_vs_archeological: 'Show tourist or archeological sites',
+            touristic_vs_archeological: 'Show tourist or archaeological sites',
             museums_etc: 'Museums and other contemporary sites',
-            museums_and_archeological: 'Both contemporary and Roman sites',
-            roman_only: 'Ancient Roman only',
+            museums_and_archeological: 'Both contemporary and archaeological sites',
+            roman_only: 'Archaeological only',
             visibility_of_sites: 'Visibility of sites to display',
             visible_sites: 'Visible sites',
             visible_and_invisible: 'Both visible and invisible sites',
@@ -100,21 +77,21 @@ function ViciWidget(element, options) {
             osm_contribs: 'OpenStreetMap contributors'
         },
         fr: {
-            selection: 'Selection',
+            selection: 'Sélection',
             more: 'plus',
             show: 'exposer',
             Featured: 'Pr&eacute;sent&eacute;',
-            Adjust_view: 'View settings',
-            touristic_vs_archeological: 'Show tourist or archeological sites',
-            museums_etc: 'Museums and other contemporary sites',
-            museums_and_archeological: 'Both contemporary and Roman sites',
-            roman_only: 'Ancient Roman only',
-            visibility_of_sites: 'Visibility of sites to display',
-            visible_sites: 'Visible sites',
-            visible_and_invisible: 'Both visible and invisible sites',
-            Map_background: 'Map background',
+            Adjust_view: 'Paramètres d\’affichage',
+            touristic_vs_archeological: 'Afficher les sites touristiques ou archéologiques',
+            museums_etc: 'Musées et autres sites contemporains',
+            museums_and_archeological: 'Sites contemporains et archéologiques',
+            roman_only: 'Uniquement archéologique',
+            visibility_of_sites: 'Visibilité des sites à afficher',
+            visible_sites: 'Sites visibles',
+            visible_and_invisible: 'Sites visibles et invisibles',
+            Map_background: 'Fond de carte',
             satellite: 'Satellite',
-            satellite_labels: 'Satellite with labels',
+            satellite_labels: 'Satellite avec labels',
             pelagios: 'Digital Atlas of the Roman Empire',
             osm_contribs: 'les contributeurs d’OpenStreetMap'
         },
@@ -127,7 +104,7 @@ function ViciWidget(element, options) {
             touristic_vs_archeological: 'Toeristisch of archeologisch',
             museums_etc: 'Musea en andere hedendaagse plekken',
             museums_and_archeological: 'Hedendaagse &eacute;n archeologische plekken',
-            roman_only: 'Enkel Romeinse archeologische locaties',
+            roman_only: 'Enkel archeologische locaties',
             visibility_of_sites: 'Zichtbaarheid',
             visible_sites: 'Enkel zichtbare plaatsen of objecten',
             visible_and_invisible: 'Zichtbare en niet-zichtbare objecten',
@@ -139,19 +116,26 @@ function ViciWidget(element, options) {
         }
     }[lang];
 
-    if (!options.useMaps) {
-        options.useMaps = ["OSM", "AWMC"];
-    }
+    options.useMaps = (options.useMaps) ? options.useMaps : ["OSM", "AWMC"];
+    options.setUrl = (options.setUrl === true) ? true : false; 
+    options.hasGeolocationAPI = ('geolocation' in navigator) && (location.protocol === 'https:');
+    options.showUserGeolocation = (options.showUserGeolocation === true && options.hasGeolocationAPI) ? true : false; 
+    options.panToUserGeolocation = (options.panToUserGeolocation === true && options.hasGeolocationAPI) ? true : false;
 
-    let session = (sessionStorage.getItem('session'))  ? JSON.parse(sessionStorage.getItem('session')) : {
-        selectedMarkerId: null,
-        zoomlevel: options.zoomlevel ? options.zoomlevel : 13,
-        mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
-        center: { lat: 41.895, lng: 12.485},
-        filter: { visibility: "anyVisibility", era: "anyEra" },
-        overlays: options.enableOverlays ? options.enableOverlays : [],
-        moveHere: options.moveHere
-    };
+    let session;
+    if (sessionStorage.getItem('session')) {
+        options.panToUserGeolocation = false;   
+        session = JSON.parse(sessionStorage.getItem('session'));
+    } else {
+        session = {
+            selectedMarkerId: null,
+            zoomlevel: options.zoomlevel ? options.zoomlevel : 13,
+            mapId: options.defaultMap ? options.defaultMap : options.useMaps[0],
+            center: { lat: 41.895, lng: 12.485},
+            filter: { visibility: "anyVisibility", era: "anyEra" },
+            overlays: options.enableOverlays ? options.enableOverlays : [],
+        };
+    }
     if (options.center) {
         session.center.lat = options.center.lat;
         session.center.lng = options.center.lng;
@@ -167,10 +151,9 @@ function ViciWidget(element, options) {
     }
 
     if (options.setUrl) {
-        // url will override zoomlevel, center and selectedMarkerId
         let parts = decodeURIComponent(self.document.location.hash).substring(1).split("/");
         if (parts.length > 1) {
-            session.moveHere = false;
+            options.panToUserGeolocation = false;
             let center = parts[1].split(",");
             session.zoomlevel = Number(parts[0]);
             session.center.lat = Number(center[0]);
@@ -181,13 +164,12 @@ function ViciWidget(element, options) {
         }
     }
 
-
     // mapState bundles parameters related to the state of the map that should not be stored in session storage:
     let mapState = {
         initialized : false,
         lang: (function(){
             let lang =  (options.lang) ? options.lang : (navigator.language.substring(0, 2) || navigator.userLanguage).substring(0, 2) ;
-            if ($.inArray(lang,['de', 'en', 'fr', 'nl']) < 0) {
+            if (['de', 'en', 'fr', 'nl'].indexOf(lang) < 0) {
                 lang = 'en';
             }
             return lang;
@@ -239,7 +221,7 @@ function ViciWidget(element, options) {
 
     let mapLayers = [];
 
-    $.each(options.useMaps, function(i, mapId){
+    options.useMaps.forEach(function(mapId){
         let mapData = (options.extraMaps && options.extraMaps[mapId]) ? options.extraMaps[mapId] : defaultMaps[mapId];
         mapLayers.push(new ol.layer.Tile({
             id: mapId,
@@ -287,7 +269,6 @@ function ViciWidget(element, options) {
                 }
             });
 
-            control.extend([new FocusLocationControl()]);
 
             if (options.showScale) {
                 let scaleLineControl = new ol.control.ScaleLine();
@@ -299,48 +280,113 @@ function ViciWidget(element, options) {
         view: view
     });
 
+    // FocusLocationControl alleen definieren als geolocatie beschikbaar is
+    let FocusLocationControl = null;
+    if (options.showUserGeolocation) {
+        FocusLocationControl = class extends ol.control.Control {
+            constructor(opt_options) {
+                const options = opt_options || {};
+
+                const button = document.createElement('button');
+                button.innerHTML = '◎';
+
+                const element = document.createElement('div');
+                element.className = 'focus-location ol-unselectable ol-control';
+                element.appendChild(button);
+
+                super({
+                    element: element,
+                    target: options.target,
+                });
+
+                button.addEventListener('click', this.handleFocusLocation.bind(this), false);
+            }
+
+            handleFocusLocation() {
+                // Eerst pannen naar de laatst bekende locatie (indien beschikbaar)
+                if (lastLocation) {
+                    this.getMap().getView().animate({
+                        center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                        duration: 500
+                    });
+                }
+                // Vraag daarna de actuele positie op
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        updateLastLocation(position);
+                        // Pannen naar de nieuwe locatie (optioneel, als je altijd wilt updaten)
+                        this.getMap().getView().animate({
+                            center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                            duration: 500
+                        });
+                    },
+                    (error) => {
+                        // Geen foutmelding tonen
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 3000,
+                        maximumAge: 0
+                    }
+                );
+            }
+        }
+    }
+
+    // FocusLocationControl pas toevoegen na succesvolle geolocatie
+    let focusLocationControlInstance = null;
+    if (options.showUserGeolocation && FocusLocationControl) {
+        focusLocationControlInstance = new FocusLocationControl();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            map.addControl(focusLocationControlInstance);
+            updateLastLocation(position);
+        });
+    }
+
     // see https://openlayers.org/en/latest/examples/geolocation.html
-    const geolocation = new ol.Geolocation({
-        // enableHighAccuracy must be set to true to have the heading value.
-        trackingOptions: {
-            enableHighAccuracy: true,
-        },
-        tracking: true,
-        projection: view.getProjection()
-    });
+    let geotracking = null;
+    if (options.showUserGeolocation) {
+        const geolocation = new ol.Geolocation({
+            // enableHighAccuracy must be set to true to have the heading value.
+            trackingOptions: {
+                enableHighAccuracy: true,
+            },
+            tracking: true,
+            projection: view.getProjection()
+        });
 
-    const accuracyFeature = new ol.Feature();
-    geolocation.on('change:accuracyGeometry', function () {
-        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-    });
+        const accuracyFeature = new ol.Feature();
+        geolocation.on('change:accuracyGeometry', function () {
+            accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+        });
 
-    const positionFeature = new ol.Feature();
-    positionFeature.setStyle(
-        new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 6,
-                fill: new ol.style.Fill({
-                    color: '#3399CC',
+        const positionFeature = new ol.Feature();
+        positionFeature.setStyle(
+            new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 6,
+                    fill: new ol.style.Fill({
+                        color: '#3399CC',
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff',
+                        width: 2,
+                    }),
                 }),
-                stroke: new ol.style.Stroke({
-                    color: '#fff',
-                    width: 2,
-                }),
+            })
+        );
+
+        geolocation.on('change:position', function () {
+            const coordinates = geolocation.getPosition();
+            positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+        });
+
+        geotracking = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [accuracyFeature, positionFeature],
             }),
-        })
-    );
-
-    geolocation.on('change:position', function () {
-        const coordinates = geolocation.getPosition();
-        positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
-    });
-
-    let geotracking = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: [accuracyFeature, positionFeature],
-        }),
-    });
-
+        });
+    }
     // end: see https://openlayers.org/en/latest/examples/geolocation.html
 
 
@@ -348,7 +394,7 @@ function ViciWidget(element, options) {
     if (options.useMaps.indexOf(session.mapId) < 0 ) {
         session.mapId = options.useMaps[0];
     }
-    $.each(mapLayers, function(id, mapLayer){
+    mapLayers.forEach(function(mapLayer){
         let selected = (session.mapId === mapLayer.get('id'));
         mapLayer.setVisible(selected);
 
@@ -362,7 +408,7 @@ function ViciWidget(element, options) {
 
     // show enabled overlays:
     function setOverlayVisibility() {
-        $.each(overlays, function(id, overlay){
+        overlays.forEach(function(overlay){
             overlay.setVisible(session.overlays.indexOf(overlay.get('id')) > -1);
             overlay.changed();
         });
@@ -459,8 +505,9 @@ function ViciWidget(element, options) {
 
     map.addOverlay(vectorLayerLines);
     map.addOverlay(vectorLayerMarkers);
-
-    map.addOverlay(geotracking);
+    if (options.showUserGeolocation && geotracking) {
+        map.addOverlay(geotracking);
+    }
 
     // change mouse cursor when over marker or line
     map.on('pointermove', function(evt) {
@@ -582,13 +629,7 @@ function ViciWidget(element, options) {
                             title: feature.properties.title,
                             html: feature.properties.summary,
                             kind: feature.properties.kind,
-                            url: (function () {
-                                if (mapState.perspectiveParam) {
-                                    return feature.properties.url;
-                                } else {
-                                    return baseUrl + feature.properties.url;
-                                }
-                            })(),
+                            url: feature.properties.url, // TODO: check if this is always correct: [x] local [ ] production [ ] perspective 
                             picture: feature.properties.img,
                             zIndex: feature.properties.zindex,
                             identified: feature.properties.identified,
@@ -661,64 +702,78 @@ function ViciWidget(element, options) {
         let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
         let snappedZoom = snapZoom(zoomlevel);
         
-        $.ajax({
-            url: baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam,
-            dataType: 'json',
+        fetch(baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam, {
             headers: {
                 'X-Vici-Token': options.viciToken
-            },
-            success: setFeatures
-        });
+            }
+        })
+        .then(response => response.json())
+        .then(setFeatures);
     }
 
     map.on('click', function(evt) {
-        let feature = map.forEachFeatureAtPixel(evt.pixel,
-            function(feature, layer) {
-                return feature;
-            });
+        let foundFeature = null;
+        map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            // Sla geotracking over, kies eerste vici-feature
+            if (geotracking) {
+                if (layer !== geotracking && feature && feature.vici) {
+                    foundFeature = feature;
+                    return true; // stop zoeken
+                }
+            } else {
+                if (feature && feature.vici) {
+                    foundFeature = feature;
+                    return true; // stop zoeken
+                }
+            }
+            return false;
+        });
 
-        if (feature) {
-            if (feature.vici.markerId) {
-                // a line was clicked:
-
-                let marker = vectorSourceMarkers.getFeatureById(feature.vici.markerId);
+        if (foundFeature) {
+            if (foundFeature.vici.markerId) {
+                let marker = vectorSourceMarkers.getFeatureById(foundFeature.vici.markerId);
                 updateInfobox(marker);
             } else {
-                // a marker was clicked:
-                updateInfobox(feature);
+                updateInfobox(foundFeature);
             }
         }
         getHighlights();
     });
 
 
-    map.on("moveend", function() {
-
-        if (hasPrefbox()) {
-            $('#viciform').hide(100);
-        }
-
-        let zoomlevel = map.getView().getZoom();
-        let extent = map.getView().calculateExtent();
-        let center = ol.proj.toLonLat(map.getView().getCenter());
-
-        session.center.lat = center[1];
-        session.center.lng = center[0];
-
-        if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId) && !options.followFocus) {
-            if (! ol.extent.containsExtent(extent, vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent())) {
-                deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+    let moveendTimer;
+    map.on("moveend", function() { 
+        clearTimeout(moveendTimer);
+        moveendTimer = setTimeout(() => {
+            if (hasPrefbox()) {
+                const viciform = document.getElementById('viciform');
+                if (viciform) {
+                    viciform.style.display = 'none';
+                }
             }
-        }
 
-        if (zoomlevel !== session.zoomlevel) {
-            //we're zoomed in or out
-            session.zoomlevel = zoomlevel;
-            redrawMarkers();
-        }
-        updateDataLayer();
-        getHighlights();
-        storeSession();
+            let zoomlevel = map.getView().getZoom();
+            let extent = map.getView().calculateExtent();
+            let center = ol.proj.toLonLat(map.getView().getCenter());
+
+            session.center.lat = center[1];
+            session.center.lng = center[0];
+
+            if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId) && !options.followFocus) {
+                if (! ol.extent.containsExtent(extent, vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent())) {
+                    deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+                }
+            }
+
+            if (zoomlevel !== session.zoomlevel) {
+                //we're zoomed in or out
+                session.zoomlevel = zoomlevel;
+                redrawMarkers();
+            }
+            updateDataLayer();
+            getHighlights();
+            storeSession();
+        }, 500);
     });
 
     function redrawMarkers() {
@@ -755,7 +810,7 @@ function ViciWidget(element, options) {
     }
 
     function selectMap(mapId) {
-        $.each(mapLayers, function(id, mapLayer){
+        mapLayers.forEach(function(mapLayer){
             let selected = (mapId === mapLayer.get('id'));
             mapLayer.setVisible(selected);
 
@@ -788,7 +843,7 @@ function ViciWidget(element, options) {
                 let highlightText='';
                 if (highlights.length > 0) {
 
-                    highlightText += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_high_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+                    highlightText += '<div id="vici_high_close" style="float:right; width:18px; height:18px; margin-right:2px; margin-top:2px; cursor:pointer"><svg viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></div>';
                     highlightText += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>"+txt["Featured"]+":</div>";
 
                     for (let i in highlights) {
@@ -808,14 +863,20 @@ function ViciWidget(element, options) {
 
                 highlightsbox.innerHTML = highlightText;
 
-                $('#vici_high_close').click(function(){
-                    highlightsbox.innerHTML = '';
-                });
+                const closeButton = document.getElementById('vici_high_close');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function(){
+                        highlightsbox.innerHTML = '';
+                    });
+                }
 
-                $('.highclick').click(function(){
-                    let string = this.id;
-                    let id = string.substr(5, string.length-5);
-                    selectMarkerAndPan(id)
+                const highclickElements = document.querySelectorAll('.highclick');
+                highclickElements.forEach(function(highclick) {
+                    highclick.addEventListener('click', function(){
+                        let string = this.id;
+                        let id = string.substr(5, string.length-5);
+                        selectMarkerAndPan(id)
+                    });
                 });
             }
      
@@ -826,16 +887,13 @@ function ViciWidget(element, options) {
             let zoomlevel = map.getView().getZoom();
             let grid = getGridSize(zoomlevel);
             
-            let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
-            let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
-            
-            let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
-            let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
-            let snappedZoom = snapZoom(zoomlevel);
-            
-            let bounds = snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1];
+            // no snapping for highlights
+            let SW = ol.proj.toLonLat([extent[0], extent[1]]);
+            let NE = ol.proj.toLonLat([extent[2], extent[3]]);
+            let bounds = SW[1] + "," + SW[0] + "," + NE[1] + "," + NE[0];
 
-            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + snappedZoom + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
+            let requrl = baseUrl + "/highlight.php?numeric" + mapState.perspectiveParam + "&bounds=" + bounds + "&zoom=" + zoomlevel + "&n=" + mapState.numHighlights + "&era=" + session.filter.era + "&visibility=" + session.filter.visibility + mapState.langReq;
+            
             if (session.selectedMarkerId && vectorSourceMarkers.getFeatureById(session.selectedMarkerId)) {
                 let extent = ol.proj.toLonLat(vectorSourceMarkers.getFeatureById(session.selectedMarkerId).getGeometry().getExtent());
                 let lat = extent[1];
@@ -845,11 +903,13 @@ function ViciWidget(element, options) {
                 requrl += "&exclude=" + session.selectedMarkerId;
             }
 
-            $.ajax({
-                url: requrl,
-                dataType: 'json',
-                success: showHighlights
-            });
+            fetch(requrl, {
+                headers: {
+                    'X-Vici-Token': options.viciToken
+                }
+            })
+            .then(response => response.json())
+            .then(showHighlights);
         }
     }
 
@@ -869,7 +929,6 @@ function ViciWidget(element, options) {
 
     ///////
 
-    // add css
     let vicistyle = "";
     vicistyle += "#" + element + " img {border:0} ";
     vicistyle += "#" + element + " #displaybox a:link {text-decoration:underline;color:#fff} ";
@@ -890,8 +949,8 @@ function ViciWidget(element, options) {
     vicistyle += ".ol-attribution {bottom: .5em !important; max-height: none !important;} "; // fix attribution position
     vicistyle += ".ol-attribution ul {max-width: 100% !important; overflow: visible !important; margin-bottom: 3px !important; margin-top: -3px !important;} "; // fix attribution text overflow and position
     vicistyle += ".ol-attribution li {display: inline-block !important; max-width: 100% !important;} "; // ensure attribution items are visible
+    vicistyle += ".focus-location {top: 5em;left: .5em;}";
 
-    // create css
     let css = document.createElement("style");
     css.type = "text/css";
     if (css.styleSheet) {
@@ -914,7 +973,7 @@ function ViciWidget(element, options) {
     displaybox.style.zIndex = '1';
     displaybox.id = 'displaybox';
 
-    $('#' + element).append(displaybox);
+    document.getElementById(element).appendChild(displaybox);
 
     let infobox = document.createElement('div');
     infobox.style.width = '270px';
@@ -929,8 +988,8 @@ function ViciWidget(element, options) {
     highlightsbox.style.borderRadius = '2px';
     highlightsbox.id = 'highlightsbox';
 
-    $('#displaybox').append(infobox);
-    $('#displaybox').append(highlightsbox);
+    displaybox.appendChild(infobox);
+    displaybox.appendChild(highlightsbox);
 
 
     // updates the display of selected marker
@@ -967,7 +1026,7 @@ function ViciWidget(element, options) {
         if(typeof options.selectionFunc === 'function') {
             options.selectionFunc(markerData);
         } else {
-            contents += '<div style="float:right; width: 18px; height: 18px; margin-right:2px; margin-top:2px;"><img id="vici_sel_close" src="'+baseUrl+'/images/close-button.png"/></div>';
+            contents += '<div id="vici_sel_close" style="float:right; width:18px; height:18px; margin-right:2px; margin-top:2px; cursor:pointer"><svg viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></div>';
             contents += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>" + txt["selection"] + ":</div>";
             contents += '<div style="padding:5px; min-height: 36px;"><a href="'+markerData.url+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+markerData.kind+'" width="32" height="37"></a><div style="font-weight:bold">'+markerData.title+'</div>';
             if (markerData.picture) {
@@ -982,9 +1041,12 @@ function ViciWidget(element, options) {
             infobox.innerHTML = contents;
         }
 
-        $('#vici_sel_close').click(function(){
-            deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
-        });
+        const closeButton = document.getElementById('vici_sel_close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function(){
+                deselectMarker(vectorSourceMarkers.getFeatureById(session.selectedMarkerId));
+            });
+        }
 
         storeSession();
     }
@@ -1000,26 +1062,24 @@ function ViciWidget(element, options) {
 
         let selectorHtml = '';
         if (options.showFilter) {
-            selectorHtml = '<div style="margin-top:8px"><strong>' + txt["touristic_vs_archeological"] + ':</strong></div><input type="radio" name="era" value="contemporaryEra" id="contemporaryEra"><label for="contemporaryEra"> ' + txt["museums_etc"] + '</label><br/><input type="radio" name="era" value="anyEra" id="anyEra"><label for="anyEra"> ' + txt["museums_and_archeological"] + '</label><br/><input type="radio" name="era" value="historicalEra" id="historicalEra"><label for="historicalEra"> ' + txt["roman_only"] + '</label><br/><div style="margin-top:8px"><strong>' + txt["visibility_of_sites"] + ':</strong></div><input type="radio" name="visibility" value="onlyVisible" id="onlyVisible"><label for="onlyVisible"> ' + txt["visible_sites"] + '</label><br/><input type="radio" name="visibility" value="anyVisibility" id="anyVisibility"><label for="anyVisibility"> ' + txt["visible_and_invisible"] + '</label><br/>';
+            selectorHtml = '<div style="margin-top:8px"><strong style="color:#fff">' + txt["touristic_vs_archeological"] + ':</strong></div><input type="radio" name="era" value="contemporaryEra" id="contemporaryEra"><label for="contemporaryEra"> ' + txt["museums_etc"] + '</label><br/><input type="radio" name="era" value="anyEra" id="anyEra"><label for="anyEra"> ' + txt["museums_and_archeological"] + '</label><br/><input type="radio" name="era" value="historicalEra" id="historicalEra"><label for="historicalEra"> ' + txt["roman_only"] + '</label><br/><div style="margin-top:8px"><strong style="color:#fff">' + txt["visibility_of_sites"] + ':</strong></div><input type="radio" name="visibility" value="onlyVisible" id="onlyVisible"><label for="onlyVisible"> ' + txt["visible_sites"] + '</label><br/><input type="radio" name="visibility" value="anyVisibility" id="anyVisibility"><label for="anyVisibility"> ' + txt["visible_and_invisible"] + '</label><br/>';
         }
 
         let mapsHtml = '';
         if (options.useMaps.length > 1) {
-            mapsHtml = '<div style="margin-top:8px"><strong>' + txt["Map_background"] + ':</strong></div>';
-            $.each(mapLayers, function (id, mapLayer) {
-                let mapId = mapLayer.get('id');
+            mapsHtml = '<div style="margin-top:8px"><strong style="color:#fff">' + txt["Map_background"] + ':</strong></div>';
+            options.useMaps.forEach(function (mapId) {
                 let checked = (mapId === session.mapId) ? ' checked' : '';
-                mapsHtml += '<input type="radio" name="map" value="' + mapId + '" id="' + mapId + '"' + checked + '><label for="' + mapId + '"> ' + mapLayer.get('name') + '</label><br/>'
+                mapsHtml += '<input type="radio" name="map" value="' + mapId + '" id="' + mapId + '"' + checked + '><label for="' + mapId + '"> ' + mapLayers.find(function(layer){ return layer.get('id') === mapId }).get('name') + '</label><br/>'
             });
         }
 
         let overlaysHtml = '';
         if (overlays.length > 0) {
-            overlaysHtml = '<div style="margin-top:8px"><strong> Overlays:</strong></div>';
-            $.each(overlays, function (id, overlay) {
-                let overlayId = overlay.get('id');
-                let checked = (session.overlays.indexOf(overlayId) > -1) ? ' checked' : '';
-                overlaysHtml += '<input type="checkbox" name="overlay" value="' + overlayId + '" id="' + overlayId + '"' + checked + '><label for="' + overlayId + '"> ' + overlay.get('name') + '</label><br/>'
+            overlaysHtml = '<div style="margin-top:8px"><strong style="color:#fff"> Overlays:</strong></div>';
+            overlays.forEach(function (overlay) {
+                let checked = (session.overlays.indexOf(overlay.get('id')) > -1) ? ' checked' : '';
+                overlaysHtml += '<input type="checkbox" name="overlay" value="' + overlay.get('id') + '" id="' + overlay.get('id') + '"' + checked + '><label for="' + overlay.get('id') + '"> ' + overlay.get('name') + '</label><br/>'
             });
         }
 
@@ -1041,43 +1101,51 @@ function ViciWidget(element, options) {
 
         prefbox.innerHTML = html;
 
-        $('#' + element).append(prefbox);
+        document.getElementById(element).appendChild(prefbox);
 
-        $('#' + session.filter.visibility).prop('checked',true);
-        $('#' + session.filter.era).prop('checked',true);
+        document.getElementById(session.filter.visibility).checked = true;
+        document.getElementById(session.filter.era).checked = true;
 
         // attach eventlisteners:
-        $('#vicihandle').click(function() {
-            $('#viciform').toggle(100);
+        document.getElementById('vicihandle').addEventListener('click', function() {
+            document.getElementById('viciform').style.display = document.getElementById('viciform').style.display === 'none' ? 'block' : 'none';
         });
 
-        $("input[name=map]").change(function () {
-            selectMap($("input[name='map']:checked").val());
+        document.querySelectorAll("input[name=map]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                selectMap(this.value);
+            });
         });
 
-        $("input[name=visibility]").change(function () {
-            session.filter.visibility = $("input[name='visibility']:checked").val();
-            redrawMarkers();
-            getHighlights();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=visibility]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                session.filter.visibility = this.value;
+                redrawMarkers();
+                getHighlights();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
-        $("input[name=era]").change(function () {
-            session.filter.era = $("input[name='era']:checked").val();
-            redrawMarkers();
-            getHighlights();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=era]").forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                session.filter.era = this.value;
+                redrawMarkers();
+                getHighlights();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
-        $("input[name=overlay]").change(function () {
-            let i = session.overlays.indexOf(this.id);
-            if (i > -1) {
-                session.overlays.splice(i, 1);
-            } else {
-                session.overlays.push(this.id);
-            }
-            setOverlayVisibility();
-            sessionStorage.setItem('session', JSON.stringify(session));
+        document.querySelectorAll("input[name=overlay]").forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                let i = session.overlays.indexOf(this.id);
+                if (i > -1) {
+                    session.overlays.splice(i, 1);
+                } else {
+                    session.overlays.push(this.id);
+                }
+                setOverlayVisibility();
+                sessionStorage.setItem('session', JSON.stringify(session));
+            });
         });
 
     } // end show prefbox
@@ -1094,16 +1162,14 @@ function ViciWidget(element, options) {
         });
     };
 
-    if (session.moveHere && 'geolocation' in navigator) {
+    if (options.panToUserGeolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-            if (position.coords.longitude > -10.1 && position.coords.longitude < 49.1 && position.coords.latitude > 29.5 && position.coords.latitude < 57.7) {
-                map.getView().animate({
-                    center: ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]),
-                    duration: 1500
-                });
-            }
+            updateLastLocation(position);
+            map.getView().animate({
+                center: ol.proj.fromLonLat([lastLocation.longitude, lastLocation.latitude]),
+                duration: 1500
+            });
         });
-        session.moveHere = false;
     }
 
     // expose functions:

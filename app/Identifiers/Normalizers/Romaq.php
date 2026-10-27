@@ -1,0 +1,49 @@
+<?php declare(strict_types=1);
+
+namespace Vici\Identifiers\Normalizers;
+
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Romaq extends AbstractNormalizer implements UrlNormalizerInterface
+{
+
+    public function getPrefix(): string
+    {
+        return 'romaq';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://www.romaq.org/the-project/aqueducts/';
+    }
+
+    protected function getValidUrlPattern(): string {
+        return '/^https?:\/\/(?:www\.)?romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/';
+    }
+
+    protected function getValidTagPattern(): string {
+        return '/^romaq( |:)?(?:aqueduct)?\s*=\s*[0-9]+$/';
+    }   
+
+    protected function getValidIdPattern(): string {
+        return '/^[0-9]+$/' ;
+    }
+
+    protected function getUrlToTagPatternArray(): array {
+        return array ('/^https?:\/\/(?:www\.)romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/i', 'romaq:aqueduct=$1');
+    }
+
+    protected function getTagToUrlPatternArray() : array {
+        return array ('/^romaq:aqueduct\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1');
+    }
+
+    protected function getUrlToIdPatternArray(): array {
+        return array ('/^https?:\/\/(?:www\.)?romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/', '$1');
+    }
+
+    protected function getIdToUrlPatternArray(): array {
+        return array ('/^([0-9]+)$/i', $this->getNamespace() . '$1');
+    }
+
+}

@@ -1,0 +1,48 @@
+<?php declare(strict_types=1);
+
+namespace Vici\Identifiers\Normalizers;
+
+use Vici\Identifiers\UrlNormalizerInterface;
+use Vici\Identifiers\Normalizers\AbstractNormalizer;
+
+class Pleiades extends AbstractNormalizer implements UrlNormalizerInterface
+{
+    public function getPrefix(): string
+    {
+        return 'pleiades';
+    }
+
+    public function getNamespace(): string
+    {
+        return 'https://pleiades.stoa.org/places/';
+    }
+
+    protected function getValidUrlPattern(): string {
+        return '/^https?:\/\/pleiades\.stoa\.org\/places\/([1-9][0-9]*)$/';
+    }
+    
+    protected function getValidTagPattern(): string {
+        return '/^pleiades:place=[1-9][0-9]*$/i';
+    }
+
+    protected function getValidIdPattern(): string {
+        return '/^[1-9][0-9]*$/' ;
+    }
+
+    protected function getUrlToTagPatternArray(): array {
+        return array ('/^https?:\/\/pleiades\.stoa\.org\/places\/([1-9][0-9]*)$/', 'pleiades:place=$1');
+    }
+
+    protected function getTagToUrlPatternArray() : array {
+        return array ('/^pleiades:place\s*=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+    }
+
+    protected function getUrlToIdPatternArray(): array {
+        return array ('/^https?:\/\/pleiades\.stoa\.org\/places\/([1-9][0-9]*)$/', '$1');
+    }
+
+    protected function getIdToUrlPatternArray(): array {
+        return array ('/^([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+    }
+
+}
