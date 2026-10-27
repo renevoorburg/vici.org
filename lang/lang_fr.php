@@ -91,6 +91,7 @@ return [
     'Login' => 'Connexion',
     "Log on to your account or <a href='/register'>register</a>." => "Connectez-vous ou <a href='/register'>inscrivez-vous</a>.",
     'Account name' => 'Nom d’utilisateur',
+    'Username or e-mail' => 'Nom d’utilisateur ou e-mail',
     'Password' => 'Mot de passe',
     'Invalid username or password.' => 'Nom d’utilisateur ou mot de passe incorrect.',
     'Could not identify you as a human.' => 'Impossible de vous identifier comme humain.',
@@ -245,4 +246,11 @@ return [
     'Passwords do not match.' => 'Les mots de passe ne correspondent pas.',
     'Password must be at least 8 characters.' => 'Le mot de passe doit contenir au moins 8 caractères.',
     'Reset' => 'Réinitialiser',
+    // settings:
+    'Settings' => 'Paramètres',
+    'Display name' => "Nom d'affichage",
+    'Display name must be at least 4 characters.' => "Le nom d'affichage doit contenir au moins 4 caractères.",
+    'This name is shown publicly on the pages and images you contribute to.' => "Ce nom est affiché publiquement sur les pages et images auxquelles vous contribuez.",
+    'Format: Jane Doe or Doe, Jane' => 'Format : Jeanne Dupont ou Dupont, Jeanne',
+    'In suggested citations this name appears as' => "Dans les citations suggérées, ce nom apparaît comme",
 ];

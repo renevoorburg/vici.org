@@ -26,7 +26,16 @@
         </form>
         <a href="/add">{$add_menu_item|default:"Add"}</a>
         {if isset($username)}
-            <a href="/logout">{$logout_menu_item|default:"Logout"}</a>
+            <div class="user-menu">
+                <button type="button" id="user-menu-button" aria-haspopup="true" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    {$username}
+                </button>
+                <div class="user-menu-dropdown">
+                    <a href="/settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> {$settings_menu_item|default:"Settings"}</a>
+                    <a href="/logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> {$logout_menu_item|default:"Logout"}</a>
+                </div>
+            </div>
         {else}
             <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
         {/if}
@@ -35,7 +44,12 @@
 
 <div id="mobile-menu">
     <a href="/add">{$add_menu_item|default:"Add"}</a>
-    <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
+    {if isset($username)}
+        <a href="/settings">{$settings_menu_item|default:"Settings"}</a>
+        <a href="/logout">{$logout_menu_item|default:"Logout"}</a>
+    {else}
+        <a href="/login">{$login_menu_item|default:"Login / Register"}</a>
+    {/if}
     <form action="/search" method="get" class="search-form">
         <input type="text" name="q"
             value="{$query|default:''|escape:'html'}"
@@ -91,6 +105,17 @@
         }
     }
     document.getElementById('menu-button').addEventListener('click', toggleMobileMenu);
+
+    const userMenuButton = document.getElementById('user-menu-button');
+    if (userMenuButton) {
+        const dropdown = userMenuButton.nextElementSibling;
+        userMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const open = dropdown.classList.toggle('open');
+            userMenuButton.setAttribute('aria-expanded', open);
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('open'));
+    }
 </script>
 <script>
     let isAtFooter = false;

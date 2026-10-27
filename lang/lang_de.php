@@ -91,6 +91,7 @@ return [
     'Login' => 'Anmelden',
     "Log on to your account or <a href='/register'>register</a>." => "Melden Sie sich an oder <a href='/register'>registrieren</a>.",
     'Account name' => 'Benutzername',
+    'Username or e-mail' => 'Benutzername oder E-Mail',
     'Password' => 'Passwort',
     'Invalid username or password.' => 'Unbekannter Benutzername oder falsches Passwort.',
     'Could not identify you as a human.' => 'Sie konnten nicht als menschlicher Benutzer identifiziert werden.',
@@ -245,4 +246,11 @@ return [
     'Passwords do not match.' => 'Die Passwörter stimmen nicht überein.',
     'Password must be at least 8 characters.' => 'Das Passwort muss mindestens 8 Zeichen enthalten.',
     'Reset' => 'Zurücksetzen',
+    // settings:
+    'Settings' => 'Einstellungen',
+    'Display name' => 'Anzeigename',
+    'Display name must be at least 4 characters.' => 'Der Anzeigename muss mindestens 4 Zeichen enthalten.',
+    'This name is shown publicly on the pages and images you contribute to.' => 'Dieser Name wird öffentlich bei den Seiten und Bildern angezeigt, zu denen Sie beitragen.',
+    'Format: Jane Doe or Doe, Jane' => 'Format: Erika Mustermann oder Mustermann, Erika',
+    'In suggested citations this name appears as' => 'In vorgeschlagenen Zitierungen wird dieser Name angezeigt als',
 ];
