@@ -151,6 +151,17 @@ header .subtitle {
     z-index: 1000;
 }
 
+/* invisible bridge across the margin-top gap so hover isn't lost */
+.user-menu-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -0.25rem;
+    left: 0;
+    right: 0;
+    height: 0.25rem;
+}
+
+.user-menu:hover .user-menu-dropdown,
 .user-menu-dropdown.open {
     display: flex;
     flex-direction: column;
