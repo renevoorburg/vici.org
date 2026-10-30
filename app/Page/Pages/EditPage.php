@@ -58,6 +58,13 @@ class EditPage extends PageRenderer
 
     private function handlePost(string $tab, $site, SiteRepository $siteRepo, $db): void
     {
+        // post_max_size exceeded: PHP empties $_POST and $_FILES entirely
+        if (empty($_POST) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            $this->errors[] = 'The uploaded file is too large. Maximum allowed size is ' .
+                ini_get('post_max_size') . 'B.';
+            $this->assignFormVars($site, $tab, $db);
+            return;
+        }
         switch ($tab) {
             case 'image':
                 $this->handleImagePost($site, $db);
@@ -92,7 +99,12 @@ class EditPage extends PageRenderer
     private function handleImagePost($site, $db): void
     {
         if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-            $this->errors[] = 'Please choose an image file to upload.';
+            $code = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
+            $this->errors[] = match ($code) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE =>
+                    'The image file is too large. Maximum allowed size is ' . ini_get('upload_max_filesize') . 'B.',
+                default => 'Please choose an image file to upload.',
+            };
             return;
         }
 
@@ -146,7 +158,12 @@ class EditPage extends PageRenderer
     private function handleLinesPost($site): void
     {
         if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-            $this->errors[] = 'Please choose a KML file to upload.';
+            $code = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
+            $this->errors[] = match ($code) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE =>
+                    'The KML file is too large. Maximum allowed size is ' . ini_get('upload_max_filesize') . 'B.',
+                default => 'Please choose a KML file to upload.',
+            };
             return;
         }
         if (preg_match('/\.kml$/i', $_FILES['file']['name']) === 0) {
