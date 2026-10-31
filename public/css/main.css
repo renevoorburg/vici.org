@@ -468,8 +468,25 @@ footer {
         height: auto;
     }
 
+    /* main.homepage has a fixed viewport height that must not survive
+       stacking — else highlights overflow onto the footer */
+    main.homepage {
+        height: auto;
+    }
+
     #map {
         max-height: 350px;
+    }
+
+    /* without a selection the highlights sit flush under the map */
+    .highlights-scroll:not(.has-selection) .highlights-content {
+        padding-top: 0.5rem;
+    }
+
+    /* footer is always expanded in the stacked layout — the
+       scroll-to-footer arrow is meaningless there */
+    #footer-arrow {
+        display: none;
     }
 }
 
