@@ -31,12 +31,39 @@ class ReverseGeocoder
         return $geoDb ??= new \Vici\DB\DBConnector('GEO');
     }
 
+    public function getCountryCode(): string
+    {
+        return $this->countryCode ?? '';
+    }
+
     public function getCountryName(string $lang): string
     {
         if (!isset($this->countryName[$lang])) {
             $this->retrieveCountryName($lang);
         }
         return $this->countryName[$lang];
+    }
+
+    /**
+     * Localized country name for an ISO code, cached per request.
+     * Shared by live resolution and stored toponyms (points.pnt_country).
+     */
+    public static function countryNameFor(string $code, string $lang): string
+    {
+        if ($code === '') {
+            return '';
+        }
+        static $cache = [];
+        $key = strtolower($code) . ':' . $lang;
+        if (!array_key_exists($key, $cache)) {
+            $stmt = self::sharedGeoDb()->prepare(
+                "SELECT $lang AS country_intl FROM countries WHERE alpha_2 = :code LIMIT 1;"
+            );
+            $stmt->execute(['code' => strtolower($code)]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $cache[$key] = ($row && !empty($row['country_intl'])) ? $row['country_intl'] : strtoupper($code);
+        }
+        return $cache[$key];
     }
 
     public function getNearbyPlace(): string
@@ -77,22 +104,7 @@ class ReverseGeocoder
 
     private function retrieveCountryName(string $lang): void
     {
-        // per-request cache: the countries table is tiny, but on pages that
-        // resolve many sites the lookup otherwise runs once per site
-        static $cache = [];
-        if (!$this->countryCode) {
-            $this->countryName[$lang] = '';
-            return;
-        }
-        $key = strtolower($this->countryCode) . ':' . $lang;
-        if (!array_key_exists($key, $cache)) {
-            $sql = "SELECT $lang AS country_intl FROM countries WHERE alpha_2 = :code LIMIT 1;";
-            $stmt = $this->geoDb->prepare($sql);
-            $stmt->execute(['code' => strtolower($this->countryCode)]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $cache[$key] = ($row && !empty($row['country_intl'])) ? $row['country_intl'] : $this->countryCode;
-        }
-        $this->countryName[$lang] = $cache[$key];
+        $this->countryName[$lang] = self::countryNameFor($this->countryCode ?? '', $lang);
     }
 
     private function retrieveNearbyPlace(string $lang = 'en'): void

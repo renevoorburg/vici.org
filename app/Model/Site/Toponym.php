@@ -4,17 +4,21 @@ namespace Vici\Model\Site;
 
 use Vici\Service\ReverseGeocoder;
 
+/**
+ * Toponym resolved once and stored on the point (pnt_country ISO code,
+ * pnt_place place name). Only the localized country name is resolved at
+ * render time, from the tiny countries table (per-request cached).
+ */
 class Toponym
 {
-    private float $latitude;
-    private float $longitude;
-    private ?ReverseGeocoder $geocoder = null;
+    private string $countryCode;
+    private string $place;
     private array $resolved = [];
 
-    public function __construct(float $latitude, float $longitude)
+    public function __construct(string $countryCode = '', string $place = '')
     {
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
+        $this->countryCode = $countryCode;
+        $this->place = $place;
     }
 
     public function __get($name)
@@ -25,27 +29,20 @@ class Toponym
         throw new \InvalidArgumentException("Unknown property: $name");
     }
 
-    public function getLatitude(): float {
-        return $this->latitude;
+    public function getCountryCode(): string {
+        return $this->countryCode;
     }
 
-    public function getLongitude(): float {
-        return $this->longitude;
+    public function getPlace(): string {
+        return $this->place;
     }
 
-    /**
-     * Resolve both toponym fields in one geocoder run and cache them per
-     * language, so accessing countryName and placeName costs one
-     * resolution instead of two.
-     */
     public function resolve(string $lang): array
     {
         if (!isset($this->resolved[$lang])) {
-            $this->geocoder ??= new ReverseGeocoder($this->latitude, $this->longitude);
-            $data = $this->geocoder->resolveToponym($lang);
             $this->resolved[$lang] = [
-                'countryName' => $data['countryName'][$lang] ?? '',
-                'placeName' => $data['placeName'][$lang] ?? '',
+                'countryName' => ReverseGeocoder::countryNameFor($this->countryCode, $lang),
+                'placeName' => $this->place,
             ];
         }
         return $this->resolved[$lang];

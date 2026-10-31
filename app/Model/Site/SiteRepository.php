@@ -25,7 +25,9 @@ class SiteRepository
         p.pnt_dflt_short, 
         p.pnt_kind, 
         p.pnt_lat, 
-        p.pnt_lng, 
+        p.pnt_lng,
+        p.pnt_country,
+        p.pnt_place,
         p.pnt_visible AS isVisible, 
         p.pnt_hide AS isPublished, 
         m.pmeta_loc_accuracy AS locationAccuracy, 
@@ -257,7 +259,7 @@ class SiteRepository
         $locales = $this->localeRepo->getBySiteId($id);
         $site->locales = new LocaleCollection($locales, $site->defaultTitle, $site->defaultSummary);
 
-        $site->toponym = new Toponym($site->representativeLocation->latitude, $site->representativeLocation->longitude);
+        $site->toponym = new Toponym($row['pnt_country'] ?? '', $row['pnt_place'] ?? '');
 
         $identifierRepo = $this->identifierRepo;
         $lineRepo = $this->lineRepo;
@@ -352,6 +354,7 @@ class SiteRepository
 
     private function savePoint(\Vici\Model\Site\Edit\SiteFormData $data): bool
     {
+        $geocoder = new \Vici\Service\ReverseGeocoder((float)$data->lat, (float)$data->lng);
         $values = [
             'pnt_name' => $data->title,
             'pnt_kind' => $data->kind,
@@ -359,12 +362,14 @@ class SiteRepository
             'pnt_lat' => $data->lat,
             'pnt_lng' => $data->lng,
             'pnt_dflt_short' => $data->summary,
+            'pnt_country' => $geocoder->getCountryCode() ?: null,
+            'pnt_place' => $geocoder->getNearbyPlace() ?: null,
         ];
 
         if ($data->id === null) {
             $stmt = $this->db->prepare(
-                "INSERT INTO points (pnt_name, pnt_kind, pnt_visible, pnt_lat, pnt_lng, pnt_dflt_short)
-                 VALUES (:pnt_name, :pnt_kind, :pnt_visible, :pnt_lat, :pnt_lng, :pnt_dflt_short)"
+                "INSERT INTO points (pnt_name, pnt_kind, pnt_visible, pnt_lat, pnt_lng, pnt_dflt_short, pnt_country, pnt_place)
+                 VALUES (:pnt_name, :pnt_kind, :pnt_visible, :pnt_lat, :pnt_lng, :pnt_dflt_short, :pnt_country, :pnt_place)"
             );
             $stmt->execute($values);
             $data->id = (int)$this->db->lastInsertId();
