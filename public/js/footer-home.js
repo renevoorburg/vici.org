@@ -34,22 +34,22 @@ function updateSelectionBox(feature) {
     let selectionHTML = `<h2>${window.selectionTitle}:</h2>`;
     if (hasImage) {
         const imageUrl = `https://images.vici.org/crop/w440xh248${feature.picture}`;
-        selectionHTML += `
-                <div class="relative">
+        const cardInner = `
                     <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
                     <div class="absolute selection-overlay">
                         <div class="selection-overlay-content">
                             <div>
-                                <div class="font-semibold">${title}</div>
-                                <p>${summary} ${id ? `[&nbsp;<a href="/vici/${id}" class="underline">${trl('more')}</a>&nbsp;]` : ''}</p>
+                                <div class="font-semibold">${title} ${id ? `<span class="underline">[&nbsp;${trl('more')}&nbsp;]</span>` : ''}</div>
+                                <p class="selection-summary">${summary}</p>
                             </div>
                             <div class="centered-flex">
                                 ${iconHtml(feature.kind || 1)}
                             </div>
                         </div>
-                    </div>
-                </div>
-            `;
+                    </div>`;
+        selectionHTML += id
+            ? `<div class="relative"><a href="/vici/${id}" class="selection-link">${cardInner}</a></div>`
+            : `<div class="relative">${cardInner}</div>`;
     } else {
         selectionHTML += `
                 <div class="selection-no-image">
@@ -94,10 +94,10 @@ function updateHighlightsBox(highlights) {
         const title = highlight.properties.title || 'Onbekende locatie';
         const summary = highlight.properties.summary || '';
         const img = highlight.properties.img;
-        const imageTag = img
-            ? `<img src="https://images.vici.org/crop/w440xh248${img}" class="highlight-image" alt="${title}" />`
-            : '';
         const id = highlight.properties.id || '';
+        const imageTag = img
+            ? `<img src="https://images.vici.org/crop/w440xh248${img}" class="highlight-image highlight-map-link" data-marker-id="${id}" alt="${title}" />`
+            : '';
 
         highlightHTML += `
             <div class="highlight-box">
@@ -118,7 +118,7 @@ function updateHighlightsBox(highlights) {
     }
     highlightsContainer.innerHTML = highlightHTML;
 
-    const showOnMapButtons = highlightsContainer.querySelectorAll('.show-on-map-btn');
+    const showOnMapButtons = highlightsContainer.querySelectorAll('.show-on-map-btn, .highlight-map-link');
     showOnMapButtons.forEach(btn => {
         const showOnMap = function() {
             // in the stacked layout the map may be scrolled out of view

@@ -346,6 +346,18 @@ strong {
     right: 0;
     background-color: rgba(0, 0, 0, 0.6);
     padding: 0.5rem;
+    /* never let the overlay grow past the top of the image */
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.selection-summary {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .selection-overlay-content {
@@ -354,6 +366,16 @@ strong {
     align-items: stretch;
     gap: 0.5rem;
     color: white;
+}
+
+.selection-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+}
+
+.highlight-map-link {
+    cursor: pointer;
 }
 
 .selection-no-image {
