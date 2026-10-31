@@ -153,6 +153,12 @@ class UserRepository
         return $userData ? $this->hydrate($userData) : null;
     }
 
+    public function updateRealName(int $accountId, string $realName): void
+    {
+        $this->db->prepare("UPDATE accounts SET acc_realname = :name WHERE acc_id = :id")
+            ->execute(['name' => $realName, 'id' => $accountId]);
+    }
+
     /**
      * Store a fresh password-reset code for an account and return it.
      * A second request replaces the previous code.

@@ -2,8 +2,8 @@
 
 {block name=metadata}
     <meta name="citation_title" content="{$mainSite->locales[$preferredLocaleLanguage]->title}">
-    <meta name="citation_author" content="{$mainSite->creator->getLastName()}, {$mainSite->creator->getInitials()}">
-    {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getLastName()}, {$mainSite->updater->getInitials()}">{/if}
+    <meta name="citation_author" content="{$mainSite->creator->getCitationName()}">
+    {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getCitationName()}">{/if}
     
     <meta name="citation_publication_date" content="{$mainSite->createDate|date_format:"%Y-%m-%d"}">
     <meta name="citation_online_date" content="{$mainSite->updateDate|date_format:"%Y-%m-%d"}">
@@ -30,7 +30,9 @@
                         <div>
                             <h3>{$location_metadata|default:"Location"}</h3>
                             <ul>
-                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}</li>
+                            {if $mainSite->toponym->countryName[$sessionLanguage]}
+                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}{if $mainSite->toponym->placeName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}{/if}</li>
+                            {/if}
                             <li>geo:{$mainSite->representativeLocation->latitude},{$mainSite->representativeLocation->longitude}</li>
                             <li>{include file="include/location_accuracy.tpl" accuracy=$mainSite->representativeLocation->qualifier}</li>
                             </ul>
@@ -150,8 +152,8 @@
 
             <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a>, <a href="https://data.digitopia.nl/uri:http://vici.org/vici/{$mainSite->id}">RDF</a><br>
 
-            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getLastName()}, {$mainSite->creator->getInitials()}
-                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getLastName()}, {$mainSite->updater->getInitials()}{/if},
+            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getCitationName()}
+                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getCitationName()}{/if},
                     {$mainSite->locales[$preferredLocaleLanguage]->title}.</em> <span class="underline">https://vici.org/vici/{$mainSite->id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
         </p>
     </div>

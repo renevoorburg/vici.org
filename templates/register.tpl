@@ -20,13 +20,14 @@
                             <div class="vici-field-error" data-error-for="accountName"></div>
                         </div>
 
-                        <label class="vici-label" for="realName">{$realname_label|default:"Full name"}:</label>
+                        <label class="vici-label" for="realName">{$realname_label|default:"Display name"}:</label>
                         <div>
                             <input class="vici-input" type="text" id="realName" name="realName" value="{$form_realname_previous|escape}" minlength="4" 
                                 required 
                                 placeholder="{$realname_placeholder|default:"Jane Doe"}">
                             <div class="vici-field-error" data-error-for="realName"></div>
                         </div>
+                        <div class="vici-hint vici-grid-field">{$displayname_explanation|default:"This name is shown publicly on the pages and images you contribute to."} {$displayname_format|default:"Format: Doe, J."}</div>
 
                         <label class="vici-label" for="email">{$email_label|default:"Email"}:</label>
                         <div>

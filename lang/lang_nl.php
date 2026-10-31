@@ -89,6 +89,7 @@ return [
     'Login' => 'Aanmelden',
     "Log on to your account or <a href='/register'>register</a>." => "Meld je aan of <a href='/register'>registreer</a>.",
     'Account name' => 'Gebruikersnaam',
+    'Username or e-mail' => 'Gebruikersnaam of e-mail',
     'Password' => 'Wachtwoord',
     'Invalid username or password.' => 'Onbekende gebruikersnaam of wachtwoord.',
     'Could not identify you as a human.' => 'Je kan niet herkend worden als menselijke gebruiker.',
@@ -261,4 +262,11 @@ return [
     'Passwords do not match.' => 'De wachtwoorden komen niet overeen.',
     'Password must be at least 8 characters.' => 'Het wachtwoord moet minstens 8 tekens bevatten.',
     'Reset' => 'Opnieuw instellen',
+    // settings:
+    'Settings' => 'Instellingen',
+    'Display name' => 'Weergavenaam',
+    'Display name must be at least 4 characters.' => 'De weergavenaam moet minstens 4 tekens bevatten.',
+    'This name is shown publicly on the pages and images you contribute to.' => 'Deze naam wordt publiek getoond bij de pagina\'s en afbeeldingen waaraan u bijdraagt.',
+    'Format: Doe, J.' => 'Formaat: Jansen, J.',
+    'In suggested citations this name appears as' => 'In voorgestelde bronvermeldingen wordt deze naam weergegeven als',
 ];

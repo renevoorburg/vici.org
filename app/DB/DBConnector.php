@@ -8,10 +8,10 @@ class DBConnector
 
     public function __construct($database = 'MAIN')
     {
-        $datahost = $_ENV['DB_HOST'] ?? '';
-        $database = $_ENV['DB_' . $database] ?? '';
-        $username = $_ENV['DB_USER'] ?? '';
-        $password = $_ENV['DB_PASS'] ?? '';
+        $datahost = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: '';
+        $database = $_ENV['DB_' . $database] ?? getenv('DB_' . $database) ?: '';
+        $username = $_ENV['DB_USER'] ?? getenv('DB_USER') ?: '';
+        $password = $_ENV['DB_PASS'] ?? getenv('DB_PASS') ?: '';
 
         $dsn = "mysql:host={$datahost};dbname={$database};charset=utf8";
         $options = [

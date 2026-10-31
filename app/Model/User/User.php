@@ -10,6 +10,7 @@ class User
     private ?string $firstName = null;
     private ?string $lastName = null;
     private ?string $initials = null;
+    private bool $nameParsed = false;
     private string $email;
     private string $password;
     private $level;
@@ -58,28 +59,49 @@ class User
         return $this->realName;
     }
 
+    public function setRealName(string $realName): void
+    {
+        $this->realName = $realName;
+        $this->firstName = null;
+        $this->lastName = null;
+        $this->initials = null;
+        $this->nameParsed = false;
+    }
+
     public function getFirstName()
     {
-        if ($this->firstName) {
-            return $this->firstName;
-        }
-        return $this->extractFirstName($this->realName);
+        $this->parseName();
+        return $this->firstName;
     }
 
     public function getLastName()
     {
-        if ($this->lastName) {
-            return $this->lastName;
-        }
-        return $this->extractLastName($this->realName);
+        $this->parseName();
+        return $this->lastName;
     }
 
     public function getInitials()
     {
-        if ($this->initials) {
-            return $this->initials;
+        $this->parseName();
+        return $this->initials;
+    }
+
+    /**
+     * Name as it should appear in citations. If the display name contains
+     * a comma it is already in "Last, First" citation form and is used
+     * verbatim (whitespace normalized). Otherwise "Last, I." is derived.
+     */
+    public function getCitationName(): string
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $this->realName));
+        if (str_contains($name, ',')) {
+            return $name;
         }
-        return $this->extractInitials($this->realName);
+        $this->parseName();
+        if ($this->lastName === '' || trim($this->initials) === '') {
+            return $name;
+        }
+        return $this->lastName . ', ' . $this->initials;
     }
 
     public function getEmail()
@@ -149,36 +171,36 @@ class User
         return $this->accountName;
     }
 
-    private function extractFirstName($realName)
+    /**
+     * Derive first name, last name and initials from the display name.
+     * Accepts "Jane Doe" (first word = first name, rest = last name) or
+     * "Doe, Jane" (comma makes the order explicit and handles
+     * tussenvoegsels / multiple given names).
+     */
+    private function parseName(): void
     {
-        $parts = explode(' ', $realName);
-        $firstName = $parts[0] ?? '';
-        $this->firstName = $firstName;
-        return $firstName;
-    }
-
-    private function extractLastName($realName)
-    {
-        $parts = explode(' ', $realName);
-        $lastName = $parts[1] ?? '';
-        $this->lastName = $lastName;
-        return $lastName;
-    }
-
-    private function extractInitials($realName)
-    {
-        $firstName = $this->firstName;
-        if (!$firstName) {
-            $firstName = $this->extractFirstName($realName);
+        if ($this->nameParsed) {
+            return;
         }
-        $words = preg_split('/\s+/', trim($firstName));
-        $initials = '';
-        foreach ($words as $word) {
+        $name = trim($this->realName);
+        if (str_contains($name, ',')) {
+            [$last, $first] = explode(',', $name, 2);
+            $this->lastName = trim($last);
+            $this->firstName = trim($first);
+            $given = $this->firstName;
+        } else {
+            $parts = preg_split('/\s+/', $name);
+            $this->firstName = $parts[0] ?? '';
+            $this->lastName = implode(' ', array_slice($parts, 1));
+            $given = $this->firstName;
+        }
+        $this->lastName = mb_strtoupper(mb_substr($this->lastName, 0, 1)) . mb_substr($this->lastName, 1);
+        $this->initials = '';
+        foreach (preg_split('/\s+/', (string)$given) as $word) {
             if ($word !== '') {
-                $initials .= mb_strtoupper(mb_substr($word, 0, 1)) . '.';
+                $this->initials .= mb_strtoupper(mb_substr($word, 0, 1)) . '.';
             }
         }
-        $this->initials = $initials;
-        return $initials;
-    }   
+        $this->nameParsed = true;
+    }
 }

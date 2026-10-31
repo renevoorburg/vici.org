@@ -14,7 +14,7 @@
                 <div class="vici-hint vici-mb login-text">{$login_text|default:"Log on to your account or <a href='/register'>register</a>."}</div>
                 <form action="" method="post" class="vici-form">
                     <div class="vici-form-grid">
-                        <label class="vici-label" for="frm_accountname">{$account_name_label|default:"Account name"}:</label>
+                        <label class="vici-label" for="frm_accountname">{$account_name_label|default:"Username or e-mail"}:</label>
                         <input class="vici-input" type="text" id="frm_accountname" name="accountname" value="{$form_accountname_previous}" />
                         
                         <label class="vici-label" for="frm_password">{$password_label|default:"Password"}:</label>

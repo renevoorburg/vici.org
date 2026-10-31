@@ -25,6 +25,7 @@ COPY docker/php/msmtprc /etc/msmtprc
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 COPY docker/php/entrypoint.sh /usr/local/bin/vici-entrypoint.sh
 RUN chmod +x /usr/local/bin/vici-entrypoint.sh
