@@ -226,6 +226,8 @@ main.homepage {
 #map {
     flex: 1;
     min-height: 300px;
+    /* scrollIntoView must clear the fixed header */
+    scroll-margin-top: 3.2rem;
 }
 
 .highlights-column {
@@ -344,6 +346,18 @@ strong {
     right: 0;
     background-color: rgba(0, 0, 0, 0.6);
     padding: 0.5rem;
+    /* never let the overlay grow past the top of the image */
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.selection-summary {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .selection-overlay-content {
@@ -352,6 +366,16 @@ strong {
     align-items: stretch;
     gap: 0.5rem;
     color: white;
+}
+
+.selection-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+}
+
+.highlight-map-link {
+    cursor: pointer;
 }
 
 .selection-no-image {
@@ -468,8 +492,25 @@ footer {
         height: auto;
     }
 
+    /* main.homepage has a fixed viewport height that must not survive
+       stacking — else highlights overflow onto the footer */
+    main.homepage {
+        height: auto;
+    }
+
     #map {
         max-height: 350px;
+    }
+
+    /* without a selection the highlights sit flush under the map */
+    .highlights-scroll:not(.has-selection) .highlights-content {
+        padding-top: 0.5rem;
+    }
+
+    /* footer is always expanded in the stacked layout — the
+       scroll-to-footer arrow is meaningless there */
+    #footer-arrow {
+        display: none;
     }
 }
 
@@ -943,6 +984,11 @@ main.item {
     grid-template-columns: 1fr;
     gap: 0.5rem;
 }
+/* keep long unbreakable content (e.g. long URLs) from squeezing the
+   image column to nothing */
+main.item > * {
+    min-width: 0;
+}
 .maincontent > * + * {
     margin-top: 1rem;
 }
@@ -953,7 +999,8 @@ main.item #map {
 .textualcontent {
     margin-bottom: 2rem;
     margin-right: 1.5rem;
-    margin-left: 1.5rem
+    margin-left: 1.5rem;
+    overflow-wrap: anywhere;
 }
 .meta-container {
     display: flex;
