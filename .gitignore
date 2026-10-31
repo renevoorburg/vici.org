@@ -9,6 +9,7 @@
 /.env.*
 !/.env.*.example
 /db-preview/
+/geo_*.sql.gz
 plan.md
 /tmp/
 /public/js/vici-2.latest.js

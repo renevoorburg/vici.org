@@ -17,10 +17,18 @@ class ReverseGeocoder
 
     public function __construct(float $lat, float $lng)
     {
-        $this->geoDb = new \Vici\DB\DBConnector('GEO');
+        $this->geoDb = self::sharedGeoDb();
         $this->lat = $lat;
         $this->lng = $lng;
         $this->retrieveCountryCode();
+    }
+
+    // one PDO connection per request — a geocoder per site would otherwise
+    // exhaust max_connections on pages listing many sites
+    private static function sharedGeoDb(): \Vici\DB\DBConnector
+    {
+        static $geoDb = null;
+        return $geoDb ??= new \Vici\DB\DBConnector('GEO');
     }
 
     public function getCountryName(string $lang): string
@@ -69,19 +77,22 @@ class ReverseGeocoder
 
     private function retrieveCountryName(string $lang): void
     {
-        if ($this->countryCode) {
+        // per-request cache: the countries table is tiny, but on pages that
+        // resolve many sites the lookup otherwise runs once per site
+        static $cache = [];
+        if (!$this->countryCode) {
+            $this->countryName[$lang] = '';
+            return;
+        }
+        $key = strtolower($this->countryCode) . ':' . $lang;
+        if (!array_key_exists($key, $cache)) {
             $sql = "SELECT $lang AS country_intl FROM countries WHERE alpha_2 = :code LIMIT 1;";
             $stmt = $this->geoDb->prepare($sql);
             $stmt->execute(['code' => strtolower($this->countryCode)]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row && !empty($row['country_intl'])) {
-                $this->countryName[$lang] = $row['country_intl'];
-            } else {
-                $this->countryName[$lang] = $this->countryCode;
-            }
-        } else {
-            $this->countryName[$lang] = '';
+            $cache[$key] = ($row && !empty($row['country_intl'])) ? $row['country_intl'] : $this->countryCode;
         }
+        $this->countryName[$lang] = $cache[$key];
     }
 
     private function retrieveNearbyPlace(string $lang = 'en'): void

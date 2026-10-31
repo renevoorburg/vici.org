@@ -30,7 +30,9 @@
                         <div>
                             <h3>{$location_metadata|default:"Location"}</h3>
                             <ul>
-                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}</li>
+                            {if $mainSite->toponym->countryName[$sessionLanguage]}
+                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}{if $mainSite->toponym->placeName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}{/if}</li>
+                            {/if}
                             <li>geo:{$mainSite->representativeLocation->latitude},{$mainSite->representativeLocation->longitude}</li>
                             <li>{include file="include/location_accuracy.tpl" accuracy=$mainSite->representativeLocation->qualifier}</li>
                             </ul>

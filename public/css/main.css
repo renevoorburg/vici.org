@@ -1156,6 +1156,10 @@ a.hover:hover {
 }
 
 /* Site list pages */
+.toponym {
+    color: #4a6fa5;
+    font-size: 0.85rem;
+}
 .sitelistmetadata {
     font-size: 0.8em;
     color: #6b7280;

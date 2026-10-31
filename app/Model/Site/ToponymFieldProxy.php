@@ -45,12 +45,8 @@ class ToponymFieldProxy implements ArrayAccess
     private function ensureLoaded(string $lang): void
     {
         if (!array_key_exists($lang, $this->valuesPerLang)) {
-            $geocoder = new ReverseGeocoder(
-                $this->toponym->getLatitude(),
-                $this->toponym->getLongitude()
-            );
-            $data = $geocoder->resolveToponym($lang);
-            $this->valuesPerLang[$lang] = $data[$this->field][$lang] ?? null;
+            $data = $this->toponym->resolve($lang);
+            $this->valuesPerLang[$lang] = $data[$this->field] ?? null;
         }
 
     }
