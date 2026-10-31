@@ -943,6 +943,11 @@ main.item {
     grid-template-columns: 1fr;
     gap: 0.5rem;
 }
+/* keep long unbreakable content (e.g. long URLs) from squeezing the
+   image column to nothing */
+main.item > * {
+    min-width: 0;
+}
 .maincontent > * + * {
     margin-top: 1rem;
 }
@@ -953,7 +958,8 @@ main.item #map {
 .textualcontent {
     margin-bottom: 2rem;
     margin-right: 1.5rem;
-    margin-left: 1.5rem
+    margin-left: 1.5rem;
+    overflow-wrap: anywhere;
 }
 .meta-container {
     display: flex;
