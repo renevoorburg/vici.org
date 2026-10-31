@@ -72,6 +72,7 @@ class ImageRepository
         $image->isOwnWork = (bool)$row['imgd_ownwork'];
         $image->source = $row['imgd_source'] ?? '';
         $image->creator = $row['imgd_creator'] ?? '';
+        $image->attribution = $row['imgd_attribution'] ?? '';
 
         $image->title = $row['imgd_title'] ?? '';
         $image->description = $row['imgd_description'] ?? '';
