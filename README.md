@@ -72,6 +72,18 @@ Setup on the server:
    before browsing; importing a full dump takes a while. To re-import,
    remove the `vici-preview-db-data` volume.
 
+   Toponyms (country + nearby place) are materialized on `points`
+   (`pnt_country`/`pnt_place`). Dumps containing data predate those
+   columns, so after importing a dump that lacks them run the backfill:
+
+   ```
+   docker exec vici-preview-php php bin/backfill_toponyms.php
+   ```
+
+   It fills `pnt_country` (ISO code — localized via `geo.countries`) and
+   `pnt_place` via reverse geocoding. Re-run it after a geonames data
+   refresh; points saved through the editor get the same fields on save.
+
 5. Uploaded images can go to two places:
 
    **a) S3-compatible object storage** (e.g. TransIP Object Store) — set
