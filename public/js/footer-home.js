@@ -120,12 +120,13 @@ function updateHighlightsBox(highlights) {
 
     const showOnMapButtons = highlightsContainer.querySelectorAll('.show-on-map-btn');
     showOnMapButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        const showOnMap = function() {
+            // in the stacked layout the map may be scrolled out of view
+            document.getElementById('map')?.scrollIntoView({ behavior: 'smooth' });
             mapObj.selectMarkerAndPan(this.dataset.markerId);
-        });
-        btn.addEventListener('touchstart', function(e) {
-            mapObj.selectMarkerAndPan(this.dataset.markerId);
-        }, {passive: true});
+        };
+        btn.addEventListener('click', showOnMap);
+        btn.addEventListener('touchstart', showOnMap, {passive: true});
     });
 }
 

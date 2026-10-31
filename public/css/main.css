@@ -226,6 +226,8 @@ main.homepage {
 #map {
     flex: 1;
     min-height: 300px;
+    /* scrollIntoView must clear the fixed header */
+    scroll-margin-top: 3.2rem;
 }
 
 .highlights-column {
