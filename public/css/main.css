@@ -447,6 +447,16 @@ strong {
     overflow: hidden;
 }
 
+.tile-desc {
+    font-size: 0.8rem;
+    color: #4b5563;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .tile-sub {
     font-size: 0.75rem;
     opacity: 0.85;

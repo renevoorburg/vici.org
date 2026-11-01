@@ -3,6 +3,7 @@
     {if $thumb == ''}{assign var=thumb value=$siteImage->filepath}{/if}
 {/foreach}
 {assign var=siteTitle value=(isset($site->locales[$sessionLanguage]->title) && $site->locales[$sessionLanguage]->title ne '') ? $site->locales[$sessionLanguage]->title : $site->defaultTitle}
+{assign var=siteSum value=(isset($site->locales[$sessionLanguage]->summary) && $site->locales[$sessionLanguage]->summary ne '') ? $site->locales[$sessionLanguage]->summary : $site->defaultSummary}
 {assign var=siteLoc value=$site->toponym->countryName[$sessionLanguage]|default:''}
 {if $site->toponym->placeName[$sessionLanguage]|default:'' ne ''}{assign var=siteLoc value="{$siteLoc}, {$site->toponym->placeName[$sessionLanguage]}"}{/if}
 {if $metaMode|default:'added' == 'changed'}
@@ -16,6 +17,7 @@
     {/if}
     <span class="marker-icon" data-icon-type="{$site->type->id}"></span>
     <span class="tile-title">{$siteTitle}</span>
+    <span class="tile-desc">{$siteSum}</span>
     <span class="tile-sub tile-loc">{$siteLoc}</span>
     <span class="tile-sub tile-meta">{$siteMeta}</span>
 </a>
