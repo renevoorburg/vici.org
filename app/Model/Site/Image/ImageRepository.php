@@ -43,6 +43,25 @@ class ImageRepository
         return null;
     }
 
+    public function findRecentlyAdded(int $limit = 40): ImageCollection
+    {
+        $limit = (int)$limit;
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            WHERE i.img_hide = 0
+            ORDER BY d.imgd_date DESC
+            LIMIT $limit
+        ");
+        $stmt->execute();
+        $images = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $images[] = $this->mapRowToImage($row);
+        }
+        return new ImageCollection($images);
+    }
+
     public function findBySite(int $siteId, bool $isPublished = true): ImageCollection
     {
         $stmt = $this->db->prepare("
