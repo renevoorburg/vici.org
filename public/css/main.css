@@ -511,6 +511,39 @@ strong {
     gap: 0.5rem;
 }
 
+.stats-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 40rem;
+}
+
+.stats-table th,
+.stats-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.stats-table th {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.stats-num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.stats-note {
+    display: block;
+    font-size: 0.75rem;
+    color: #4a6fa5;
+}
+
+.stats-table .stats-num .stats-note {
+    display: inline;
+}
+
 footer {
     font-size: 0.875rem;
     color: #718096;

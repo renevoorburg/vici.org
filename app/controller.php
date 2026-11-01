@@ -122,6 +122,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setRequiresAuthenticatedUser(true);
         $action = fn() => (new Pages\SettingsPage($session))->display();
         break;
+    case 'statistics':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\StatisticsPage($session))->display();
+        break;
     case 'add':
         $accessControl->setRequiresAuthenticatedUser(true);
         $action = fn() => (new Pages\EditPage($session))->display();
