@@ -16,6 +16,6 @@
     {/if}
     <span class="marker-icon" data-icon-type="{$site->type->id}"></span>
     <span class="tile-title">{$siteTitle}</span>
-    <span class="tile-sub">{$siteLoc}</span>
-    <span class="tile-sub">{$siteMeta}</span>
+    <span class="tile-sub tile-loc">{$siteLoc}</span>
+    <span class="tile-sub tile-meta">{$siteMeta}</span>
 </a>

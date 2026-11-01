@@ -434,6 +434,10 @@ strong {
     z-index: 1;
 }
 
+.tile-caption .tile-sub {
+    color: #4a6fa5;
+}
+
 .tile-title {
     font-weight: 600;
     display: -webkit-box;
@@ -455,13 +459,19 @@ strong {
     background-color: #f3f4f6;
     color: inherit;
     align-items: center;
+    justify-content: flex-start;
     gap: 0.35rem;
-    padding: 0.75rem;
+    padding: 0.75rem 0.75rem 0.5rem;
     text-align: center;
 }
 
 .tile-site .tile-sub {
     color: #4a6fa5;
+}
+
+/* pin loc + meta to the bottom so they line up across tiles */
+.tile-site .tile-loc {
+    margin-top: auto;
 }
 
 /* site with image: photo as dimmed backdrop under the whole text tile */
