@@ -200,13 +200,13 @@ class SiteRepository
 
     public function findRecentlyAdded(int $limit = 25): SiteCollection
     {
-        $limit = (int)$limit;
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
             WHERE pnt_hide=0
             ORDER BY m.pmeta_create_date DESC
-            LIMIT $limit"
+            LIMIT :limit"
         );
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
@@ -218,13 +218,13 @@ class SiteRepository
 
     public function findRecentlyChanged(int $limit = 25): SiteCollection
     {
-        $limit = (int)$limit;
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
-            WHERE pnt_hide=0 AND DATE(m.pmeta_create_date) != DATE(m.pmeta_edit_date)
+            WHERE pnt_hide=0 AND m.pmeta_edit_date > m.pmeta_create_date
             ORDER BY m.pmeta_edit_date DESC
-            LIMIT $limit"
+            LIMIT :limit"
         );
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];

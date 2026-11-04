@@ -30,8 +30,18 @@ class UserStatistics
         ];
     }
 
+    private const ALLOWED_COLUMNS = [
+        'pmetadata' => ['pmeta_creator', 'pmeta_editor'],
+        'img_data'  => ['imgd_uploader'],
+        'plines'    => ['line_uploader'],
+        'ptexts'    => ['ptxt_editor'],
+    ];
+
     private function countWithRank(string $table, string $column, int $userId): array
     {
+        if (!in_array($column, self::ALLOWED_COLUMNS[$table] ?? [], true)) {
+            throw new \InvalidArgumentException("Unsupported statistics column $table.$column");
+        }
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM `$table` WHERE `$column` = :uid");
         $stmt->execute(['uid' => $userId]);
         $count = (int)$stmt->fetchColumn();

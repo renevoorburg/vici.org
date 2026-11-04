@@ -6,7 +6,7 @@
     <main class="margin">
 
     <h1>{$statistics_title|default:"Statistics"}</h1>
-    <p>{$statistics_intro|default:"Your contributions as"} <strong>{$stats_display_name}</strong></p>
+    <p>{$statistics_intro|default:"Your contributions as"} <strong>{$stats_display_name|escape:'html'}</strong></p>
 
     <table class="stats-table">
         <thead>

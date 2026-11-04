@@ -45,21 +45,43 @@ class ImageRepository
 
     public function findRecentlyAdded(int $limit = 40): ImageCollection
     {
-        $limit = (int)$limit;
         $stmt = $this->db->prepare("
             SELECT * 
             FROM images i
             LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
             WHERE i.img_hide = 0
             ORDER BY d.imgd_date DESC
-            LIMIT $limit
+            LIMIT :limit
         ");
+        $stmt->bindValue('limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();
         $images = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $images[] = $this->mapRowToImage($row);
         }
         return new ImageCollection($images);
+    }
+
+    /**
+     * Map of site id => image path for each site's default image.
+     * One query for a whole set of sites, used by the recent-tiles pages
+     * to avoid a lazy-load per tile.
+     */
+    public function findDefaultThumbs(array $siteIds): array
+    {
+        $siteIds = array_values(array_unique(array_map('intval', $siteIds)));
+        if (count($siteIds) === 0) {
+            return [];
+        }
+        $in = implode(',', $siteIds);
+        $stmt = $this->db->prepare("
+            SELECT l.pil_pnt, i.img_path
+            FROM pnt_img_lnk l
+            JOIN images i ON i.img_id = l.pil_img AND i.img_hide = 0
+            WHERE l.pil_dflt = 1 AND l.pil_pnt IN ($in)
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
     public function findBySite(int $siteId, bool $isPublished = true): ImageCollection

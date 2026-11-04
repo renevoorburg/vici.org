@@ -5,8 +5,6 @@ namespace Vici\API;
 use PDO;
 use Vici\Session\Session;
 use Vici\DB\DBConnector;
-use Vici\Geometries\Line;
-use Vici\Identifiers\NormalizersIndex;
 
 class Highlights extends APICall
 {
@@ -30,8 +28,12 @@ class Highlights extends APICall
         }
         $zoom = (int)$_GET['zoom'];
         $exclude = isset($_GET['exclude']) ? (int)$_GET['exclude'] : 0;
-        $n = (isset($_GET['n']) ? (int)$_GET['n'] : 2);
+        $n = max(0, min(50, isset($_GET['n']) ? (int)$_GET['n'] : 2));
         $bounds = explode(",", $_GET['bounds']);
+        if (count($bounds) !== 4) {
+            echo '{ "type": "FeatureCollection", "features": [] }';
+            return;
+        }
 
         $minLat = (float)$bounds[0];
         $minLng = (float)$bounds[1];
@@ -39,15 +41,14 @@ class Highlights extends APICall
         $maxLng = (float)$bounds[3];
 
         // either we focus on the center of the map or we read out the 'focus' parameter:
-        if (isset($_GET['focus'])) {
-            $coords = explode(",", $_GET['focus']);
-            $centerLat = $coords[0];
-            $centerLng = $coords[1];
+        $centerLat = $minLat + ($maxLat - $minLat) / 2;
+        $centerLng = $minLng + ($maxLng - $minLng) / 2;
+        $orderby = "distance * RAND()";
+        $coords = isset($_GET['focus']) ? explode(",", $_GET['focus']) : [];
+        if (count($coords) === 2) {
+            $centerLat = (float)$coords[0];
+            $centerLng = (float)$coords[1];
             $orderby = "distance";
-        } else {
-            $centerLat = $minLat + ($maxLat - $minLat) / 2;
-            $centerLng = $minLng + ($maxLng - $minLng) / 2;
-            $orderby = "distance * RAND()";
         }
 
         $extraSQL = '';
@@ -55,7 +56,7 @@ class Highlights extends APICall
             $era = $_GET['era']; 
             if (($era == 'onlyContemporary') || ($era == 'contemporaryEra')) {
                 $extraSQL = ' AND (pnt_kind=8 OR pnt_kind=19)';    
-            } elseif (($era == 'onlyRoman')| ($era == 'historicalEra')) {
+            } elseif (($era == 'onlyRoman') || ($era == 'historicalEra')) {
                 $extraSQL = ' AND  NOT (pnt_kind=8 OR pnt_kind=19)'; 
             }
         }
@@ -91,25 +92,31 @@ class Highlights extends APICall
         // . "(POW($centerLat - pnt_lat, 2) + POW(($centerLng - pnt_lng)*1.6, 2))/(pkind_zindex + 40*pnt_promote) AS distance "
 
         $sql  = "SELECT pnt_id, pnt_name, pnt_lng, pnt_lat, pnt_kind, pnt_dflt_short, pkind_zindex, psum_pnt_name, psum_short, img_path, "
-                . "6371*acos(cos(radians($centerLat))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians($centerLng))+sin(radians($centerLat))*sin(radians(pnt_lat))) AS distance "
+                . "6371*acos(GREATEST(-1,LEAST(1,cos(radians(:clat1))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(:clng))+sin(radians(:clat2))*sin(radians(pnt_lat))))) AS distance "
                 . $perspectiveSelectSQL
                 . "FROM points "
-                . "LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND psum_lang='".$lng."'" 
+                . "LEFT JOIN psummaries ON pnt_id = psum_pnt_id AND psum_lang = :lang "
                 . "LEFT JOIN pkinds ON pkinds.pkind_id=points.pnt_kind "
                 . "LEFT JOIN pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1 "
                 . "LEFT JOIN images ON pil_img=img_id AND img_hide=0 "
                 . $perspectivePointJoinSQL
-                . "WHERE (pnt_lat > $minLat) AND (pnt_lat < $maxLat) AND (pnt_lng > $minLng) AND (pnt_lng < $maxLng) "
-                .      "AND (pnt_hide=0) AND (pkind_low <= $zoom) "
+                . "WHERE (pnt_lat > :minlat) AND (pnt_lat < :maxlat) AND (pnt_lng > :minlng) AND (pnt_lng < :maxlng) "
+                .      "AND (pnt_hide=0) AND (pkind_low <= :zoom) "
                 .      "AND ((pnt_promote=1) OR (pil_dflt=1)) "
-                .      "AND pnt_id != $exclude "
+                .      "AND pnt_id != :exclude "
                 .      $extraSQL
                 .      $perspectiveRestrictSQL
+                .  "GROUP BY pnt_id "
                 .  "ORDER BY $orderby ASC "
                 .  "LIMIT $n ";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([
+            'clat1' => $centerLat, 'clat2' => $centerLat, 'clng' => $centerLng,
+            'lang' => $lng,
+            'minlat' => $minLat, 'maxlat' => $maxLat, 'minlng' => $minLng, 'maxlng' => $maxLng,
+            'zoom' => $zoom, 'exclude' => $exclude,
+        ]);
 
         $sepx = '';
         echo '{ "type": "FeatureCollection",'."\n"; 

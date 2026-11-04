@@ -30,6 +30,7 @@ class Site
     public string $createDate;
     public string $updateDate;
     public IdentifierCollection $identifiers;
+    public ?string $thumbPath = null;
     public bool $isVisible = true;
     public bool $isPublished = true;
 

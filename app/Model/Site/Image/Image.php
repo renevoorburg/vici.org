@@ -14,7 +14,7 @@ class Image
     public string $language;
     public string $filepath;
     public bool $isPublished = true;
-    public User $uploader;
+    public ?User $uploader = null;
     public bool $isOwnWork = false;
     public string $source;
     public string $creator;
@@ -28,7 +28,12 @@ class Image
 
     public function getCreator(): string
     {
-        return $this->isOwnWork ? $this->uploader->getRealName() : $this->creator;
+        return $this->isOwnWork ? ($this->uploader?->getRealName() ?? '') : $this->creator;
+    }
+
+    public function getSafeSource(): string
+    {
+        return preg_match('#^https?://#i', $this->source) ? $this->source : '';
     }
 
 }

@@ -19,9 +19,14 @@ class RecentlyChangedPage extends PageRenderer
 
         $db = $session->getDBConnector();
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
+        $imageRepo = new \Vici\Model\Site\Image\ImageRepository($db);
+
+        $sites = iterator_to_array($siteRepo->findRecentlyChanged());
+        $thumbs = $imageRepo->findDefaultThumbs(array_map(fn($s) => $s->id, $sites));
 
         $items = [];
-        foreach ($siteRepo->findRecentlyChanged() as $site) {
+        foreach ($sites as $site) {
+            $site->thumbPath = $thumbs[$site->id] ?? null;
             $items[] = ['type' => 'site', 'date' => $site->updateDate, 'item' => $site, 'metaMode' => 'changed'];
         }
 
