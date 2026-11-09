@@ -31,12 +31,15 @@ body {
 }
 
 header {
-    height: 2.8125rem;
+    height: auto;
+    min-height: 2.8125rem;
     flex-shrink: 0;
     background-color: white;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    padding-top: 0.5rem;
+    /* keeps the header below the iOS standalone status bar and
+       fills that area with the header's white background */
+    padding-top: calc(0.5rem + env(safe-area-inset-top));
     padding-bottom: 0.5rem;
     display: flex;
     align-items: center;
