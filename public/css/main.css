@@ -582,6 +582,17 @@ strong {
     display: inline;
 }
 
+/* profile links as identifier-style pills: label + url in one pill */
+.profile-links {
+    margin-top: 1.25rem;
+}
+.profile-link-label {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #1e3a8a;
+    margin-right: 0.35em;
+}
+
 /* scrollable wrapper: lets the heatmap swipe left-right on narrow screens */
 .heatmap-scroll {
     overflow-x: auto;

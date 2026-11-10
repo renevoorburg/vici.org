@@ -14,14 +14,13 @@
     {/if}
 
     {if count($profile_links) > 0}
-        <table class="stats-table">
+        <ul class="identifier-list profile-links">
             {foreach $profile_links as $link}
-            <tr>
-                <td>{$link.label|escape:'html'}</td>
-                <td><a class="vici-link" href="{$link.url|escape:'html'}" target="_blank" rel="noopener">{$link.url|escape:'html'}</a></td>
-            </tr>
+            <li>
+                <a href="{$link.url|escape:'html'}" target="_blank" rel="noopener">{$link.label|escape:'html'}</a>
+            </li>
             {/foreach}
-        </table>
+        </ul>
     {/if}
 
     {if !$logged_in}
