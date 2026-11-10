@@ -4,11 +4,12 @@
         <div class="vici-overlay">
             <div class="vici-card">
             <a href="/" class="vici-close" title="{$close|default:"Close"}" aria-label="{$close|default:"Close"}">×</a>
-            <h1>{$settings_title|default:"Settings"}</h1>
+            <h1>{$settings_title|default:"User profile"}</h1>
                 {if $error_message}
                 <div class="vici-error">{$error_message}</div>
                 {/if}
                 <form action="" method="post" class="vici-form">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
                     <div class="vici-form-grid">
                         <label class="vici-label" for="realName">{$displayname_label|default:"Display name"}:</label>
                         <input class="vici-input" type="text" id="realName" name="realName" value="{$settings_realname|escape}" minlength="4" required />
@@ -16,6 +17,26 @@
                     <div class="vici-hint vici-mb">
                         {$displayname_explanation|default:"This name is shown publicly on the pages and images you contribute to."} {$displayname_format|default:"Format: Doe, J."}<br>
                         {$displayname_citation_label|default:"In suggested citations this name appears as"}: <em id="citation-preview"></em>
+                    </div>
+                    <h2>{$profile_section|default:"Public profile"}</h2>
+                    <div class="vici-hint vici-mb">
+                        {$profile_explanation|default:"The fields below are shown on your public profile page:"} <a class="vici-link" href="{$settings_profile_url}">{$profile_view_link|default:"view your profile"}</a>
+                    </div>
+                    <div class="vici-form-grid">
+                        <label class="vici-label vici-label--top" for="bio">{$bio_label|default:"Bio"}:</label>
+                        <textarea class="vici-textarea" id="bio" name="bio" rows="4" maxlength="4000">{$settings_bio|escape}</textarea>
+                    </div>
+                    <h3>{$links_section|default:"Links and identifiers"}</h3>
+                    <div class="vici-form-grid">
+                        {foreach $settings_links as $i => $link}
+                        <label class="vici-label" for="link_label_{$i}">{$link_label_label|default:"Label"}:</label>
+                        <input class="vici-input" type="text" id="link_label_{$i}" name="link_label[]" value="{$link.label|escape}" maxlength="40" placeholder="{$link_label_placeholder|default:"e.g. Website"}" />
+                        <label class="vici-label" for="link_url_{$i}">{$link_url_label|default:"URL"}:</label>
+                        <input class="vici-input" type="url" id="link_url_{$i}" name="link_url[]" value="{$link.url|escape}" maxlength="255" placeholder="https://" />
+                        {/foreach}
+                    </div>
+                    <div>
+                        <label><input type="checkbox" name="bio_public" {if $settings_bio_public}checked{/if}> {$bio_public_label|default:"Show to visitors who are not logged in"}</label>
                     </div>
                     <div>
                         <input type="submit" class="vici-btn" value="{$save_label|default:"Save"}">

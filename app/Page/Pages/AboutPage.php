@@ -23,11 +23,6 @@ Metadata is available under the <a href="http://creativecommons.org/about/cc0">C
 Images or line tracings may be available under other licenses.
 Vici.org invites everyone to participate and share their knowledge of classical antiquity.
 Vici.org provides various services to reuse this shared knowledge; please contact me for more information.
-</p>
-
-<p>
-<span style="font-style:italic">René Voorburg, May 27th, 2025.</span><br />
-rene@digitopia.nl
 </p>';
 
     private const CONTENT_NL = '<p>Vici.org is de archeologische atlas van de oudheid.</p>
@@ -47,10 +42,7 @@ De eerste versie van Vici.org ging in mei 2012 online.</p>
 <p>Vici.org is, net als Wikipedia, gericht op <em>delen</em> en <em>samenwerken</em>. Zoals bij Wikipedia is alle geschreven content beschikbaar onder de <a href="http://creativecommons.org/licenses/by-sa/3.0/deed.nl">Creative Commons Naamsvermelding/Gelijk delen</a>-licentie.
 Metadata is vrij beschikbaar (<a href="http://creativecommons.org/about/cc0">CC0 / Public Domain</a>). Voor afbeeldingen en lijnen kunnen afwijkende licenties gelden.
 Iedereen wordt uitgenodigd om via Vici.org zijn of haar kennis van de klassieke oudheid te delen.
-Vici.org stelt gedeelde kennis op haar beurt ter beschikking voor hergebruik via verschillende dataservices. Neem hiervoor even contact met me op.</p>
-
-<p><span style="font-style:italic">René Voorburg, 27 mei 2025.</span><br />
-rene@digitopia.nl</p>';
+Vici.org stelt gedeelde kennis op haar beurt ter beschikking voor hergebruik via verschillende dataservices. Neem hiervoor even contact met me op.</p>';
 
     private const CONTENT_DE = '<p style="margin-top:0">Vici.org ist der archäologische Atlas der klassischen Antike. Es handelt sich um eine gemeinschaftlich erstellte archäologische Karte, inspiriert von und modelliert nach Wikipedia.</p>
 
@@ -66,11 +58,6 @@ Metadaten stehen unter der <a href="http://creativecommons.org/about/cc0">CC0 / 
 Bilder oder Linienzeichnungen können unter anderen Lizenzen verfügbar sein.
 Vici.org lädt alle ein, ihr Wissen über die klassische Antike zu teilen.
 Vici.org bietet verschiedene Dienste zur Wiederverwendung dieses geteilten Wissens an; bitte kontaktieren Sie mich für weitere Informationen.
-</p>
-
-<p>
-<span style="font-style:italic">René Voorburg, 27. Mai 2025.</span><br />
-rene@digitopia.nl
 </p>';
 
     private const CONTENT_FR = '<p style="margin-top:0">Vici.org est l’atlas archéologique de l’Antiquité classique. Il s’agit d’une carte archéologique collaborative, inspirée et modélisée d’après Wikipédia.</p>
@@ -87,11 +74,6 @@ Les métadonnées sont disponibles sous la dédicace <a href="http://creativecom
 Les images ou tracés peuvent être disponibles sous d’autres licences.
 Vici.org invite chacun à participer et à partager ses connaissances sur l’Antiquité classique.
 Vici.org propose divers services pour réutiliser ces connaissances partagées ; veuillez me contacter pour plus d’informations.
-</p>
-
-<p>
-<span style="font-style:italic">René Voorburg, 27 mai 2025.</span><br />
-rene@digitopia.nl
 </p>';
 
     public function __construct(Session $session)

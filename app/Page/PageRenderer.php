@@ -33,6 +33,8 @@ class PageRenderer extends Smarty
         }
         if ($this->session->hasUser()) {
             $this->assign('username', $this->session->getUser()->getName());
+            $this->assign('user_id', $this->session->getUser()->getId());
+            $this->assign('csrf_token', $this->session->getCsrfToken());
         }
             
     }

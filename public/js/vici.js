@@ -26,7 +26,12 @@ function ViciWidget(element, options) {
     function snapZoom(zoom) {
         return Math.floor(zoom + 0.5);
     }
-    
+
+    // escapes API-supplied text that is inserted into innerHTML below
+    function esc(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
     // use the element as an anchor but don't override absolute positioning:
     const elementStyle = document.getElementById(element).style;
     if (elementStyle.position !== "absolute") {
@@ -849,13 +854,13 @@ function ViciWidget(element, options) {
                     for (let i in highlights) {
                         let highlight = highlights[i];
 
-                        highlightText += '<div style="padding:5px; min-height: 36px;" class="highclick" id="high_'+highlight.properties.id+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker icon'+highlight.properties.kind+'" width="32" height="37"><div style="font-weight:bold">'+highlight.properties.title+'</div>';
+                        highlightText += '<div style="padding:5px; min-height: 36px;" class="highclick" id="high_'+esc(highlight.properties.id)+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker icon'+esc(highlight.properties.kind)+'" width="32" height="37"><div style="font-weight:bold">'+esc(highlight.properties.title)+'</div>';
                         if (highlight.properties.img) {
-                            highlightText += '<div style="margin:2px 0px 0px 37px;position:relative;cursor: pointer"><img id="vici_high_image'+i+'" src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+highlight.properties.img+'">';
-                            highlightText += '<div style="position: absolute; bottom:3px; left:0px; width:220px; background-color: rgba(0, 60, 136, 0.7);">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
+                            highlightText += '<div style="margin:2px 0px 0px 37px;position:relative;cursor: pointer"><img id="vici_high_image'+i+'" src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+esc(highlight.properties.img)+'">';
+                            highlightText += '<div style="position: absolute; bottom:3px; left:0px; width:220px; background-color: rgba(0, 60, 136, 0.7);">'+esc(highlight.properties.summary)+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
                             highlightText += '</div>';
                         } else {
-                            highlightText += '<div style="margin-left:37px">'+highlight.properties.summary+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
+                            highlightText += '<div style="margin-left:37px">'+esc(highlight.properties.summary)+' [&nbsp;<a class="vici_box" href="#" id="vici_high_link'+i+'">'+txt["show"]+'</a>&nbsp;]</div>';
                         }
                         highlightText += '</div>'
                     }
@@ -1028,13 +1033,13 @@ function ViciWidget(element, options) {
         } else {
             contents += '<div id="vici_sel_close" style="float:right; width:18px; height:18px; margin-right:2px; margin-top:2px; cursor:pointer"><svg viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></div>';
             contents += "<div style='font-size: 1.2em; font-weight:bold; margin-left:8px; padding-top:5px;'>" + txt["selection"] + ":</div>";
-            contents += '<div style="padding:5px; min-height: 36px;"><a href="'+markerData.url+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+markerData.kind+'" width="32" height="37"></a><div style="font-weight:bold">'+markerData.title+'</div>';
+            contents += '<div style="padding:5px; min-height: 36px;"><a href="'+esc(markerData.url)+'"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" class="marker infomarker iconS'+esc(markerData.kind)+'" width="32" height="37"></a><div style="font-weight:bold">'+esc(markerData.title)+'</div>';
             if (markerData.picture) {
-                contents+= '<div style="margin:2px 0 0 37px; position: relative"><a href="'+markerData.url+'"><img src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+markerData.picture+'" style="border:0"></a>';
-                contents+= '<div style="position: absolute; bottom:3px; left:0; width:220px; background-color: rgba(0, 60, 136, 0.7)">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
+                contents+= '<div style="margin:2px 0 0 37px; position: relative"><a href="'+esc(markerData.url)+'"><img src="'+window.location.protocol+'//images.vici.org/crop/w220xh124'+esc(markerData.picture)+'" style="border:0"></a>';
+                contents+= '<div style="position: absolute; bottom:3px; left:0; width:220px; background-color: rgba(0, 60, 136, 0.7)">'+esc(markerData.html)+' [&nbsp;<a href="'+esc(markerData.url)+'">' + txt["more"] + '</a>&nbsp;]</div>';
                 contents+= '</div>';
             } else {
-                contents+= '<div style="margin-left:37px">'+markerData.html+' [&nbsp;<a href="'+markerData.url+'">' + txt["more"] + '</a>&nbsp;]</div>';
+                contents+= '<div style="margin-left:37px">'+esc(markerData.html)+' [&nbsp;<a href="'+esc(markerData.url)+'">' + txt["more"] + '</a>&nbsp;]</div>';
             }
             contents += '</div>';
     
@@ -1156,7 +1161,7 @@ function ViciWidget(element, options) {
         let zoomlevel = map.getView().getZoom();
 
         map.getView().animate({
-            center: marker.getGeometry().getExtent(),
+            center: marker.getGeometry().getFirstCoordinate(),
             zoom: (marker.vici.zoomNormal > zoomlevel) ? marker.vici.zoomNormal : zoomlevel,
             duration: 1500
         });

@@ -29,6 +29,26 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->findById($session->getRequestedItem());
 
+        // hidden sites are only visible to admins
+        $isAdmin = $session->hasUser() && $session->getUser()->isAdmin();
+
+        // admin-only visibility toggle (POST to avoid accidental triggers via prefetch/links)
+        if ($isAdmin && $site !== null && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hidden'])
+            && $session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+            $siteRepo->setHidden($site->id, $site->isPublished);
+            header('Location: /vici/' . $site->id);
+            exit;
+        }
+        $this->assign('is_admin', $isAdmin);
+        if ($site === null || (!$site->isPublished && !$isAdmin)) {
+            http_response_code(404);
+            $this->setTemplate('notfound.tpl');
+            $this->assign('title', $this->session->translator->get('Site not found.'));
+            $this->assign('notfound_message', $this->session->translator->get('Site not found.'));
+            return;
+        }
+        $this->assign('site_is_hidden', !$site->isPublished);
+
         $nearbySites = $siteRepo->findNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
         $relevantMuseums = $siteRepo->findRelevantMuseums($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 

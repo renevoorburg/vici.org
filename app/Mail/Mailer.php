@@ -37,11 +37,16 @@ class Mailer
         return $this->send($to, $subject, $body);
     }
 
-    public function send(string $to, string $subject, string $body): bool
+    public function send(string $to, string $subject, string $body, ?string $replyTo = null): bool
     {
         $from = $_ENV['MAIL_FROM'] ?? 'noreply@vici.org';
+        $replyTo = $replyTo ?? $from;
+        // prevent header injection via user-supplied names/addresses
+        $to = str_replace(["\r", "\n"], '', $to);
+        $subject = str_replace(["\r", "\n"], ' ', $subject);
+        $replyTo = str_replace(["\r", "\n"], '', $replyTo);
         $headers = "From: Vici <$from>\r\n"
-            . "Reply-To: $from\r\n"
+            . "Reply-To: $replyTo\r\n"
             . "Content-Type: text/plain; charset=UTF-8\r\n"
             . "MIME-Version: 1.0\r\n";
 

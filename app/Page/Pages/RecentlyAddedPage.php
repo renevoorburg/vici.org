@@ -9,7 +9,7 @@ class RecentlyAddedPage extends PageRenderer
 {
 
     private Session $session;
-    private string $template = 'sitelist.tpl';
+    private string $template = 'recently.tpl';
 
     public function __construct(Session $session)
     {
@@ -19,8 +19,22 @@ class RecentlyAddedPage extends PageRenderer
 
         $db = $session->getDBConnector();
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
-        $sites = $siteRepo->findRecentlyAdded();
-        $this->assign('sites', $sites);
+        $imageRepo = new \Vici\Model\Site\Image\ImageRepository($db);
+
+        $sites = iterator_to_array($siteRepo->findRecentlyAdded());
+        $thumbs = $imageRepo->findDefaultThumbs(array_map(fn($s) => $s->id, $sites));
+
+        $items = [];
+        foreach ($sites as $site) {
+            $site->thumbPath = $thumbs[$site->id] ?? null;
+            $items[] = ['type' => 'site', 'date' => $site->createDate, 'item' => $site];
+        }
+        foreach ($imageRepo->findRecentlyAdded(20) as $image) {
+            $items[] = ['type' => 'image', 'date' => $image->dateAdded, 'item' => $image];
+        }
+        usort($items, fn($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
+
+        $this->assign('items', $items);
         $this->assign('search_results_label', $this->session->translator->get('Recently added'));
     }
 

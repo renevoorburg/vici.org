@@ -198,14 +198,15 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
-    public function findRecentlyAdded(): SiteCollection
+    public function findRecentlyAdded(int $limit = 25): SiteCollection
     {
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
             WHERE pnt_hide=0
             ORDER BY m.pmeta_create_date DESC
-            LIMIT 50"
+            LIMIT :limit"
         );
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
@@ -215,14 +216,15 @@ class SiteRepository
         return new SiteCollection($sites);
     }
 
-    public function findRecentlyChanged(): SiteCollection
+    public function findRecentlyChanged(int $limit = 25): SiteCollection
     {
         $stmt = $this->db->prepare(
             self::getBaseSelect() . "
-            WHERE pnt_hide=0 AND DATE(m.pmeta_create_date) != DATE(m.pmeta_edit_date)
+            WHERE pnt_hide=0 AND m.pmeta_edit_date > m.pmeta_create_date
             ORDER BY m.pmeta_edit_date DESC
-            LIMIT 50"
+            LIMIT :limit"
         );
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
@@ -233,6 +235,25 @@ class SiteRepository
     }
 
 
+
+    public function findByCreator(int $userId, int $limit = 10): SiteCollection
+    {
+        $stmt = $this->db->prepare(
+            self::getBaseSelect() . "
+            WHERE pnt_hide=0 AND m.pmeta_creator = :uid
+            ORDER BY m.pmeta_create_date DESC
+            LIMIT :limit"
+        );
+        $stmt->bindValue('uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sites = [];
+        foreach ($result as $row) {
+            $sites[] = $this->mapRowToSite($row, $row['pnt_id']);
+        }
+        return new SiteCollection($sites);
+    }
 
     private function mapRowToSite(array $row, int $id): Site
     {
@@ -241,7 +262,7 @@ class SiteRepository
         $site->defaultTitle = $row['pnt_name'];
         $site->defaultSummary = $row['pnt_dflt_short'];
         $site->isVisible = (bool)$row['isVisible'];
-        $site->isPublished = (bool)$row['isPublished'];
+        $site->isPublished = !(bool)$row['isPublished'];  // column is pnt_hide
 
         $site->type = $this->typeRepo->getById((int)$row['pnt_kind']);
 
@@ -340,6 +361,12 @@ class SiteRepository
             throw $e;
         }
         return $id;
+    }
+
+    public function setHidden(int $siteId, bool $hidden): void
+    {
+        $this->db->prepare("UPDATE points SET pnt_hide = :hide WHERE pnt_id = :id")
+            ->execute(['hide' => $hidden ? 1 : 0, 'id' => $siteId]);
     }
 
     /**

@@ -7,9 +7,13 @@ function trl(key) {
     return key;
 }
 
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function iconHtml(icon_type) {    
     const iconTitle = trl(`markerdef.${icon_type}`);
-    return `<div class="marker-icon" data-icon-type="${icon_type}" title="${iconTitle}"></div>`
+    return `<div class="marker-icon" data-icon-type="${icon_type}" title="${esc(iconTitle)}"></div>`
 }
 
 function updateSelectionBox(feature) {
@@ -26,44 +30,48 @@ function updateSelectionBox(feature) {
         highlightsScroll.classList.add('has-selection');
     }
 
-    const title = feature.title || 'Onbekende locatie';
-    const summary = feature.html || '';
-    const id = feature.id || '';
+    const title = esc(feature.title || 'Onbekende locatie');
+    const summary = esc(feature.html || '');
+    const id = String(feature.id || '');
     const hasImage = feature.picture && feature.picture !== '';
+    const siteLink = `/vici/${esc(id)}`;
+    const moreLink = id ? `<a href="${siteLink}" class="underline">[&nbsp;${esc(trl('more'))}&nbsp;]</a>` : '';
+    const iconPart = id
+        ? `<a href="${siteLink}" class="selection-link">${iconHtml(feature.kind || 1)}</a>`
+        : iconHtml(feature.kind || 1);
 
     let selectionHTML = `<h2>${window.selectionTitle}:</h2>`;
     if (hasImage) {
-        const imageUrl = `https://images.vici.org/crop/w440xh248${feature.picture}`;
-        const cardInner = `
-                    <img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />
+        const imageUrl = `https://images.vici.org/crop/w440xh248${esc(feature.picture)}`;
+        const imagePart = id
+            ? `<a href="${siteLink}" class="selection-link"><img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" /></a>`
+            : `<img src="${imageUrl}" loading="lazy" class="highlight-image" alt="${title}" />`;
+        selectionHTML += `<div class="relative">${imagePart}
                     <div class="absolute selection-overlay">
                         <div class="selection-overlay-content">
                             <div>
-                                <div class="font-semibold">${title} ${id ? `<span class="underline">[&nbsp;${trl('more')}&nbsp;]</span>` : ''}</div>
+                                <div class="font-semibold">${title} ${moreLink}</div>
                                 <p class="selection-summary">${summary}</p>
                             </div>
                             <div class="centered-flex">
-                                ${iconHtml(feature.kind || 1)}
+                                ${iconPart}
                             </div>
                         </div>
-                    </div>`;
-        selectionHTML += id
-            ? `<div class="relative"><a href="/vici/${id}" class="selection-link">${cardInner}</a></div>`
-            : `<div class="relative">${cardInner}</div>`;
+                    </div>
+                </div>`;
     } else {
         selectionHTML += `
                 <div class="selection-no-image">
                     <div class="selection-overlay-content">
                         <div>
-                            <div class="font-semibold">${title}</div>
-                            <p>${summary} ${id ? `[<a href="/vici/${id}" class="underline">${trl('more')}</a>]` : ''}</p>
+                            <div class="font-semibold">${title} ${moreLink}</div>
+                            <p>${summary}</p>
                         </div>
                         <div class="centered-flex">
-                            ${iconHtml(feature.kind || 1)}
+                            ${iconPart}
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
     }
     selectionBox.innerHTML = selectionHTML;
 
@@ -91,12 +99,12 @@ function updateHighlightsBox(highlights) {
     let highlightHTML = '';
     for (let i = 0; i < highlights.length; i++) {
         const highlight = highlights[i];
-        const title = highlight.properties.title || 'Onbekende locatie';
-        const summary = highlight.properties.summary || '';
+        const title = esc(highlight.properties.title || 'Onbekende locatie');
+        const summary = esc(highlight.properties.summary || '');
         const img = highlight.properties.img;
-        const id = highlight.properties.id || '';
+        const id = String(highlight.properties.id || '');
         const imageTag = img
-            ? `<img src="https://images.vici.org/crop/w440xh248${img}" class="highlight-image highlight-map-link" data-marker-id="${id}" alt="${title}" />`
+            ? `<img src="https://images.vici.org/crop/w440xh248${esc(img)}" class="highlight-image highlight-map-link" data-marker-id="${esc(id)}" alt="${title}" />`
             : '';
 
         highlightHTML += `
@@ -107,7 +115,7 @@ function updateHighlightsBox(highlights) {
                         <div class="font-semibold">${title}</div>
                         <div>
                             ${summary}
-                            ${id ? `<button type="button" class="show-on-map-btn" data-marker-id="${id}">${trl('show on map')}</button>` : ''}</div>
+                            ${id ? `<button type="button" class="show-on-map-btn" data-marker-id="${esc(id)}">${esc(trl('show on map'))}</button>` : ''}</div>
                     </div>
                     <div class="centered-flex">
                         ${iconHtml(highlight.properties.kind || 1)}
@@ -126,7 +134,6 @@ function updateHighlightsBox(highlights) {
             mapObj.selectMarkerAndPan(this.dataset.markerId);
         };
         btn.addEventListener('click', showOnMap);
-        btn.addEventListener('touchstart', showOnMap, {passive: true});
     });
 }
 

@@ -68,7 +68,13 @@ class Session
     {
         if (isset($_SESSION['user_id'])) {
             $userRepository = new UserRepository($this->getDBConnector());
-            $this->user = $userRepository->findById($_SESSION['user_id']);
+            $user = $userRepository->findById($_SESSION['user_id']);
+            // an account locked/deleted after login must lose its session immediately
+            if ($user === null || !$user->isConfirmed()) {
+                unset($_SESSION['user_id']);
+                return;
+            }
+            $this->user = $user;
         }
     }
 
@@ -132,6 +138,21 @@ class Session
     public function unsetIsVerifiedRealUser() : void
     {
         unset($_SESSION['is_real_user']);
+    }
+
+    public function getCsrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    public function isCsrfTokenValid(?string $token): bool
+    {
+        return isset($_SESSION['csrf_token'])
+            && $token !== null && $token !== ''
+            && hash_equals($_SESSION['csrf_token'], $token);
     }
 
     public function getRequestedAction() : string

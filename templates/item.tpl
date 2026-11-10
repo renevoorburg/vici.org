@@ -1,9 +1,9 @@
 {extends file="base.tpl"}
 
 {block name=metadata}
-    <meta name="citation_title" content="{$mainSite->locales[$preferredLocaleLanguage]->title}">
-    <meta name="citation_author" content="{$mainSite->creator->getCitationName()}">
-    {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getCitationName()}">{/if}
+    <meta name="citation_title" content="{$mainSite->locales[$preferredLocaleLanguage]->title|escape}">
+    <meta name="citation_author" content="{$mainSite->creator->getCitationName()|escape}">
+    {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getCitationName()|escape}">{/if}
     
     <meta name="citation_publication_date" content="{$mainSite->createDate|date_format:"%Y-%m-%d"}">
     <meta name="citation_online_date" content="{$mainSite->updateDate|date_format:"%Y-%m-%d"}">
@@ -21,17 +21,20 @@
             <div id="map"></div>
             
             <div class="textualcontent">
+            {if $site_is_hidden}
+                <div class="vici-error">{$hidden_notice|default:"This site is hidden and only visible to administrators."}</div>
+            {/if}
             
                 <div class="meta-container">
                     <div class="meta-left">
-                        <div class="marker-icon" id="myIcon" data-icon-type="{$mainSite->type->id}" title="{$classification_description}"></div>
+                        <div class="marker-icon" id="myIcon" data-icon-type="{$mainSite->type->id}" title="{$classification_description|escape}"></div>
                     </div>
                     <div class="meta-right">
                         <div>
                             <h3>{$location_metadata|default:"Location"}</h3>
                             <ul>
                             {if $mainSite->toponym->countryName[$sessionLanguage]}
-                            <li>{$mainSite->toponym->countryName[$sessionLanguage]}{if $mainSite->toponym->placeName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]}{/if}</li>
+                            <li>{$mainSite->toponym->countryName[$sessionLanguage]|escape}{if $mainSite->toponym->placeName[$sessionLanguage]}, {$mainSite->toponym->placeName[$sessionLanguage]|escape}{/if}</li>
                             {/if}
                             <li>geo:{$mainSite->representativeLocation->latitude},{$mainSite->representativeLocation->longitude}</li>
                             <li>{include file="include/location_accuracy.tpl" accuracy=$mainSite->representativeLocation->qualifier}</li>
@@ -48,7 +51,7 @@
                         <div>
                             <h3>{$classification_metadata|default:"Classification"}</h3>
                             <ul>
-                            <li title="{$classification_description}">{$classification_title}</li>
+                            <li title="{$classification_description|escape}">{$classification_title|escape}</li>
                             {if !$mainSite->type->isContemporary}
                                 <li>{include file="include/is_visible.tpl" isVisible=$mainSite->isVisible}</li>
                             {/if}
@@ -59,7 +62,7 @@
                                 <h3>{$identifier_metadata|default:"Identifiers"}</h3>
                                 <ul class="identifier-list">
                                 {foreach $mainSite->identifiers as $identifier}
-                                <li><a href="{$identifier->uri}" class="hover">{$identifier->getQname()}</a></li>
+                                <li><a href="{$identifier->uri|escape}" class="hover">{$identifier->getQname()|escape}</a></li>
                                 {/foreach}
                                 </ul>
                             </div>
@@ -72,11 +75,17 @@
                     <a href="/edit/{$mainSite->id}">{$edit_menu_edit|default:"Edit"}</a>
                     <a href="/edit/{$mainSite->id}/image">{$edit_menu_image|default:"Add image"}</a>
                     <a href="/edit/{$mainSite->id}/lines">{$edit_menu_lines|default:"Add lines"}</a>
+                    {if $is_admin}
+                    <form method="post" action="/vici/{$mainSite->id}" class="edit-menu-form">
+                        <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
+                        <button type="submit" name="toggle_hidden" value="1" class="edit-menu-danger">{if $site_is_hidden}{$admin_unhide|default:"Unhide site"}{else}{$admin_hide|default:"Hide site"}{/if}</button>
+                    </form>
+                    {/if}
                 </nav>
                 {/if}
 
                 <div class="lang-header-row">
-                    <h1>{$mainSite->locales[$preferredLocaleLanguage]->title}</h1>
+                    <h1>{$mainSite->locales[$preferredLocaleLanguage]->title|escape}</h1>
                     <nav id="langSelBox">
                         <ul>
                             {foreach from=$mainSite->locales key=langKey item=langVal}
@@ -144,17 +153,17 @@
     <div class="attributions">
         <h2>{$use_and_reuse_label|default:"Use and reuse"}</h2>
         <p>
-            <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} {$mainSite->creator->getRealName()} ({$mainSite->createDate|date_format:"%Y-%m-%d"})
-            {if $mainSite->creator->getId() != $mainSite->updater->getId()}, {$updated_label|default:"last updated by"} {$mainSite->updater->getRealName()} ({$mainSite->updateDate|date_format:"%Y-%m-%d"}){/if},
+            <strong>{$creators_label|default:"Creators"}:</strong> {$added_label|default:"Entry created by"} <a href="/user/{$mainSite->creator->getId()}">{$mainSite->creator->getRealName()|escape}</a> ({$mainSite->createDate|date_format:"%Y-%m-%d"})
+            {if $mainSite->creator->getId() != $mainSite->updater->getId()}, {$updated_label|default:"last updated by"} <a href="/user/{$mainSite->updater->getId()}">{$mainSite->updater->getRealName()|escape}</a> ({$mainSite->updateDate|date_format:"%Y-%m-%d"}){/if},
             {$with_others_label|default:"with possible contributions by others"}.
             <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>, metadata <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0</a>.<br>
             <strong>{$persistent_URI_label|default:"Persistent URI"}</strong>: <a class="underline" href="https://vici.org/vici/{$mainSite->id}">https://vici.org/vici/{$mainSite->id}</a><br>
 
             <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a>, <a href="https://data.digitopia.nl/uri:http://vici.org/vici/{$mainSite->id}">RDF</a><br>
 
-            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getCitationName()}
-                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getCitationName()}{/if},
-                    {$mainSite->locales[$preferredLocaleLanguage]->title}.</em> <span class="underline">https://vici.org/vici/{$mainSite->id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
+            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getCitationName()|escape}
+                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getCitationName()|escape}{/if},
+                    {$mainSite->locales[$preferredLocaleLanguage]->title|escape}.</em> <span class="underline">https://vici.org/vici/{$mainSite->id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
         </p>
     </div>
 

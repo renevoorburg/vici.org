@@ -31,12 +31,15 @@ body {
 }
 
 header {
-    height: 2.8125rem;
+    height: auto;
+    min-height: 2.8125rem;
     flex-shrink: 0;
     background-color: white;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    padding-top: 0.5rem;
+    /* keeps the header below the iOS standalone status bar and
+       fills that area with the header's white background */
+    padding-top: calc(0.5rem + env(safe-area-inset-top));
     padding-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -176,6 +179,7 @@ header .subtitle {
     padding: 0.5rem 0.75rem;
     color: #1a365d;
     font-weight: 400;
+    white-space: nowrap;
 }
 
 .user-menu-dropdown a svg {
@@ -390,6 +394,130 @@ strong {
     color: #6b7280;
 }
 
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    color: white;
+    text-decoration: none;
+    min-height: 10.5rem;
+}
+
+.tile-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tile-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #1f2937;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    z-index: 1;
+}
+
+.tile-caption .tile-sub {
+    color: #4a6fa5;
+}
+
+.tile-title {
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tile-desc {
+    font-size: 0.8rem;
+    color: #4b5563;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tile-sub {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile-site {
+    background-color: #f3f4f6;
+    color: inherit;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.75rem 0.75rem 0.5rem;
+    text-align: center;
+}
+
+.tile-site .tile-sub {
+    color: #4a6fa5;
+}
+
+/* tile content links to the site/image; the meta line below it
+   links to the contributor's profile page */
+.tile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.tile-meta:hover {
+    text-decoration: underline;
+}
+
+/* pin loc + meta to the bottom so they line up across tiles */
+.tile-site .tile-loc {
+    margin-top: auto;
+}
+
+/* site with image: photo as dimmed backdrop under the whole text tile */
+.tile-has-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.tile-has-img > *:not(.tile-image) {
+    position: relative;
+    z-index: 2;
+}
+
 .highlight-box {
     background-color: #f3f4f6;
     border-radius: 0.25rem;
@@ -402,6 +530,84 @@ strong {
     justify-content: space-between;
     align-items: stretch;
     gap: 0.5rem;
+}
+
+.stats-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 40rem;
+}
+
+.stats-table th,
+.stats-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.stats-table th {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.stats-num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.stats-note {
+    display: block;
+    font-size: 0.75rem;
+    color: #4a6fa5;
+}
+
+.stats-table .stats-num .stats-note {
+    display: inline;
+}
+
+/* scrollable wrapper: lets the heatmap swipe left-right on narrow screens */
+.heatmap-scroll {
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+.heatmap {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 0.5rem;
+    width: max-content;
+}
+
+.hm-week {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.hm-cell {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    background-color: #ebedf0;
+    flex: none;
+}
+
+.hm-l1 { background-color: #9be9a8; }
+.hm-l2 { background-color: #40c463; }
+.hm-l3 { background-color: #30a14e; }
+.hm-l4 { background-color: #216e39; }
+
+.hm-legend {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    width: max-content;
+}
+
+.hm-legend span:first-child,
+.hm-legend span:last-child {
+    margin: 0 0.25rem;
 }
 
 footer {
@@ -458,6 +664,14 @@ footer {
 
 .login-text a {
     text-decoration: underline;
+}
+/* standard look for inline content links */
+.vici-link {
+    color: #1e3a8a;
+    text-decoration: underline;
+}
+.vici-link:hover {
+    color: #1e40af;
 }
 
 @media (min-width: 768px) {
@@ -896,6 +1110,30 @@ main.margin {
 .edit-menu a:hover {
     background: #eef2ff;
     border-color: #1e3a8a;
+}
+/* admin-only actions sit at the far right of the edit menu */
+.edit-menu-form {
+    margin-left: auto;
+}
+.edit-menu-status {
+    margin-left: auto;
+    align-self: center;
+    font-size: 0.8rem;
+    color: #1e3a8a;
+}
+.edit-menu-danger {
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    background: #fff;
+    cursor: pointer;
+}
+.edit-menu-danger:hover {
+    background: #fee2e2;
+    border-color: #b91c1c;
 }
 #editcanvas {
     width: 100%;

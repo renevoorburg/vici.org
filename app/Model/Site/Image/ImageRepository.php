@@ -43,6 +43,67 @@ class ImageRepository
         return null;
     }
 
+    public function findRecentlyAdded(int $limit = 40): ImageCollection
+    {
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            WHERE i.img_hide = 0
+            ORDER BY d.imgd_date DESC
+            LIMIT :limit
+        ");
+        $stmt->bindValue('limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $images = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $images[] = $this->mapRowToImage($row);
+        }
+        return new ImageCollection($images);
+    }
+
+    public function findByUploader(int $userId, int $limit = 10): ImageCollection
+    {
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            WHERE i.img_hide = 0 AND d.imgd_uploader = :uid
+            ORDER BY d.imgd_date DESC
+            LIMIT :limit
+        ");
+        $stmt->bindValue('uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $images = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $images[] = $this->mapRowToImage($row);
+        }
+        return new ImageCollection($images);
+    }
+
+    /**
+     * Map of site id => image path for each site's default image.
+     * One query for a whole set of sites, used by the recent-tiles pages
+     * to avoid a lazy-load per tile.
+     */
+    public function findDefaultThumbs(array $siteIds): array
+    {
+        $siteIds = array_values(array_unique(array_map('intval', $siteIds)));
+        if (count($siteIds) === 0) {
+            return [];
+        }
+        $in = implode(',', $siteIds);
+        $stmt = $this->db->prepare("
+            SELECT l.pil_pnt, i.img_path
+            FROM pnt_img_lnk l
+            JOIN images i ON i.img_id = l.pil_img AND i.img_hide = 0
+            WHERE l.pil_dflt = 1 AND l.pil_pnt IN ($in)
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
+
     public function findBySite(int $siteId, bool $isPublished = true): ImageCollection
     {
         $stmt = $this->db->prepare("
@@ -72,6 +133,7 @@ class ImageRepository
         $image->isOwnWork = (bool)$row['imgd_ownwork'];
         $image->source = $row['imgd_source'] ?? '';
         $image->creator = $row['imgd_creator'] ?? '';
+        $image->attribution = $row['imgd_attribution'] ?? '';
 
         $image->title = $row['imgd_title'] ?? '';
         $image->description = $row['imgd_description'] ?? '';
