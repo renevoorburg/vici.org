@@ -45,7 +45,7 @@
         {/if}
         <tr>
             <td>{$uploader_label|default:"Added by"}</td>
-            <td>{if $image->uploader}{$image->uploader->getRealName()|escape:'html'}{/if}</td>
+            <td>{if $image->uploader}<a href="/user/{$image->uploader->getId()}">{$image->uploader->getRealName()|escape:'html'}</a>{/if}</td>
         </tr>
         <tr>
             <td>{$date_added_label|default:"Date added"}</td>

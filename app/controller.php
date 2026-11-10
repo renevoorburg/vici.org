@@ -119,8 +119,21 @@ switch ($session->getRequestedAction()) {
         $action = fn() => (new Pages\RegisterPage($session))->display();
         break;
     case 'settings':
+        $return = isset($_GET['return']) && preg_match('#^/[^/]#', $_GET['return'])
+            ? '?return=' . urlencode($_GET['return']) : '';
+        header('Location: /profile' . $return, true, 302);
+        exit;
+    case 'profile':
         $accessControl->setRequiresAuthenticatedUser(true);
         $action = fn() => (new Pages\SettingsPage($session))->display();
+        break;
+    case 'user':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\UserPage($session))->display();
+        break;
+    case 'usermail':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\UserMailPage($session))->display();
         break;
     case 'statistics':
         $accessControl->setRequiresAuthenticatedUser(true);
@@ -140,6 +153,7 @@ switch ($session->getRequestedAction()) {
         break;
     default:
         http_response_code(404);
+        $action = fn() => null;
         break;
 }
 

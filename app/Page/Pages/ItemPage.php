@@ -33,7 +33,8 @@ class ItemPage extends PageRenderer
         $isAdmin = $session->hasUser() && $session->getUser()->isAdmin();
 
         // admin-only visibility toggle (POST to avoid accidental triggers via prefetch/links)
-        if ($isAdmin && $site !== null && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hidden'])) {
+        if ($isAdmin && $site !== null && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hidden'])
+            && $session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
             $siteRepo->setHidden($site->id, $site->isPublished);
             header('Location: /vici/' . $site->id);
             exit;

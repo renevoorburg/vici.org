@@ -30,6 +30,38 @@ class UserStatistics
         ];
     }
 
+    /**
+     * Contributions per calendar day over the last 371 days.
+     * Returns ['YYYY-MM-DD' => int]. Note: only the most recent edit per
+     * record counts — there is no edit history in the schema.
+     */
+    public function dailyContributions(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT d, SUM(n) AS c FROM (
+                SELECT DATE(pmeta_create_date) AS d, COUNT(*) AS n
+                FROM pmetadata WHERE pmeta_creator = :uid1 GROUP BY d
+                UNION ALL
+                SELECT DATE(pmeta_edit_date) AS d, COUNT(*) AS n
+                FROM pmetadata WHERE pmeta_editor = :uid2
+                    AND DATE(pmeta_edit_date) <> DATE(pmeta_create_date) GROUP BY d
+                UNION ALL
+                SELECT DATE(imgd_date) AS d, COUNT(*) AS n
+                FROM img_data WHERE imgd_uploader = :uid3 GROUP BY d
+                UNION ALL
+                SELECT DATE(line_date) AS d, COUNT(*) AS n
+                FROM plines WHERE line_uploader = :uid4 GROUP BY d
+                UNION ALL
+                SELECT DATE(ptxt_edit_date) AS d, COUNT(*) AS n
+                FROM ptexts WHERE ptxt_editor = :uid5 GROUP BY d
+            ) x
+            WHERE d >= DATE_SUB(CURDATE(), INTERVAL 371 DAY)
+            GROUP BY d
+        ");
+        $stmt->execute(['uid1' => $userId, 'uid2' => $userId, 'uid3' => $userId, 'uid4' => $userId, 'uid5' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
+
     private const ALLOWED_COLUMNS = [
         'pmetadata' => ['pmeta_creator', 'pmeta_editor'],
         'img_data'  => ['imgd_uploader'],

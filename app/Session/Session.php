@@ -140,6 +140,21 @@ class Session
         unset($_SESSION['is_real_user']);
     }
 
+    public function getCsrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    public function isCsrfTokenValid(?string $token): bool
+    {
+        return isset($_SESSION['csrf_token'])
+            && $token !== null && $token !== ''
+            && hash_equals($_SESSION['csrf_token'], $token);
+    }
+
     public function getRequestedAction() : string
     {
         return $this->requestedAction;

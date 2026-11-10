@@ -62,6 +62,26 @@ class ImageRepository
         return new ImageCollection($images);
     }
 
+    public function findByUploader(int $userId, int $limit = 10): ImageCollection
+    {
+        $stmt = $this->db->prepare("
+            SELECT * 
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            WHERE i.img_hide = 0 AND d.imgd_uploader = :uid
+            ORDER BY d.imgd_date DESC
+            LIMIT :limit
+        ");
+        $stmt->bindValue('uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $images = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $images[] = $this->mapRowToImage($row);
+        }
+        return new ImageCollection($images);
+    }
+
     /**
      * Map of site id => image path for each site's default image.
      * One query for a whole set of sites, used by the recent-tiles pages
