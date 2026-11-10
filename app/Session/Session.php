@@ -68,7 +68,13 @@ class Session
     {
         if (isset($_SESSION['user_id'])) {
             $userRepository = new UserRepository($this->getDBConnector());
-            $this->user = $userRepository->findById($_SESSION['user_id']);
+            $user = $userRepository->findById($_SESSION['user_id']);
+            // an account locked/deleted after login must lose its session immediately
+            if ($user === null || !$user->isConfirmed()) {
+                unset($_SESSION['user_id']);
+                return;
+            }
+            $this->user = $user;
         }
     }
 
