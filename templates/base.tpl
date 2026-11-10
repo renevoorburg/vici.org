@@ -23,7 +23,7 @@
 
 <body>
 <header>
-    <div><a href="/">Vici.org</a><span class="subtitle">:: {$sitesubtitle|default:"archaeological atlas"}</span></div>
+    <div><a href="/"><span class="vici-mark">vici</span><span class="vici-tld">.org</span></a><span class="subtitle">:: {$sitesubtitle|default:"archaeological atlas"}</span></div>
     <button id="menu-button">&#9776;</button>
     <nav id="main-menu">
         <form action="/search" method="get" class="search-form">

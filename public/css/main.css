@@ -52,7 +52,24 @@ header > div {
     font-size: 1.25rem;
     line-height: 1.75rem;
     display: flex;
-    align-items: center;
+    align-items: baseline;
+}
+
+header > div > a {
+    font-family: Georgia, 'Times New Roman', serif;
+    margin-left: 0.35rem;
+}
+
+.vici-mark {
+    font-size: 1.75rem;
+}
+
+.vici-tld {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #718096;
+    vertical-align: super;
+    margin-left: 1px;
 }
 
 header .subtitle {
