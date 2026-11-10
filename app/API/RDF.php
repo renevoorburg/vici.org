@@ -83,7 +83,7 @@ class RDF extends APICall
     {
         foreach ($batch as $pntId) {
             $site = $this->siteRepo->findById((int)$pntId);
-            if (!$site || $site->isPublished) {
+            if (!$site || !$site->isPublished) {
                 continue;
             }
 

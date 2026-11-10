@@ -275,4 +275,6 @@ return [
     'Vici.org is free to use; it is run, maintained and paid for by one person. If you appreciate what I do, you can support me with a donation via PayPal.' => 'Vici.org ist kostenlos; es wird von einer einzigen Person betrieben, gepflegt und finanziert. Wenn Ihnen meine Arbeit gefällt, können Sie mich mit einer Spende über PayPal unterstützen.',
     'Donate with PayPal' => 'Mit PayPal spenden',
     'René Voorburg, May 27th, 2025.' => 'René Voorburg, 27. Mai 2025.',
+    'Back to the map' => 'Zurück zur Karte',
+    'This site is hidden and only visible to administrators.' => 'Diese Stätte ist verborgen und nur für Administratoren sichtbar.',
 ];

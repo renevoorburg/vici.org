@@ -29,6 +29,17 @@ class ItemPage extends PageRenderer
         $siteRepo = new \Vici\Model\Site\SiteRepository($db);
         $site = $siteRepo->findById($session->getRequestedItem());
 
+        // hidden sites are only visible to admins
+        $isAdmin = $session->hasUser() && $session->getUser()->isAdmin();
+        if ($site === null || (!$site->isPublished && !$isAdmin)) {
+            http_response_code(404);
+            $this->setTemplate('notfound.tpl');
+            $this->assign('title', $this->session->translator->get('Site not found.'));
+            $this->assign('notfound_message', $this->session->translator->get('Site not found.'));
+            return;
+        }
+        $this->assign('site_is_hidden', !$site->isPublished);
+
         $nearbySites = $siteRepo->findNearbySites($site->representativeLocation->latitude, $site->representativeLocation->longitude);
         $relevantMuseums = $siteRepo->findRelevantMuseums($site->representativeLocation->latitude, $site->representativeLocation->longitude);
 

@@ -243,7 +243,7 @@ class SiteRepository
         $site->defaultTitle = $row['pnt_name'];
         $site->defaultSummary = $row['pnt_dflt_short'];
         $site->isVisible = (bool)$row['isVisible'];
-        $site->isPublished = (bool)$row['isPublished'];
+        $site->isPublished = !(bool)$row['isPublished'];  // column is pnt_hide
 
         $site->type = $this->typeRepo->getById((int)$row['pnt_kind']);
 

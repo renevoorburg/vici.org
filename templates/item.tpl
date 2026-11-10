@@ -21,6 +21,9 @@
             <div id="map"></div>
             
             <div class="textualcontent">
+            {if $site_is_hidden}
+                <div class="vici-error">{$hidden_notice|default:"This site is hidden and only visible to administrators."}</div>
+            {/if}
             
                 <div class="meta-container">
                     <div class="meta-left">

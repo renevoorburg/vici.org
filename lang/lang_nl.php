@@ -291,4 +291,6 @@ return [
     'Vici.org is free to use; it is run, maintained and paid for by one person. If you appreciate what I do, you can support me with a donation via PayPal.' => 'Vici.org is gratis te gebruiken; het wordt door één persoon gerund, onderhouden en betaald. Waardeert u wat ik doe, dan kunt u mij steunen met een donatie via PayPal.',
     'Donate with PayPal' => 'Doneren via PayPal',
     'René Voorburg, May 27th, 2025.' => 'René Voorburg, 27 mei 2025.',
+    'Back to the map' => 'Terug naar de kaart',
+    'This site is hidden and only visible to administrators.' => 'Deze site is verborgen en alleen zichtbaar voor beheerders.',
 ];
