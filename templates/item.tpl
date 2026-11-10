@@ -75,6 +75,11 @@
                     <a href="/edit/{$mainSite->id}">{$edit_menu_edit|default:"Edit"}</a>
                     <a href="/edit/{$mainSite->id}/image">{$edit_menu_image|default:"Add image"}</a>
                     <a href="/edit/{$mainSite->id}/lines">{$edit_menu_lines|default:"Add lines"}</a>
+                    {if $is_admin}
+                    <form method="post" action="/vici/{$mainSite->id}" class="edit-menu-form">
+                        <button type="submit" name="toggle_hidden" value="1" class="edit-menu-danger">{if $site_is_hidden}{$admin_unhide|default:"Unhide site"}{else}{$admin_hide|default:"Hide site"}{/if}</button>
+                    </form>
+                    {/if}
                 </nav>
                 {/if}
 

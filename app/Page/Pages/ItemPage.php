@@ -31,6 +31,14 @@ class ItemPage extends PageRenderer
 
         // hidden sites are only visible to admins
         $isAdmin = $session->hasUser() && $session->getUser()->isAdmin();
+
+        // admin-only visibility toggle (POST to avoid accidental triggers via prefetch/links)
+        if ($isAdmin && $site !== null && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hidden'])) {
+            $siteRepo->setHidden($site->id, $site->isPublished);
+            header('Location: /vici/' . $site->id);
+            exit;
+        }
+        $this->assign('is_admin', $isAdmin);
         if ($site === null || (!$site->isPublished && !$isAdmin)) {
             http_response_code(404);
             $this->setTemplate('notfound.tpl');
