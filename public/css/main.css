@@ -582,15 +582,9 @@ strong {
     display: inline;
 }
 
-/* profile links as identifier-style pills: label + url in one pill */
-.profile-links {
-    margin-top: 1.25rem;
-}
-.profile-link-label {
-    font-size: 0.8em;
-    font-weight: 600;
-    color: #1e3a8a;
-    margin-right: 0.35em;
+/* profile links as identifier-style pills: label is the link */
+.identifier-list.profile-links {
+    margin: 0.5rem 0;
 }
 
 /* scrollable wrapper: lets the heatmap swipe left-right on narrow screens */
