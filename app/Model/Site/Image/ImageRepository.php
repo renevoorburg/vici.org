@@ -123,6 +123,66 @@ class ImageRepository
         return new ImageCollection($images);
     }
 
+    /* minimal info (id, path, title) about hidden images linked to a
+       site, for the admin "hidden images" box — no full hydration */
+    public function findHiddenBySite(int $siteId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT i.img_id, i.img_path, d.imgd_title
+            FROM images i
+            LEFT JOIN img_data d ON i.img_id = d.imgd_imgid
+            JOIN pnt_img_lnk l ON i.img_id = l.pil_img
+            WHERE l.pil_pnt = :site_id AND i.img_hide = 1
+            ORDER BY i.img_id ASC
+        ");
+        $stmt->execute(['site_id' => $siteId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /* pass the image's current published state; toggles img_hide */
+    public function setHidden(int $id, bool $currentlyPublished): void
+    {
+        $stmt = $this->db->prepare("UPDATE images SET img_hide = :hide WHERE img_id = :id");
+        $stmt->execute([
+            'hide' => $currentlyPublished ? 1 : 0,
+            'id'   => $id,
+        ]);
+    }
+
+    public function updateMetadata(Image $image): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE img_data SET
+                imgd_title = :title,
+                imgd_description = :description,
+                imgd_license = :license
+            WHERE imgd_imgid = :id
+        ");
+        $stmt->execute([
+            'title'       => mb_substr($image->title, 0, 255),
+            'description' => $image->description,
+            'license'     => $image->license?->id,
+            'id'          => $image->id,
+        ]);
+    }
+
+    /* title + description only, for trusted users who may not
+       touch attribution/creator/license */
+    public function updateText(int $id, string $title, string $description): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE img_data SET
+                imgd_title = :title,
+                imgd_description = :description
+            WHERE imgd_imgid = :id
+        ");
+        $stmt->execute([
+            'title'       => mb_substr($title, 0, 255),
+            'description' => $description,
+            'id'          => $id,
+        ]);
+    }
+
     private function mapRowToImage(array $row): Image
     {
         $image = new Image();
