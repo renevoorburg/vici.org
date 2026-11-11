@@ -36,7 +36,7 @@ header {
     flex-shrink: 0;
     background-color: white;
     padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-right: 0.85rem;
     /* keeps the header below the iOS standalone status bar and
        fills that area with the header's white background */
     padding-top: calc(0.5rem + env(safe-area-inset-top));
@@ -52,7 +52,24 @@ header > div {
     font-size: 1.25rem;
     line-height: 1.75rem;
     display: flex;
-    align-items: center;
+    align-items: baseline;
+}
+
+header > div > a {
+    font-family: Georgia, 'Times New Roman', serif;
+    margin-left: 0.35rem;
+}
+
+.vici-mark {
+    font-size: 1.75rem;
+}
+
+.vici-tld {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #718096;
+    vertical-align: super;
+    margin-left: 1px;
 }
 
 header .subtitle {
@@ -563,6 +580,11 @@ strong {
 
 .stats-table .stats-num .stats-note {
     display: inline;
+}
+
+/* profile links as identifier-style pills: label is the link */
+.identifier-list.profile-links {
+    margin: 0.5rem 0;
 }
 
 /* scrollable wrapper: lets the heatmap swipe left-right on narrow screens */
@@ -1124,6 +1146,7 @@ main.margin {
 .edit-menu-danger {
     font-size: 0.85rem;
     font-family: inherit;
+    line-height: 1.5;
     color: #b91c1c;
     border: 1px solid #fca5a5;
     border-radius: 0.375rem;
@@ -1252,11 +1275,16 @@ main.item #map {
     white-space: nowrap;
 }
 .meta-right {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     column-gap: 0.1rem;
     row-gap: 1rem;
     flex: 1;
+    min-width: 0;
+}
+.meta-right > div {
+    flex: 0 1 200px;
+    min-width: 0;
 }
 .meta-right ul {
     list-style: none;
@@ -1374,6 +1402,16 @@ a.hover:hover {
     margin: 0;
     list-style: none;
 }
+/* identifiers take the same 200px slot as the other columns so they
+   land next to Classification, then grow to fill the rest of the row;
+   whole pills wrap inside the block as needed */
+.meta-right > .meta-identifiers {
+    flex: 1 1 200px;
+    /* never narrower than the longest pill: if that does not fit
+       next to Classification the block wraps to its own row */
+    min-width: min-content;
+}
+
 .identifier-list li {
     background: #f2f2f2;
     border-radius: 0.5em;
@@ -1381,6 +1419,9 @@ a.hover:hover {
     display: flex;
     align-items: center;
     margin: 0;
+    /* long qnames like livius:articles/place/duiven-loowaard
+       must not wrap mid-token at hyphens */
+    white-space: nowrap;
 }
 .identifier-list li a {
     color: #333;

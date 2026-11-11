@@ -58,7 +58,7 @@
                             </ul>
                         </div>
                         {if $mainSite->identifiers->count() > 0}
-                            <div>
+                            <div class="meta-identifiers">
                                 <h3>{$identifier_metadata|default:"Identifiers"}</h3>
                                 <ul class="identifier-list">
                                 {foreach $mainSite->identifiers as $identifier}

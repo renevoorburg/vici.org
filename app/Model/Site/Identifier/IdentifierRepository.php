@@ -41,7 +41,7 @@ class IdentifierRepository
             $identifier->prefix = $normalizer->getPrefix();
             $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_pleiades'];
-            $identifiers[] = $identifier;
+            $identifiers[$identifier->uri] = $identifier;
         }
 
         if ($row['pmeta_livius']) {
@@ -50,7 +50,7 @@ class IdentifierRepository
             $identifier->prefix = $normalizer->getPrefix();
             $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $normalizer->idToUrl($row['pmeta_livius']);
-            $identifiers[] = $identifier;
+            $identifiers[$identifier->uri] = $identifier;
         }
 
         if ($row['pmeta_romaq']) {
@@ -59,7 +59,7 @@ class IdentifierRepository
             $identifier->prefix = $normalizer->getPrefix();
             $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_romaq'];
-            $identifiers[] = $identifier;
+            $identifiers[$identifier->uri] = $identifier;
         }
 
         if ($row['pmeta_dare']) {
@@ -68,7 +68,7 @@ class IdentifierRepository
             $identifier->prefix = $normalizer->getPrefix();
             $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $identifier->namespace . $row['pmeta_dare'];
-            $identifiers[] = $identifier;
+            $identifiers[$identifier->uri] = $identifier;
         }
 
         if ($row['pmeta_extids']) {
@@ -82,14 +82,14 @@ class IdentifierRepository
                         $identifier->prefix = $normalizer->getPrefix();
                         $identifier->namespace = $normalizer->getNamespace();
                         $identifier->uri = $url;
-                        $identifiers[] = $identifier;
+                        $identifiers[$identifier->uri] = $identifier;
                         break;
                     }
                 }
             }
         }
 
-        return $identifiers;
+        return array_values($identifiers);
     }
 
 }

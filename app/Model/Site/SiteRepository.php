@@ -157,6 +157,9 @@ class SiteRepository
 
     public function search(string $query): SiteCollection
     {
+        // UNION of four separate fulltext searches: each leg uses its own
+        // fulltext index instead of evaluating MATCH over a row product
+        // of points x ptexts x psummaries x images.
         $sql = "
             SELECT 
                 " . self::BASE_COLUMNS . ",
@@ -164,27 +167,27 @@ class SiteRepository
             FROM points p
             LEFT JOIN pmetadata m ON p.pnt_id = m.pmeta_pnt_id
             INNER JOIN (
-                SELECT pnt_id,
-                    (
-                        MATCH (pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE) * 4 +
-                        MATCH (psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE) * 2 +
-                        MATCH (ptxt_full) AGAINST (? IN BOOLEAN MODE) +
-                        MATCH (imgd_title, imgd_description) AGAINST (? IN BOOLEAN MODE)
-                    ) AS relevance_score
-                FROM points p
-                LEFT JOIN ptexts ON pnt_id = ptxt_pnt_id 
-                LEFT JOIN psummaries ON pnt_id = psum_pnt_id 
-                LEFT JOIN pmetadata m ON pnt_id = pmeta_pnt_id 
-                LEFT JOIN pnt_img_lnk ON pnt_id = pil_pnt
-                LEFT JOIN img_data ON pil_img = imgd_imgid
-                WHERE pnt_hide=0  AND (
-                    MATCH (pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE)
-                    OR MATCH (psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE)
-                    OR MATCH (ptxt_full) AGAINST (? IN BOOLEAN MODE)
-                    OR MATCH (imgd_title, imgd_description) AGAINST (? IN BOOLEAN MODE)
-                )
+                SELECT pnt_id, SUM(score) AS relevance_score FROM (
+                    SELECT pnt_id, MATCH(pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE) * 4 AS score
+                    FROM points
+                    WHERE pnt_hide = 0 AND MATCH(pnt_name, pnt_dflt_short) AGAINST (? IN BOOLEAN MODE)
+                    UNION ALL
+                    SELECT psum_pnt_id, MATCH(psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE) * 2
+                    FROM psummaries
+                    WHERE MATCH(psum_short, psum_pnt_name) AGAINST (? IN BOOLEAN MODE)
+                    UNION ALL
+                    SELECT ptxt_pnt_id, MATCH(ptxt_full) AGAINST (? IN BOOLEAN MODE)
+                    FROM ptexts
+                    WHERE MATCH(ptxt_full) AGAINST (? IN BOOLEAN MODE)
+                    UNION ALL
+                    SELECT l.pil_pnt, MATCH(d.imgd_title, d.imgd_description) AGAINST (? IN BOOLEAN MODE)
+                    FROM img_data d
+                    JOIN pnt_img_lnk l ON l.pil_img = d.imgd_imgid
+                    WHERE MATCH(d.imgd_title, d.imgd_description) AGAINST (? IN BOOLEAN MODE)
+                ) s
                 GROUP BY pnt_id
             ) rs ON p.pnt_id = rs.pnt_id
+            WHERE pnt_hide = 0
             ORDER BY rs.relevance_score DESC
             LIMIT 500
         ";

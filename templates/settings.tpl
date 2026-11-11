@@ -30,9 +30,9 @@
                     <div class="vici-form-grid">
                         {foreach $settings_links as $i => $link}
                         <label class="vici-label" for="link_label_{$i}">{$link_label_label|default:"Label"}:</label>
-                        <input class="vici-input" type="text" id="link_label_{$i}" name="link_label[]" value="{$link.label|escape}" maxlength="40" placeholder="{$link_label_placeholder|default:"e.g. Website"}" />
+                        <input class="vici-input" type="text" id="link_label_{$i}" name="link_label[]" value="{$link.label|escape}" maxlength="40" placeholder="{if $i == 0}orcid:0000-0002-1825-0097{elseif $i == 1}wikidata:Q111836371{elseif $i == 2}github:renevoorburg{else}viaf:18955144{/if}" />
                         <label class="vici-label" for="link_url_{$i}">{$link_url_label|default:"URL"}:</label>
-                        <input class="vici-input" type="url" id="link_url_{$i}" name="link_url[]" value="{$link.url|escape}" maxlength="255" placeholder="https://" />
+                        <input class="vici-input" type="url" id="link_url_{$i}" name="link_url[]" value="{$link.url|escape}" maxlength="255" placeholder="{if $i == 0}https://orcid.org/0000-0002-1825-0097{elseif $i == 1}https://www.wikidata.org/entity/Q111836371{elseif $i == 2}https://github.com/renevoorburg{else}https://viaf.org/viaf/18955144{/if}" />
                         {/foreach}
                     </div>
                     <div>
