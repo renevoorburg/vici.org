@@ -140,11 +140,23 @@
 
         </div> 
 
-        {if $mainSite->images->count() > 0}
-            <div class="image-column" id="my-gallery">
-                {foreach from=$mainSite->images item=image}
-                    {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="cover/w440xh248"}
-                {/foreach}
+        {if $mainSite->images->count() > 0 || ($is_admin && isset($hidden_images) && $hidden_images|@count > 0)}
+            <div class="image-column">
+                {if $mainSite->images->count() > 0}
+                <div id="my-gallery">
+                    {foreach from=$mainSite->images item=image}
+                        {include file="include/lightbox_image.tpl" image=$image imageSizeUrlPrefix="cover/w440xh248"}
+                    {/foreach}
+                </div>
+                {/if}
+                {if $is_admin && isset($hidden_images) && $hidden_images|@count > 0}
+                <div class="edit-menu hidden-images-box">
+                    <span>{$hidden_images_label|default:"Hidden images"}:</span>
+                    {foreach from=$hidden_images item=himg}
+                        <a href="/image/{$himg.img_id}" title="{$himg.imgd_title|escape:'html'}"><img src="https://images.vici.org/crop/w120xh80{$himg.img_path|escape:'html'}" alt="{$himg.imgd_title|escape:'html'}"></a>
+                    {/foreach}
+                </div>
+                {/if}
             </div>
         {/if}
 

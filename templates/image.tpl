@@ -16,6 +16,22 @@
     </div>
 
     {$image->description|escape:'html'}
+
+    {if $can_edit}
+    <nav class="edit-menu">
+        <a href="/editimage/{$image->id}">{$edit_description_label|default:"Edit description"}</a>
+        {if !$image->isPublished}<span class="edit-menu-status">{$hidden_label|default:"hidden"}</span>{/if}
+        {if $is_admin}
+        <form method="post" action="" class="edit-menu-form">
+            <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
+            <button type="submit" name="toggle_hidden" value="1" class="edit-menu-danger">
+                {if $image->isPublished}{$hide_image_label|default:"Hide image"}{else}{$unhide_image_label|default:"Unhide image"}{/if}
+            </button>
+        </form>
+        {/if}
+    </nav>
+    {/if}
+
     <table class="image-meta">
         <tr>
             <td>{$creator_label|default:"Creator"}</td>
@@ -24,14 +40,14 @@
         {if !$image->isOwnWork && $image->source}
         <tr>
             <td>{$source_label|default:"Source"}</td>
-            <td>{if $image->getSafeSource() ne ''}<a href="{$image->getSafeSource()|escape:'html'}" target="_blank" rel="noopener">{$image->getSafeSource()|escape:'html'}</a>{else}{$image->source|escape:'html'}{/if}</td>
+            <td>{if $image->getSafeSource() ne ''}<a class="vici-link" href="{$image->getSafeSource()|escape:'html'}" target="_blank" rel="noopener">{$image->getSafeSource()|escape:'html'}</a>{else}{$image->source|escape:'html'}{/if}</td>
         </tr>
         {/if}
         <tr>
             <td>{$license_label|default:"License"}</td>
             <td>
             {if $image->license && $image->license->uri}
-            <a href="{$image->license->uri|escape:'html'}">{$image->license->name|escape:'html'}</a>
+            <a class="vici-link" href="{$image->license->uri|escape:'html'}">{$image->license->name|escape:'html'}</a>
             {else}
             {if $image->license}{$image->license->name|escape:'html'}{/if}
             {/if}
@@ -45,13 +61,15 @@
         {/if}
         <tr>
             <td>{$uploader_label|default:"Added by"}</td>
-            <td>{if $image->uploader}<a href="/user/{$image->uploader->getId()}">{$image->uploader->getRealName()|escape:'html'}</a>{/if}</td>
+            <td>{if $image->uploader}<a class="vici-link" href="/user/{$image->uploader->getId()}">{$image->uploader->getRealName()|escape:'html'}</a>{/if}</td>
         </tr>
         <tr>
             <td>{$date_added_label|default:"Date added"}</td>
-            <td>{$image->dateAdded}</td>
+            <td>{$image->dateAdded|escape}</td>
         </tr>
     </table>
+
+
 
     {if $image->sites->count() > 0}
         <div class="sitelist">

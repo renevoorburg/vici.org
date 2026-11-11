@@ -55,6 +55,11 @@ class ItemPage extends PageRenderer
         $preferredLocaleLanguage = $site->locales->preferredLocaleLanguage($session->getLanguage());
 
         $this->assign('mainSite', $site);
+        if ($isAdmin) {
+            // hidden linked images, so admins can find and unhide them
+            $imageRepo = new \Vici\Model\Site\Image\ImageRepository($db);
+            $this->assign('hidden_images', $imageRepo->findHiddenBySite($site->id));
+        }
         $this->assign('preferredLocaleLanguage', $preferredLocaleLanguage);
         $this->assign('nearbySites', $nearbySites);
         $this->assign('relevantMuseums', $relevantMuseums);

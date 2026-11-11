@@ -1143,6 +1143,11 @@ main.margin {
     font-size: 0.8rem;
     color: #1e3a8a;
 }
+/* when a status tag precedes the admin form they sit together on
+   the right; only the first carries the auto margin */
+.edit-menu-status + .edit-menu-form {
+    margin-left: 0;
+}
 .edit-menu-danger {
     font-size: 0.85rem;
     font-family: inherit;
@@ -1432,12 +1437,27 @@ a.hover:hover {
 .identifier-list li a:hover {
     text-decoration: underline;
 }
+
+/* admin-only box in the image column listing hidden linked images;
+   always on its own line below the images */
+.hidden-images-box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+.hidden-images-box img {
+    display: block;
+    border-radius: 0.25rem;
+}
 .image-column {
+    margin-right:0.5rem;
+    margin-left:0.5rem;
+}
+#my-gallery {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.5em;
-    margin-right:0.5rem;
-    margin-left:0.5rem;
 }
 .refanchor {
     margin-left: 0.5em;
@@ -1467,7 +1487,7 @@ a.hover:hover {
         grid-template-columns: 3fr 2fr;
         align-items: start;
     }
-    .item--img3 .image-column {
+    .item--img3 #my-gallery {
         grid-template-columns: 1fr 1fr;
     }
 }
@@ -1476,7 +1496,7 @@ a.hover:hover {
         grid-template-columns: 1fr 1fr;
         align-items: start;
     }
-    .item--img4 .image-column {
+    .item--img4 #my-gallery {
         grid-template-columns: 1fr 1fr 1fr;
     }
 }

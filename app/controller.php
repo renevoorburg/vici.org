@@ -147,6 +147,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setRequiresAuthenticatedUser(true);
         $action = fn() => (new Pages\EditPage($session, $session->getRequestedItem()))->display();
         break;
+    case 'editimage':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\ImageEditPage($session))->display();
+        break;
     case 'logout':
         $session->clearUser();
         $action = fn() => (new Pages\HomePage($session))->display();
