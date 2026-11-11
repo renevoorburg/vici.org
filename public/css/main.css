@@ -1275,11 +1275,16 @@ main.item #map {
     white-space: nowrap;
 }
 .meta-right {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     column-gap: 0.1rem;
     row-gap: 1rem;
     flex: 1;
+    min-width: 0;
+}
+.meta-right > div {
+    flex: 0 1 200px;
+    min-width: 0;
 }
 .meta-right ul {
     list-style: none;
@@ -1397,6 +1402,12 @@ a.hover:hover {
     margin: 0;
     list-style: none;
 }
+/* identifiers sit next to the other columns when all pills fit
+   on one line there, otherwise they take a full row of their own */
+.meta-right > .meta-identifiers {
+    flex: 1 1 auto;
+}
+
 .identifier-list li {
     background: #f2f2f2;
     border-radius: 0.5em;
@@ -1404,6 +1415,9 @@ a.hover:hover {
     display: flex;
     align-items: center;
     margin: 0;
+    /* long qnames like livius:articles/place/duiven-loowaard
+       must not wrap mid-token at hyphens */
+    white-space: nowrap;
 }
 .identifier-list li a {
     color: #333;
