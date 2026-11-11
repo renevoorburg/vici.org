@@ -1402,10 +1402,14 @@ a.hover:hover {
     margin: 0;
     list-style: none;
 }
-/* identifiers sit next to the other columns when all pills fit
-   on one line there, otherwise they take a full row of their own */
+/* identifiers take the same 200px slot as the other columns so they
+   land next to Classification, then grow to fill the rest of the row;
+   whole pills wrap inside the block as needed */
 .meta-right > .meta-identifiers {
-    flex: 1 1 auto;
+    flex: 1 1 200px;
+    /* never narrower than the longest pill: if that does not fit
+       next to Classification the block wraps to its own row */
+    min-width: min-content;
 }
 
 .identifier-list li {
