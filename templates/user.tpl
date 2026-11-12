@@ -33,7 +33,7 @@
         </nav>
         {/if}
 
-        <h2>{$stats_heatmap_title|default:"Contributions in the last year"}</h2>
+        <h2>{$stats_heatmap_title|default:"Contributions"}</h2>
         <p><strong>{$heatmap_total}</strong> {$heatmap_sub|default:"contributions in the last year"}</p>
         <div class="heatmap-scroll">
             <div class="hm-inner">

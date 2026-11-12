@@ -344,6 +344,7 @@ return [
     'Trusted' => 'Vertrouwd',
     'Administrator' => 'Beheerder',
     'Contributions in the last year' => 'Bijdragen in het afgelopen jaar',
+    'Contributions' => 'Bijdragen',
     'contributions in the last year' => 'bijdragen in het afgelopen jaar',
     'contribution(s) on' => 'bijdrage(n) op',
     'Less' => 'Minder',

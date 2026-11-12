@@ -328,6 +328,7 @@ return [
     'Trusted' => 'Vertrauenswürdig',
     'Administrator' => 'Administrator',
     'Contributions in the last year' => 'Beiträge im letzten Jahr',
+    'Contributions' => 'Beiträge',
     'contributions in the last year' => 'Beiträge im letzten Jahr',
     'contribution(s) on' => 'Beitrag/Beiträge am',
     'Less' => 'Weniger',

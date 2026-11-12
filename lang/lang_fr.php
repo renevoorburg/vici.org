@@ -328,6 +328,7 @@ return [
     'Trusted' => 'De confiance',
     'Administrator' => 'Administrateur',
     'Contributions in the last year' => 'Contributions de l’année écoulée',
+    'Contributions' => 'Contributions',
     'contributions in the last year' => 'contributions au cours de l’année écoulée',
     'contribution(s) on' => 'contribution(s) le',
     'Less' => 'Moins',
