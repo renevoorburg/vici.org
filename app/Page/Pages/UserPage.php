@@ -68,21 +68,34 @@ class UserPage extends PageRenderer
         $day = (clone $today)->modify('-364 days')->modify('last sunday');
         $weeks = [];
         $week = [];
+        $weekLabel = '';
         while ($day <= $today) {
             $key = $day->format('Y-m-d');
             $count = $daily[$key] ?? 0;
             $level = $count === 0 ? 0 : ($count < 5 ? 1 : ($count < 10 ? 2 : ($count < 20 ? 3 : 4)));
             $week[] = ['date' => $key, 'count' => $count, 'level' => $level];
+            // GitHub-style: month label sits above the column containing the 1st
+            if ((int)$day->format('j') === 1) {
+                $weekLabel = $session->translator->get($day->format('M'));
+            }
             $day->modify('+1 day');
             if ($day->format('N') === '7') {
-                $weeks[] = $week;
+                $weeks[] = ['label' => $weekLabel, 'days' => $week];
                 $week = [];
+                $weekLabel = '';
             }
         }
         if ($week) {
-            $weeks[] = $week;
+            $weeks[] = ['label' => $weekLabel, 'days' => $week];
         }
         $this->assign('heatmap_weeks', $weeks);
+
+        // weekday labels for rows Mon/Wed/Fri (row 0 = Sunday, like GitHub)
+        $dayLabels = array_fill(0, 7, '');
+        foreach ([1 => 'Mon', 3 => 'Wed', 5 => 'Fri'] as $i => $name) {
+            $dayLabels[$i] = $session->translator->get($name);
+        }
+        $this->assign('hm_day_labels', $dayLabels);
 
         // recent contributions, thumbnails eager-loaded to avoid N+1
         $siteRepo = new SiteRepository($db);

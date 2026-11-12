@@ -36,14 +36,22 @@
         <h2>{$stats_heatmap_title|default:"Contributions in the last year"}</h2>
         <p><strong>{$heatmap_total}</strong> {$heatmap_sub|default:"contributions in the last year"}</p>
         <div class="heatmap-scroll">
-            <div class="heatmap">
-                {foreach $heatmap_weeks as $week}
-                    <div class="hm-week">
-                        {foreach $week as $cell}
-                            <span class="hm-cell hm-l{$cell.level}" title="{$cell.count} {$hm_on|default:"contribution(s) on"} {$cell.date}"></span>
-                        {/foreach}
-                    </div>
-                {/foreach}
+            <div class="hm-inner">
+                <div class="hm-days" aria-hidden="true">
+                    {foreach $hm_day_labels as $d}<span>{$d}</span>{/foreach}
+                </div>
+                <div class="heatmap">
+                    {foreach $heatmap_weeks as $week}
+                        <div class="hm-col">
+                            <div class="hm-label">{$week.label|escape}</div>
+                            <div class="hm-week">
+                                {foreach $week.days as $cell}
+                                    <span class="hm-cell hm-l{$cell.level}" title="{$cell.count} {$hm_on|default:"contribution(s) on"} {$cell.date}"></span>
+                                {/foreach}
+                            </div>
+                        </div>
+                    {/foreach}
+                </div>
             </div>
             <div class="hm-legend">
                 <span>{$hm_less|default:"Less"}</span>

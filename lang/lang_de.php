@@ -332,4 +332,11 @@ return [
     'contribution(s) on' => 'Beitrag/Beiträge am',
     'Less' => 'Weniger',
     'More' => 'Mehr',
+    // contribution heatmap:
+    'Mon' => 'Mo',
+    'Wed' => 'Mi',
+    'Fri' => 'Fr',
+    'Jan' => 'Jan', 'Feb' => 'Feb', 'Mar' => 'Mär', 'Apr' => 'Apr',
+    'May' => 'Mai', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Aug',
+    'Sep' => 'Sep', 'Oct' => 'Okt', 'Nov' => 'Nov', 'Dec' => 'Dez',
 ];

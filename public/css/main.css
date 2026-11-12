@@ -592,11 +592,52 @@ strong {
     overflow-x: auto;
     padding-bottom: 0.25rem;
 }
+.hm-inner {
+    display: flex;
+    gap: 4px;
+    width: max-content;
+}
 .heatmap {
     display: flex;
     gap: 3px;
     margin-bottom: 0.5rem;
     width: max-content;
+}
+
+/* weekday labels at the left (Mon/Wed/Fri rows); padding-top aligns them
+   with the cells under the month-label row */
+.hm-days {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-top: 12px;
+    font-size: 9px;
+    color: #6b7280;
+    width: 2.2em;
+    flex: none;
+}
+.hm-days span {
+    height: 11px;
+    line-height: 11px;
+}
+
+/* week column = month label above the cells; label text may overflow
+   the 11px column to the right, like GitHub's month labels */
+.hm-col {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+}
+.hm-label {
+    /* width 0 + overflow visible: keeps the column at cell width while
+       the month text overflows to the right, like GitHub's labels */
+    width: 0;
+    overflow: visible;
+    height: 12px;
+    font-size: 9px;
+    line-height: 12px;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .hm-week {
