@@ -65,6 +65,11 @@ class EditPage extends PageRenderer
             $this->assignFormVars($site, $tab, $db);
             return;
         }
+        if (!$this->session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+            $this->errors[] = 'Invalid form token. Please reload the page and try again.';
+            $this->assignFormVars($site, $tab, $db);
+            return;
+        }
         switch ($tab) {
             case 'image':
                 $this->handleImagePost($site, $db);
@@ -161,13 +166,13 @@ class EditPage extends PageRenderer
             $code = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
             $this->errors[] = match ($code) {
                 UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE =>
-                    'The KML file is too large. Maximum allowed size is ' . ini_get('upload_max_filesize') . 'B.',
-                default => 'Please choose a KML file to upload.',
+                    'The KML or KMZ file is too large. Maximum allowed size is ' . ini_get('upload_max_filesize') . 'B.',
+                default => 'Please choose a KML or KMZ file to upload.',
             };
             return;
         }
-        if (preg_match('/\.kml$/i', $_FILES['file']['name']) === 0) {
-            $this->errors[] = 'Unsupported file type, please upload a KML file.';
+        if (preg_match('/\.(kml|kmz)$/i', $_FILES['file']['name']) === 0) {
+            $this->errors[] = 'Unsupported file type, please upload a KML or KMZ file.';
             return;
         }
 
