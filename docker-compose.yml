@@ -9,26 +9,32 @@ name: vici-novo-preview
 # alphabetical order (that dir is gitignored), so drop dumps there
 # before the first `up`.
 #
+# Uploaded images live in S3-compatible object storage (S3_BUCKET in the
+# env file); nothing on the host filesystem is mounted for them. Without
+# S3_BUCKET the app falls back to public/uploads inside the repo mount
+# (dev only — not meant for the server).
+#
 # Differences with docker-compose.local.yml (local dev):
-#   - the real uploads dir is bind-mounted into public/uploads, so uploads
-#     land exactly where main / images.vici.org expect them (set
-#     PROD_UPLOADS_DIR to a local dir instead if you want full isolation)
 #   - web publishes on 127.0.0.1 only; the host nginx terminates TLS and
 #     proxies the vhost here (see nginx/preview.vici.org.conf)
 #
 # Before first start on the server:
 #   1. cp .env.preview.example .env.preview  and fill in real values.
 #      Note: compose only reads .env automatically — pass the env file
-#      with --env-file so ${…} interpolations (PROD_STATIC_DIR,
-#      PROD_UPLOADS_DIR, PORT) resolve from it.
+#      with --env-file so ${…} interpolations (ENV_FILE, PORT) resolve
+#      from it. Shell exports of the same names take precedence over the
+#      env file, so keep these out of ~/.bashrc & co.
 #   2. place dump files in ./db-preview/
-#   3. make sure the uploads dir (PROD_UPLOADS_DIR) is writable by the
-#      php-fpm user in the container (www-data, uid 33 — same as Debian's)
 #
 # Start:             docker compose --env-file .env.preview up -d --build
 # Logs:              docker compose --env-file .env.preview logs -f php
 # Note: on first start, wait for vici-preview-mysql to become healthy
 # (importing a full dump takes a while) before browsing.
+#
+# One-off S3 migration of a legacy static tree: add the override file
+#   docker compose --env-file .env.preview -f docker-compose.yml \
+#     -f docker-compose.migrate.yml run --rm php php bin/sync-images-to-s3.php ...
+# (see that file and README step 6).
 
 services:
   web:
@@ -40,9 +46,6 @@ services:
       - ./public:/var/www/local.vici.novo/public:ro
       # public/vendor/ckeditor is a symlink to ../../vendor/ckeditor
       - ./vendor/ckeditor:/var/www/local.vici.novo/vendor/ckeditor:ro
-      # production uploads dir, read-only: serves /uploads/... locally so the
-      # CDN-fallback URLs work even for files the CDN hasn't picked up yet
-      - ${PROD_UPLOADS_DIR:-/var/www/org.vici.static/public/uploads}:/var/www/local.vici.novo/public/uploads:ro
       - ./docker/nginx/preview.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - php
@@ -57,14 +60,6 @@ services:
     volumes:
       - ./:/var/www/local.vici.novo
       - ./${ENV_FILE:-.env.preview}:/var/www/local.vici.novo/.env:ro
-      # production uploads dir, read-write: only used in local-storage
-      # mode (no S3_BUCKET set). With S3 enabled uploads go to object
-      # storage and this mount is unused by the uploader.
-      - ${PROD_UPLOADS_DIR:-/var/www/org.vici.static/public/uploads}:/var/www/local.vici.novo/public/uploads
-      # whole static root, read-only: source for the S3 migration
-      # (bin/sync-images-to-s3.php /srv/static — covers uploads/, livius/
-      # and any other img_path prefix)
-      - ${PROD_STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro
       # mail() works out of the box: /etc/msmtprc is baked into the image
       # and relays to the Postfix on this host via host.docker.internal:25.
       # Mount a custom msmtprc here for an authenticated SMTP relay instead:

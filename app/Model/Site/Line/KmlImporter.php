@@ -10,6 +10,8 @@ use geoPHP;
 
 class KmlImporter
 {
+    private const MAX_KML_SIZE = 67108864; // 64 MB, after decompression
+
     private string $errorMessage = '';
 
     /**
@@ -19,9 +21,9 @@ class KmlImporter
      *
      * @return bool true on success, false on error (see getErrorMessage())
      */
-    public function replaceLinesForSite(string $kmlPath, int $siteId, int $userId, int $lineKind, int $license, string $owner, string $attribution): bool
+    public function replaceLinesForSite(string $filePath, int $siteId, int $userId, int $lineKind, int $license, string $owner, string $attribution): bool
     {
-        $lines = $this->reduceFile($kmlPath);
+        $lines = $this->reduceFile($filePath);
         if ($lines === null) {
             return false;
         }
@@ -85,9 +87,8 @@ class KmlImporter
      */
     private function reduceFile(string $path): ?array
     {
-        $file = file_get_contents($path);
-        if ($file === false) {
-            $this->errorMessage = 'Error: could not read file.';
+        $file = $this->readKmlContent($path);
+        if ($file === null) {
             return null;
         }
 
@@ -115,6 +116,84 @@ class KmlImporter
             return null;
         }
         return $result;
+    }
+
+    /**
+     * Read the KML payload from a plain .kml file or a .kmz zip archive.
+     * A KMZ holds the KML as a compressed member (usually doc.kml at the
+     * archive root); the zip signature decides which path is taken, not
+     * the uploaded file extension.
+     */
+    private function readKmlContent(string $path): ?string
+    {
+        // only the first bytes are needed for the zip signature check;
+        // plain KML is read in full afterwards
+        $head = file_get_contents($path, false, null, 0, 4);
+        if ($head === false) {
+            $this->errorMessage = 'Error: could not read file.';
+            return null;
+        }
+        if (str_starts_with($head, "PK\x03\x04")) {
+            return $this->extractFromKmz($path);
+        }
+        $kml = file_get_contents($path);
+        if ($kml === false) {
+            $this->errorMessage = 'Error: could not read file.';
+            return null;
+        }
+        return $kml; // plain KML
+    }
+
+    private function extractFromKmz(string $path): ?string
+    {
+        if (!class_exists(\ZipArchive::class)) {
+            $this->errorMessage = 'Error: could not read KMZ archive.';
+            return null;
+        }
+        $zip = new \ZipArchive();
+        if ($zip->open($path, \ZipArchive::CHECKCONS) !== true) {
+            $this->errorMessage = 'Error: could not read KMZ archive.';
+            return null;
+        }
+
+        // macOS archivers add AppleDouble junk (__MACOSX/._doc.kml) that
+        // matches the .kml suffix but must not shadow the real document
+        $kmlIndex = null;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $name = $zip->getNameIndex($i);
+            if ($name === false || !preg_match('/\.kml$/i', $name)) {
+                continue;
+            }
+            if (str_contains($name, '__MACOSX/') || str_starts_with(basename($name), '._')) {
+                continue;
+            }
+            if (strcasecmp($name, 'doc.kml') === 0) {
+                $kmlIndex = $i;
+                break;
+            }
+            $kmlIndex ??= $i;
+        }
+        if ($kmlIndex === null) {
+            $zip->close();
+            $this->errorMessage = 'Error: no KML file in KMZ archive.';
+            return null;
+        }
+
+        // cap the decompressed size: a small zip can inflate enormously
+        $stat = $zip->statIndex($kmlIndex);
+        if ($stat === false || $stat['size'] > self::MAX_KML_SIZE) {
+            $zip->close();
+            $this->errorMessage = 'Error: could not read KMZ archive.';
+            return null;
+        }
+
+        $kml = $zip->getFromIndex($kmlIndex);
+        $zip->close();
+        if ($kml === false) {
+            $this->errorMessage = 'Error: could not read KMZ archive.';
+            return null;
+        }
+        return $kml;
     }
 
     private function reduceGeometry($curGeom): array

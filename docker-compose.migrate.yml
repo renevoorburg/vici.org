@@ -1,0 +1,13 @@
+# Override for the one-off S3 migration (bin/sync-images-to-s3.php).
+# Mounts a legacy static root read-only at /srv/static in the php
+# container. Not part of the normal stack, so a missing or unmounted host
+# path (e.g. an unmounted /mnt/bigstorage) can never block `up`.
+#
+# Usage (STATIC_DIR defaults to the old static root on the server):
+#   STATIC_DIR=/mnt/bigstorage docker compose --env-file .env.preview \
+#     -f docker-compose.yml -f docker-compose.migrate.yml \
+#     run --rm php php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
+services:
+  php:
+    volumes:
+      - ${STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro

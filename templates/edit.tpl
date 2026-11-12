@@ -58,6 +58,7 @@
         {/foreach}
     {elseif $edit_tab == 'data'}
     <form class="vici-form" method="post" action="{if $is_new}/add{else}/edit/{$pntid}{/if}">
+        <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
         <div class="vici-form-grid">
             <label class="vici-label" for="kop_edit">{$edit_label_title|default:"Title"} <span class="vici-hint">({$edit_required|default:"required"})</span></label>
             <input class="vici-input" type="text" id="kop_edit" name="kop_edit" value="{$f_title|escape}" required>
@@ -129,6 +130,7 @@
 
     {elseif $edit_tab == 'image'}
     <form class="vici-form" method="post" action="/edit/{$pntid}/image" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
         <div class="vici-form-grid">
             <label class="vici-label" for="file">{$edit_img_file|default:"Image file"} <span class="vici-hint">jpg, png, gif</span></label>
             <input class="vici-input" type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif" required>
@@ -176,11 +178,12 @@
 
     {elseif $edit_tab == 'lines'}
     <form class="vici-form" method="post" action="/edit/{$pntid}/lines" enctype="multipart/form-data">
-        <p class="vici-hint">{$edit_lines_intro|default:"Upload a KML file to add line tracings for this site. All existing lines for this site will be replaced."}</p>
+        <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
+        <p class="vici-hint">{$edit_lines_intro|default:"Upload a KML or KMZ file to add line tracings for this site. All existing lines for this site will be replaced."}</p>
 
         <div class="vici-form-grid">
-            <label class="vici-label" for="file">{$edit_lines_file|default:"KML file"}</label>
-            <input class="vici-input" type="file" id="file" name="file" accept=".kml" required>
+            <label class="vici-label" for="file">{$edit_lines_file|default:"KML or KMZ file"}</label>
+            <input class="vici-input" type="file" id="file" name="file" accept=".kml,.kmz" required>
 
             <label class="vici-label" for="frm_linekind">{$edit_lines_kind|default:"Line kind"}</label>
             <select class="vici-select" id="frm_linekind" name="frm_linekind">

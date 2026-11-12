@@ -155,7 +155,8 @@ class ImageRepository
             UPDATE img_data SET
                 imgd_title = :title,
                 imgd_description = :description,
-                imgd_license = :license
+                imgd_license = :license,
+                imgd_date = imgd_date
             WHERE imgd_imgid = :id
         ");
         $stmt->execute([
@@ -173,7 +174,8 @@ class ImageRepository
         $stmt = $this->db->prepare("
             UPDATE img_data SET
                 imgd_title = :title,
-                imgd_description = :description
+                imgd_description = :description,
+                imgd_date = imgd_date
             WHERE imgd_imgid = :id
         ");
         $stmt->execute([

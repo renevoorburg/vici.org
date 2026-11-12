@@ -96,27 +96,30 @@ Setup on the server:
    can fetch private objects with credentials, the public ACL can be
    switched off at the container level.
 
-   **b) Local filesystem** — without `S3_BUCKET` uploads go to
-   `public/uploads`, bind-mounted from `PROD_UPLOADS_DIR` (default
-   `/var/www/org.vici.static/public/uploads`, where main and
-   images.vici.org serve them). The php container writes as `www-data`
-   (uid 33), so that dir must be writable by it. For full isolation from
-   production, point `PROD_UPLOADS_DIR` at a local dir.
+   **b) Local filesystem** (dev only) — without `S3_BUCKET` uploads go to
+   `public/uploads` inside the repo mount. The php container writes as
+   `www-data` (uid 33), so that dir must be writable by it. The server
+   stack mounts nothing from the host for images: object storage is the
+   only production location.
 
    Either way the HTML only ever references `//images.vici.org` URLs;
    there is no client-side fallback to the storage location.
 
 6. Migrate existing images to object storage — `img_path` values in the
    database are not all `/uploads/...`: a large set is `/livius/...` (with
-   subdirectories). The static root is bind-mounted read-only at
-   `/srv/static` in the php container (`PROD_STATIC_DIR`), so one command
-   covers every prefix. The object key is the path relative to that root,
-   i.e. `img_path` minus the leading slash:
+   subdirectories). The legacy static root is not part of the normal
+   stack; `docker-compose.migrate.yml` mounts it read-only at
+   `/srv/static` only for this run (`STATIC_DIR`, default
+   `/var/www/org.vici.static/public`), so one command covers every
+   prefix. The object key is the path relative to that root, i.e.
+   `img_path` minus the leading slash:
 
    ```
-   docker compose --env-file .env.preview run --rm php \
+   STATIC_DIR=/mnt/bigstorage docker compose --env-file .env.preview \
+     -f docker-compose.yml -f docker-compose.migrate.yml run --rm php \
      php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
-   docker compose --env-file .env.preview run --rm php \
+   STATIC_DIR=/mnt/bigstorage docker compose --env-file .env.preview \
+     -f docker-compose.yml -f docker-compose.migrate.yml run --rm php \
      php bin/sync-images-to-s3.php /srv/static uploads livius
    ```
 
