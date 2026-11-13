@@ -1289,6 +1289,8 @@ main.margin {
 main.item {
     display: grid;
     grid-template-columns: 1fr;
+    /* 0.5rem column gap: same visual spacing as on the homepage,
+       where .highlights-content carries 0.5rem padding */
     gap: 0.5rem;
 }
 /* keep long unbreakable content (e.g. long URLs) from squeezing the
@@ -1493,7 +1495,6 @@ a.hover:hover {
 }
 .image-column {
     margin-right:0.5rem;
-    margin-left:0.5rem;
 }
 #my-gallery {
     display: grid;
