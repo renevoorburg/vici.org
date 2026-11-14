@@ -3,6 +3,7 @@
 return [
     // defaults from base.tpl:
     'archaeological atlas' => 'atlas archéologique',
+    'archaeological atlas of antiquity' => 'atlas archéologique de l’Antiquité',
     'search' => 'Recherche',
     'Add' => 'Ajouter',
     'Login / Register' => 'Connexion / Inscription',

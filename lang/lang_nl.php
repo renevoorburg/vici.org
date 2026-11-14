@@ -3,6 +3,7 @@
 return [
     // defaults from base.tpl:
     'archaeological atlas' => 'archeologische atlas',
+    'archaeological atlas of antiquity' => 'archeologische atlas van de oudheid',
     'search' => 'Zoeken',
     'Add' => 'Toevoegen',
     'Login / Register' => 'Aanmelden / Registreren',

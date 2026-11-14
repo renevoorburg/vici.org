@@ -1495,6 +1495,14 @@ a.hover:hover {
 }
 .image-column {
     margin-right:0.5rem;
+    margin-left:0.5rem;
+}
+/* two-column layout: the grid gap provides the spacing, no extra
+   margin between map and image column */
+@media (min-width: 768px) {
+    main.item .image-column {
+        margin-left: 0;
+    }
 }
 #my-gallery {
     display: grid;
