@@ -94,6 +94,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\PrivacyPage($session))->display();
         break;
+    case 'contact':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\ContactPage($session))->display();
+        break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\GeoJSON($session))->get();

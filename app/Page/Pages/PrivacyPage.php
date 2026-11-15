@@ -12,7 +12,7 @@ class PrivacyPage extends PageRenderer
     private const CONTENT_EN = '<p>Vici.org is a non-commercial website run by one private individual — no company or organisation is involved. This policy explains which personal data Vici.org processes and why.</p>
 
 <h2>Data controller</h2>
-<p>René Voorburg, <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Hosting takes place within the European Union.</p>
+<p>René Voorburg, reachable via the <a class="vici-link" href="/contact">contact form</a>. Hosting takes place within the European Union.</p>
 
 <h2>What is stored when you register</h2>
 <ul>
@@ -31,12 +31,12 @@ class PrivacyPage extends PageRenderer
 <p>Like any webserver, the site keeps technical logs that may contain IP addresses, and uses IP-based rate limiting to protect the service. These data are not linked to your account, are not shared and are retained only as long as needed for security and troubleshooting.</p>
 
 <h2>Your rights</h2>
-<p>Under the GDPR you may request access to, correction of, or deletion of your personal data, and you may object to processing. E-mail addresses are never published, so simply contact <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Note that published contributions are meant to be a lasting part of the atlas (as on Wikipedia); deleting your account does not automatically remove them — choose a display name you are comfortable with.</p>';
+<p>Under the GDPR you may request access to, correction of, or deletion of your personal data, and you may object to processing. E-mail addresses are never published, so simply use the <a class="vici-link" href="/contact">contact form</a>. Note that published contributions are meant to be a lasting part of the atlas (as on Wikipedia); deleting your account does not automatically remove them — choose a display name you are comfortable with.</p>';
 
     private const CONTENT_NL = '<p>Vici.org is een niet-commerciële website die wordt beheerd door één particulier — er is geen bedrijf of organisatie bij betrokken. Dit statement legt uit welke persoonsgegevens Vici.org verwerkt en waarom.</p>
 
 <h2>Verwerkingsverantwoordelijke</h2>
-<p>René Voorburg, <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. De hosting vindt plaats binnen de Europese Unie.</p>
+<p>René Voorburg, bereikbaar via het <a class="vici-link" href="/contact">contactformulier</a>. De hosting vindt plaats binnen de Europese Unie.</p>
 
 <h2>Wat er bij registratie wordt opgeslagen</h2>
 <ul>
@@ -55,12 +55,12 @@ class PrivacyPage extends PageRenderer
 <p>Zoals elke webserver houdt de site technische logs bij die IP-adressen kunnen bevatten, en gebruikt hij op IP gebaseerde rate limiting om de dienst te beschermen. Deze gegevens worden niet aan je account gekoppeld, niet gedeeld en alleen bewaard zolang dat voor beveiliging en probleemoplossing nodig is.</p>
 
 <h2>Je rechten</h2>
-<p>Op grond van de AVG kun je verzoeken om inzage in, correctie of verwijdering van je persoonsgegevens, en je kunt bezwaar maken tegen verwerking. Je e-mailadres wordt nooit gepubliceerd, dus mail simpelweg <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Let op: gepubliceerde bijdragen zijn bedoeld als blijvend onderdeel van de atlas (zoals bij Wikipedia); verwijderen van je account verwijdert ze niet automatisch — kies dus een weergavenaam die je wilt gebruiken.</p>';
+<p>Op grond van de AVG kun je verzoeken om inzage in, correctie of verwijdering van je persoonsgegevens, en je kunt bezwaar maken tegen verwerking. Je e-mailadres wordt nooit gepubliceerd, dus gebruik simpelweg het <a class="vici-link" href="/contact">contactformulier</a>. Let op: gepubliceerde bijdragen zijn bedoeld als blijvend onderdeel van de atlas (zoals bij Wikipedia); verwijderen van je account verwijdert ze niet automatisch — kies dus een weergavenaam die je wilt gebruiken.</p>';
 
     private const CONTENT_DE = '<p>Vici.org ist eine nicht-kommerzielle Website, die von einer einzelnen Privatperson betrieben wird — es ist weder ein Unternehmen noch eine Organisation beteiligt. Diese Erklärung beschreibt, welche personenbezogenen Daten Vici.org verarbeitet und warum.</p>
 
 <h2>Verantwortliche Stelle</h2>
-<p>René Voorburg, <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Das Hosting findet innerhalb der Europäischen Union statt.</p>
+<p>René Voorburg, erreichbar über das <a class="vici-link" href="/contact">Kontaktformular</a>. Das Hosting findet innerhalb der Europäischen Union statt.</p>
 
 <h2>Was bei der Registrierung gespeichert wird</h2>
 <ul>
@@ -79,12 +79,12 @@ class PrivacyPage extends PageRenderer
 <p>Wie jeder Webserver führt die Site technische Logs, die IP-Adressen enthalten können, und nutzt IP-basiertes Rate Limiting zum Schutz des Dienstes. Diese Daten werden nicht mit deinem Konto verknüpft, nicht weitergegeben und nur so lange aufbewahrt, wie es für Sicherheit und Fehlerbehebung nötig ist.</p>
 
 <h2>Deine Rechte</h2>
-<p>Nach der DSGVO kannst du Auskunft über, Berichtigung oder Löschung deiner personenbezogenen Daten verlangen und der Verarbeitung widersprechen. Deine E-Mail-Adresse wird nie veröffentlicht — schreib einfach an <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Beachte: veröffentlichte Beiträge sind als dauerhafter Teil des Atlas gedacht (wie bei Wikipedia); das Löschen deines Kontos entfernt sie nicht automatisch — wähle daher einen Anzeigenamen, mit dem du dich wohlfühlst.</p>';
+<p>Nach der DSGVO kannst du Auskunft über, Berichtigung oder Löschung deiner personenbezogenen Daten verlangen und der Verarbeitung widersprechen. Deine E-Mail-Adresse wird nie veröffentlicht — verwende einfach das <a class="vici-link" href="/contact">Kontaktformular</a>. Beachte: veröffentlichte Beiträge sind als dauerhafter Teil des Atlas gedacht (wie bei Wikipedia); das Löschen deines Kontos entfernt sie nicht automatisch — wähle daher einen Anzeigenamen, mit dem du dich wohlfühlst.</p>';
 
     private const CONTENT_FR = '<p>Vici.org est un site non commercial géré par un seul particulier — aucune entreprise ni organisation n’y est impliquée. Cette déclaration explique quelles données personnelles Vici.org traite et pourquoi.</p>
 
 <h2>Responsable du traitement</h2>
-<p>René Voorburg, <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. L’hébergement a lieu au sein de l’Union européenne.</p>
+<p>René Voorburg, joignable via le <a class="vici-link" href="/contact">formulaire de contact</a>. L’hébergement a lieu au sein de l’Union européenne.</p>
 
 <h2>Ce qui est enregistré lors de l’inscription</h2>
 <ul>
@@ -103,7 +103,7 @@ class PrivacyPage extends PageRenderer
 <p>Comme tout serveur web, le site conserve des journaux techniques pouvant contenir des adresses IP, et utilise une limitation de débit basée sur l’IP pour protéger le service. Ces données ne sont pas liées à votre compte, ne sont pas partagées et ne sont conservées que le temps nécessaire à la sécurité et au dépannage.</p>
 
 <h2>Vos droits</h2>
-<p>En vertu du RGPD, vous pouvez demander l’accès à vos données personnelles, leur rectification ou leur suppression, et vous pouvez vous opposer au traitement. Votre adresse e-mail n’est jamais publiée — écrivez simplement à <a href="mailto:rene@digitopia.nl">rene@digitopia.nl</a>. Attention : les contributions publiées sont conçues comme une partie durable de l’atlas (comme sur Wikipédia) ; supprimer votre compte ne les retire pas automatiquement — choisissez donc un nom d’affichage qui vous convient.</p>';
+<p>En vertu du RGPD, vous pouvez demander l’accès à vos données personnelles, leur rectification ou leur suppression, et vous pouvez vous opposer au traitement. Votre adresse e-mail n’est jamais publiée — utilisez simplement le <a class="vici-link" href="/contact">formulaire de contact</a>. Attention : les contributions publiées sont conçues comme une partie durable de l’atlas (comme sur Wikipédia) ; supprimer votre compte ne les retire pas automatiquement — choisissez donc un nom d’affichage qui vous convient.</p>';
 
     public function __construct(Session $session)
     {
