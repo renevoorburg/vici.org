@@ -183,6 +183,7 @@ return [
     'Supported identifiers' => 'Identifiants pris en charge',
     'Allowed date notations' => 'Notations de date autorisées',
     'Period' => 'Période',
+    'You are editing only the %s version of the description.' => 'Vous modifiez ici uniquement la version %s de la description.',
     'Use the website URL (or URI), or the short tag notation shown above. Other values, including Wikipedia links, are rejected.' => 'Utilisez l\'URL (ou URI) du site web, ou la notation de balise courte ci-dessus. Les autres valeurs, y compris les liens Wikipédia, sont rejetées.',
     'Save' => 'Enregistrer',
     'Image file' => "Fichier d'image",
