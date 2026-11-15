@@ -11,6 +11,7 @@ return [
     'Recently added' => 'Ajouté récemment',
     'Recently changed' => 'Modifié récemment',
     'About Vici.org' => 'À propos de Vici.org',
+    'Privacy' => 'Confidentialité',
     'Logout' => 'Déconnexion',
 
     // defaults from home.tpl:
@@ -96,6 +97,16 @@ return [
     'Password' => 'Mot de passe',
     'Invalid username or password.' => 'Nom d’utilisateur ou mot de passe incorrect.',
     'Could not identify you as a human.' => 'Impossible de vous identifier comme humain.',
+
+    // defaults from register.tpl:
+    'Register account' => 'Créer un compte',
+    'Email' => 'Adresse e-mail',
+    'Confirm password' => 'Répétez le mot de passe',
+    'Register' => 'S’inscrire',
+    'janedoe' => 'mariebernard',
+    'Jane Doe' => 'Marie Bernard',
+    'jane.doe@example.com' => 'marie.bernard@exemple.fr',
+    "How your data is handled: see the <a href='/privacy'>privacy policy</a>." => "Comment vos données sont traitées : consultez la <a href='/privacy'>politique de confidentialité</a>.",
 
     // defaults from item.tpl:
     "Description" => "Description",

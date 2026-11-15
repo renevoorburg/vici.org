@@ -11,6 +11,7 @@ return [
     'Recently added' => 'Recent toegevoegd',
     'Recently changed' => 'Recent aangepast',
     'About Vici.org' => 'Over Vici.org',
+    'Privacy' => 'Privacy',
     'Logout' => 'Afmelden',
 
     // defaults from home.tpl:
@@ -106,6 +107,7 @@ return [
     'janedoe' => 'mariekevandijk',
     'Jane Doe' => 'Marieke van Dijk',
     'jane.doe@example.com' => 'marieke.van.dijk@voorbeeld.nl',
+    "How your data is handled: see the <a href='/privacy'>privacy policy</a>." => "Hoe je gegevens worden behandeld: zie de <a href='/privacy'>privacyverklaring</a>.",
 
     // defaults from item.tpl:
     "Description" => "Beschrijving",

@@ -1093,6 +1093,13 @@ main.margin {
     font-size: 0.85rem;
     font-weight: normal;
 }
+.vici-hint a {
+    color: #1e3a8a;
+    text-decoration: underline;
+}
+.vici-hint a:hover {
+    color: #1e40af;
+}
 .vici-error {
     color: #db3e17;
     margin-bottom: 1rem;
