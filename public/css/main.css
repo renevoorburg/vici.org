@@ -142,6 +142,8 @@ header .subtitle {
     color: #1e3a8a;
     font-weight: 500;
     font-size: 1rem;
+    font-family: inherit;
+    line-height: inherit;
     background: none;
     border: none;
     padding: 0;
