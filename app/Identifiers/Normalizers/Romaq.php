@@ -23,7 +23,7 @@ class Romaq extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getValidTagPattern(): string {
-        return '/^romaq( |:)?(?:aqueduct)?\s*=\s*[0-9]+$/';
+        return '/^romaq(?:(?: |:)?(?:aqueduct)?\s*=|:)\s*[0-9]+$/i';
     }   
 
     protected function getValidIdPattern(): string {
@@ -31,11 +31,11 @@ class Romaq extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getUrlToTagPatternArray(): array {
-        return array ('/^https?:\/\/(?:www\.)romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/i', 'romaq:aqueduct=$1');
+        return array ('/^https?:\/\/(?:www\.)?romaq\.org\/the-project\/aqueducts\/(?:article\/)?([0-9]+)(?:-.*\.html)?$/i', 'romaq:aqueduct=$1');
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^romaq:aqueduct\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1');
+        return array ('/^romaq(?:(?: |:)?(?:aqueduct)?\s*=|:)\s*([0-9]+)$/i', $this->getNamespace() . '$1');
     }
 
     protected function getUrlToIdPatternArray(): array {

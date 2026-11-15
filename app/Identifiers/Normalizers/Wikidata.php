@@ -22,7 +22,7 @@ class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getValidTagPattern(): string {
-        return '/^wikidata:?(?:entity)?=q[0-9]*$/i';
+        return '/^wikidata:?(?:entity)?=?q[0-9]+$/i';
     }
 
     protected function getValidIdPattern(): string {
@@ -36,7 +36,7 @@ class Wikidata extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^wikidata:?(?:entity)?=q([0-9]+)$/i', $this->getNamespace() . 'Q$1');
+        return array ('/^wikidata:?(?:entity)?=?q([0-9]+)$/i', $this->getNamespace() . 'Q$1');
     }
 
     protected function getUrlToIdPatternArray(): array {

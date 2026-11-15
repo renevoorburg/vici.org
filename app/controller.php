@@ -64,6 +64,16 @@ switch ($session->getRequestedAction()) {
                     $action = fn() => null;
                 }
                 break;
+            case 'extid':
+                $accessControl->setRequiresAuthenticatedUser(true);
+                $accessControl->setIsRateLimitedAnonymously(true);
+                if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                    $action = fn() => (new ApiPage\ExtIdController())->check();
+                } else {
+                    http_response_code(405);
+                    $action = fn() => null;
+                }
+                break;
             default:
                 http_response_code(404);
                 $action = fn() => null;

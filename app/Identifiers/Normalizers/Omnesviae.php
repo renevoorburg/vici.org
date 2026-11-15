@@ -31,11 +31,11 @@ class Omnesviae extends AbstractNormalizer implements UrlNormalizerInterface
         //omnesviae:place=TPPlace785
         //omnesviae:id=TPPlace785 <= canonical
 
-        return '/^(omnesviae|tp|OVPlace):?(place|tpplace|id)?\s*=?\s*(TPPlace|OVPlace)?[0-9]+$/';
+        return '/^(omnesviae|tp|OVPlace):?(place|tpplace|id)?\s*=?\s*(TPPlace|OVPlace)?[0-9]+$/i';
     }
 
     protected function getValidIdPattern(): string {
-        return '/^(?:TP|OV)Place[0-9]+/' ;
+        return '/^(?:TP|OV)Place[0-9]+$/i' ;
     }
 
     protected function getUrlToTagPatternArray(): array {
@@ -44,9 +44,9 @@ class Omnesviae extends AbstractNormalizer implements UrlNormalizerInterface
 
     protected function getTagToUrlPatternArray() : array {
         return array (
-            array ('/^((?:TP|OV)Place[0-9]+)$/', $this->getNamespace() . '$1'),
-            array ('/^(?:omnesviae|tp|OVPlace):?(?:place|tpplace|id)?\s*=?\s*((?:TPPlace|OVPlace)[0-9]+)$/', $this->getNamespace() . '$1'),
-            array ('/^(?:omnesviae|tp|OVPlace):?(?:place|tpplace|id)?\s*=?\s*([0-9]+)$/', $this->getNamespace() . 'TPPlace$1')
+            array ('/^((?:TP|OV)Place[0-9]+)$/i', $this->getNamespace() . '$1'),
+            array ('/^(?:omnesviae|tp|OVPlace):?(?:place|tpplace|id)?\s*=?\s*((?:TPPlace|OVPlace)[0-9]+)$/i', $this->getNamespace() . '$1'),
+            array ('/^(?:omnesviae|tp|OVPlace):?(?:place|tpplace|id)?\s*=?\s*([0-9]+)$/i', $this->getNamespace() . 'TPPlace$1')
         );
     }
 

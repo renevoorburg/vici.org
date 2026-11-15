@@ -24,7 +24,7 @@ class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getValidTagPattern(): string {
-        return '/^mithraeum:(?:monument|person|book)\s*=\s*[0-9]+$/i';
+        return '/^mithraeum:(?:monument|person|book)(?:\s*=\s*|\s*\/\s*)[0-9]+$/i';
     }
 
     protected function getValidIdPattern(): string {
@@ -36,7 +36,10 @@ class Mithraeum extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^mithraeum:(monument|person|book)\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1/$2');
+        return array (
+            array ('/^mithraeum:(monument|person|book)\s*=\s*([0-9]+)$/i', $this->getNamespace() . '$1/$2'),
+            array ('/^mithraeum:(monument|person|book)\s*\/\s*([0-9]+)$/i', $this->getNamespace() . '$1/$2')
+        );
     }
 
     protected function getUrlToIdPatternArray(): array
