@@ -270,7 +270,7 @@ initExtIdChecker();
         } catch (e) {}
     }
 
-    var mapObj = new MapWidget('editcanvas', 'coords_frm', lng, lat, {$f_kind|default:1|intval});
+    var mapObj = new MapWidget('editcanvas', 'coords_frm', lng, lat, {$f_kind|default:1});
     mapObj.setZoom(zoom);
 
     coordsField.addEventListener('blur', function() { mapObj.moveMarker(this.value); });
