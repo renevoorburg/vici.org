@@ -32,7 +32,7 @@ This starts three containers: `web` (nginx), `php` (PHP-FPM) and `mysql`
 
 Configuration for the stack lives in `.env.docker` (mounted into the php
 container as `.env`). It contains development-only values, including the
-Cloudflare Turnstile test keys that always pass.
+ALTCHA HMAC key used to sign captcha challenges served at `/captcha`.
 
 A development account is seeded: username `user1`, password `vici-dev`.
 

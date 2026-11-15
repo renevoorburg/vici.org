@@ -4,7 +4,6 @@ namespace Vici\Page\Pages;
 
 use Vici\Page\PageRenderer;
 use Vici\Session\Session;
-use Vici\Security\Turnstile;
 
 class RegisterPage extends PageRenderer
 {
@@ -15,9 +14,6 @@ class RegisterPage extends PageRenderer
     {
         $this->session = $session;
 
-        // Turnstile keys uit env, zelfde als login
-        $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'] ?? '', $_ENV['TURNSTILE_SITE_KEY'] ?? '');
-
         parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
 
@@ -27,6 +23,5 @@ class RegisterPage extends PageRenderer
         $this->assign('form_email_previous', '');
         $this->assign('error_messages', []);
         $this->assign('is_verified_real_user', $this->session->isVerifiedRealUser());
-        $this->assign('turnstile_sitekey', $turnstile->getSiteKey());
     }
 }

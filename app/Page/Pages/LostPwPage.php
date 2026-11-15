@@ -6,7 +6,7 @@ use Vici\Page\PageRenderer;
 use Vici\Session\Session;
 use Vici\Model\User\UserRepository;
 use Vici\Mail\Mailer;
-use Vici\Security\Turnstile;
+use Vici\Security\Altcha;
 
 class LostPwPage extends PageRenderer
 {
@@ -18,11 +18,12 @@ class LostPwPage extends PageRenderer
         $error = '';
         $done = false;
 
-        $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'] ?? '', $_ENV['TURNSTILE_SITE_KEY'] ?? '');
+        $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && $email !== '') {
-            $token = $_POST['cf-turnstile-response'] ?? '';
-            if ($session->isVerifiedRealUser() || $turnstile->validate($token, $_SERVER['REMOTE_ADDR'] ?? '')) {
+            $token = $_POST['altcha'] ?? '';
+            if ($session->isVerifiedRealUser() || $altcha->validate($token)) {
+                $session->setIsVerifiedRealUser(true);
                 $repo = new UserRepository($session->getDBConnector());
                 $user = $repo->findByEmail(strtolower($email));
                 if ($user !== null) {
@@ -43,6 +44,5 @@ class LostPwPage extends PageRenderer
         $this->assign('lostpw_done', $done);
         $this->assign('error_message', $error);
         $this->assign('is_verified_real_user', $session->isVerifiedRealUser());
-        $this->assign('turnstile_sitekey', $turnstile->getSiteKey());
     }
 }

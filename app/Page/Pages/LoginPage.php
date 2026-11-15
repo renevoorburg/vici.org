@@ -6,7 +6,7 @@ use Vici\Page\PageRenderer;
 use Vici\Session\Session;
 use Vici\Model\User\User;
 use Vici\Model\User\UserRepository;
-use Vici\Security\Turnstile;
+use Vici\Security\Altcha;
 
 class LoginPage extends PageRenderer
 {
@@ -22,12 +22,12 @@ class LoginPage extends PageRenderer
 
         $accountname = $_POST['accountname'] ?? null;
         $password = $_POST['password'] ?? null;
-        $token = $_POST['cf-turnstile-response'] ?? '';
+        $token = $_POST['altcha'] ?? '';
 
-        $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'], $_ENV['TURNSTILE_SITE_KEY']);
+        $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-            if ($this->session->isVerifiedRealUser() || $turnstile->validate($token, $_SERVER['REMOTE_ADDR'] ?? '')) {
+            if ($this->session->isVerifiedRealUser() || $altcha->validate($token)) {
                 if ($accountname && $password) {
                     $userRepository = new UserRepository($this->session->getDBConnector());
                     $user = $userRepository->authenticateUser($accountname, $password);
@@ -59,7 +59,6 @@ class LoginPage extends PageRenderer
         $this->assign('message', $this->getMessage());
         $this->assign('error_message', $this->error_message);
         $this->assign('is_verified_real_user', $this->session->isVerifiedRealUser());
-        $this->assign('turnstile_sitekey', $turnstile->getSiteKey());  
     }
 
     private function getMessage() : string

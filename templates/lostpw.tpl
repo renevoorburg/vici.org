@@ -17,7 +17,7 @@
                         <label class="vici-label" for="frm_email">{$email_label|default:"Email address"}:</label>
                         <input class="vici-input" type="email" id="frm_email" name="frm_email" value="{$lostpw_email_previous|escape}" required />
                     </div>
-                    {include file="include/turnstile.tpl" is_verified_real_user=$is_verified_real_user turnstile_sitekey=$turnstile_sitekey bot_challenge_label=$bot_challenge_label}
+                    {include file="include/altcha.tpl" is_verified_real_user=$is_verified_real_user bot_challenge_label=$bot_challenge_label}
                     <div>
                         <input type="submit" class="vici-btn" value="{$lostpw_submit|default:"Submit"}">
                     </div>

@@ -98,6 +98,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
         break;
+    case 'captcha':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new ApiPage\CaptchaController())->getChallenge();
+        break;
     case 'login':
         // $accessControl->setIsBotAttractingLink(true);
         $action = fn() => (new Pages\LoginPage($session))->display();
