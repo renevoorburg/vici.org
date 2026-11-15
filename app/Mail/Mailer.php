@@ -39,7 +39,7 @@ class Mailer
 
     public function send(string $to, string $subject, string $body, ?string $replyTo = null): bool
     {
-        $from = $_ENV['MAIL_FROM'] ?? 'noreply@vici.org';
+        $from = ($_ENV['MAIL_FROM'] ?? '') ?: 'noreply@vici.org';
         $replyTo = $replyTo ?? $from;
         // prevent header injection via user-supplied names/addresses
         $to = str_replace(["\r", "\n"], '', $to);
