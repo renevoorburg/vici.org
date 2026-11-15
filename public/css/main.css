@@ -142,6 +142,8 @@ header .subtitle {
     color: #1e3a8a;
     font-weight: 500;
     font-size: 1rem;
+    font-family: inherit;
+    line-height: inherit;
     background: none;
     border: none;
     padding: 0;
@@ -592,11 +594,52 @@ strong {
     overflow-x: auto;
     padding-bottom: 0.25rem;
 }
+.hm-inner {
+    display: flex;
+    gap: 4px;
+    width: max-content;
+}
 .heatmap {
     display: flex;
     gap: 3px;
     margin-bottom: 0.5rem;
     width: max-content;
+}
+
+/* weekday labels at the left (Mon/Wed/Fri rows); padding-top aligns them
+   with the cells under the month-label row */
+.hm-days {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-top: 12px;
+    font-size: 9px;
+    color: #6b7280;
+    width: 2.2em;
+    flex: none;
+}
+.hm-days span {
+    height: 11px;
+    line-height: 11px;
+}
+
+/* week column = month label above the cells; label text may overflow
+   the 11px column to the right, like GitHub's month labels */
+.hm-col {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+}
+.hm-label {
+    /* width 0 + overflow visible: keeps the column at cell width while
+       the month text overflows to the right, like GitHub's labels */
+    width: 0;
+    overflow: visible;
+    height: 12px;
+    font-size: 9px;
+    line-height: 12px;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .hm-week {
@@ -1050,6 +1093,13 @@ main.margin {
     font-size: 0.85rem;
     font-weight: normal;
 }
+.vici-hint a {
+    color: #1e3a8a;
+    text-decoration: underline;
+}
+.vici-hint a:hover {
+    color: #1e40af;
+}
 .vici-error {
     color: #db3e17;
     margin-bottom: 1rem;
@@ -1248,6 +1298,8 @@ main.margin {
 main.item {
     display: grid;
     grid-template-columns: 1fr;
+    /* 0.5rem column gap: same visual spacing as on the homepage,
+       where .highlights-content carries 0.5rem padding */
     gap: 0.5rem;
 }
 /* keep long unbreakable content (e.g. long URLs) from squeezing the
@@ -1453,6 +1505,13 @@ a.hover:hover {
 .image-column {
     margin-right:0.5rem;
     margin-left:0.5rem;
+}
+/* two-column layout: the grid gap provides the spacing, no extra
+   margin between map and image column */
+@media (min-width: 768px) {
+    main.item .image-column {
+        margin-left: 0;
+    }
 }
 #my-gallery {
     display: grid;

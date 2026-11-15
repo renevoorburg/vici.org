@@ -173,9 +173,11 @@
 
             <strong>{$data_access_label|default:"Data downloads"}</strong>: <a href="/vici/{$mainSite->id}/kml">KML</a>, <a href="https://data.digitopia.nl/uri:http://vici.org/vici/{$mainSite->id}">RDF</a><br>
 
-            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: <em>{$mainSite->creator->getCitationName()|escape}
-                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getCitationName()|escape}{/if},
-                    {$mainSite->locales[$preferredLocaleLanguage]->title|escape}.</em> <span class="underline">https://vici.org/vici/{$mainSite->id}</span>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
+            <strong>{$suggested_citation_label|default:"Suggested citation"}</strong>: {$mainSite->creator->getCitationName()|escape}
+                    {if $mainSite->creator->getId() != $mainSite->updater->getId()}{$and_label|default:"and"} {$mainSite->updater->getCitationName()|escape}{/if}
+                    ({$mainSite->updateDate|date_format:"%Y"}) {$mainSite->locales[$preferredLocaleLanguage]->title|escape}.
+                    <em>Vici.org: {$atlas_tagline|default:"archaeological atlas of antiquity"}</em>.
+                    <a class="underline" href="https://vici.org/vici/{$mainSite->id}">https://vici.org/vici/{$mainSite->id}</a>, {$accessed_label|default:"accessed"} {$smarty.now|date_format:"%Y-%m-%d"}.
         </p>
     </div>
 

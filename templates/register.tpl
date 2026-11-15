@@ -49,11 +49,12 @@
                         </div>
                     </div>
 
-                    {include file="include/turnstile.tpl" is_verified_real_user=$is_verified_real_user turnstile_sitekey=$turnstile_sitekey bot_challenge_label=$bot_challenge_label}
+                    {include file="include/altcha.tpl" is_verified_real_user=$is_verified_real_user bot_challenge_label=$bot_challenge_label}
 
                     <div>
                         <button type="submit" class="vici-btn">{$register_label|default:"Register"}</button>
                     </div>
+                    <div class="vici-hint">{$register_privacy_note|default:"How your data is handled: see the <a href='/privacy'>privacy policy</a>."}</div>
                 </form>
             </div>
         </div>

@@ -157,9 +157,23 @@ class SiteRepository
 
     public function search(string $query): SiteCollection
     {
-        // UNION of four separate fulltext searches: each leg uses its own
-        // fulltext index instead of evaluating MATCH over a row product
-        // of points x ptexts x psummaries x images.
+        // UNION of fulltext searches plus a place-name (toponym) match:
+        // each leg uses its own fulltext index instead of evaluating
+        // MATCH over a row product of points x ptexts x psummaries x images.
+        // pnt_place has no fulltext index; LIKE with OR'd terms mirrors
+        // boolean mode, which treats unmarked terms as optional too.
+        $terms = array_values(array_filter(
+            preg_split('/\s+/u', $query, -1, PREG_SPLIT_NO_EMPTY),
+            fn($t) => mb_strlen($t) >= 2
+        ));
+        $placeClause = '0';
+        $placeParams = [];
+        if ($terms) {
+            $placeClause = implode(' OR ', array_fill(0, count($terms), "pnt_place LIKE ? ESCAPE '\\\\'"));
+            foreach ($terms as $t) {
+                $placeParams[] = '%' . addcslashes($t, '%_\\') . '%';
+            }
+        }
         $sql = "
             SELECT 
                 " . self::BASE_COLUMNS . ",
@@ -184,6 +198,10 @@ class SiteRepository
                     FROM img_data d
                     JOIN pnt_img_lnk l ON l.pil_img = d.imgd_imgid
                     WHERE MATCH(d.imgd_title, d.imgd_description) AGAINST (? IN BOOLEAN MODE)
+                    UNION ALL
+                    SELECT pnt_id, 3
+                    FROM points
+                    WHERE pnt_hide = 0 AND pnt_place <> '' AND ({$placeClause})
                 ) s
                 GROUP BY pnt_id
             ) rs ON p.pnt_id = rs.pnt_id
@@ -192,7 +210,7 @@ class SiteRepository
             LIMIT 500
         ";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$query, $query, $query, $query, $query, $query, $query, $query]);
+        $stmt->execute([$query, $query, $query, $query, $query, $query, $query, $query, ...$placeParams]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $sites = [];
         foreach ($result as $row) {

@@ -3,6 +3,7 @@
 return [
     // defaults from base.tpl:
     'archaeological atlas' => 'archeologische atlas',
+    'archaeological atlas of antiquity' => 'archeologische atlas van de oudheid',
     'search' => 'Zoeken',
     'Add' => 'Toevoegen',
     'Login / Register' => 'Aanmelden / Registreren',
@@ -10,6 +11,7 @@ return [
     'Recently added' => 'Recent toegevoegd',
     'Recently changed' => 'Recent aangepast',
     'About Vici.org' => 'Over Vici.org',
+    'Privacy' => 'Privacy',
     'Logout' => 'Afmelden',
 
     // defaults from home.tpl:
@@ -105,6 +107,7 @@ return [
     'janedoe' => 'mariekevandijk',
     'Jane Doe' => 'Marieke van Dijk',
     'jane.doe@example.com' => 'marieke.van.dijk@voorbeeld.nl',
+    "How your data is handled: see the <a href='/privacy'>privacy policy</a>." => "Hoe je gegevens worden behandeld: zie de <a href='/privacy'>privacyverklaring</a>.",
 
     // defaults from item.tpl:
     "Description" => "Beschrijving",
@@ -344,8 +347,16 @@ return [
     'Trusted' => 'Vertrouwd',
     'Administrator' => 'Beheerder',
     'Contributions in the last year' => 'Bijdragen in het afgelopen jaar',
+    'Contributions' => 'Bijdragen',
     'contributions in the last year' => 'bijdragen in het afgelopen jaar',
     'contribution(s) on' => 'bijdrage(n) op',
     'Less' => 'Minder',
     'More' => 'Meer',
+    // contribution heatmap:
+    'Mon' => 'ma',
+    'Wed' => 'wo',
+    'Fri' => 'vr',
+    'Jan' => 'jan', 'Feb' => 'feb', 'Mar' => 'mrt', 'Apr' => 'apr',
+    'May' => 'mei', 'Jun' => 'jun', 'Jul' => 'jul', 'Aug' => 'aug',
+    'Sep' => 'sep', 'Oct' => 'okt', 'Nov' => 'nov', 'Dec' => 'dec',
 ];

@@ -3,7 +3,7 @@
 namespace Vici\Page\Api;
 
 use Vici\Session\Session;
-use Vici\Security\Turnstile;
+use Vici\Security\Altcha;
 use Vici\Model\User\Command\RegisterUserCommand;
 use Vici\Model\User\Command\RegisterUserHandler;
 use Vici\Model\User\UserRepository;
@@ -36,12 +36,12 @@ class UserApiController
         $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
         $passwordConfirm = $data['passwordConfirm'] ?? '';
-        $turnstileToken = $data['turnstileToken'] ?? '';
+        $altchaPayload = $data['altcha'] ?? '';
 
-        // Cloudflare Turnstile verification (same approach as LoginPage)
+        // ALTCHA verification (same approach as LoginPage)
         if (!$this->session->isVerifiedRealUser()) {
-            $turnstile = new Turnstile($_ENV['TURNSTILE_SECRET_KEY'] ?? '', $_ENV['TURNSTILE_SITE_KEY'] ?? '');
-            if (!$turnstile->validate($turnstileToken, $_SERVER['REMOTE_ADDR'] ?? '')) {
+            $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
+            if (!$altcha->validate($altchaPayload)) {
                 http_response_code(422);
                 echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
                 return;

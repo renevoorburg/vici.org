@@ -80,6 +80,7 @@
                 <a href="/additions" class="flex items-center gap-2">{$footer_new|default:"Recently added"}</a>
                 <a href="/changes" class="flex items-center gap-2">{$footer_changed|default:"Recently changed"}</a>
                 <a href="/about" class="flex items-center gap-2">{$footer_about|default:"About Vici.org"}</a>
+                <a href="/privacy" class="flex items-center gap-2">{$footer_privacy|default:"Privacy"}</a>
             </div>
             <div class="footerline">
                 <a href="https://github.com/renevoorburg/vici.org" class="footer-logolink">

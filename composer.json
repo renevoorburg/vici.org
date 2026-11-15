@@ -8,7 +8,8 @@
         "solarium/solarium": "^3.7",
         "vlucas/phpdotenv": "^5.6",
         "ext-pdo": "*",
-        "aws/aws-sdk-php": "^3.402"
+        "aws/aws-sdk-php": "^3.402",
+        "altcha-org/altcha": "^2.3"
     },
     "autoload": {
         "psr-4": {

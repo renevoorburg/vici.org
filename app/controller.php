@@ -90,6 +90,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new Pages\AboutPage($session))->display();
         break;
+    case 'privacy':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new Pages\PrivacyPage($session))->display();
+        break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\GeoJSON($session))->get();
@@ -97,6 +101,10 @@ switch ($session->getRequestedAction()) {
     case 'highlight.php':
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
+        break;
+    case 'captcha':
+        $accessControl->setIsRateLimitedAnonymously(true);
+        $action = fn() => (new ApiPage\CaptchaController())->getChallenge();
         break;
     case 'login':
         // $accessControl->setIsBotAttractingLink(true);

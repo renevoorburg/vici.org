@@ -6,15 +6,18 @@
     if (el) el.textContent = msg || '';
   }
   function clearErrors(){ $all('.vici-field-error').forEach(function(e){ e.textContent=''; }); var formErr=$('#form-error'); if(formErr) formErr.textContent=''; }
-  function getTurnstileToken(){
-    // Prefer hidden input produced by include/turnstile.tpl
-    var hidden = document.querySelector('input[name="cf-turnstile-response"]');
-    if (hidden && hidden.value) return hidden.value;
-    // Fallback if Turnstile API is available
-    if (window.turnstile && typeof window.turnstile.getResponse === 'function') {
-      try { return window.turnstile.getResponse(); } catch(e) {}
-    }
-    return '';
+  function getAltchaPayload(){
+    // Hidden input produced by the altcha-widget in include/altcha.tpl
+    var hidden = document.querySelector('input[name="altcha"]');
+    return (hidden && hidden.value) ? hidden.value : '';
+  }
+  function resetAltcha(){
+    var widget = document.querySelector('altcha-widget');
+    if (!widget) return;
+    try {
+      if (typeof widget.reset === 'function') { widget.reset(); }
+      else { widget.setAttribute('challenge', '/captcha?r=' + Date.now()); }
+    } catch(e) {}
   }
 
   document.addEventListener('DOMContentLoaded', function(){
@@ -31,7 +34,7 @@
         email: $('#email')?.value || '',
         password: $('#password')?.value || '',
         passwordConfirm: $('#passwordConfirm')?.value || '',
-        turnstileToken: getTurnstileToken()
+        altcha: getAltchaPayload()
       };
 
       var headers = { 'Content-Type': 'application/json' };
@@ -58,10 +61,8 @@
           Object.keys(errors).forEach(function(field){ setFieldError(field, errors[field]); });
           var msg = resp.body && resp.body.message;
           if (msg && document.getElementById('form-error')) document.getElementById('form-error').textContent = msg;
-          // Reset Turnstile if available
-          if (window.turnstile && typeof window.turnstile.reset === 'function') {
-            try { window.turnstile.reset(); } catch(e){}
-          }
+          // New ALTCHA challenge if the captcha itself was rejected
+          if (errors.__all__ === 'user.bot_detected') resetAltcha();
           return;
         }
         // Other errors

@@ -3,6 +3,7 @@
 return [
     // defaults from base.tpl:
     'archaeological atlas' => 'Archäologischer Atlas',
+    'archaeological atlas of antiquity' => 'archäologischer Atlas der Antike',
     'search' => 'Suche',
     'Add' => 'Hinzufügen',
     'Login / Register' => 'Anmelden / Registrieren',
@@ -10,6 +11,7 @@ return [
     'Recently added' => 'Kürzlich hinzugefügt',
     'Recently changed' => 'Kürzlich geändert',
     'About Vici.org' => 'Über Vici.org',
+    'Privacy' => 'Datenschutz',
     'Logout' => 'Abmelden',
 
     // defaults from home.tpl:
@@ -95,6 +97,16 @@ return [
     'Password' => 'Passwort',
     'Invalid username or password.' => 'Unbekannter Benutzername oder falsches Passwort.',
     'Could not identify you as a human.' => 'Sie konnten nicht als menschlicher Benutzer identifiziert werden.',
+
+    // defaults from register.tpl:
+    'Register account' => 'Konto registrieren',
+    'Email' => 'E-Mail-Adresse',
+    'Confirm password' => 'Passwort wiederholen',
+    'Register' => 'Registrieren',
+    'janedoe' => 'emiliemuster',
+    'Jane Doe' => 'Emilie Muster',
+    'jane.doe@example.com' => 'emilie.muster@beispiel.de',
+    "How your data is handled: see the <a href='/privacy'>privacy policy</a>." => "Wie mit Ihren Daten umgegangen wird: siehe die <a href='/privacy'>Datenschutzerklärung</a>.",
 
     // defaults from item.tpl:
     "Description" => "Beschreibung",
@@ -328,8 +340,16 @@ return [
     'Trusted' => 'Vertrauenswürdig',
     'Administrator' => 'Administrator',
     'Contributions in the last year' => 'Beiträge im letzten Jahr',
+    'Contributions' => 'Beiträge',
     'contributions in the last year' => 'Beiträge im letzten Jahr',
     'contribution(s) on' => 'Beitrag/Beiträge am',
     'Less' => 'Weniger',
     'More' => 'Mehr',
+    // contribution heatmap:
+    'Mon' => 'Mo',
+    'Wed' => 'Mi',
+    'Fri' => 'Fr',
+    'Jan' => 'Jan', 'Feb' => 'Feb', 'Mar' => 'Mär', 'Apr' => 'Apr',
+    'May' => 'Mai', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Aug',
+    'Sep' => 'Sep', 'Oct' => 'Okt', 'Nov' => 'Nov', 'Dec' => 'Dez',
 ];
