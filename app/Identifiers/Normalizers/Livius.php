@@ -24,7 +24,7 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getValidTagPattern(): string {
-        return '/^livius:(museum|place|battle|people|religion|source-content|source-about)=(.*)$/i';
+        return '/^livius:(?:(?:museum|place|battle|people|religion|source-content|source-about)=(.*)|articles\/(?:place|battle|people|religion|source-content|source-about)\/.+|museum\/.+)$/i';
     }
 
     protected function getValidIdPattern(): string {
@@ -44,6 +44,8 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
     {
         return array (
             array('/^livius:museum=([^\/]*)\/?$/i', $this->getNamespace() . 'museum/$1'),
+            array('/^livius:articles\/(place|battle|people|religion|source-content|source-about)\/(.+)$/i', $this->getNamespace() . 'articles/$1/$2'),
+            array('/^livius:museum\/(.+)$/i', $this->getNamespace() . 'museum/$1'),
             array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2'),
             array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3'),
             array('/^livius:(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3/$4')

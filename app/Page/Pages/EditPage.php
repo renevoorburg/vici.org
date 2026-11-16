@@ -253,6 +253,10 @@ class EditPage extends PageRenderer
         $this->assign('f_summary', $posted ? ($_POST['short_edit'] ?? '') : ($locale->summary ?? (!$isNew ? $site->defaultSummary : '')));
         $this->assign('f_annotation', $posted ? ($_POST['edit_full'] ?? '') : ($locale->description ?? ''));
         $this->assign('f_kind', $posted ? (int)($_POST['kindselect'] ?? 0) : (!$isNew ? $site->type->id : (int)($_GET['kind'] ?? 0)));
+        $this->assign('edit_lang_notice', sprintf(
+            $this->session->translator->get('You are editing only the %s version of the title, summary and description.'),
+            strtoupper($lang)
+        ));
         $this->assign('f_coords', $posted ? ($_POST['coords_frm'] ?? '') : (!$isNew ? $site->representativeLocation->latitude . ', ' . $site->representativeLocation->longitude : ''));
         $this->assign('f_visible', $posted ? (int)($_POST['visibilityselect'] ?? 1) : (!$isNew ? (int)$site->isVisible : 1));
         $this->assign('f_accuracy', $posted ? ($_POST['accuracyselect'] ?? '') : (!$isNew ? $site->representativeLocation->qualifier : ''));

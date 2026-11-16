@@ -178,6 +178,13 @@ return [
     'visible' => 'sichtbar',
     'invisible' => 'unsichtbar',
     'External identifiers (URIs)' => 'Externe Identifikatoren (URIs)',
+    'Recognized identifier' => 'Erkannter Identifikator',
+    'Unrecognized identifier' => 'Nicht erkannter Identifikator',
+    'Supported identifiers' => 'Unterstützte Identifikatoren',
+    'Allowed date notations' => 'Zulässige Datumsnotationen',
+    'Period' => 'Zeitraum',
+    'You are editing only the %s version of the title, summary and description.' => 'Sie bearbeiten hier nur die %s-Version von Titel, Zusammenfassung und Beschreibung.',
+    'Use the website URL (or URI), or the short tag notation shown above. Other values, including Wikipedia links, are rejected.' => 'Verwende die Website-URL (oder URI), oder die oben gezeigte kurze Tag-Notation. Andere Werte, einschließlich Wikipedia-Links, werden abgelehnt.',
     'Save' => 'Speichern',
     'Image file' => 'Bilddatei',
     'Description' => 'Beschreibung',
@@ -234,7 +241,6 @@ return [
     'Error: no lines in file.' => 'Fehler: keine Linien in der Datei.',
     'Error: not a valid image file.' => 'Fehler: keine gültige Bilddatei.',
 
-    'Recently edited' => 'Zuletzt bearbeitet',
     'Last edit' => 'Letzte Änderung',
     'by' => 'von',
     // account activation:

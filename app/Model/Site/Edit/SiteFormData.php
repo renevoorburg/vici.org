@@ -3,6 +3,7 @@
 namespace Vici\Model\Site\Edit;
 
 use Vici\Identifiers\ExternalIdentifiers;
+use Vici\Identifiers\IdentifierValidator;
 
 /**
  * Validated data from the site edit form, following the same rules as
@@ -36,7 +37,16 @@ class SiteFormData
     {
         $data = new self();
         $data->id = $siteId;
-        $data->extIds = ExternalIdentifiers::withUrlsAndTagsArray(self::postedExtIds($post));
+        $normalized = [];
+        foreach (self::postedExtIds($post) as $value) {
+            $url = IdentifierValidator::normalize($value);
+            if ($url === null) {
+                $data->errors[] = 'Unrecognized external identifier: ' . $value;
+            } else {
+                $normalized[] = $url;
+            }
+        }
+        $data->extIds = ExternalIdentifiers::withUrlsAndTagsArray($normalized);
 
         $data->setTitle($post['kop_edit'] ?? '');
         $data->setSummary($post['short_edit'] ?? '');
@@ -81,7 +91,7 @@ class SiteFormData
 
     public function getErrorsHtml(): string
     {
-        return implode('', array_map(fn($e) => 'Error: ' . $e . '<br>', $this->errors));
+        return implode('', array_map(fn($e) => 'Error: ' . htmlspecialchars($e, ENT_QUOTES, 'UTF-8') . '<br>', $this->errors));
     }
 
     public function getExtIdUrls(): array
@@ -91,9 +101,9 @@ class SiteFormData
 
     private function setTitle(string $title): void
     {
-        $title = preg_replace('/(^\s*)|(\s*$)/', '', $title);
+        $title = trim($title);
         $title = str_replace(['_', '/'], [' ', '-'], $title);
-        if (strlen($title) < 3) {
+        if (mb_strlen($title) < 3) {
             $this->errors[] = 'Title should be at least 3 characters.';
         }
         $this->title = $title;
@@ -102,7 +112,7 @@ class SiteFormData
     private function setSummary(string $summary): void
     {
         $summary = trim($summary);
-        if (strlen($summary) < 5) {
+        if (mb_strlen($summary) < 5) {
             $this->errors[] = 'Summary should be at least 5 characters.';
         }
         $this->summary = $summary;
@@ -115,9 +125,13 @@ class SiteFormData
 
     private function setCoords(string $coordsStr): void
     {
-        $coordsArr = explode(',', $coordsStr);
-        $this->lat = (float)($coordsArr[0] ?? 0);
-        $this->lng = (float)($coordsArr[1] ?? 0);
+        $coordsArr = array_map('trim', explode(',', $coordsStr));
+        if (count($coordsArr) !== 2 || !is_numeric($coordsArr[0]) || !is_numeric($coordsArr[1])) {
+            $this->errors[] = 'Coordinates out of range.';
+            return;
+        }
+        $this->lat = (float)$coordsArr[0];
+        $this->lng = (float)$coordsArr[1];
         if ($this->lat < -90 || $this->lat > 90 || $this->lng < -180 || $this->lng > 180) {
             $this->errors[] = 'Coordinates out of range.';
         }

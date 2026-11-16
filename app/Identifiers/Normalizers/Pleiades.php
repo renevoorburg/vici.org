@@ -22,7 +22,7 @@ class Pleiades extends AbstractNormalizer implements UrlNormalizerInterface
     }
     
     protected function getValidTagPattern(): string {
-        return '/^pleiades:place=[1-9][0-9]*$/i';
+        return '/^pleiades:(?:place=)?[1-9][0-9]*$/i';
     }
 
     protected function getValidIdPattern(): string {
@@ -34,7 +34,7 @@ class Pleiades extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^pleiades:place\s*=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+        return array ('/^pleiades:(?:place=)?([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
     }
 
     protected function getUrlToIdPatternArray(): array {

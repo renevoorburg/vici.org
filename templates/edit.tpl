@@ -60,6 +60,7 @@
     <form class="vici-form" method="post" action="{if $is_new}/add{else}/edit/{$pntid}{/if}">
         <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
         <div class="vici-form-grid">
+            <div class="vici-full-row"><p class="vici-hint">{$edit_lang_notice|escape}</p></div>
             <label class="vici-label" for="kop_edit">{$edit_label_title|default:"Title"} <span class="vici-hint">({$edit_required|default:"required"})</span></label>
             <input class="vici-input" type="text" id="kop_edit" name="kop_edit" value="{$f_title|escape}" required>
 
@@ -88,19 +89,28 @@
                 {/foreach}
             </select>
 
+            <label class="vici-label" for="visibilityselect">{$edit_label_visibility|default:"Visibility"}</label>
+            <select class="vici-select" id="visibilityselect" name="visibilityselect">
+                <option value="1" {if $f_visible == 1}selected{/if}>{$edit_visible|default:"visible"}</option>
+                <option value="0" {if $f_visible == 0}selected{/if}>{$edit_invisible|default:"invisible"}</option>
+            </select>
+
             <div id="periodbox">
-                <table class="datenotation">
-                    <caption>{$edit_date_examples|default:"examples of allowed date notations:"}</caption>
-                    <tr><td>-123</td><td>{$edit_date_neg|default:"the year 123 BCE"}</td></tr>
-                    <tr><td>post 70</td><td>{$edit_date_post|default:"after the year 70 CE"}</td></tr>
-                    <tr><td>ante 405</td><td>{$edit_date_ante|default:"before the year 405 CE"}</td></tr>
-                    <tr><td>3xx</td><td>{$edit_date_x|default:"the fourth century CE"}</td></tr>
-                    <tr><td>70~</td><td>{$edit_date_approx|default:"approximately the year 70 CE"}</td></tr>
-                    <tr><td>405?</td><td>{$edit_date_unc|default:"the year 405 CE, uncertain"}</td></tr>
-                    <tr><td>47?~</td><td>{$edit_date_both|default:"approximately the year 47 CE, uncertain"}</td></tr>
-                    <tr><td>unknown</td><td>{$edit_date_unknown|default:"unknown, for end dates only"}</td></tr>
-                    <tr><td>open</td><td>{$edit_date_open|default:"no end date, has original function"}</td></tr>
-                </table>
+                <label class="vici-label vici-label--section vici-full-row">{$edit_label_period|default:"Period"}</label>
+                <details class="vici-extids-help vici-full-row">
+                    <summary>{$edit_date_notations|default:"Allowed date notations"}</summary>
+                    <ul>
+                        <li><code>-123</code> — {$edit_date_neg|default:"the year 123 BCE"}</li>
+                        <li><code>post 70</code> — {$edit_date_post|default:"after the year 70 CE"}</li>
+                        <li><code>ante 405</code> — {$edit_date_ante|default:"before the year 405 CE"}</li>
+                        <li><code>3xx</code> — {$edit_date_x|default:"the fourth century CE"}</li>
+                        <li><code>70~</code> — {$edit_date_approx|default:"approximately the year 70 CE"}</li>
+                        <li><code>405?</code> — {$edit_date_unc|default:"the year 405 CE, uncertain"}</li>
+                        <li><code>47?~</code> — {$edit_date_both|default:"approximately the year 47 CE, uncertain"}</li>
+                        <li><code>unknown</code> — {$edit_date_unknown|default:"unknown, for end dates only"}</li>
+                        <li><code>open</code> — {$edit_date_open|default:"no end date, has original function"}</li>
+                    </ul>
+                </details>
 
                 <label class="vici-label" for="start_yr">{$edit_label_start|default:"Year of creation"} <span class="vici-hint">({$edit_required|default:"required"})</span></label>
                 <input class="vici-input" type="text" id="start_yr" name="start_yr" pattern="{literal}(post |ante )?-?[0-9]{0,5}[x]{0,3}\??~?{/literal}" value="{$f_start|escape}">
@@ -109,16 +119,28 @@
                 <input class="vici-input" type="text" id="end_yr" name="end_yr" pattern="{literal}(post |ante )?(-?[0-9]{1,5}[x]{0,3}\??~?|open|unknown){/literal}" value="{$f_end|escape}">
             </div>
 
-            <label class="vici-label" for="visibilityselect">{$edit_label_visibility|default:"Visibility"}</label>
-            <select class="vici-select" id="visibilityselect" name="visibilityselect">
-                <option value="1" {if $f_visible == 1}selected{/if}>{$edit_visible|default:"visible"}</option>
-                <option value="0" {if $f_visible == 0}selected{/if}>{$edit_invisible|default:"invisible"}</option>
-            </select>
-
-            <label class="vici-label vici-full-row">{$edit_label_extids|default:"External identifiers (URIs)"}</label>
-            <div class="vici-full-row" id="extids">
+            <label class="vici-label vici-label--section vici-full-row">{$edit_label_extids|default:"External identifiers (URIs)"}</label>
+            <details class="vici-extids-help vici-full-row">
+                <summary>{$edit_extids_help|default:"Supported identifiers"}</summary>
+                <ul>
+                    <li>pleiades.stoa.org — <code>pleiades:12345</code></li>
+                    <li>livius.org — <code>livius:articles/place/…</code></li>
+                    <li>romaq.org — <code>romaq:12</code></li>
+                    <li>imperium.ahlfeldt.se — <code>dare:123</code></li>
+                    <li>wikidata.org — <code>wikidata:Q123</code></li>
+                    <li>omnesviae.org — <code>omnesviae:TPPlace123</code></li>
+                    <li>mithraeum.eu — <code>mithraeum:monument/4</code></li>
+                </ul>
+                <p class="vici-hint">{$edit_extids_note|default:"Use the website URL (or URI), or the short tag notation shown above. Other values, including Wikipedia links, are rejected."}</p>
+            </details>
+            <div class="vici-full-row" id="extids"
+                 data-extid-ok="{$edit_extid_ok|default:"Recognized identifier"|escape:'html'}"
+                 data-extid-error="{$edit_extid_error|default:"Unrecognized identifier"|escape:'html'}">
                 {foreach from=$ext_ids key=i item=url}
-                    <input class="vici-input vici-input--compact" type="text" name="extid{$i}" value="{$url|escape}" placeholder="external URI">
+                    <span class="vici-extid-field">
+                        <input class="vici-input vici-input--compact" type="text" name="extid{$i}" value="{$url|escape}" placeholder="external URI">
+                        <span class="extid-status" aria-live="polite"></span>
+                    </span>
                 {/foreach}
             </div>
         </div>
@@ -232,6 +254,7 @@ document.getElementById('frm_ownership')?.addEventListener('change', function ()
 <script src="/js/edit.js"></script>
 <script>
 editPage();
+initExtIdChecker();
 (function () {
     var coordsField = document.getElementById('coords_frm');
     var lng = 12.5, lat = 41.9, zoom = 5;
@@ -248,7 +271,7 @@ editPage();
         } catch (e) {}
     }
 
-    var mapObj = new MapWidget('editcanvas', 'coords_frm', lng, lat, '{$f_kind|default:1}');
+    var mapObj = new MapWidget('editcanvas', 'coords_frm', lng, lat, {$f_kind|default:1});
     mapObj.setZoom(zoom);
 
     coordsField.addEventListener('blur', function() { mapObj.moveMarker(this.value); });

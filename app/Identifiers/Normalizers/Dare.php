@@ -22,7 +22,7 @@ class Dare extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getValidTagPattern(): string {
-        return '/^dare( |:)?(?:id|place)?=\s*[1-9][0-9]*$/i';
+        return '/^dare(?:(?: |:)?(?:id|place)?=|:)\s*[1-9][0-9]*$/i';
     }
 
     protected function getValidIdPattern(): string {
@@ -34,7 +34,12 @@ class Dare extends AbstractNormalizer implements UrlNormalizerInterface
     }
 
     protected function getTagToUrlPatternArray() : array {
-        return array ('/^dare(?: |:)(?:place|id)?=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1');
+        return array (
+            array ('/^dare(?: |:)(?:place|id)?=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1'),
+            array ('/^dare\s*=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1'),
+            array ('/^dare:([1-9][0-9]*)$/i', $this->getNamespace() . '$1'),
+            array ('/^dare(?:id|place)?=\s*([1-9][0-9]*)$/i', $this->getNamespace() . '$1'),
+        );
     }
 
     protected function getUrlToIdPatternArray(): array {

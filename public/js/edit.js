@@ -96,13 +96,18 @@ function MapWidget(canvas, positionField, lng, lat, markerType) {
 
     // exports
     function moveMarker(str) {
-        var coordsArr=str.split(",");
-        if (coordsArr.length !== 2) return false;
+        var parts = str.split(",").map(function (s) { return s.trim(); });
+        if (parts.length !== 2) return false;
+        var lat = Number(parts[0]);
+        var lng = Number(parts[1]);
+        if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+            return false;
+        }
         markerIcon.setGeometry(
-            new ol.geom.Point(ol.proj.fromLonLat([Number(coordsArr[1]), Number(coordsArr[0])]))
+            new ol.geom.Point(ol.proj.fromLonLat([lng, lat]))
         );
         map.getView().animate({
-            center: markerIcon.getGeometry().getExtent(),
+            center: markerIcon.getGeometry().getCoordinates(),
             duration: 400
         });
     }
@@ -125,4 +130,54 @@ function MapWidget(canvas, positionField, lng, lat, markerType) {
         setMarkerIcon:  setMarkerIcon,
         setZoom:        setZoom
     }
+}
+
+function initExtIdChecker() {
+    var container = document.getElementById('extids');
+    if (!container) return;
+    var okText = container.dataset.extidOk || 'Recognized identifier';
+    var errText = container.dataset.extidError || 'Unrecognized identifier';
+
+    container.querySelectorAll('input[name^="extid"]').forEach(function (input) {
+        var status = input.parentElement.querySelector('.extid-status');
+        if (!status) return;
+        var timer = null;
+
+        function setStatus(cls, symbol, title) {
+            status.className = 'extid-status ' + cls;
+            status.textContent = symbol;
+            status.title = title;
+        }
+
+        function check() {
+            var value = input.value.trim();
+            if (value === '') {
+                setStatus('', '', '');
+                return;
+            }
+            setStatus('extid-status--pending', '…', '');
+            fetch('/api/extid?value=' + encodeURIComponent(value), {
+                headers: { 'Accept': 'application/json' }
+            }).then(function (r) { return r.json(); }).then(function (data) {
+                if (input.value.trim() !== value) return;
+                if (data.valid) {
+                    setStatus('extid-status--ok', '✓', okText + (data.url ? ' → ' + data.url : ''));
+                } else {
+                    setStatus('extid-status--error', '✗', errText);
+                }
+            }).catch(function () {
+                setStatus('', '', '');
+            });
+        }
+
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(check, 400);
+        });
+        input.addEventListener('blur', check);
+
+        if (input.value.trim() !== '') {
+            check();
+        }
+    });
 }

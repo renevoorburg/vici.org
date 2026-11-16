@@ -282,6 +282,23 @@ main.homepage {
 #selectionbox-content {
     padding: 0.5rem;
 }
+
+.selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.selection-close {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: 0;
+    flex-shrink: 0;
+}
 .highlights-scroll:not(.has-selection) #selectionbox-content,
 .highlights-scroll:not(.has-selection) .highlights-content h2,
 .highlights-scroll:not(.has-highlights) .highlights-content h2 {
@@ -1056,6 +1073,14 @@ main.margin {
 .vici-label--top {
     align-self: start;
 }
+.vici-label--section {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #1e3a8a;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.3rem;
+    margin-top: 0.75rem;
+}
 .vici-label--field {
     align-self: start;
     padding-top: 0.55rem;
@@ -1110,6 +1135,53 @@ main.margin {
 }
 .vici-error:empty {
     display: none;
+}
+.vici-extid-field {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.vici-extid-field .vici-input {
+    flex: 1;
+}
+.vici-extids-help {
+    font-size: 0.85rem;
+}
+.vici-extids-help summary {
+    color: #718096;
+    cursor: pointer;
+    width: fit-content;
+}
+.vici-extids-help summary:hover {
+    color: #1e3a8a;
+}
+.vici-extids-help ul {
+    margin: 0.4rem 0;
+    padding-left: 1.2rem;
+    columns: 2;
+    column-gap: 2rem;
+}
+.vici-extids-help li {
+    margin-bottom: 0.15rem;
+}
+.vici-extids-help code {
+    background: #edf2f7;
+    border-radius: 3px;
+    padding: 0 0.25rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+.extid-status {
+    flex: 0 0 auto;
+    width: 1.2rem;
+    text-align: center;
+    font-weight: bold;
+}
+.extid-status--ok {
+    color: #276749;
+}
+.extid-status--error {
+    color: #db3e17;
 }
 .vici-field-error {
     color: #db3e17;
@@ -1226,21 +1298,6 @@ main.margin {
 #periodbox {
     display: contents;
 }
-#periodbox .datenotation {
-    grid-column: 2;
-}
-.datenotation {
-    border: 1px dotted #1e3a8a;
-    color: #1e3a8a;
-    margin: 10px 0;
-    font-size: 0.85rem;
-}
-.datenotation caption {
-    text-align: left;
-}
-.datenotation td {
-    padding: 0 0.5rem;
-}
 .kind-group {
     display: grid;
     grid-template-columns: repeat(auto-fill, 240px);
@@ -1287,12 +1344,6 @@ main.margin {
     background: rgba(255, 255, 255, 0.75);
     font-size: 0.8rem;
 }
-@media (max-width: 768px) {
-    #periodbox .datenotation {
-        grid-column: 1 / -1;
-    }
-}
-
 /* Item page */
 .access-link {
     position: absolute;
