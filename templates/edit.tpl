@@ -60,14 +60,14 @@
     <form class="vici-form" method="post" action="{if $is_new}/add{else}/edit/{$pntid}{/if}">
         <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
         <div class="vici-form-grid">
+            <div class="vici-full-row"><p class="vici-hint">{$edit_lang_notice|escape}</p></div>
             <label class="vici-label" for="kop_edit">{$edit_label_title|default:"Title"} <span class="vici-hint">({$edit_required|default:"required"})</span></label>
             <input class="vici-input" type="text" id="kop_edit" name="kop_edit" value="{$f_title|escape}" required>
 
             <label class="vici-label vici-label--top" for="short_edit">{$edit_label_summary|default:"Summary"} <span class="vici-hint">({$edit_required|default:"required"})</span></label>
             <textarea class="vici-textarea" id="short_edit" name="short_edit" rows="3" required>{$f_summary|escape}</textarea>
 
-            <label class="vici-label vici-label--section vici-full-row" for="edit_full">{$edit_label_annotation|default:"Description"}</label>
-            <div class="vici-full-row"><p class="vici-hint">{$edit_lang_notice|escape}</p></div>
+            <label class="vici-label vici-full-row" for="edit_full">{$edit_label_annotation|default:"Description"}</label>
             <div class="vici-full-row"><textarea id="edit_full" name="edit_full" rows="10">{$f_annotation|escape}</textarea></div>
 
             <label class="vici-label" for="kindselect">{$edit_label_kind|default:"Category"}</label>

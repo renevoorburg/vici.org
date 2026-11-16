@@ -91,7 +91,8 @@ class SiteRepository
         $latDelta = 25 / 111.0;
         $lngDelta = min(25 / (111.0 * max(cos(deg2rad($lat)), 0.1)), 180.0);
         $query = self::getBaseSelect() . "
-            WHERE pnt_lat BETWEEN ? AND ? AND pnt_lng BETWEEN ? AND ?
+            WHERE pnt_hide = 0
+            AND pnt_lat BETWEEN ? AND ? AND pnt_lng BETWEEN ? AND ?
             AND 6371*acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat))) < ?
             ORDER BY acos(cos(radians(?))*cos(radians(pnt_lat))*cos(radians(pnt_lng)-radians(?))+sin(radians(?))*sin(radians(pnt_lat)))
             LIMIT $number";

@@ -31,7 +31,7 @@ class RecentlyChangedPage extends PageRenderer
         }
 
         $this->assign('items', $items);
-        $this->assign('search_results_label', $this->session->translator->get('Recently edited'));
+        $this->assign('search_results_label', $this->session->translator->get('Recently changed'));
     }
 
 }

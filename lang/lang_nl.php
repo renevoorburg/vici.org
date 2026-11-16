@@ -146,7 +146,6 @@ return [
     "Results" => "Zoekresultaten",
 
     // defaults from recently_changed.tpl:
-    "Recently edited" => "Onlangs aangepast",
     "by" => "door",
     "Last edit" => "Laatst aangepast op",
 
@@ -194,7 +193,7 @@ return [
     'Supported identifiers' => 'Ondersteunde identifiers',
     'Allowed date notations' => 'Toegestane datumnotaties',
     'Period' => 'Periode',
-    'You are editing only the %s version of the description.' => 'Je bewerkt hier alleen de %s-versie van de beschrijving.',
+    'You are editing only the %s version of the title, summary and description.' => 'Je bewerkt hier alleen de %s-versie van titel, samenvatting en beschrijving.',
     'Use the website URL (or URI), or the short tag notation shown above. Other values, including Wikipedia links, are rejected.' => 'Gebruik de website-URL (of URI), of de verkorte tag-notatie zoals hierboven. Andere waarden, inclusief Wikipedia-links, worden geweigerd.',
     'Save' => 'Opslaan',
     'Image file' => 'Afbeeldingsbestand',
