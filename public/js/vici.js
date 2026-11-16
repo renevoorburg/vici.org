@@ -796,10 +796,12 @@ function ViciWidget(element, options) {
     }
 
     function deselectMarker(marker) {
-        marker.setStyle(new ol.style.Style({
-            zIndex: marker.vici.zIndex,
-            image: selectIcon(marker, false)
-        }));
+        if (marker) {
+            marker.setStyle(new ol.style.Style({
+                zIndex: marker.vici.zIndex,
+                image: selectIcon(marker, false)
+            }));
+        }
         session.selectedMarkerId = null;
         storeSession();
         
@@ -1178,9 +1180,12 @@ function ViciWidget(element, options) {
     }
 
     // expose functions:
-    return { 
+    return {
         panTo: panTo,
-        selectMarkerAndPan: selectMarkerAndPan 
+        selectMarkerAndPan: selectMarkerAndPan,
+        deselectSelection: function() {
+            deselectMarker(session.selectedMarkerId ? vectorSourceMarkers.getFeatureById(session.selectedMarkerId) : null);
+        }
     }
 
 }

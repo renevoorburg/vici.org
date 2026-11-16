@@ -40,7 +40,9 @@ function updateSelectionBox(feature) {
         ? `<a href="${siteLink}" class="selection-link">${iconHtml(feature.kind || 1)}</a>`
         : iconHtml(feature.kind || 1);
 
-    let selectionHTML = `<h2>${window.selectionTitle}:</h2>`;
+    const closeLabel = esc(trl('Close'));
+    const closeButton = `<button type="button" id="selection-close" class="selection-close" title="${closeLabel}" aria-label="${closeLabel}"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="8.5" fill="rgba(0,0,0,0.5)"/><path d="M5.5 5.5l7 7M12.5 5.5l-7 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button>`;
+    let selectionHTML = `<div class="selection-header"><h2>${window.selectionTitle}:</h2>${closeButton}</div>`;
     if (hasImage) {
         const imageUrl = `https://images.vici.org/crop/w440xh248${esc(feature.picture)}`;
         const imagePart = id
@@ -74,6 +76,13 @@ function updateSelectionBox(feature) {
                 </div>`;
     }
     selectionBox.innerHTML = selectionHTML;
+
+    const closeBtn = document.getElementById('selection-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+            mapObj.deselectSelection();
+        });
+    }
 
     // Scroll de highlights-scroll div naar boven
     if (highlightsScroll) {

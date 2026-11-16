@@ -282,6 +282,23 @@ main.homepage {
 #selectionbox-content {
     padding: 0.5rem;
 }
+
+.selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.selection-close {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: 0;
+    flex-shrink: 0;
+}
 .highlights-scroll:not(.has-selection) #selectionbox-content,
 .highlights-scroll:not(.has-selection) .highlights-content h2,
 .highlights-scroll:not(.has-highlights) .highlights-content h2 {
