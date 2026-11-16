@@ -130,6 +130,9 @@ return [
     "not yet provided" => "noch nicht eingegeben",
     "more info" => "mehr Informationen",
 
+    // defaults from footer-home.js:
+    "Only %s randomly selected photos are shown" => "Nur %s zufällig ausgewählte Fotos in dieser Ansicht werden angezeigt",
+
     // defaults from image.tpl:
     "Used in" => "Verwendet in",
     "Creator" => "Urheber",

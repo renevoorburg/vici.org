@@ -116,6 +116,10 @@ switch ($session->getRequestedAction()) {
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
         break;
+    case 'images.php':
+        $accessControl->setRequiresToken(true);
+        $action = fn() => (new API\Images($session))->get();
+        break;
     case 'captcha':
         $accessControl->setIsRateLimitedAnonymously(true);
         $action = fn() => (new ApiPage\CaptchaController())->getChallenge();

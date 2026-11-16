@@ -131,12 +131,14 @@ class GeoJSON extends APICall
                 $additionalPointsSQL = " OR pnt_id IN (". implode(",", array_keys($requiredPointsArr)) . ")";
             }
 
-            $sql  = "SELECT pnt_id, pnt_name, pnt_kind, pnt_lat, pnt_lng, pnt_visible, pnt_dflt_short, pnt_promote, pkind_low, pkind_high, pkind_zindex, psum_pnt_name, psum_short, img_path, pmeta_loc_accuracy "
+            $sql  = "SELECT pnt_id, pnt_name, pnt_kind, pnt_lat, pnt_lng, pnt_visible, pnt_dflt_short, pnt_promote, pkind_low, pkind_high, pkind_zindex, psum_pnt_name, psum_short, img_path, pmeta_loc_accuracy, "
+                    . "COALESCE(img_counts.img_count, 0) AS img_count "
                     .$perspectiveSelectSQL
                     . "FROM points " 
                     . "LEFT JOIN pkinds ON pkind_id=pnt_kind "
                     . "LEFT JOIN pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1 "
                     . "LEFT JOIN images ON pil_img=img_id  AND img_hide=0 "
+                    . "LEFT JOIN (SELECT pil_pnt, COUNT(*) AS img_count FROM pnt_img_lnk JOIN images ON img_id = pil_img AND img_hide = 0 GROUP BY pil_pnt) img_counts ON img_counts.pil_pnt = pnt_id "
                     //. "LEFT JOIN pmetadata ON pnt_id=pmeta_pnt_id "
                     . "LEFT JOIN psummaries ON pnt_id=psum_pnt_id AND psum_lang='".$lng."' "
                     .$perspectivePointJoinSQL
@@ -146,12 +148,14 @@ class GeoJSON extends APICall
                     .$perspectiveRestrictSQL
                     .$additionalPointsSQL ;
         } else {
-            $sql  = "SELECT pnt_id, pnt_name, pnt_kind, pnt_lat, pnt_lng, pnt_visible, pnt_dflt_short, pnt_promote, pkind_low, pkind_high, pkind_zindex, psum_pnt_name, psum_short, img_path, pmeta_loc_accuracy "
+            $sql  = "SELECT pnt_id, pnt_name, pnt_kind, pnt_lat, pnt_lng, pnt_visible, pnt_dflt_short, pnt_promote, pkind_low, pkind_high, pkind_zindex, psum_pnt_name, psum_short, img_path, pmeta_loc_accuracy, "
+                    . "COALESCE(img_counts.img_count, 0) AS img_count "
                     . "FROM points " 
                     . "LEFT JOIN pkinds ON pkind_id=pnt_kind "
                     . "LEFT JOIN pnt_img_lnk ON pnt_id=pil_pnt AND pil_dflt=1 "
                     . "LEFT JOIN images ON pil_img=img_id AND img_hide=0 "
                     . "LEFT JOIN pmetadata ON pnt_id=pmeta_pnt_id "
+                    . "LEFT JOIN (SELECT pil_pnt, COUNT(*) AS img_count FROM pnt_img_lnk JOIN images ON img_id = pil_img AND img_hide = 0 GROUP BY pil_pnt) img_counts ON img_counts.pil_pnt = pnt_id "
                     . "LEFT JOIN psummaries ON pnt_id=psum_pnt_id AND psum_lang='".$lng."' "
                     . "WHERE pnt_hide=0 "
                     . $focusPointRestrictSQL;
@@ -204,7 +208,7 @@ class GeoJSON extends APICall
 
             echo "\"properties\":{";
         //    echo "\"id\":",$row['pnt_id'],",";
-            echo "\"url\":\"",$fullUrl,"\",";
+            echo "\"url\":",json_encode($fullUrl),",";
             echo "\"title\":",json_encode($name),",";
             echo "\"kind\":",$kind,",";
             if ($isFlat) {
@@ -225,6 +229,7 @@ class GeoJSON extends APICall
             }
 
             echo "\"summary\":",json_encode($short);
+            echo ",\"photos\":", (int)$row['img_count'];
             if ($row['img_path']) {
                 echo ",\"img\":", json_encode($row['img_path']);
             }

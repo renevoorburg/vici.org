@@ -16,7 +16,7 @@ class HomePage extends PageRenderer
         $this->session = $session;
         parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
-        $this->assign('js_translations', $this->session->translator->getTranslationsJson(['more', 'show on map', 'Close'], 'markerdef.'));
+        $this->assign('js_translations', $this->session->translator->getTranslationsJson(['more', 'show on map', 'Close', 'more info', 'Only %s randomly selected photos are shown'], 'markerdef.'));
     }
 
 }

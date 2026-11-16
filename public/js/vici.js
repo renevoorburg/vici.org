@@ -9,6 +9,18 @@ function ViciWidget(element, options) {
         };
     }
 
+    function getSnappedView() {
+        let extent = map.getView().calculateExtent();
+        let zoomlevel = map.getView().getZoom();
+        let grid = getGridSize(zoomlevel);
+        let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
+        let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
+        return {
+            bounds: snap(rawSW[1], grid) + "," + snap(rawSW[0], grid) + "," + snapCeil(rawNE[1], grid) + "," + snapCeil(rawNE[0], grid),
+            zoom: snapZoom(zoomlevel)
+        };
+    }
+
     function getGridSize(zoom) {
         if (zoom >= 13) return 0.125;
         if (zoom >= 10) return 0.25;
@@ -60,7 +72,8 @@ function ViciWidget(element, options) {
             satellite: "Satellitbild",
             satellite_labels: "Satellitebild mit Labels",
             pelagios: "Digital Atlas of the Roman Empire",
-            osm_contribs: "OpenStreetMap-Mitwirkende"
+            osm_contribs: "OpenStreetMap-Mitwirkende",
+            Look_around: "Hier umsehen"
         },
         en: {
             selection: "Selection",
@@ -79,7 +92,8 @@ function ViciWidget(element, options) {
             satellite: 'Satellite',
             satellite_labels: 'Satellite with labels',
             pelagios: 'Digital Atlas of the Roman Empire',
-            osm_contribs: 'OpenStreetMap contributors'
+            osm_contribs: 'OpenStreetMap contributors',
+            Look_around: 'Look around'
         },
         fr: {
             selection: 'Sélection',
@@ -98,7 +112,8 @@ function ViciWidget(element, options) {
             satellite: 'Satellite',
             satellite_labels: 'Satellite avec labels',
             pelagios: 'Digital Atlas of the Roman Empire',
-            osm_contribs: 'les contributeurs d’OpenStreetMap'
+            osm_contribs: 'les contributeurs d’OpenStreetMap',
+            Look_around: 'Explorer ici'
         },
         nl: {
             selection: 'Geselecteerd',
@@ -117,7 +132,8 @@ function ViciWidget(element, options) {
             satellite: 'Satelliet',
             satellite_labels: 'Satelliet met hedendaagse aanduidingen',
             pelagios: 'Digital Atlas of the Roman Empire',
-            osm_contribs: 'OpenStreetMap-auteurs'
+            osm_contribs: 'OpenStreetMap-auteurs',
+            Look_around: 'Kijk hier rond'
         }
     }[lang];
 
@@ -131,6 +147,8 @@ function ViciWidget(element, options) {
     if (sessionStorage.getItem('session')) {
         options.panToUserGeolocation = false;   
         session = JSON.parse(sessionStorage.getItem('session'));
+        session.filter = { visibility: "anyVisibility", era: "anyEra", ...(session.filter || {}) };
+        session.overlays = session.overlays || [];
     } else {
         session = {
             selectedMarkerId: null,
@@ -348,6 +366,43 @@ function ViciWidget(element, options) {
         });
     }
 
+    // Slideshow button: only rendered when the page supplies slideshowFunc,
+    // and only visible while at least one marker in view has photos.
+    let slideshowControlEl = null;
+    if (typeof options.slideshowFunc === 'function') {
+        const slideshowButton = document.createElement('button');
+        slideshowButton.type = 'button';
+        slideshowButton.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+        slideshowButton.appendChild(document.createTextNode(txt["Look_around"]));
+        slideshowButton.title = txt["Look_around"];
+        slideshowButton.setAttribute('aria-label', txt["Look_around"]);
+        slideshowButton.addEventListener('click', function() {
+            const snappedView = getSnappedView();
+            options.slideshowFunc(snappedView.bounds, snappedView.zoom, session.filter, mapState.lang);
+        }, false);
+
+        slideshowControlEl = document.createElement('div');
+        slideshowControlEl.className = 'slideshow-control ol-unselectable ol-control';
+        slideshowControlEl.style.display = 'none';
+        slideshowControlEl.appendChild(slideshowButton);
+        map.addControl(new ol.control.Control({element: slideshowControlEl}));
+    }
+
+    function updateSlideshowVisibility() {
+        if (!slideshowControlEl) {
+            return;
+        }
+        const extent = map.getView().calculateExtent();
+        let hasPhotos = false;
+        vectorSourceMarkers.forEachFeature(function(marker) {
+            if (!hasPhotos && marker.vici.display !== false && marker.vici.photos > 0
+                    && ol.extent.containsCoordinate(extent, marker.getGeometry().getCoordinates())) {
+                hasPhotos = true;
+            }
+        });
+        slideshowControlEl.style.display = hasPhotos ? '' : 'none';
+    }
+
     // see https://openlayers.org/en/latest/examples/geolocation.html
     let geotracking = null;
     if (options.showUserGeolocation) {
@@ -544,10 +599,10 @@ function ViciWidget(element, options) {
             ((session.filter.era === "historicalEra") && (!isContemporary(marker.vici.kind)));
 
         if (visibilityMatch && eraMatch) {
-            marker.vici.display=true;
             // return appropriate icon for zoomlevel:
             let zoomlevel = map.getView().getZoom();
             if (zoomlevel >= marker.vici.zoomSmall) {
+                marker.vici.display=true;
                 if (zoomlevel >= marker.vici.zoomNormal) {
                     if (marker.vici.identified) {
                         return markerIcons[marker.vici.kind].normal;
@@ -640,7 +695,8 @@ function ViciWidget(element, options) {
                             identified: feature.properties.identified,
                             visible: (feature.properties.isvisible === 1),
                             zoomSmall: parseInt(feature.properties.zoomsmall),
-                            zoomNormal: parseInt(feature.properties.zoomnormal)
+                            zoomNormal: parseInt(feature.properties.zoomnormal),
+                            photos: feature.properties.photos || 0
                         };
 
                         let isSelected = (feature.id === session.selectedMarkerId);
@@ -694,20 +750,13 @@ function ViciWidget(element, options) {
                 }
                 mapState.initialized = true;
             }
+
+            updateSlideshowVisibility();
         }
 
-        let extent = map.getView().calculateExtent();
-        let zoomlevel = map.getView().getZoom();
-        let grid = getGridSize(zoomlevel);
-        
-        let rawSW = ol.proj.toLonLat([extent[0], extent[1]]);
-        let rawNE = ol.proj.toLonLat([extent[2], extent[3]]);
-        
-        let snappedSW = [snap(rawSW[1], grid), snap(rawSW[0], grid)];
-        let snappedNE = [snapCeil(rawNE[1], grid), snapCeil(rawNE[0], grid)];
-        let snappedZoom = snapZoom(zoomlevel);
-        
-        fetch(baseUrl + "/geojson.php?bounds=" + snappedSW[0] + "," + snappedSW[1] + "," + snappedNE[0] + "," + snappedNE[1] + "&zoom=" + snappedZoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam, {
+        let snappedView = getSnappedView();
+
+        fetch(baseUrl + "/geojson.php?bounds=" + snappedView.bounds + "&zoom=" + snappedView.zoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam, {
             headers: {
                 'X-Vici-Token': options.viciToken
             }
@@ -777,6 +826,7 @@ function ViciWidget(element, options) {
             }
             updateDataLayer();
             getHighlights();
+            updateSlideshowVisibility();
             storeSession();
         }, 500);
     });
@@ -957,6 +1007,8 @@ function ViciWidget(element, options) {
     vicistyle += ".ol-attribution ul {max-width: 100% !important; overflow: visible !important; margin-bottom: 3px !important; margin-top: -3px !important;} "; // fix attribution text overflow and position
     vicistyle += ".ol-attribution li {display: inline-block !important; max-width: 100% !important;} "; // ensure attribution items are visible
     vicistyle += ".focus-location {top: 5em;left: .5em;}";
+    vicistyle += ".slideshow-control {top: .5em; right: .5em;}";
+    vicistyle += ".slideshow-control button {width: auto; height: auto; padding: 2px 8px; display: flex; align-items: center; gap: .4em; font-size: .9em; font-weight: normal; line-height: normal;}";
 
     let css = document.createElement("style");
     css.type = "text/css";
@@ -1128,6 +1180,7 @@ function ViciWidget(element, options) {
             radio.addEventListener('change', function() {
                 session.filter.visibility = this.value;
                 redrawMarkers();
+                updateSlideshowVisibility();
                 getHighlights();
                 sessionStorage.setItem('session', JSON.stringify(session));
             });
@@ -1137,6 +1190,7 @@ function ViciWidget(element, options) {
             radio.addEventListener('change', function() {
                 session.filter.era = this.value;
                 redrawMarkers();
+                updateSlideshowVisibility();
                 getHighlights();
                 sessionStorage.setItem('session', JSON.stringify(session));
             });
