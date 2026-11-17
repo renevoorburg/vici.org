@@ -126,6 +126,8 @@ async function openSlideshow(bounds, zoom, filter, lang) {
                     imageId: im.id,
                     siteId: im.siteId,
                     siteTitle: im.siteTitle || '',
+                    siteSummary: im.siteSummary || '',
+                    siteToponym: im.siteToponym || '',
                     kind: im.kind || 1,
                     imgTitle: im.title || '',
                     creator: im.creator || '',
@@ -142,27 +144,21 @@ async function openSlideshow(bounds, zoom, filter, lang) {
             pswpModule: () => import('/js/photoswipe/dist/photoswipe.esm.js')
         });
 
-        if (data.truncated) {
-            const notice = trl('Only %s randomly selected photos are shown').replace('%s', String(items.length));
-            lightbox.on('uiRegister', function() {
-                lightbox.pswp.ui.registerElement({
-                    name: 'truncated-notice',
-                    ariaLabel: notice,
-                    order: 9,
-                    isButton: false,
-                    appendTo: 'root',
-                    html: esc(notice)
-                });
-            });
-        }
-
         new PhotoSwipeDynamicCaption(lightbox, {
             type: 'auto',
             captionContent: (slide) => {
                 const d = slide.data;
                 let html = '';
                 if (d.siteId) {
-                    html += `<div class="slideshow-site"><span class="marker-icon" data-icon-type="${d.kind}"></span> <a href="/vici/${esc(String(d.siteId))}">${esc(d.siteTitle)}</a></div>`;
+                    // same structure as templates/include/site_list_item.tpl
+                    const lines = [`<a href="/vici/${esc(String(d.siteId))}">${esc(d.siteTitle)}</a>`];
+                    if (d.siteSummary) {
+                        lines.push(esc(d.siteSummary));
+                    }
+                    if (d.siteToponym) {
+                        lines.push(`<span class="toponym">${esc(d.siteToponym)}</span>`);
+                    }
+                    html += `<div class="marker-row slideshow-site"><span class="marker-icon" data-icon-type="${d.kind}"></span><span class="marker-text">${lines.join('<br>')}</span></div>`;
                 }
                 if (d.imgTitle) {
                     html += esc(d.imgTitle) + '<br>';

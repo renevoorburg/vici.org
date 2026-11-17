@@ -134,7 +134,6 @@ return [
     "Selected" => "Geselecteerd",
 
     // defaults from footer-home.js:
-    "Only %s randomly selected photos are shown" => "Alleen %s willekeurig geselecteerde foto's in dit kaartbeeld worden getoond",
 
     // defaults from image.tpl:
     "Used in" => "Wordt getoond bij",

@@ -24,5 +24,5 @@
 {/block}
 
 {block name=footerscripts}
-    <script src="/js/footer-home.js"></script>
+    <script src="/js/footer-home.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
 {/block}

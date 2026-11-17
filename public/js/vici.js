@@ -1007,8 +1007,8 @@ function ViciWidget(element, options) {
     vicistyle += ".ol-attribution ul {max-width: 100% !important; overflow: visible !important; margin-bottom: 3px !important; margin-top: -3px !important;} "; // fix attribution text overflow and position
     vicistyle += ".ol-attribution li {display: inline-block !important; max-width: 100% !important;} "; // ensure attribution items are visible
     vicistyle += ".focus-location {top: 5em;left: .5em;}";
-    vicistyle += ".slideshow-control {top: .5em; right: .5em;}";
-    vicistyle += ".slideshow-control button {width: auto; height: auto; padding: 2px 8px; display: flex; align-items: center; gap: .4em; font-size: .9em; font-weight: normal; line-height: normal;}";
+    vicistyle += ".slideshow-control {top: .5em; right: .5em; font-size: 12px; font-family: Helvetica; line-height: 120%;}";
+    vicistyle += ".slideshow-control button {width: auto; height: auto; padding: 2px 8px; display: flex; align-items: center; gap: .4em; font-size: 1.2em; font-weight: bold; font-family: inherit; line-height: inherit; background-color: rgba(0,60,136,.7);}";
 
     let css = document.createElement("style");
     css.type = "text/css";

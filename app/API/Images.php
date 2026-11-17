@@ -5,6 +5,7 @@ namespace Vici\API;
 use PDO;
 use Vici\Session\Session;
 use Vici\DB\DBConnector;
+use Vici\Service\ReverseGeocoder;
 
 class Images extends APICall
 {
@@ -18,6 +19,13 @@ class Images extends APICall
         parent::__construct($session);
         $this->session = $session;
         $this->db = $session->getDBConnector();
+    }
+
+    public function headers()
+    {
+        header("Content-Type: application/json");
+        header("Cache-Control: private, no-store");
+        header("Expires: 0");
     }
 
     public function payload()
@@ -57,7 +65,8 @@ class Images extends APICall
         // pnt_img_lnk can link one image to multiple points; the derived
         // table pins each image to the lowest point id that is actually
         // inside the requested view, so slides stay unique and in-scope.
-        $sql = "SELECT p.pnt_id, pnt_name, pnt_kind, s.psum_pnt_name,
+        $sql = "SELECT p.pnt_id, pnt_name, pnt_kind, pnt_country, pnt_place,
+                pnt_dflt_short, s.psum_pnt_name, s.psum_short,
                 i.img_id, i.img_path,
                 d.imgd_title, d.imgd_width, d.imgd_height,
                 d.imgd_creator, d.imgd_ownwork,
@@ -99,6 +108,11 @@ class Images extends APICall
 
         $images = [];
         foreach ($rows as $row) {
+            // same toponym as site_list_item.tpl: localized country + place
+            $toponym = ReverseGeocoder::countryNameFor($row['pnt_country'] ?? '', $lang);
+            if (!empty($row['pnt_place'])) {
+                $toponym .= ($toponym !== '' ? ', ' : '') . $row['pnt_place'];
+            }
             $images[] = [
                 'id' => (int)$row['img_id'],
                 'path' => $row['img_path'],
@@ -109,6 +123,8 @@ class Images extends APICall
                 'license' => $row['license_abbr'] ?? '',
                 'siteId' => (int)$row['pnt_id'],
                 'siteTitle' => $row['psum_pnt_name'] ?: $row['pnt_name'],
+                'siteSummary' => $row['psum_short'] ?: ($row['pnt_dflt_short'] ?? ''),
+                'siteToponym' => $toponym,
                 'kind' => (int)$row['pnt_kind'],
             ];
         }
