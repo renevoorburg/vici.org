@@ -163,14 +163,18 @@ class AccessControl
 
     private function hasValidToken(): bool
     {
-        $headers = getallheaders();
+        // an empty or missing token/env value must never count as a match
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
         $token = $headers['X-Vici-Token'] ?? '';
-        $token_match = $token === ($_ENV['VICITOKEN'] ?? '');
+        $envToken = $_ENV['VICITOKEN'] ?? '';
+        $token_match = $token !== '' && $envToken !== ''
+            && hash_equals($envToken, $token);
 
         // Check extra tokens CUST1–CUST9
         if (!$token_match && $token !== '') {
             for ($i = 1; $i <= 9; $i++) {
-                if (($env = $_ENV['CUST' . $i] ?? '') !== '' && $token === $env) {
+                if (($env = $_ENV['CUST' . $i] ?? '') !== ''
+                    && hash_equals($env, $token)) {
                     $token_match = true;
                     break;
                 }
@@ -200,7 +204,7 @@ class AccessControl
         return $token_match || $useragent_match || $ext_secret_match;
     }
 
-    public function denyAccess($message = ''): void 
+    public static function denyAccess($message = ''): void 
     {
         header('HTTP/1.1 403 Forbidden');
         header('Content-Type: application/json');
