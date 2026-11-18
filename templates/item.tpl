@@ -97,7 +97,7 @@
                     </nav>
                 </div>
 
-                <a href="/data-access/{$mainSite->id}" class="access-link">data access {$mainSite->id}</a>
+                <a href="/data-access/{$mainSite->id}" class="access-link" rel="nofollow">data access {$mainSite->id}</a>
 
                 {foreach from=$mainSite->locales key=langKey item=langVal}
                     {if $langVal->description}
