@@ -66,7 +66,9 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
             array('/^museum=([^\/]*)\/?$/i', $this->getNamespace() . 'museum/$1'),
             array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2'),
             array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3'),
-            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3/$4')
+            array('/^(place|battle|people|religion|source-content|source-about)=([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/', $this->getNamespace() . 'articles/$1/$2/$3/$4'),
+            // catch-all for deeper article paths (e.g. place=rome/rome-photos/...)
+            array('/^(place|battle|people|religion|source-content|source-about)=(.+)$/', $this->getNamespace() . 'articles/$1/$2')
         );
     }
 

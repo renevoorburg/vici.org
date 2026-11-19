@@ -50,7 +50,10 @@ class IdentifierRepository
             $identifier->prefix = $normalizer->getPrefix();
             $identifier->namespace = $normalizer->getNamespace();
             $identifier->uri = $normalizer->idToUrl($row['pmeta_livius']);
-            $identifiers[$identifier->uri] = $identifier;
+            // a normalizer that cannot map the stored id must not emit an empty link
+            if ($identifier->uri !== '') {
+                $identifiers[$identifier->uri] = $identifier;
+            }
         }
 
         if ($row['pmeta_romaq']) {
