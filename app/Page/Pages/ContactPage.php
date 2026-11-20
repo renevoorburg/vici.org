@@ -6,6 +6,7 @@ use Vici\Page\PageRenderer;
 use Vici\Session\Session;
 use Vici\Mail\Mailer;
 use Vici\Security\Altcha;
+use Vici\Security\AccessControl;
 
 class ContactPage extends PageRenderer
 {
@@ -25,7 +26,12 @@ class ContactPage extends PageRenderer
             $email = trim((string)($_POST['email'] ?? ''));
             $replyTo = $user ? $user->getEmail() : $email;
 
-            if (!$session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+            // hidden field humans never fill; a filled honeypot means a bot —
+            // block the IP (escalating strikes) and refuse the submission
+            if (trim((string)($_POST['website'] ?? '')) !== '') {
+                AccessControl::blockIp($session->getIP());
+                $error = $session->translator->get('Could not identify you as a human.');
+            } elseif (!$session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
                 $error = $session->translator->get('Invalid form token. Please reload the page and try again.');
             } elseif (mb_strlen($formMessage) < 10) {
                 $error = $session->translator->get('Please enter a message of at least 10 characters.');

@@ -13,6 +13,10 @@
                 <div id="form-error" class="vici-error"></div>
 
                 <form id="register-form" method="post" action="/api/users" novalidate class="vici-form">
+                    <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+                        <label for="reg_website">Website</label>
+                        <input type="text" id="reg_website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="vici-form-grid">
                         <label class="vici-label" for="accountName">{$account_name_label|default:"Account name"}:</label>
                         <div>

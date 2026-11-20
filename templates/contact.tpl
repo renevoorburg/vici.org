@@ -15,6 +15,10 @@
                 <p class="vici-mb">{$contact_intro|default:"Use this form to send a message to the maintainer of Vici.org."}</p>
                 <form action="/contact" method="post" class="vici-form">
                     <input type="hidden" name="csrf_token" value="{$csrf_token|escape}">
+                    <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;" aria-hidden="true">
+                        <label for="frm_website">Website</label>
+                        <input type="text" id="frm_website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="vici-form-grid">
                         {if !$is_logged_in}
                         <label class="vici-label vici-label--field" for="frm_email">{$email_label|default:"Email address"}:</label>

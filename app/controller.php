@@ -28,7 +28,6 @@ switch ($session->getRequestedAction()) {
         $action = fn() => null;
         break;
     case 'favicon.ico':
-        $accessControl->setIsWhitelistLink(true);
         $action = function () {
             $path = __DIR__ . '/assets/favicon.ico';
             header('Content-Type: image/x-icon');
