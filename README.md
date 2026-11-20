@@ -108,19 +108,18 @@ Setup on the server:
 6. Migrate existing images to object storage — `img_path` values in the
    database are not all `/uploads/...`: a large set is `/livius/...` (with
    subdirectories). The legacy static root is not part of the normal
-   stack; `docker-compose.migrate.yml` mounts it read-only at
-   `/srv/static` only for this run (`STATIC_DIR`, default
-   `/var/www/org.vici.static/public`), so one command covers every
-   prefix. The object key is the path relative to that root, i.e.
-   `img_path` minus the leading slash:
+   stack; mount it read-only at `/srv/static` only for this run
+   (`STATIC_DIR`, default `/var/www/org.vici.static/public`), so one
+   command covers every prefix. The object key is the path relative to
+   that root, i.e. `img_path` minus the leading slash:
 
    ```
-   STATIC_DIR=/mnt/bigstorage docker compose --env-file .env.preview \
-     -f docker-compose.yml -f docker-compose.migrate.yml run --rm php \
-     php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
-   STATIC_DIR=/mnt/bigstorage docker compose --env-file .env.preview \
-     -f docker-compose.yml -f docker-compose.migrate.yml run --rm php \
-     php bin/sync-images-to-s3.php /srv/static uploads livius
+   docker compose --env-file .env.preview -f docker-compose.yml run --rm \
+     --volume ${STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro \
+     php php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
+   docker compose --env-file .env.preview -f docker-compose.yml run --rm \
+     --volume ${STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro \
+     php php bin/sync-images-to-s3.php /srv/static uploads livius
    ```
 
    The subdir arguments restrict the sync to those top-level trees;
@@ -143,6 +142,14 @@ Start the stack:
 ```
 docker compose --env-file .env.preview up -d --build
 ```
+
+The server stack mounts `docker/php/prod.ini` into the php container:
+`display_errors=Off` and `log_errors=On` (errors go to
+`docker compose logs php` instead of browser output — no stack traces or
+internal paths leaked). The local stack (`docker-compose.local.yml`)
+deliberately does not mount it, so errors stay visible during
+development. Nothing per-environment to set: running
+`docker-compose.yml` always means production-like error handling.
 
 ## Running without Docker
 

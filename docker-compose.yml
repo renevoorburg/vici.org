@@ -31,10 +31,11 @@ name: vici-novo-preview
 # Note: on first start, wait for vici-preview-mysql to become healthy
 # (importing a full dump takes a while) before browsing.
 #
-# One-off S3 migration of a legacy static tree: add the override file
+# One-off S3 migration of a legacy static tree: mount the source root
+# read-only on the run container (see README step 6):
 #   docker compose --env-file .env.preview -f docker-compose.yml \
-#     -f docker-compose.migrate.yml run --rm php php bin/sync-images-to-s3.php ...
-# (see that file and README step 6).
+#     run --rm --volume ${STATIC_DIR:-/var/www/org.vici.static/public}:/srv/static:ro \
+#     php php bin/sync-images-to-s3.php --dry-run /srv/static uploads livius
 
 services:
   web:
@@ -60,6 +61,9 @@ services:
     volumes:
       - ./:/var/www/local.vici.novo
       - ./${ENV_FILE:-.env.preview}:/var/www/local.vici.novo/.env:ro
+      # production hardening: display_errors=Off etc (local dev stack
+      # in docker-compose.local.yml does not mount this)
+      - ./docker/php/prod.ini:/usr/local/etc/php/conf.d/zz-prod.ini:ro
       # mail() works out of the box: /etc/msmtprc is baked into the image
       # and relays to the Postfix on this host via host.docker.internal:25.
       # Mount a custom msmtprc here for an authenticated SMTP relay instead:
