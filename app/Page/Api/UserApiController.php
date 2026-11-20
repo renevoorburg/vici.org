@@ -38,15 +38,12 @@ class UserApiController
         $passwordConfirm = $data['passwordConfirm'] ?? '';
         $altchaPayload = $data['altcha'] ?? '';
 
-        // ALTCHA verification (same approach as LoginPage)
-        if (!$this->session->isVerifiedRealUser()) {
-            $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
-            if (!$altcha->validate($altchaPayload)) {
-                http_response_code(422);
-                echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
-                return;
-            }
-            $this->session->setIsVerifiedRealUser(true);
+        // ALTCHA verification; every POST needs a fresh, unreplayed solution
+        $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
+        if (!$altcha->validateOnce($altchaPayload)) {
+            http_response_code(422);
+            echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
+            return;
         }
 
         // Basic edge validation (server remains source of truth)

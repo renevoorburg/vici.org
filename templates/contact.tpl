@@ -29,7 +29,9 @@
                     {if $is_logged_in}
                     <div class="vici-hint vici-mb">{$contact_account_hint|default:"The reply address will be the e-mail address of your account."}</div>
                     {/if}
-                    {include file="include/altcha.tpl" is_verified_real_user=$is_verified_real_user bot_challenge_label=$bot_challenge_label}
+                    {if !$is_logged_in}
+                    {include file="include/altcha.tpl" is_verified_real_user=false bot_challenge_label=$bot_challenge_label}
+                    {/if}
                     <div>
                         <input type="submit" class="vici-btn" value="{$send_label|default:"Send"}">
                     </div>

@@ -36,7 +36,9 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
             array('/^https?:\/\/(?:www\.)?livius\.org\/museum\/([^\/]*)\/?$/', 'livius:museum=$1'),
             array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/?$/', 'livius:$1=$2'),
             array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/?$/', 'livius:$1=$2/$3'),
-            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$/', 'livius:$1=$2/$3/$4')
+            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$/', 'livius:$1=$2/$3/$4'),
+            // catch-all for deeper article paths (e.g. .../place/rome/rome-photos/...)
+            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/(.+)$/', 'livius:$1=$2')
         );
     }
 
@@ -57,7 +59,9 @@ class Livius extends AbstractNormalizer implements UrlNormalizerInterface
             array('/^https?:\/\/(?:www\.)?livius\.org\/museum\/([^\/]*)\/?$/', 'museum=$1'),
             array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/?$/', '$1=$2'),
             array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/?$/', '$1=$2/$3'),
-            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$/', '$1=$2/$3/$4')
+            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/?$/', '$1=$2/$3/$4'),
+            // catch-all for deeper article paths (e.g. .../place/rome/rome-photos/...)
+            array('/^https?:\/\/(?:www\.)?livius\.org\/[^\/]+\/([^\/]+)\/(.+)$/', '$1=$2')
         );
     }
 

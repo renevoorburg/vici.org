@@ -60,7 +60,7 @@
                         <div class="meta-identifiers">
                             <h3>{$identifier_metadata|default:"Identifiers"}</h3>
                             <ul class="identifier-list">
-                            <li><a href="https://vici.org/vici/{$mainSite->id}" class="hover">vici:{$mainSite->id}</a></li>
+                            <li><a href="https://vici.org/vici/{$mainSite->id|escape}" class="hover">vici:{$mainSite->id|escape}</a></li>
                             {foreach $mainSite->identifiers as $identifier}
                             <li><a href="{$identifier->uri|escape}" class="hover">{$identifier->getQname()|escape}</a></li>
                             {/foreach}

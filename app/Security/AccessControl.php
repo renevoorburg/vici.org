@@ -82,16 +82,16 @@ class AccessControl
         }
             
         if ($this->hasBlockedIP()) {
-            $this->denyAccess('IP blocked');
+            self::denyAccess('IP blocked');
         }
 
         if ($this->requires_token && !$this->hasValidToken()) {
-            $this->denyAccess('Invalid token');
+            self::denyAccess('Invalid token');
         }
 
         if ($this->is_bot_trap_link) {
             $this->blockIP();
-            $this->denyAccess('Blocked');
+            self::denyAccess('Blocked');
         }
 
         if ($this->is_rate_limited_anonymously && !$this->has_authenticated_user) {
@@ -165,7 +165,8 @@ class AccessControl
     {
         // an empty or missing token/env value must never count as a match
         $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $token = $headers['X-Vici-Token'] ?? '';
+        $token = $headers['X-Vici-Token'] ?? $headers['x-vici-token']
+            ?? $_SERVER['HTTP_X_VICI_TOKEN'] ?? '';
         $envToken = $_ENV['VICITOKEN'] ?? '';
         $token_match = $token !== '' && $envToken !== ''
             && hash_equals($envToken, $token);
@@ -194,11 +195,15 @@ class AccessControl
             }
         }
 
-        // Check EXTSECRET in query string
+        // Check EXTSECRET in query string; it must match as a complete
+        // parameter sequence, not as a substring inside another value
         $ext_secret_match = false;
         $ext_secret = $_ENV['EXTSECRET'] ?? null;
         if ($ext_secret && isset($_SERVER['QUERY_STRING'])) {
-            $ext_secret_match = str_contains($_SERVER['QUERY_STRING'], $ext_secret);
+            $ext_secret_match = str_contains(
+                '&' . $_SERVER['QUERY_STRING'] . '&',
+                '&' . $ext_secret . '&'
+            );
         }
 
         return $token_match || $useragent_match || $ext_secret_match;

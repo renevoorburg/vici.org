@@ -22,8 +22,7 @@ class LostPwPage extends PageRenderer
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && $email !== '') {
             $token = $_POST['altcha'] ?? '';
-            if ($session->isVerifiedRealUser() || $altcha->validate($token)) {
-                $session->setIsVerifiedRealUser(true);
+            if ($altcha->validateOnce($token)) {
                 $repo = new UserRepository($session->getDBConnector());
                 $user = $repo->findByEmail(strtolower($email));
                 if ($user !== null) {

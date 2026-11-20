@@ -64,4 +64,33 @@ class Altcha
             return false;
         }
     }
+
+    /**
+     * Valideer een payload en blokkeer hergebruik (replay).
+     *
+     * Een opgeloste challenge blijft tot 600s geldig; zonder replay-guard kan
+     * dezelfde payload meerdere formulieren/posts autoriseren. apcu_add() is
+     * atomair: slechts één request kan een payload-key claimen.
+     *
+     * @param string $payload De base64 payload zoals de widget die in het formulier zet
+     * @return bool True als de payload valide én nog niet eerder gebruikt is
+     */
+    public function validateOnce(string $payload): bool
+    {
+        if ($payload === '') {
+            return false;
+        }
+        if (!function_exists('apcu_add')) {
+            return $this->validate($payload);
+        }
+        $replayKey = 'altcha_used_' . hash('sha256', $payload);
+        if (!apcu_add($replayKey, true, 660)) {
+            return false;
+        }
+        if (!$this->validate($payload)) {
+            apcu_delete($replayKey);
+            return false;
+        }
+        return true;
+    }
 }

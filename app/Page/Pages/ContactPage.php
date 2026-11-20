@@ -34,13 +34,11 @@ class ContactPage extends PageRenderer
             } elseif ($user === null && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error = $session->translator->get('Please enter a valid e-mail address.');
             } else {
-                $verified = $session->isVerifiedRealUser();
-                if (!$verified) {
-                    $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
-                    $verified = $altcha->validate($_POST['altcha'] ?? '');
-                }
+                // logged-in users already proved themselves at registration;
+                // others must submit a fresh, unreplayed ALTCHA per POST
+                $verified = $user !== null || (new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? ''))
+                    ->validateOnce((string)($_POST['altcha'] ?? ''));
                 if ($verified) {
-                    $session->setIsVerifiedRealUser(true);
                     $to = ($_ENV['MAIL_CONTACT'] ?? '') ?: ($_ENV['MAIL_FROM'] ?? 'noreply@vici.org');
                     $body = sprintf(
                             $session->translator->get("Message from %s (%s) via the Vici.org contact form:\n\n"),

@@ -46,13 +46,14 @@ switch ($session->getRequestedAction()) {
                 $accessControl->setRequiresAuthOrToken(true);
                 $action = fn() => (new API\RDF($session))->get();
                 break;
-            case 'json':
-                http_response_code(404);
-                $action = fn() => null;
-                break;
-            default:
+            case 'default':
+            case '':
                 $accessControl->setIsRateLimitedAnonymously(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
+                break;
+            default:
+                http_response_code(404);
+                $action = fn() => null;
                 break;
         }
         break;
