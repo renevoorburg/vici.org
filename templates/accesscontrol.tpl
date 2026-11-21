@@ -6,6 +6,7 @@
 
     <h1>{$accesscontrol_title|default:"Access control"}</h1>
 
+    <h2>{$subnet_blocks_label|default:"Blocked subnets"}</h2>
     <table class="stats-table">
         <thead>
             <tr>
