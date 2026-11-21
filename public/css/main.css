@@ -299,6 +299,27 @@ main.homepage {
     line-height: 0;
     flex-shrink: 0;
 }
+
+.slideshow-site {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.25rem;
+}
+
+.pswp__dynamic-caption .slideshow-site .marker-icon {
+    flex-shrink: 0;
+}
+
+.pswp__dynamic-caption .slideshow-site a {
+    font-weight: 600;
+}
+
+/* lighter than the light-page .toponym for the dark caption background */
+.pswp__dynamic-caption .slideshow-site .toponym {
+    color: #a9c3ea;
+}
+
 .highlights-scroll:not(.has-selection) #selectionbox-content,
 .highlights-scroll:not(.has-selection) .highlights-content h2,
 .highlights-scroll:not(.has-highlights) .highlights-content h2 {

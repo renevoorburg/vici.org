@@ -133,6 +133,8 @@ return [
     "References" => "Bronnen",
     "Selected" => "Geselecteerd",
 
+    // defaults from footer-home.js:
+
     // defaults from image.tpl:
     "Used in" => "Wordt getoond bij",
     "Creator" => "Maker",

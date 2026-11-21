@@ -57,16 +57,15 @@
                             {/if}
                             </ul>
                         </div>
-                        {if $mainSite->identifiers->count() > 0}
-                            <div class="meta-identifiers">
-                                <h3>{$identifier_metadata|default:"Identifiers"}</h3>
-                                <ul class="identifier-list">
-                                {foreach $mainSite->identifiers as $identifier}
-                                <li><a href="{$identifier->uri|escape}" class="hover">{$identifier->getQname()|escape}</a></li>
-                                {/foreach}
-                                </ul>
-                            </div>
-                        {/if}
+                        <div class="meta-identifiers">
+                            <h3>{$identifier_metadata|default:"Identifiers"}</h3>
+                            <ul class="identifier-list">
+                            <li><a href="https://vici.org/vici/{$mainSite->id|escape}" class="hover">vici:{$mainSite->id|escape}</a></li>
+                            {foreach $mainSite->identifiers as $identifier}
+                            <li><a href="{$identifier->uri|escape}" class="hover">{$identifier->getQname()|escape}</a></li>
+                            {/foreach}
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -97,7 +96,7 @@
                     </nav>
                 </div>
 
-                <a href="/data-access/{$mainSite->id}" class="access-link">data access {$mainSite->id}</a>
+                <a href="/data-access/{$mainSite->id}" class="access-link" rel="nofollow">data access {$mainSite->id}</a>
 
                 {foreach from=$mainSite->locales key=langKey item=langVal}
                     {if $langVal->description}

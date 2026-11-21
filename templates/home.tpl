@@ -1,4 +1,8 @@
 {extends file="base.tpl"}
+{block name=stylesheets}
+    <link rel="stylesheet" href="/js/photoswipe/dist/photoswipe.css">
+    <link rel="stylesheet" href="/js/photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css">
+{/block}
 {block name=main}
     <main class="homepage">  
         <div id="map"></div>
@@ -20,5 +24,5 @@
 {/block}
 
 {block name=footerscripts}
-    <script src="/js/footer-home.js"></script>
+    <script src="/js/footer-home.js?v={$smarty.now|date_format:"%Y%m%d"}"></script>
 {/block}

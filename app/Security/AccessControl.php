@@ -12,6 +12,12 @@ class AccessControl
     public const MAX_BOTLIKE_REQUESTS = 3;
     public const BLOCK_TIME_SECONDS = 900;
 
+    // escalating strikes: 15min → 24h → 7d → 30d
+    private const STRIKE_TTLS = [900, 86400, 604800];
+    private const MAX_BLOCK_TTL = 2592000;   // 30 days
+    private const STRIKES_TTL = 7776000;     // strike count decays after 90 quiet days
+    private const TRAP_WINDOW = 86400;       // trap hits counted over 24h
+
     private string $ip;
     private string $requested_action;
     private bool $has_authenticated_user;
@@ -23,14 +29,13 @@ class AccessControl
 
     private bool $is_bot_attracting_link = false;
     private bool $is_bot_trap_link = false;
-    private bool $is_whitelist_link = false;
     private bool $is_rate_limited_anonymously = false;
 
 
 
     public function __construct(string $ip, string $requested_action, bool $has_authenticated_user)
     {
-        $this->ip = $ip;
+        $this->ip = self::normalizeIp($ip);
         $this->requested_action = $requested_action;
         $this->has_authenticated_user = $has_authenticated_user;
     }
@@ -64,11 +69,6 @@ class AccessControl
         $this->is_bot_trap_link = $value;
     }
 
-    public function setIsWhitelistLink(bool $value): void
-    {
-        $this->is_whitelist_link = $value;
-    }
-
     public function setIsRateLimitedAnonymously(bool $value): void
     {
         $this->is_rate_limited_anonymously = $value;
@@ -77,21 +77,28 @@ class AccessControl
 
     public function enforceAndRun(callable $requested_action): void
     {
-        if ($this->is_whitelist_link) {
-            $this->unblockIP();
+        // Static assets (favicon) bypass IP bans so browsers still get them,
+        // but they do NOT unban the IP. Source is public, so this is a
+        // convenience, not a security boundary.
+        if ($this->requested_action === 'favicon.ico') {
+            $requested_action();
+            return;
         }
-            
+
         if ($this->hasBlockedIP()) {
-            $this->denyAccess('IP blocked');
+            self::denyAccess('IP blocked');
         }
 
         if ($this->requires_token && !$this->hasValidToken()) {
-            $this->denyAccess('Invalid token');
+            self::denyAccess('Invalid token');
         }
 
         if ($this->is_bot_trap_link) {
-            $this->blockIP();
-            $this->denyAccess('Blocked');
+            $this->applyTrapHit();
+            // keep /data-access/* out of search indexes — the visible link on
+            // item pages is a honeypot, not real content
+            header('X-Robots-Tag: noindex, nofollow');
+            self::denyAccess('Blocked');
         }
 
         if ($this->is_rate_limited_anonymously && !$this->has_authenticated_user) {
@@ -149,28 +156,81 @@ class AccessControl
         return apcu_exists("ip_blocked_{$this->ip}");
     }
 
-    private function blockIP(): void
+    /**
+     * A single trap hit only earns a 403 — real users sometimes follow the
+     * visible "data access" link. A strike (and thus an IP ban) is only
+     * applied from the second trap hit within TRAP_WINDOW.
+     */
+    private function applyTrapHit(): void
     {
-        apcu_store("ip_blocked_{$this->ip}", true, self::BLOCK_TIME_SECONDS);
+        $key = "trap_hits_{$this->ip}";
+        $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+        if (!$success) {
+            apcu_add($key, 0, self::TRAP_WINDOW);
+            $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+            if (!$success) {
+                $hits = ((int)apcu_fetch($key)) + 1;
+                apcu_store($key, $hits, self::TRAP_WINDOW);
+            }
+        }
+        if ($hits >= 2) {
+            self::blockIp($this->ip);
+        }
     }
 
-    private function unblockIP(): void
+    /**
+     * Record a strike and (re)block the IP for an escalating duration:
+     * 15min → 24h → 7d → 30d. Strikes decay after 90 quiet days.
+     */
+    public static function blockIp(string $ip): void
     {
-        if (apcu_exists("ip_blocked_{$this->ip}")) {
-            apcu_delete("ip_blocked_{$this->ip}");
+        $ip = self::normalizeIp($ip);
+        $strikesKey = "ip_strikes_{$ip}";
+
+        // Increment the strike counter atomically. If the key does not yet
+        // exist, seed it with 0 first and then increment.
+        $strikes = apcu_inc($strikesKey, 1, $success, self::STRIKES_TTL);
+        if (!$success) {
+            apcu_add($strikesKey, 0, self::STRIKES_TTL);
+            $strikes = apcu_inc($strikesKey, 1, $success, self::STRIKES_TTL);
+            if (!$success) {
+                $strikes = ((int)apcu_fetch($strikesKey)) + 1;
+                apcu_store($strikesKey, $strikes, self::STRIKES_TTL);
+            }
         }
+
+        $ttl = self::STRIKE_TTLS[$strikes - 1] ?? self::MAX_BLOCK_TTL;
+        apcu_store("ip_blocked_{$ip}", true, $ttl);
+    }
+
+    // IPv6 privacy addresses rotate within a /64 — key bans on the prefix
+    private static function normalizeIp(string $ip): string
+    {
+        if (str_starts_with($ip, 'v4:') || str_starts_with($ip, 'v6:')) {
+            return $ip; // already normalized
+        }
+        $packed = @inet_pton($ip);
+        if ($packed !== false && strlen($packed) === 16) {
+            return 'v6:' . substr(bin2hex($packed), 0, 16);
+        }
+        return 'v4:' . $ip;
     }
 
     private function hasValidToken(): bool
     {
-        $headers = getallheaders();
-        $token = $headers['X-Vici-Token'] ?? '';
-        $token_match = $token === ($_ENV['VICITOKEN'] ?? '');
+        // an empty or missing token/env value must never count as a match
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
+        $token = $headers['X-Vici-Token'] ?? $headers['x-vici-token']
+            ?? $_SERVER['HTTP_X_VICI_TOKEN'] ?? '';
+        $envToken = $_ENV['VICITOKEN'] ?? '';
+        $token_match = $token !== '' && $envToken !== ''
+            && hash_equals($envToken, $token);
 
         // Check extra tokens CUST1–CUST9
         if (!$token_match && $token !== '') {
             for ($i = 1; $i <= 9; $i++) {
-                if (($env = $_ENV['CUST' . $i] ?? '') !== '' && $token === $env) {
+                if (($env = $_ENV['CUST' . $i] ?? '') !== ''
+                    && hash_equals($env, $token)) {
                     $token_match = true;
                     break;
                 }
@@ -190,17 +250,21 @@ class AccessControl
             }
         }
 
-        // Check EXTSECRET in query string
+        // Check EXTSECRET in query string; it must match as a complete
+        // parameter sequence, not as a substring inside another value
         $ext_secret_match = false;
         $ext_secret = $_ENV['EXTSECRET'] ?? null;
         if ($ext_secret && isset($_SERVER['QUERY_STRING'])) {
-            $ext_secret_match = str_contains($_SERVER['QUERY_STRING'], $ext_secret);
+            $ext_secret_match = str_contains(
+                '&' . $_SERVER['QUERY_STRING'] . '&',
+                '&' . $ext_secret . '&'
+            );
         }
 
         return $token_match || $useragent_match || $ext_secret_match;
     }
 
-    public function denyAccess($message = ''): void 
+    public static function denyAccess($message = ''): void 
     {
         header('HTTP/1.1 403 Forbidden');
         header('Content-Type: application/json');

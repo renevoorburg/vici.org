@@ -4,6 +4,7 @@ namespace Vici\Page\Api;
 
 use Vici\Session\Session;
 use Vici\Security\Altcha;
+use Vici\Security\AccessControl;
 use Vici\Model\User\Command\RegisterUserCommand;
 use Vici\Model\User\Command\RegisterUserHandler;
 use Vici\Model\User\UserRepository;
@@ -38,15 +39,21 @@ class UserApiController
         $passwordConfirm = $data['passwordConfirm'] ?? '';
         $altchaPayload = $data['altcha'] ?? '';
 
-        // ALTCHA verification (same approach as LoginPage)
-        if (!$this->session->isVerifiedRealUser()) {
-            $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
-            if (!$altcha->validate($altchaPayload)) {
-                http_response_code(422);
-                echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
-                return;
-            }
-            $this->session->setIsVerifiedRealUser(true);
+        // Honeypot: hidden field humans never fill; a filled honeypot means a
+        // bot — block the IP (escalating strikes) and refuse the submission
+        if (trim((string)($data['website'] ?? '')) !== '') {
+            AccessControl::blockIp($this->session->getIP());
+            http_response_code(422);
+            echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
+            return;
+        }
+
+        // ALTCHA verification; every POST needs a fresh, unreplayed solution
+        $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
+        if (!$altcha->validateOnce($altchaPayload)) {
+            http_response_code(422);
+            echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
+            return;
         }
 
         // Basic edge validation (server remains source of truth)
@@ -75,14 +82,7 @@ class UserApiController
 
         if ($errors) {
             http_response_code(422);
-            echo json_encode([
-                'errors' => $errors,
-                'debug' => [
-                    'accountName' => $accountNameTrim,
-                    'realName' => $realNameTrim,
-                    'email' => $emailTrim
-                ]
-            ]);
+            echo json_encode(['errors' => $errors]);
             return;
         }
 
@@ -99,17 +99,10 @@ class UserApiController
         try {
             $result = $handler($cmd); // expected array: ['id' => ..., 'createdAt' => ...]
             http_response_code(201);
-            $result['debug'] = 'ok';
             echo json_encode($result);
         } catch (\DomainException $e) {
             // Voorbeelden: uniqueness/conflict
-            $payload = [
-                'message' => $e->getMessage(),
-                'debug' => [
-                    'exception' => get_class($e),
-                    'message' => $e->getMessage()
-                ]
-            ];
+            $payload = ['message' => $e->getMessage()];
             if (str_contains($e->getMessage(), 'account taken')) {
                 $payload['errors'] = ['accountName' => 'user.account_taken'];
                 http_response_code(409);
@@ -123,22 +116,11 @@ class UserApiController
         } catch (\RuntimeException $e) {
             // Nog niet geïmplementeerd
             http_response_code(501);
-            echo json_encode([
-                'message' => 'Not implemented',
-                'debug' => [
-                    'exception' => get_class($e),
-                    'message' => $e->getMessage()
-                ]
-            ]);
+            echo json_encode(['message' => 'Not implemented']);
         } catch (\Throwable $e) {
+            error_log('UserApiController: ' . get_class($e) . ': ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode([
-                'message' => 'Server error',
-                'debug' => [
-                    'exception' => get_class($e),
-                    'message' => $e->getMessage()
-                ]
-            ]);
+            echo json_encode(['message' => 'Server error']);
         }
     }
 }

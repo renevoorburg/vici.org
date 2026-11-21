@@ -34,6 +34,7 @@
         email: $('#email')?.value || '',
         password: $('#password')?.value || '',
         passwordConfirm: $('#passwordConfirm')?.value || '',
+        website: $('#reg_website')?.value || '',
         altcha: getAltchaPayload()
       };
 

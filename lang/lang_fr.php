@@ -130,6 +130,8 @@ return [
     "not yet provided" => "pas encore renseigné",
     "more info" => "plus d'informations",
 
+    // defaults from footer-home.js:
+
     // defaults from image.tpl:
     "Used in" => "Utilisé dans",
     "Creator" => "Auteur",

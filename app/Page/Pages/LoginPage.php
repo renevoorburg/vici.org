@@ -27,7 +27,7 @@ class LoginPage extends PageRenderer
         $altcha = new Altcha($_ENV['ALTCHA_HMAC_KEY'] ?? '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-            if ($this->session->isVerifiedRealUser() || $altcha->validate($token)) {
+            if ($altcha->validateOnce($token)) {
                 if ($accountname && $password) {
                     $userRepository = new UserRepository($this->session->getDBConnector());
                     $user = $userRepository->authenticateUser($accountname, $password);
@@ -37,7 +37,6 @@ class LoginPage extends PageRenderer
                             ? $this->session->translator->get("Your account has not been activated yet. Please follow the activation link in the email you received.")
                             : $this->session->translator->get("This account is disabled.");
                     } elseif ($user) {
-                        $this->session->setIsVerifiedRealUser(true);
                         $this->session->setUser($user);
                         $return = $_GET['return'] ?? '';
                         header("Location: " . (preg_match('#^/[^/]#', $return) ? $return : '/'));
@@ -47,7 +46,6 @@ class LoginPage extends PageRenderer
                     }
                 }
             } else {
-                $this->session->setIsVerifiedRealUser(false);
                 $this->error_message = $this->session->translator->get("Could not identify you as a human.");
             }
             usleep(500000); 

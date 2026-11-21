@@ -28,7 +28,6 @@ switch ($session->getRequestedAction()) {
         $action = fn() => null;
         break;
     case 'favicon.ico':
-        $accessControl->setIsWhitelistLink(true);
         $action = function () {
             $path = __DIR__ . '/assets/favicon.ico';
             header('Content-Type: image/x-icon');
@@ -46,9 +45,14 @@ switch ($session->getRequestedAction()) {
                 $accessControl->setRequiresAuthOrToken(true);
                 $action = fn() => (new API\RDF($session))->get();
                 break;
-            default:
+            case 'default':
+            case '':
                 $accessControl->setIsRateLimitedAnonymously(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
+                break;
+            default:
+                http_response_code(404);
+                $action = fn() => null;
                 break;
         }
         break;
@@ -115,6 +119,10 @@ switch ($session->getRequestedAction()) {
     case 'highlight.php':
         $accessControl->setRequiresToken(true);
         $action = fn() => (new API\Highlights($session))->get();
+        break;
+    case 'images.php':
+        $accessControl->setRequiresToken(true);
+        $action = fn() => (new API\Images($session))->get();
         break;
     case 'captcha':
         $accessControl->setIsRateLimitedAnonymously(true);
