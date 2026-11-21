@@ -17,6 +17,8 @@ class AccessControl
     private const MAX_BLOCK_TTL = 2592000;   // 30 days
     private const STRIKES_TTL = 7776000;     // strike count decays after 90 quiet days
     private const TRAP_WINDOW = 86400;       // trap hits counted over 24h
+    private const SUBNET_BLOCK_THRESHOLD = 20; // trap hits per subnet within TRAP_WINDOW
+    private const SUBNET_BLOCK_TTL = 86400;    // subnet block duration (24h)
 
     private string $ip;
     private string $requested_action;
@@ -85,7 +87,7 @@ class AccessControl
             return;
         }
 
-        if ($this->hasBlockedIP()) {
+        if ($this->hasBlockedIP() || $this->hasBlockedSubnet()) {
             self::denyAccess('IP blocked');
         }
 
@@ -161,6 +163,42 @@ class AccessControl
         return apcu_exists("ip_blocked_{$this->ip}");
     }
 
+    private function hasBlockedSubnet(): bool
+    {
+        return apcu_exists("subnet_blocked_{$this->subnetKey()}");
+    }
+
+    private function subnetKey(): string
+    {
+        if (str_starts_with($this->ip, 'v6:')) {
+            // IPv6 /64: first 16 hex chars (64 bits)
+            return 'v6:' . substr($this->ip, 3, 16);
+        }
+        // IPv4 /24: first three octets
+        $parts = explode('.', substr($this->ip, 3));
+        return 'v4:' . $parts[0] . '.' . $parts[1] . '.' . $parts[2];
+    }
+
+    private function recordSubnetTrapHit(): void
+    {
+        $key = "subnet_trap_hits_{$this->subnetKey()}";
+        $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+        if (!$success) {
+            apcu_add($key, 0, self::TRAP_WINDOW);
+            $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+            if (!$success) {
+                $hits = ((int)apcu_fetch($key)) + 1;
+            }
+        }
+        // apcu_inc only sets the TTL when it creates the key; refresh it so
+        // the window is measured from the most recent hit.
+        apcu_store($key, $hits, self::TRAP_WINDOW);
+
+        if ($hits >= self::SUBNET_BLOCK_THRESHOLD) {
+            apcu_store("subnet_blocked_{$this->subnetKey()}", true, self::SUBNET_BLOCK_TTL);
+        }
+    }
+
     /**
      * A single trap hit only earns a 403 — real users sometimes follow the
      * visible "data access" link. A strike (and thus an IP ban) is only
@@ -180,6 +218,7 @@ class AccessControl
         // apcu_inc only sets the TTL when it creates the key; refresh it so
         // the trap window is measured from the most recent hit.
         apcu_store($key, $hits, self::TRAP_WINDOW);
+        $this->recordSubnetTrapHit();
         if ($hits >= 2) {
             self::blockIp($this->ip);
             return true;
