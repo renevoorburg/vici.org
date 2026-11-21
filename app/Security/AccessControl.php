@@ -94,11 +94,16 @@ class AccessControl
         }
 
         if ($this->is_bot_trap_link) {
-            $this->applyTrapHit();
-            // keep /data-access/* out of search indexes — the visible link on
-            // item pages is a honeypot, not real content
+            if ($this->applyTrapHit()) {
+                self::denyAccess('Blocked');
+            }
+            // first hit: send the visitor home instead of a bare 403 — real
+            // users sometimes follow old indexed links. The hit is still
+            // counted; a repeat within TRAP_WINDOW earns a strike. The 301
+            // also tells search engines the trap URL moved to /.
             header('X-Robots-Tag: noindex, nofollow');
-            self::denyAccess('Blocked');
+            header('Location: /', true, 301);
+            exit;
         }
 
         if ($this->is_rate_limited_anonymously && !$this->has_authenticated_user) {
@@ -161,7 +166,7 @@ class AccessControl
      * visible "data access" link. A strike (and thus an IP ban) is only
      * applied from the second trap hit within TRAP_WINDOW.
      */
-    private function applyTrapHit(): void
+    private function applyTrapHit(): bool
     {
         $key = "trap_hits_{$this->ip}";
         $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
@@ -175,7 +180,9 @@ class AccessControl
         }
         if ($hits >= 2) {
             self::blockIp($this->ip);
+            return true;
         }
+        return false;
     }
 
     /**
