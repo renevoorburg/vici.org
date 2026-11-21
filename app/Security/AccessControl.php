@@ -227,42 +227,25 @@ class AccessControl
     }
 
     /**
-     * Snapshot of the APCu-backed enforcement state, for the admin
-     * "access control" page: active IP/subnet blocks with seconds until
-     * expiry, plus the strike and trap-hit counters feeding them.
+     * Active subnet blocks from APCu, for the admin "access control"
+     * page: subnet key => seconds until expiry.
      */
     public static function listBlocks(): array
     {
-        $blocks = [
-            'ips' => [], 'subnets' => [], 'strikes' => [],
-            'trap_hits' => [], 'subnet_hits' => [],
-        ];
+        $blocks = [];
         $info = function_exists('apcu_cache_info') ? @apcu_cache_info() : false;
         foreach (($info['cache_list'] ?? []) as $entry) {
             $key = (string)($entry['info'] ?? '');
+            if (!str_starts_with($key, 'subnet_blocked_')) {
+                continue;
+            }
             // deletion_time is the expiry timestamp; fall back to ttl
             $expires = (int)($entry['deletion_time'] ?? 0);
-            $ttl = $expires > 0
+            $blocks[substr($key, strlen('subnet_blocked_'))] = $expires > 0
                 ? max(0, $expires - time())
                 : (int)($entry['ttl'] ?? 0);
-            if (str_starts_with($key, 'ip_blocked_')) {
-                $blocks['ips'][substr($key, strlen('ip_blocked_'))] = $ttl;
-            } elseif (str_starts_with($key, 'subnet_blocked_')) {
-                $blocks['subnets'][substr($key, strlen('subnet_blocked_'))] = $ttl;
-            } elseif (str_starts_with($key, 'ip_strikes_')) {
-                $blocks['strikes'][substr($key, strlen('ip_strikes_'))] =
-                    (int)apcu_fetch($key);
-            } elseif (str_starts_with($key, 'subnet_trap_hits_')) {
-                $blocks['subnet_hits'][substr($key, strlen('subnet_trap_hits_'))] =
-                    (int)apcu_fetch($key);
-            } elseif (str_starts_with($key, 'trap_hits_')) {
-                $blocks['trap_hits'][substr($key, strlen('trap_hits_'))] =
-                    (int)apcu_fetch($key);
-            }
         }
-        foreach ($blocks as &$map) {
-            ksort($map);
-        }
+        ksort($blocks);
         return $blocks;
     }
 

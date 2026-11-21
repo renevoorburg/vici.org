@@ -375,11 +375,7 @@ return [
 
     // access control page:
     'Access control' => 'Gestion des accès',
-    'Blocked IPs' => 'IP bloquées',
     'Blocked subnets' => 'Sous-réseaux bloqués',
-    'Strikes' => 'Strikes',
-    'Trap hits (last 24h)' => 'Hits de piège (24 dernières h)',
-    'Subnet trap hits (last 24h)' => 'Hits de piège par sous-réseau (24 dernières h)',
     'Address' => 'Adresse',
     'Expires in' => 'Expire dans',
     'None' => 'Aucun',

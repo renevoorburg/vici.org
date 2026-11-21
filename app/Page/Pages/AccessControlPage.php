@@ -20,8 +20,6 @@ class AccessControlPage extends PageRenderer
         parent::__construct($this->template, $session);
         $this->assignTranslatedTemplateVars($this->template);
 
-        $blocks = AccessControl::listBlocks();
-
         $formatTtl = function (int $seconds): string {
             if ($seconds <= 0) {
                 return '—';
@@ -38,26 +36,10 @@ class AccessControlPage extends PageRenderer
             return $minutes . 'm ' . ($seconds % 60) . 's';
         };
 
-        $ttlRows = function (array $map) use ($formatTtl) {
-            $rows = [];
-            foreach ($map as $key => $ttl) {
-                $rows[] = ['key' => $key, 'ttl' => $formatTtl($ttl)];
-            }
-            return $rows;
-        };
-
-        $countRows = function (array $map) {
-            $rows = [];
-            foreach ($map as $key => $count) {
-                $rows[] = ['key' => $key, 'count' => $count];
-            }
-            return $rows;
-        };
-
-        $this->assign('ip_blocks', $ttlRows($blocks['ips']));
-        $this->assign('subnet_blocks', $ttlRows($blocks['subnets']));
-        $this->assign('strikes', $countRows($blocks['strikes']));
-        $this->assign('trap_hits', $countRows($blocks['trap_hits']));
-        $this->assign('subnet_hits', $countRows($blocks['subnet_hits']));
+        $rows = [];
+        foreach (AccessControl::listBlocks() as $subnet => $ttl) {
+            $rows[] = ['key' => $subnet, 'ttl' => $formatTtl($ttl)];
+        }
+        $this->assign('subnet_blocks', $rows);
     }
 }

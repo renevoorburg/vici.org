@@ -382,11 +382,7 @@ return [
 
     // access control page:
     'Access control' => 'Toegangsbeheer',
-    'Blocked IPs' => 'Geblokkeerde IP-adressen',
     'Blocked subnets' => 'Geblokkeerde subnetten',
-    'Strikes' => 'Strikes',
-    'Trap hits (last 24h)' => 'Honeypot-hits (laatste 24u)',
-    'Subnet trap hits (last 24h)' => 'Subnet-honeypot-hits (laatste 24u)',
     'Address' => 'Adres',
     'Expires in' => 'Verloopt over',
     'None' => 'Geen',

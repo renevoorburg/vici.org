@@ -375,11 +375,7 @@ return [
 
     // access control page:
     'Access control' => 'Zugriffsverwaltung',
-    'Blocked IPs' => 'Blockierte IP-Adressen',
     'Blocked subnets' => 'Blockierte Subnetze',
-    'Strikes' => 'Strikes',
-    'Trap hits (last 24h)' => 'Fallen-Treffer (letzte 24 Std.)',
-    'Subnet trap hits (last 24h)' => 'Subnetz-Fallen-Treffer (letzte 24 Std.)',
     'Address' => 'Adresse',
     'Expires in' => 'Läuft ab in',
     'None' => 'Keine',
