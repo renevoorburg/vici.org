@@ -16,6 +16,7 @@ class AccessControl
     private const STRIKE_TTLS = [900, 86400, 604800];
     private const MAX_BLOCK_TTL = 2592000;   // 30 days
     private const STRIKES_TTL = 7776000;     // strike count decays after 90 quiet days
+    private const TRAP_WINDOW = 86400;       // trap hits counted over 24h
 
     private string $ip;
     private string $requested_action;
@@ -93,7 +94,10 @@ class AccessControl
         }
 
         if ($this->is_bot_trap_link) {
-            $this->applyStrike();
+            $this->applyTrapHit();
+            // keep /data-access/* out of search indexes — the visible link on
+            // item pages is a honeypot, not real content
+            header('X-Robots-Tag: noindex, nofollow');
             self::denyAccess('Blocked');
         }
 
@@ -152,9 +156,26 @@ class AccessControl
         return apcu_exists("ip_blocked_{$this->ip}");
     }
 
-    private function applyStrike(): void
+    /**
+     * A single trap hit only earns a 403 — real users sometimes follow the
+     * visible "data access" link. A strike (and thus an IP ban) is only
+     * applied from the second trap hit within TRAP_WINDOW.
+     */
+    private function applyTrapHit(): void
     {
-        self::blockIp($this->ip);
+        $key = "trap_hits_{$this->ip}";
+        $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+        if (!$success) {
+            apcu_add($key, 0, self::TRAP_WINDOW);
+            $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
+            if (!$success) {
+                $hits = ((int)apcu_fetch($key)) + 1;
+                apcu_store($key, $hits, self::TRAP_WINDOW);
+            }
+        }
+        if ($hits >= 2) {
+            self::blockIp($this->ip);
+        }
     }
 
     /**
