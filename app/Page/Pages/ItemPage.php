@@ -86,7 +86,47 @@ class ItemPage extends PageRenderer
             $metaDescription = $docTitle . ' — Vici.org';
         }
 
-        $canonicalUrl = 'https://vici.org/vici/' . $site->id;
+        $availableLangs = $this->session->getAvailableLanguages();
+
+        // Canonical reflects the language of the displayed description, not the UI language.
+        $contentLang = $preferredLocaleLanguage;
+        if ($contentLang === '' || !in_array($contentLang, $availableLangs, true)) {
+            // Fall back to the UI language, which always leads to the same displayed content.
+            $contentLang = in_array($sessionLanguage, $availableLangs, true)
+                ? $sessionLanguage
+                : ($availableLangs[0] ?? 'en');
+        }
+
+        $canonicalUrl = 'https://vici.org/vici/' . $site->id . '?lang=' . $contentLang;
+
+        $hreflangAlternates = [];
+        foreach ($availableLangs as $lang) {
+            $loc = $site->locales->getByLanguage($lang);
+            if ($loc !== null && !empty($loc->description)) {
+                $hreflangAlternates[] = [
+                    'lang' => $lang,
+                    'url'  => 'https://vici.org/vici/' . $site->id . '?lang=' . $lang,
+                ];
+            }
+        }
+
+        // x-default: English if present, otherwise first available content language.
+        $defaultLang = null;
+        foreach ($hreflangAlternates as $alt) {
+            if ($alt['lang'] === 'en') {
+                $defaultLang = 'en';
+                break;
+            }
+        }
+        if ($defaultLang === null && $hreflangAlternates !== []) {
+            $defaultLang = $hreflangAlternates[0]['lang'];
+        }
+        if ($defaultLang !== null) {
+            $hreflangAlternates[] = [
+                'lang' => 'x-default',
+                'url'  => 'https://vici.org/vici/' . $site->id . '?lang=' . $defaultLang,
+            ];
+        }
 
         $ogImage = null;
         if ($site->images->count() > 0) {
@@ -124,9 +164,14 @@ class ItemPage extends PageRenderer
         $this->assign('title', $docTitle);
         $this->assign('meta_description', $metaDescription);
         $this->assign('canonical_url', $canonicalUrl);
+        $this->assign('hreflang_alternates', $hreflangAlternates);
         $this->assign('og_image', $ogImage);
-        $this->assign('jsonld', json_encode($jsonLd,
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT));
+        $jsonLdJson = json_encode($jsonLd,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE);
+        if ($jsonLdJson === false) {
+            $jsonLdJson = '{}';
+        }
+        $this->assign('jsonld', $jsonLdJson);
 
     }
 

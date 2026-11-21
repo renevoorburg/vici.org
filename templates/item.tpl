@@ -3,6 +3,9 @@
 {block name=metadata}
     <meta name="description" content="{$meta_description|escape}">
     <link rel="canonical" href="{$canonical_url|escape}">
+    {foreach $hreflang_alternates|default:[] as $alt}
+    <link rel="alternate" hreflang="{$alt.lang|escape}" href="{$alt.url|escape}">
+    {/foreach}
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Vici.org">
     <meta property="og:title" content="{$title|escape}">

@@ -73,8 +73,9 @@ class Translator {
     }
     
     /**
-     * Get all available languages based on language files in the lang directory
-     * 
+     * Get all available languages based on language files in the lang directory.
+     * English is returned first so it serves as the default/fallback language.
+     *
      * @return array List of available language codes
      */
     public static function getAvailableLanguages(): array
@@ -88,7 +89,18 @@ class Translator {
                 $languages[] = $matches[1];
             }
         }
-        
+
+        // English first so it is the default/fallback language.
+        usort($languages, function ($a, $b) {
+            if ($a === 'en') {
+                return -1;
+            }
+            if ($b === 'en') {
+                return 1;
+            }
+            return strcmp($a, $b);
+        });
+
         return $languages;
     }
 }
