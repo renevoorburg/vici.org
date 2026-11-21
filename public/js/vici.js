@@ -626,6 +626,8 @@ function ViciWidget(element, options) {
         }
     }
 
+    let geojsonAbort = null;
+
     function updateDataLayer() {
 
         function setFeatures(d) {
@@ -756,13 +758,32 @@ function ViciWidget(element, options) {
 
         let snappedView = getSnappedView();
 
+        // abort a still-pending request so slow/out-of-order responses on a
+        // bad connection cannot overwrite newer marker state
+        if (geojsonAbort) {
+            geojsonAbort.abort();
+        }
+        geojsonAbort = new AbortController();
+
         fetch(baseUrl + "/geojson.php?bounds=" + snappedView.bounds + "&zoom=" + snappedView.zoom + mapState.modelParam + mapState.perspectiveParam + mapState.langReq + mapState.requireParam, {
             headers: {
                 'X-Vici-Token': options.viciToken
-            }
+            },
+            signal: geojsonAbort.signal
         })
-        .then(response => response.json())
-        .then(setFeatures);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('geojson.php returned ' + response.status);
+            }
+            return response.json();
+        })
+        .then(setFeatures)
+        .catch(err => {
+            if (err && err.name === 'AbortError') {
+                return; // superseded by a newer request
+            }
+            console.error('geojson fetch failed:', err);
+        });
     }
 
     map.on('click', function(evt) {
@@ -888,6 +909,8 @@ function ViciWidget(element, options) {
         }
     }
 
+    let highlightsAbort = null;
+
     function getHighlights() {
         // loads data to the highlightsArray for given bounds and zoom
 
@@ -960,13 +983,30 @@ function ViciWidget(element, options) {
                 requrl += "&exclude=" + session.selectedMarkerId;
             }
 
+            if (highlightsAbort) {
+                highlightsAbort.abort();
+            }
+            highlightsAbort = new AbortController();
+
             fetch(requrl, {
                 headers: {
                     'X-Vici-Token': options.viciToken
-                }
+                },
+                signal: highlightsAbort.signal
             })
-            .then(response => response.json())
-            .then(showHighlights);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('highlight.php returned ' + response.status);
+                }
+                return response.json();
+            })
+            .then(showHighlights)
+            .catch(err => {
+                if (err && err.name === 'AbortError') {
+                    return; // superseded by a newer request
+                }
+                console.error('highlight fetch failed:', err);
+            });
         }
     }
 
