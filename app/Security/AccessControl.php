@@ -227,6 +227,46 @@ class AccessControl
     }
 
     /**
+     * Snapshot of the APCu-backed enforcement state, for the admin
+     * "access control" page: active IP/subnet blocks with seconds until
+     * expiry, plus the strike and trap-hit counters feeding them.
+     */
+    public static function listBlocks(): array
+    {
+        $blocks = [
+            'ips' => [], 'subnets' => [], 'strikes' => [],
+            'trap_hits' => [], 'subnet_hits' => [],
+        ];
+        $info = function_exists('apcu_cache_info') ? @apcu_cache_info() : false;
+        foreach (($info['cache_list'] ?? []) as $entry) {
+            $key = (string)($entry['info'] ?? '');
+            // deletion_time is the expiry timestamp; fall back to ttl
+            $expires = (int)($entry['deletion_time'] ?? 0);
+            $ttl = $expires > 0
+                ? max(0, $expires - time())
+                : (int)($entry['ttl'] ?? 0);
+            if (str_starts_with($key, 'ip_blocked_')) {
+                $blocks['ips'][substr($key, strlen('ip_blocked_'))] = $ttl;
+            } elseif (str_starts_with($key, 'subnet_blocked_')) {
+                $blocks['subnets'][substr($key, strlen('subnet_blocked_'))] = $ttl;
+            } elseif (str_starts_with($key, 'ip_strikes_')) {
+                $blocks['strikes'][substr($key, strlen('ip_strikes_'))] =
+                    (int)apcu_fetch($key);
+            } elseif (str_starts_with($key, 'subnet_trap_hits_')) {
+                $blocks['subnet_hits'][substr($key, strlen('subnet_trap_hits_'))] =
+                    (int)apcu_fetch($key);
+            } elseif (str_starts_with($key, 'trap_hits_')) {
+                $blocks['trap_hits'][substr($key, strlen('trap_hits_'))] =
+                    (int)apcu_fetch($key);
+            }
+        }
+        foreach ($blocks as &$map) {
+            ksort($map);
+        }
+        return $blocks;
+    }
+
+    /**
      * Record a strike and (re)block the IP for an escalating duration:
      * 15min → 24h → 7d → 30d. Strikes decay after 90 quiet days.
      */

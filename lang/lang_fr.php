@@ -372,4 +372,15 @@ return [
 
     // homepage meta description:
     'Interactive archaeological atlas of antiquity: explore hundreds of thousands of archaeological sites, monuments and finds on an interactive map.' => 'Atlas archéologique interactif de l’Antiquité : explorez des centaines de milliers de sites archéologiques, monuments et découvertes sur une carte interactive.',
+
+    // access control page:
+    'Access control' => 'Gestion des accès',
+    'Blocked IPs' => 'IP bloquées',
+    'Blocked subnets' => 'Sous-réseaux bloqués',
+    'Strikes' => 'Strikes',
+    'Trap hits (last 24h)' => 'Hits de piège (24 dernières h)',
+    'Subnet trap hits (last 24h)' => 'Hits de piège par sous-réseau (24 dernières h)',
+    'Address' => 'Adresse',
+    'Expires in' => 'Expire dans',
+    'None' => 'Aucun',
 ];
