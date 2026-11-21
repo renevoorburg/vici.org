@@ -369,4 +369,7 @@ return [
     'Jan' => 'Jan', 'Feb' => 'Feb', 'Mar' => 'Mär', 'Apr' => 'Apr',
     'May' => 'Mai', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Aug',
     'Sep' => 'Sep', 'Oct' => 'Okt', 'Nov' => 'Nov', 'Dec' => 'Dez',
+
+    // homepage meta description:
+    'Interactive archaeological atlas of antiquity: explore hundreds of thousands of archaeological sites, monuments and finds on an interactive map.' => 'Interaktiver archäologischer Atlas der Antike: Entdecke Hunderttausende archäologische Stätten, Denkmäler und Funde auf einer interaktiven Karte.',
 ];

@@ -175,9 +175,11 @@ class AccessControl
             $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
             if (!$success) {
                 $hits = ((int)apcu_fetch($key)) + 1;
-                apcu_store($key, $hits, self::TRAP_WINDOW);
             }
         }
+        // apcu_inc only sets the TTL when it creates the key; refresh it so
+        // the trap window is measured from the most recent hit.
+        apcu_store($key, $hits, self::TRAP_WINDOW);
         if ($hits >= 2) {
             self::blockIp($this->ip);
             return true;
@@ -202,9 +204,11 @@ class AccessControl
             $strikes = apcu_inc($strikesKey, 1, $success, self::STRIKES_TTL);
             if (!$success) {
                 $strikes = ((int)apcu_fetch($strikesKey)) + 1;
-                apcu_store($strikesKey, $strikes, self::STRIKES_TTL);
             }
         }
+        // apcu_inc only sets the TTL when it creates the key; refresh it so
+        // the 90-day decay is measured from the most recent strike.
+        apcu_store($strikesKey, $strikes, self::STRIKES_TTL);
 
         $ttl = self::STRIKE_TTLS[$strikes - 1] ?? self::MAX_BLOCK_TTL;
         apcu_store("ip_blocked_{$ip}", true, $ttl);
