@@ -180,7 +180,7 @@ class GeoJSON extends APICall
             $short = (empty($row['psum_short']) ? $row['pnt_dflt_short'] : $row['psum_short']);
             $kind = $row['pnt_kind'];
 
-            $fullUrl = $perspective
+            $fullUrl = $perspective && !empty($row['extid'])
                 ? $normalizer->idToUrl($row['extid'])
                 : $this->session->getViciBase() . '/vici/' . $row['pnt_id'] . '/' ;
             
