@@ -94,6 +94,7 @@ services:
     volumes:
       - vici-preview-db-data:/var/lib/mysql
       - ./db-preview:/docker-entrypoint-initdb.d:ro
+      - ./db/access_control.sql:/docker-entrypoint-initdb.d/zz-access-control.sql:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s

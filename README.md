@@ -72,6 +72,16 @@ Setup on the server:
    before browsing; importing a full dump takes a while. To re-import,
    remove the `vici-preview-db-data` volume.
 
+   The `access_control` table (shared IP/subnet blocks and trap counters)
+   is created automatically on first init via a mount in
+   `docker-compose.yml`. On an *existing* database — a volume that was
+   already initialized — create it once by hand:
+
+   ```
+   docker exec -i vici-preview-mysql mariadb \
+     -u "$DB_USER" -p"$DB_PASS" "$DB_MAIN" < db/access_control.sql
+   ```
+
    Toponyms (country + nearby place) are materialized on `points`
    (`pnt_country`/`pnt_place`). Dumps containing data predate those
    columns, so after importing a dump that lacks them run the backfill:
@@ -154,7 +164,8 @@ development. Nothing per-environment to set: running
 ## Running without Docker
 
 You need a database (MariaDB / MySQL), a webserver (nginx config examples
-in `nginx/`) and PHP 8. Load the `db/` dumps into the database.
+in `nginx/`) and PHP 8. Load the `db/` dumps into the database, and run
+`db/access_control.sql` to create the access-control table.
 
 The PHP code reads its configuration from environment variables or a `.env`
 file in the repo root (via phpdotenv). See `.env.docker` for the required

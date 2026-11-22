@@ -48,6 +48,7 @@ switch ($session->getRequestedAction()) {
             case 'default':
             case '':
                 $accessControl->setIsRateLimitedAnonymously(true);
+                $accessControl->setIsContentPage(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
                 break;
             default:
@@ -114,6 +115,7 @@ switch ($session->getRequestedAction()) {
         break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
+        $accessControl->setIsGeoJsonRequest(true);
         $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':

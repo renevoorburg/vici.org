@@ -20,6 +20,9 @@ class AccessControl
     private const TRAP_WINDOW = 86400;       // trap hits counted over 24h
     private const SUBNET_BLOCK_THRESHOLD = 20; // trap hits per subnet within TRAP_WINDOW
     private const SUBNET_BLOCK_TTL = 86400;    // subnet block duration (24h)
+    // scrapers fetch item pages but never the map: a subnet with this many
+    // page views and zero geojson hits in 24h is a distributed botnet
+    private const SUBNET_PAGE_VIEW_THRESHOLD = 20;
 
     private string $ip;
     private string $requested_action;
@@ -34,6 +37,8 @@ class AccessControl
     private bool $is_bot_attracting_link = false;
     private bool $is_bot_trap_link = false;
     private bool $is_rate_limited_anonymously = false;
+    private bool $is_content_page = false;
+    private bool $is_geojson_request = false;
 
 
 
@@ -79,6 +84,16 @@ class AccessControl
         $this->is_rate_limited_anonymously = $value;
     }
 
+    public function setIsContentPage(bool $value): void
+    {
+        $this->is_content_page = $value;
+    }
+
+    public function setIsGeoJsonRequest(bool $value): void
+    {
+        $this->is_geojson_request = $value;
+    }
+
 
     public function enforceAndRun(callable $requested_action): void
     {
@@ -109,6 +124,27 @@ class AccessControl
             header('X-Robots-Tag: noindex, nofollow');
             header('Location: /', true, 301);
             exit;
+        }
+
+        // scrapers pull page HTML but never the map: one geojson hit
+        // legitimizes a whole subnet, so only pure-scraper ranges accrue
+        // page views
+        if ($this->is_geojson_request) {
+            $this->bumpCounter(
+                "subnet_geojson_hits_" . $this->subnetKey(), self::TRAP_WINDOW);
+        }
+        if ($this->is_content_page &&
+            !($this->has_authenticated_user || $this->hasValidToken()) &&
+            !self::isAdvertisingBot() &&
+            $this->readCounter("subnet_geojson_hits_" . $this->subnetKey()) === 0
+        ) {
+            $subnet = $this->subnetKey();
+            $views = $this->bumpCounter(
+                "subnet_page_views_{$subnet}", self::TRAP_WINDOW);
+            if ($views >= self::SUBNET_PAGE_VIEW_THRESHOLD) {
+                $this->blockSubnet($subnet);
+                self::denyAccess('Subnet blocked');
+            }
         }
 
         if ($this->is_rate_limited_anonymously && !$this->has_authenticated_user) {
@@ -220,29 +256,49 @@ class AccessControl
         }
     }
 
+    private function readCounter(string $key): int
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT ac_count FROM access_control " .
+                "WHERE ac_key = ? AND ac_expires > UNIX_TIMESTAMP()"
+            );
+            $stmt->execute([$key]);
+            return (int)$stmt->fetchColumn();
+        } catch (\PDOException $e) {
+            error_log('access_control counter read failed: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    private function blockSubnet(string $subnet): void
+    {
+        try {
+            // remember what tripped the counter so the admin page
+            // can show it
+            $stmt = $this->db->prepare(
+                "INSERT INTO access_control (ac_key, ac_count, ac_expires, ac_info) " .
+                "VALUES (?, 1, UNIX_TIMESTAMP() + ?, ?) " .
+                "ON DUPLICATE KEY UPDATE " .
+                "ac_expires = VALUES(ac_expires), ac_info = VALUES(ac_info)"
+            );
+            $stmt->execute([
+                "subnet_blocked_{$subnet}",
+                self::SUBNET_BLOCK_TTL,
+                time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
+            ]);
+        } catch (\PDOException $e) {
+            error_log('access_control subnet block failed: ' . $e->getMessage());
+        }
+    }
+
     private function recordSubnetTrapHit(): void
     {
         $subnet = $this->subnetKey();
         $hits = $this->bumpCounter("subnet_trap_hits_{$subnet}", self::TRAP_WINDOW);
 
         if ($hits >= self::SUBNET_BLOCK_THRESHOLD) {
-            try {
-                // remember what tripped the counter so the admin page
-                // can show it
-                $stmt = $this->db->prepare(
-                    "INSERT INTO access_control (ac_key, ac_count, ac_expires, ac_info) " .
-                    "VALUES (?, 1, UNIX_TIMESTAMP() + ?, ?) " .
-                    "ON DUPLICATE KEY UPDATE " .
-                    "ac_expires = VALUES(ac_expires), ac_info = VALUES(ac_info)"
-                );
-                $stmt->execute([
-                    "subnet_blocked_{$subnet}",
-                    self::SUBNET_BLOCK_TTL,
-                    time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
-                ]);
-            } catch (\PDOException $e) {
-                error_log('access_control subnet block failed: ' . $e->getMessage());
-            }
+            $this->blockSubnet($subnet);
         }
     }
 
