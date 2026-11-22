@@ -10,6 +10,7 @@ class AccessControl
 
     public const RATE_LIMIT_SECONDS = 60;
     public const MAX_ANONYMOUS_REQUESTS = 8;
+    public const MAX_BOT_REQUESTS = 10;      // global per-IP cap for self-declared bots
     public const MAX_BOTLIKE_REQUESTS = 3;
     public const BLOCK_TIME_SECONDS = 900;
 
@@ -97,14 +98,6 @@ class AccessControl
 
     public function enforceAndRun(callable $requested_action): void
     {
-        // Static assets (favicon) bypass IP bans so browsers still get them,
-        // but they do NOT unban the IP. Source is public, so this is a
-        // convenience, not a security boundary.
-        if ($this->requested_action === 'favicon.ico') {
-            $requested_action();
-            return;
-        }
-
         if ($this->isBlocked()) {
             self::denyAccess('IP blocked');
         }
@@ -124,6 +117,22 @@ class AccessControl
             header('X-Robots-Tag: noindex, nofollow');
             header('Location: /', true, 301);
             exit;
+        }
+
+        // self-declared bots (UA says bot/crawler/spider) get one global
+        // per-IP cap across all routes — the honest crawlers stay well
+        // below it, sweep bots don't
+        if (self::isAdvertisingBot() &&
+            !($this->has_authenticated_user || $this->hasValidToken())
+        ) {
+            $key = "bot_rate_limited_" . $this->ip;
+            $hits = apcu_fetch($key) ?: 0;
+
+            if ($hits > self::MAX_BOT_REQUESTS) {
+                self::denyAccessTemporarily($key);
+            } else {
+                apcu_store($key, $hits + 1, self::RATE_LIMIT_SECONDS);
+            }
         }
 
         // scrapers pull page HTML but never the map: one geojson hit
@@ -237,6 +246,14 @@ class AccessControl
     private function bumpCounter(string $key, int $ttl): int
     {
         try {
+            // ~1-in-1000 bumps prune expired rows so the table stays small
+            // without depending on admin-page visits
+            if (mt_rand(1, 1000) === 1) {
+                $this->db->query(
+                    "DELETE FROM access_control " .
+                    "WHERE ac_expires <= UNIX_TIMESTAMP()"
+                );
+            }
             $stmt = $this->db->prepare(
                 "INSERT INTO access_control (ac_key, ac_count, ac_expires) " .
                 "VALUES (?, 1, UNIX_TIMESTAMP() + ?) " .
@@ -285,7 +302,8 @@ class AccessControl
             $stmt->execute([
                 "subnet_blocked_{$subnet}",
                 self::SUBNET_BLOCK_TTL,
-                time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
+                // ac_info is varchar(255): 10-digit ts + space + truncated URI
+                time() . ' ' . substr($_SERVER['REQUEST_URI'] ?? '', 0, 244),
             ]);
         } catch (\PDOException $e) {
             error_log('access_control subnet block failed: ' . $e->getMessage());

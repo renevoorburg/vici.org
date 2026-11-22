@@ -1,6 +1,7 @@
 # Vici.org
 
-Codebase for [https://vici.org](https://vici.org).
+Codebase for [https://vici.org](https://vici.org). The anti-bot and
+rate-limiting logic is documented in [ACCESS_CONTROL.md](ACCESS_CONTROL.md).
 
 ## Running with Docker
 
