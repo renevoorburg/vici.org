@@ -376,6 +376,7 @@ return [
     // access control page:
     'Access control' => 'Zugriffsverwaltung',
     'Blocked subnets' => 'Blockierte Subnetze',
+    'Subnets' => 'Subnetze',
     'Address' => 'Adresse',
     'Expires in' => 'Läuft ab in',
     'None' => 'Keine',

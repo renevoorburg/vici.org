@@ -36,8 +36,6 @@ class AccessControlPage extends PageRenderer
             return $minutes . 'm ' . ($seconds % 60) . 's';
         };
 
-        // subnet keys are stored as 'v4:a.b.c' or 'v6:<16 hex chars>';
-        // display them in standard CIDR notation
         $formatSubnet = function (string $key): string {
             if (str_starts_with($key, 'v4:')) {
                 return substr($key, 3) . '.0/24';
@@ -50,9 +48,57 @@ class AccessControlPage extends PageRenderer
             return ($packed !== false ? inet_ntop($packed) : $key) . '/64';
         };
 
-        $rows = [];
+        // Merge adjacent blocked /24s into the smallest set of CIDR
+        // blocks: a botnet sweeping 131.222.136-183 shows as a handful
+        // of supernets instead of ~50 rows. IPv6 keys pass through.
+        $v4ranges = [];
+        $v6 = [];
         foreach (AccessControl::listBlocks() as $subnet => $ttl) {
-            $rows[] = ['key' => $formatSubnet($subnet), 'ttl' => $formatTtl($ttl)];
+            if (str_starts_with($subnet, 'v4:')) {
+                $start = ip2long(substr($subnet, 3) . '.0');
+                $v4ranges[$start] = ['end' => $start + 255, 'ttl' => $ttl];
+            } else {
+                $v6[] = ['key' => $formatSubnet($subnet), 'ttl' => $ttl];
+            }
+        }
+        ksort($v4ranges);
+
+        // merge adjacent/overlapping ranges, then split each into
+        // aligned CIDR blocks (start determines the largest legal size)
+        $merged = [];
+        foreach ($v4ranges as $start => $r) {
+            $last = end($merged);
+            if ($last !== false && $start <= $last['end'] + 1) {
+                $merged[key($merged)]['end'] = max($last['end'], $r['end']);
+                $merged[key($merged)]['ttl'] = max($last['ttl'], $r['ttl']);
+                $merged[key($merged)]['count'] += 1;
+            } else {
+                $merged[$start] = ['end' => $r['end'], 'ttl' => $r['ttl'], 'count' => 1];
+            }
+        }
+
+        $rows = [];
+        foreach ($merged as $start => $r) {
+            while ($start <= $r['end']) {
+                // largest block aligned at $start that fits the range:
+                // capped by the trailing zeros of $start (alignment)
+                // and by the remaining length
+                $align = $start === 0 ? 32 : (int)log($start & -$start, 2);
+                $fit = (int)floor(log($r['end'] - $start + 1, 2));
+                $blockBits = min($align, $fit);
+                $count = 1 << ($blockBits - 8); // /24s covered
+                $rows[] = [
+                    'key' => long2ip($start) . '/' . (32 - $blockBits),
+                    'ttl' => $formatTtl($r['ttl']),
+                    'count' => $count > 1 ? $count : null,
+                ];
+                $start += 1 << $blockBits;
+            }
+        }
+        foreach ($v6 as $row) {
+            $row['ttl'] = $formatTtl($row['ttl']);
+            $row['count'] = null;
+            $rows[] = $row;
         }
         $this->assign('subnet_blocks', $rows);
     }

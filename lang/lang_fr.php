@@ -376,6 +376,7 @@ return [
     // access control page:
     'Access control' => 'Gestion des accès',
     'Blocked subnets' => 'Sous-réseaux bloqués',
+    'Subnets' => 'Sous-réseaux',
     'Address' => 'Adresse',
     'Expires in' => 'Expire dans',
     'None' => 'Aucun',

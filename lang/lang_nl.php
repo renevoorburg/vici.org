@@ -383,6 +383,7 @@ return [
     // access control page:
     'Access control' => 'Toegangsbeheer',
     'Blocked subnets' => 'Geblokkeerde subnetten',
+    'Subnets' => 'Subnetten',
     'Address' => 'Adres',
     'Expires in' => 'Verloopt over',
     'None' => 'Geen',
