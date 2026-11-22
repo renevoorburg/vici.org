@@ -29,7 +29,7 @@ class ContactPage extends PageRenderer
             // hidden field humans never fill; a filled honeypot means a bot —
             // block the IP (escalating strikes) and refuse the submission
             if (trim((string)($_POST['website'] ?? '')) !== '') {
-                AccessControl::blockIp($session->getIP());
+                AccessControl::blockIp($session->getDBConnector(), $session->getIP());
                 $error = $session->translator->get('Could not identify you as a human.');
             } elseif (!$session->isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
                 $error = $session->translator->get('Invalid form token. Please reload the page and try again.');

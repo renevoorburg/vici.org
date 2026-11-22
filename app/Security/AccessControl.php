@@ -3,6 +3,7 @@
 namespace Vici\Security;
 
 use Dotenv\Dotenv;
+use Vici\DB\DBConnector;
 
 class AccessControl
 {
@@ -23,6 +24,7 @@ class AccessControl
     private string $ip;
     private string $requested_action;
     private bool $has_authenticated_user;
+    private DBConnector $db;
 
     private bool $requires_token = false;
     private bool $requires_authenticated_user = false;
@@ -35,11 +37,12 @@ class AccessControl
 
 
 
-    public function __construct(string $ip, string $requested_action, bool $has_authenticated_user)
+    public function __construct(string $ip, string $requested_action, bool $has_authenticated_user, DBConnector $db)
     {
         $this->ip = self::normalizeIp($ip);
         $this->requested_action = $requested_action;
         $this->has_authenticated_user = $has_authenticated_user;
+        $this->db = $db;
     }
 
     public function setRequiresToken(bool $value): void
@@ -87,7 +90,7 @@ class AccessControl
             return;
         }
 
-        if ($this->hasBlockedIP() || $this->hasBlockedSubnet()) {
+        if ($this->isBlocked()) {
             self::denyAccess('IP blocked');
         }
 
@@ -158,14 +161,25 @@ class AccessControl
         return false;
     }
 
-    private function hasBlockedIP(): bool
+    // Blocks live in the shared access_control table — APCu is per
+    // php-fpm worker, so a block there would only cover ~1/N requests
+    private function isBlocked(): bool
     {
-        return apcu_exists("ip_blocked_{$this->ip}");
-    }
-
-    private function hasBlockedSubnet(): bool
-    {
-        return apcu_exists("subnet_blocked_{$this->subnetKey()}");
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT ac_key FROM access_control " .
+                "WHERE ac_key IN (?, ?) AND ac_expires > UNIX_TIMESTAMP()"
+            );
+            $stmt->execute([
+                "ip_blocked_{$this->ip}",
+                "subnet_blocked_{$this->subnetKey()}",
+            ]);
+            return $stmt->fetch() !== false;
+        } catch (\PDOException $e) {
+            // fail open: a broken/missing table must not take the site down
+            error_log('access_control lookup failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
     private function subnetKey(): string
@@ -179,28 +193,56 @@ class AccessControl
         return 'v4:' . $parts[0] . '.' . $parts[1] . '.' . $parts[2];
     }
 
+    /**
+     * Atomic increment on a shared counter. An expired row restarts at 1,
+     * matching the old APCu behaviour where an expired key simply vanished.
+     * Returns the new count; 0 on DB failure (fail open).
+     */
+    private function bumpCounter(string $key, int $ttl): int
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT INTO access_control (ac_key, ac_count, ac_expires) " .
+                "VALUES (?, 1, UNIX_TIMESTAMP() + ?) " .
+                "ON DUPLICATE KEY UPDATE " .
+                "ac_count = IF(ac_expires <= UNIX_TIMESTAMP(), 1, ac_count + 1), " .
+                "ac_expires = VALUES(ac_expires)"
+            );
+            $stmt->execute([$key, $ttl]);
+            $stmt = $this->db->prepare(
+                "SELECT ac_count FROM access_control WHERE ac_key = ?"
+            );
+            $stmt->execute([$key]);
+            return (int)$stmt->fetchColumn();
+        } catch (\PDOException $e) {
+            error_log('access_control counter failed: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
     private function recordSubnetTrapHit(): void
     {
-        $key = "subnet_trap_hits_{$this->subnetKey()}";
-        $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
-        if (!$success) {
-            apcu_add($key, 0, self::TRAP_WINDOW);
-            $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
-            if (!$success) {
-                $hits = ((int)apcu_fetch($key)) + 1;
-            }
-        }
-        // apcu_inc only sets the TTL when it creates the key; refresh it so
-        // the window is measured from the most recent hit.
-        apcu_store($key, $hits, self::TRAP_WINDOW);
+        $subnet = $this->subnetKey();
+        $hits = $this->bumpCounter("subnet_trap_hits_{$subnet}", self::TRAP_WINDOW);
 
         if ($hits >= self::SUBNET_BLOCK_THRESHOLD) {
-            // remember what tripped the counter so the admin page can show it
-            apcu_store(
-                "subnet_blocked_{$this->subnetKey()}",
-                time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
-                self::SUBNET_BLOCK_TTL
-            );
+            try {
+                // remember what tripped the counter so the admin page
+                // can show it
+                $stmt = $this->db->prepare(
+                    "INSERT INTO access_control (ac_key, ac_count, ac_expires, ac_info) " .
+                    "VALUES (?, 1, UNIX_TIMESTAMP() + ?, ?) " .
+                    "ON DUPLICATE KEY UPDATE " .
+                    "ac_expires = VALUES(ac_expires), ac_info = VALUES(ac_info)"
+                );
+                $stmt->execute([
+                    "subnet_blocked_{$subnet}",
+                    self::SUBNET_BLOCK_TTL,
+                    time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
+                ]);
+            } catch (\PDOException $e) {
+                error_log('access_control subnet block failed: ' . $e->getMessage());
+            }
         }
     }
 
@@ -211,54 +253,46 @@ class AccessControl
      */
     private function applyTrapHit(): bool
     {
-        $key = "trap_hits_{$this->ip}";
-        $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
-        if (!$success) {
-            apcu_add($key, 0, self::TRAP_WINDOW);
-            $hits = apcu_inc($key, 1, $success, self::TRAP_WINDOW);
-            if (!$success) {
-                $hits = ((int)apcu_fetch($key)) + 1;
-            }
-        }
-        // apcu_inc only sets the TTL when it creates the key; refresh it so
-        // the trap window is measured from the most recent hit.
-        apcu_store($key, $hits, self::TRAP_WINDOW);
+        $hits = $this->bumpCounter("trap_hits_{$this->ip}", self::TRAP_WINDOW);
         // hits by logged-in users or valid token holders don't count
         // toward the subnet threshold — they're allowed to follow the link
         if (!($this->has_authenticated_user || $this->hasValidToken())) {
             $this->recordSubnetTrapHit();
         }
         if ($hits >= 2) {
-            self::blockIp($this->ip);
+            self::blockIp($this->db, $this->ip);
             return true;
         }
         return false;
     }
 
     /**
-     * Active subnet blocks from APCu, for the admin "access control"
-     * page: subnet key => ['ttl' => seconds until expiry,
+     * Active subnet blocks for the admin "access control" page:
+     * subnet key => ['ttl' => seconds until expiry,
      * 'trigger' => "timestamp request-uri" or null].
      */
-    public static function listBlocks(): array
+    public static function listBlocks(DBConnector $db): array
     {
         $blocks = [];
-        $info = function_exists('apcu_cache_info') ? @apcu_cache_info() : false;
-        foreach (($info['cache_list'] ?? []) as $entry) {
-            $key = (string)($entry['info'] ?? '');
-            if (!str_starts_with($key, 'subnet_blocked_')) {
-                continue;
+        try {
+            // prune dead rows — cheap here because admin visits are rare
+            $db->query(
+                "DELETE FROM access_control WHERE ac_expires <= UNIX_TIMESTAMP()"
+            );
+            $stmt = $db->query(
+                "SELECT ac_key, ac_expires, ac_info FROM access_control " .
+                "WHERE ac_key LIKE 'subnet\_blocked\_%' " .
+                "AND ac_expires > UNIX_TIMESTAMP() ORDER BY ac_key"
+            );
+            foreach ($stmt->fetchAll() as $row) {
+                $blocks[substr($row['ac_key'], strlen('subnet_blocked_'))] = [
+                    'ttl' => max(0, (int)$row['ac_expires'] - time()),
+                    'trigger' => $row['ac_info'],
+                ];
             }
-            // deletion_time is the expiry timestamp; fall back to ttl
-            $expires = (int)($entry['deletion_time'] ?? 0);
-            $blocks[substr($key, strlen('subnet_blocked_'))] = [
-                'ttl' => $expires > 0
-                    ? max(0, $expires - time())
-                    : (int)($entry['ttl'] ?? 0),
-                'trigger' => apcu_fetch($key) ?: null,
-            ];
+        } catch (\PDOException $e) {
+            error_log('access_control list failed: ' . $e->getMessage());
         }
-        ksort($blocks);
         return $blocks;
     }
 
@@ -266,27 +300,34 @@ class AccessControl
      * Record a strike and (re)block the IP for an escalating duration:
      * 15min → 24h → 7d → 30d. Strikes decay after 90 quiet days.
      */
-    public static function blockIp(string $ip): void
+    public static function blockIp(DBConnector $db, string $ip): void
     {
         $ip = self::normalizeIp($ip);
-        $strikesKey = "ip_strikes_{$ip}";
+        try {
+            $stmt = $db->prepare(
+                "INSERT INTO access_control (ac_key, ac_count, ac_expires) " .
+                "VALUES (?, 1, UNIX_TIMESTAMP() + ?) " .
+                "ON DUPLICATE KEY UPDATE " .
+                "ac_count = IF(ac_expires <= UNIX_TIMESTAMP(), 1, ac_count + 1), " .
+                "ac_expires = VALUES(ac_expires)"
+            );
+            $stmt->execute(["ip_strikes_{$ip}", self::STRIKES_TTL]);
+            $stmt = $db->prepare(
+                "SELECT ac_count FROM access_control WHERE ac_key = ?"
+            );
+            $stmt->execute(["ip_strikes_{$ip}"]);
+            $strikes = (int)$stmt->fetchColumn();
 
-        // Increment the strike counter atomically. If the key does not yet
-        // exist, seed it with 0 first and then increment.
-        $strikes = apcu_inc($strikesKey, 1, $success, self::STRIKES_TTL);
-        if (!$success) {
-            apcu_add($strikesKey, 0, self::STRIKES_TTL);
-            $strikes = apcu_inc($strikesKey, 1, $success, self::STRIKES_TTL);
-            if (!$success) {
-                $strikes = ((int)apcu_fetch($strikesKey)) + 1;
-            }
+            $ttl = self::STRIKE_TTLS[$strikes - 1] ?? self::MAX_BLOCK_TTL;
+            $stmt = $db->prepare(
+                "INSERT INTO access_control (ac_key, ac_count, ac_expires) " .
+                "VALUES (?, 1, UNIX_TIMESTAMP() + ?) " .
+                "ON DUPLICATE KEY UPDATE ac_expires = VALUES(ac_expires)"
+            );
+            $stmt->execute(["ip_blocked_{$ip}", $ttl]);
+        } catch (\PDOException $e) {
+            error_log('access_control blockIp failed: ' . $e->getMessage());
         }
-        // apcu_inc only sets the TTL when it creates the key; refresh it so
-        // the 90-day decay is measured from the most recent strike.
-        apcu_store($strikesKey, $strikes, self::STRIKES_TTL);
-
-        $ttl = self::STRIKE_TTLS[$strikes - 1] ?? self::MAX_BLOCK_TTL;
-        apcu_store("ip_blocked_{$ip}", true, $ttl);
     }
 
     // IPv6 privacy addresses rotate within a /64 — key bans on the prefix

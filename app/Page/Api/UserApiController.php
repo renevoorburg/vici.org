@@ -42,7 +42,7 @@ class UserApiController
         // Honeypot: hidden field humans never fill; a filled honeypot means a
         // bot — block the IP (escalating strikes) and refuse the submission
         if (trim((string)($data['website'] ?? '')) !== '') {
-            AccessControl::blockIp($this->session->getIP());
+            AccessControl::blockIp($this->session->getDBConnector(), $this->session->getIP());
             http_response_code(422);
             echo json_encode(['errors' => ['__all__' => 'user.bot_detected']]);
             return;

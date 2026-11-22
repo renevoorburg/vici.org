@@ -15,7 +15,7 @@ $dotenv->load();
 
 $session = new Session();
 
-$accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser());
+$accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser(), $session->getDBConnector());
 
 $action = null; // Initialize to prevent undefined variable error
 

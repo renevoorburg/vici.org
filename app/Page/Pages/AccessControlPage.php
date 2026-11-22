@@ -62,7 +62,7 @@ class AccessControlPage extends PageRenderer
         // of supernets instead of ~50 rows. IPv6 keys pass through.
         $v4ranges = [];
         $v6 = [];
-        foreach (AccessControl::listBlocks() as $subnet => $entry) {
+        foreach (AccessControl::listBlocks($session->getDBConnector()) as $subnet => $entry) {
             if (str_starts_with($subnet, 'v4:')) {
                 $start = ip2long(substr($subnet, 3) . '.0');
                 $v4ranges[$start] = [
