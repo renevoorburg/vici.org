@@ -11,6 +11,7 @@ class AccessControl
     public const RATE_LIMIT_SECONDS = 60;
     public const MAX_ANONYMOUS_REQUESTS = 8;
     public const MAX_BOT_REQUESTS = 10;      // global per-IP cap for self-declared bots
+    public const MAX_BOT_UA_REQUESTS = 60;   // shared cap per bot UA (rotating IPs)
     public const MAX_BOTLIKE_REQUESTS = 3;
     public const BLOCK_TIME_SECONDS = 900;
 
@@ -132,6 +133,16 @@ class AccessControl
                 self::denyAccessTemporarily($key);
             } else {
                 apcu_store($key, $hits + 1, self::RATE_LIMIT_SECONDS);
+            }
+
+            // a bot declaring its UA can't dodge the cap by rotating IPs:
+            // all IPs sending the same UA share one budget. In MariaDB —
+            // APCu is per worker, which would inflate the effective cap
+            $uaHits = $this->bumpCounter(
+                'bot_ua_rate_' . sha1(strtolower($_SERVER['HTTP_USER_AGENT'])),
+                self::RATE_LIMIT_SECONDS);
+            if ($uaHits > self::MAX_BOT_UA_REQUESTS) {
+                self::denyAccessTemporarily($key);
             }
         }
 

@@ -12,16 +12,17 @@ before the route handler executes.
 2. **Token requirement** — route with `setRequiresToken()` and no valid
    token → 403
 3. **Trap link** — `/data-access/*` handling (see below)
-4. **Global bot limit** — APCu counter, 10 req/60s per IP across all
-   routes, for self-declared bots only
+4. **Global bot limits** — two caps for self-declared bots: 10 req/60s
+   per IP (APCu) plus a shared 60 req/60s budget per user-agent
+   (MariaDB) so rotating IPs can't dodge the cap
 5. **Subnet scraper detection** — page-view vs geojson asymmetry (below)
 6. **Anonymous rate limit** — APCu counter, 8 req/60s per IP+route
 7. **Bot-attracting link limit** — APCu counter, currently disabled
    (call sites commented out in `controller.php`)
-7. **Authentication requirements** — `setRequiresAuthenticatedUser()` or
+8. **Authentication requirements** — `setRequiresAuthenticatedUser()` or
    `setRequiresAuthOrToken()` → redirect to `/login`, or 403 for
    self-declared bots
-8. Route handler runs
+9. Route handler runs
 
 Self-declared bots (UA containing `bot`, `crawler` or `spider`) get bare
 403/429 responses; browser-like UAs get redirected to `/login?wait=…` or
@@ -88,6 +89,13 @@ session or valid token. Checked before any route-specific logic; over
 the cap → `429 + Retry-After`. Honest crawlers like Googlebot crawl well
 below this and additionally render the map, which also legitimizes their
 subnet for scraper detection.
+
+`bot_ua_rate_{sha1(ua)}` — 60 requests per 60s **per user-agent string**
+(lowercased, hashed), also across all routes. Stored in
+`access_control`, not APCu: the shared MariaDB state means a crawler
+rotating through hundreds of IPs still burns through one budget. The
+cap is deliberately looser than the per-IP cap — a pool of IPs sending
+one UA is suspicious, but a single busy IP from a real crawler is not.
 
 `anon_rate_limited_{route}_{ip}` — 8 requests per 60s per route for
 anonymous requests. On exceeding: bots get `429 + Retry-After`, browsers
@@ -161,6 +169,7 @@ All in `AccessControl.php`:
 RATE_LIMIT_SECONDS          = 60    // APCu window (anon + bot)
 MAX_ANONYMOUS_REQUESTS      = 8     // per route+IP
 MAX_BOT_REQUESTS            = 10    // per IP, all routes, bot UAs
+MAX_BOT_UA_REQUESTS         = 60    // per UA string, all routes (DB)
 MAX_BOTLIKE_REQUESTS        = 3     // disabled mechanism
 TRAP_WINDOW                 = 86400 // 24h
 SUBNET_BLOCK_THRESHOLD      = 20    // trap hits → subnet block
