@@ -24,9 +24,12 @@ before the route handler executes.
    self-declared bots
 9. Route handler runs
 
-Self-declared bots (UA containing `bot`, `crawler` or `spider`) get bare
-403/429 responses; browser-like UAs get redirected to `/login?wait=…` or
-`/login?loginrequired=…` so real users keep a path in.
+Self-declared bots get bare 403/429 responses; browser-like UAs get
+redirected to `/login?wait=…` or `/login?loginrequired=…` so real users
+keep a path in. `isAdvertisingBot()` matches on UA substrings:
+`bot`, `crawler`, `spider`, `agent`, `fetcher`, plus the agentic
+fetcher tokens `chatgpt-user`, `claude-user`, `perplexity-user` and
+`anthropic-ai`.
 
 ## The trap link (`/data-access/{id}`)
 
@@ -81,10 +84,10 @@ days) and sets `ip_blocked_*` with an escalating TTL:
 | 3      | 7 days         |
 | 4+     | 30 days        |
 
-## Rate limiting (APCu — intentionally per-worker)
+## Rate limiting
 
 `bot_rate_limited_{ip}` — 10 requests per 60s across **all routes** for
-self-declared bots (UA contains `bot`/`crawler`/`spider`) without a
+self-declared bots (UA matching `isAdvertisingBot()`) without a
 session or valid token. Checked before any route-specific logic; over
 the cap → `429 + Retry-After`. Honest crawlers like Googlebot crawl well
 below this and additionally render the map, which also legitimizes their
@@ -106,14 +109,17 @@ get redirected to `/login?wait=60` and the counter is lowered by 2
 endpoints. Mechanism exists but all call sites are commented out —
 dead code kept as an option.
 
-These counters live in APCu deliberately: rate limiting doesn't need
-cross-worker precision, and keeping them off the database avoids a write
-on every anonymous request.
+The `bot_rate_limited_*`, `anon_rate_limited_*` and
+`botlike_rate_limited_*` counters live in APCu deliberately: per-worker
+precision is enough there, and keeping them off the database avoids a
+write on every anonymous request. `bot_ua_rate_*` is the exception — it
+must be shared across IPs and workers, so it lives in
+`access_control`.
 
 ## Storage
 
-All block/counter state except the two APCu rate limiters lives in the
-`access_control` table (`db/access_control.sql`):
+All block/counter state except the three APCu rate-limit counters lives
+in the `access_control` table (`db/access_control.sql`):
 
 | Key pattern | Content |
 |-------------|---------|
@@ -124,6 +130,7 @@ All block/counter state except the two APCu rate limiters lives in the
 | `subnet_page_views_{subnet}` | page views while geojson count = 0 |
 | `subnet_geojson_hits_{subnet}` | map loads |
 | `trap_hits_{ip}` | per-IP trap-hit counter, 24h window |
+| `bot_ua_rate_{sha1(lowercase ua)}` | bot UA request counter, 60s window |
 
 Counters use atomic `INSERT … ON DUPLICATE KEY UPDATE`; an expired row
 restarts at 1 (same semantics as an expired APCu key). All database
@@ -166,7 +173,7 @@ deliberately not shown.
 All in `AccessControl.php`:
 
 ```php
-RATE_LIMIT_SECONDS          = 60    // APCu window (anon + bot)
+RATE_LIMIT_SECONDS          = 60    // window for all rate counters
 MAX_ANONYMOUS_REQUESTS      = 8     // per route+IP
 MAX_BOT_REQUESTS            = 10    // per IP, all routes, bot UAs
 MAX_BOT_UA_REQUESTS         = 60    // per UA string, all routes (DB)

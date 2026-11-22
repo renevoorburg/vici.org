@@ -20,9 +20,9 @@
             {foreach $subnet_blocks as $row}
             <tr>
                 <td>{$row.key|escape:'html'}</td>
-                <td class="stats-num">{$row.ttl}</td>
-                <td class="stats-num">{$row.count|default:"&mdash;"}</td>
-                <td>{$row.trigger|default:"&mdash;"}</td>
+                <td class="stats-num">{$row.ttl|escape:'html'}</td>
+                <td class="stats-num">{$row.count|escape:'html'|default:"&mdash;"}</td>
+                <td>{$row.trigger|escape:'html'|default:"&mdash;"}</td>
             </tr>
             {foreachelse}
             <tr><td colspan="4">{$none_label|default:"None"}</td></tr>

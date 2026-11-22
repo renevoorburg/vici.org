@@ -208,11 +208,19 @@ class AccessControl
 
     private static function isAdvertisingBot() : bool
     {
+        // 'agent' catches meta-externalagent etc.; 'fetcher' covers
+        // Meta-ExternalFetcher-style link previews; the *-user tokens are
+        // the agentic fetchers AI clients send for pasted links
+        $needles = ['bot', 'crawler', 'spider', 'agent', 'fetcher',
+            'chatgpt-user', 'claude-user', 'perplexity-user',
+            'anthropic-ai'];
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
-            return strpos($userAgent, 'bot') !== false || 
-                strpos($userAgent, 'crawler') !== false || 
-                strpos($userAgent, 'spider') !== false;
+            foreach ($needles as $needle) {
+                if (str_contains($userAgent, $needle)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -434,15 +442,20 @@ class AccessControl
         $headers = function_exists('getallheaders') ? getallheaders() : [];
         $token = $headers['X-Vici-Token'] ?? $headers['x-vici-token']
             ?? $_SERVER['HTTP_X_VICI_TOKEN'] ?? '';
-        $envToken = $_ENV['VICITOKEN'] ?? '';
+        // $_ENV may be unpopulated depending on SAPI variables_order;
+        // getenv() covers env vars injected by nginx fastcgi_param etc.
+        $env = fn(string $name): string =>
+            ($_ENV[$name] ?? getenv($name)) ?: '';
+
+        $envToken = $env('VICITOKEN');
         $token_match = $token !== '' && $envToken !== ''
             && hash_equals($envToken, $token);
 
         // Check extra tokens CUST1–CUST9
         if (!$token_match && $token !== '') {
             for ($i = 1; $i <= 9; $i++) {
-                if (($env = $_ENV['CUST' . $i] ?? '') !== ''
-                    && hash_equals($env, $token)) {
+                if (($v = $env('CUST' . $i)) !== ''
+                    && hash_equals($v, $token)) {
                     $token_match = true;
                     break;
                 }
@@ -454,7 +467,7 @@ class AccessControl
         if (!$token_match && isset($_SERVER['HTTP_USER_AGENT'])) {
             $ua = $_SERVER['HTTP_USER_AGENT'];
             for ($i = 1; $i <= 9; $i++) {
-                $prefix = $_ENV['UA' . $i] ?? '';
+                $prefix = $env('UA' . $i);
                 if ($prefix !== '' && str_starts_with($ua, $prefix)) {
                     $useragent_match = true;
                     break;
@@ -465,7 +478,7 @@ class AccessControl
         // Check EXTSECRET in query string; it must match as a complete
         // parameter sequence, not as a substring inside another value
         $ext_secret_match = false;
-        $ext_secret = $_ENV['EXTSECRET'] ?? null;
+        $ext_secret = $env('EXTSECRET');
         if ($ext_secret && isset($_SERVER['QUERY_STRING'])) {
             $ext_secret_match = str_contains(
                 '&' . $_SERVER['QUERY_STRING'] . '&',
