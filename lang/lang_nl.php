@@ -386,5 +386,6 @@ return [
     'Subnets' => 'Subnetten',
     'Address' => 'Adres',
     'Expires in' => 'Verloopt over',
+    'Triggered by' => 'Getriggerd door',
     'None' => 'Geen',
 ];

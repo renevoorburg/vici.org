@@ -48,32 +48,59 @@ class AccessControlPage extends PageRenderer
             return ($packed !== false ? inet_ntop($packed) : $key) . '/64';
         };
 
+        // stored trigger is "unix-timestamp request-uri"; show the
+        // timestamp as a short date and the URI after it
+        $formatTrigger = function (?string $trigger): ?string {
+            if ($trigger === null || !preg_match('/^(\d+) (.*)$/', $trigger, $m)) {
+                return null;
+            }
+            return date('Y-m-d H:i', (int)$m[1]) . ' ' . $m[2];
+        };
+
         // Merge adjacent blocked /24s into the smallest set of CIDR
         // blocks: a botnet sweeping 131.222.136-183 shows as a handful
         // of supernets instead of ~50 rows. IPv6 keys pass through.
         $v4ranges = [];
         $v6 = [];
-        foreach (AccessControl::listBlocks() as $subnet => $ttl) {
+        foreach (AccessControl::listBlocks() as $subnet => $entry) {
             if (str_starts_with($subnet, 'v4:')) {
                 $start = ip2long(substr($subnet, 3) . '.0');
-                $v4ranges[$start] = ['end' => $start + 255, 'ttl' => $ttl];
+                $v4ranges[$start] = [
+                    'end' => $start + 255,
+                    'ttl' => $entry['ttl'],
+                    'trigger' => $entry['trigger'],
+                ];
             } else {
-                $v6[] = ['key' => $formatSubnet($subnet), 'ttl' => $ttl];
+                $v6[] = [
+                    'key' => $formatSubnet($subnet),
+                    'ttl' => $entry['ttl'],
+                    'trigger' => $entry['trigger'],
+                ];
             }
         }
         ksort($v4ranges);
 
         // merge adjacent/overlapping ranges, then split each into
-        // aligned CIDR blocks (start determines the largest legal size)
+        // aligned CIDR blocks (start determines the largest legal size);
+        // keep the trigger of the most recently blocked subnet
         $merged = [];
         foreach ($v4ranges as $start => $r) {
             $last = end($merged);
             if ($last !== false && $start <= $last['end'] + 1) {
-                $merged[key($merged)]['end'] = max($last['end'], $r['end']);
-                $merged[key($merged)]['ttl'] = max($last['ttl'], $r['ttl']);
-                $merged[key($merged)]['count'] += 1;
+                $lk = key($merged);
+                $merged[$lk]['end'] = max($last['end'], $r['end']);
+                if ($r['ttl'] > $last['ttl']) {
+                    $merged[$lk]['ttl'] = $r['ttl'];
+                    $merged[$lk]['trigger'] = $r['trigger'];
+                }
+                $merged[$lk]['count'] += 1;
             } else {
-                $merged[$start] = ['end' => $r['end'], 'ttl' => $r['ttl'], 'count' => 1];
+                $merged[$start] = [
+                    'end' => $r['end'],
+                    'ttl' => $r['ttl'],
+                    'trigger' => $r['trigger'],
+                    'count' => 1,
+                ];
             }
         }
 
@@ -91,12 +118,14 @@ class AccessControlPage extends PageRenderer
                     'key' => long2ip($start) . '/' . (32 - $blockBits),
                     'ttl' => $formatTtl($r['ttl']),
                     'count' => $count > 1 ? $count : null,
+                    'trigger' => $formatTrigger($r['trigger']),
                 ];
                 $start += 1 << $blockBits;
             }
         }
         foreach ($v6 as $row) {
             $row['ttl'] = $formatTtl($row['ttl']);
+            $row['trigger'] = $formatTrigger($row['trigger']);
             $row['count'] = null;
             $rows[] = $row;
         }

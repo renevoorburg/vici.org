@@ -195,7 +195,12 @@ class AccessControl
         apcu_store($key, $hits, self::TRAP_WINDOW);
 
         if ($hits >= self::SUBNET_BLOCK_THRESHOLD) {
-            apcu_store("subnet_blocked_{$this->subnetKey()}", true, self::SUBNET_BLOCK_TTL);
+            // remember what tripped the counter so the admin page can show it
+            apcu_store(
+                "subnet_blocked_{$this->subnetKey()}",
+                time() . ' ' . ($_SERVER['REQUEST_URI'] ?? ''),
+                self::SUBNET_BLOCK_TTL
+            );
         }
     }
 
@@ -218,7 +223,11 @@ class AccessControl
         // apcu_inc only sets the TTL when it creates the key; refresh it so
         // the trap window is measured from the most recent hit.
         apcu_store($key, $hits, self::TRAP_WINDOW);
-        $this->recordSubnetTrapHit();
+        // hits by logged-in users or valid token holders don't count
+        // toward the subnet threshold — they're allowed to follow the link
+        if (!($this->has_authenticated_user || $this->hasValidToken())) {
+            $this->recordSubnetTrapHit();
+        }
         if ($hits >= 2) {
             self::blockIp($this->ip);
             return true;
@@ -228,7 +237,8 @@ class AccessControl
 
     /**
      * Active subnet blocks from APCu, for the admin "access control"
-     * page: subnet key => seconds until expiry.
+     * page: subnet key => ['ttl' => seconds until expiry,
+     * 'trigger' => "timestamp request-uri" or null].
      */
     public static function listBlocks(): array
     {
@@ -241,9 +251,12 @@ class AccessControl
             }
             // deletion_time is the expiry timestamp; fall back to ttl
             $expires = (int)($entry['deletion_time'] ?? 0);
-            $blocks[substr($key, strlen('subnet_blocked_'))] = $expires > 0
-                ? max(0, $expires - time())
-                : (int)($entry['ttl'] ?? 0);
+            $blocks[substr($key, strlen('subnet_blocked_'))] = [
+                'ttl' => $expires > 0
+                    ? max(0, $expires - time())
+                    : (int)($entry['ttl'] ?? 0),
+                'trigger' => apcu_fetch($key) ?: null,
+            ];
         }
         ksort($blocks);
         return $blocks;

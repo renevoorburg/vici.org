@@ -379,5 +379,6 @@ return [
     'Subnets' => 'Sous-réseaux',
     'Address' => 'Adresse',
     'Expires in' => 'Expire dans',
+    'Triggered by' => 'Déclenché par',
     'None' => 'Aucun',
 ];
