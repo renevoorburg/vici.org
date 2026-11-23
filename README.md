@@ -74,8 +74,11 @@ Setup on the server:
    remove the `vici-preview-db-data` volume.
 
    The `access_control` table (shared IP/subnet blocks and trap counters)
-   is created automatically on first init via a mount in
-   `docker-compose.yml`. On an *existing* database — a volume that was
+   is created automatically on first init — copy
+   `db/access_control.sql` into `./db-preview/` as
+   `zz-access_control.sql` alongside the dumps (the dir mounts as
+   `/docker-entrypoint-initdb.d`; a file mount nested inside it is
+   unreliable). On an *existing* database — a volume that was
    already initialized — create it once by hand:
 
    ```

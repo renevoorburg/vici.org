@@ -7,7 +7,9 @@ name: vici-novo-preview
 # The stack always runs its own MariaDB (the app uses DB_HOST=mysql).
 # On first init it imports every .sql/.sql.gz in ./db-preview/ in
 # alphabetical order (that dir is gitignored), so drop dumps there
-# before the first `up`.
+# before the first `up`. Also copy db/access_control.sql there as
+# zz-access_control.sql — a file mount nested inside the mounted
+# dir is unreliable, so it must live inside the dir mount itself.
 #
 # Uploaded images live in S3-compatible object storage (S3_BUCKET in the
 # env file); nothing on the host filesystem is mounted for them. Without
@@ -94,7 +96,6 @@ services:
     volumes:
       - vici-preview-db-data:/var/lib/mysql
       - ./db-preview:/docker-entrypoint-initdb.d:ro
-      - ./db/access_control.sql:/docker-entrypoint-initdb.d/zz-access-control.sql:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s

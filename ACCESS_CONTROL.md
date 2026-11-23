@@ -189,10 +189,11 @@ STRIKES_TTL                 = 7776000  // 90d decay
 
 ## Installation
 
-Fresh Docker stacks create `access_control` automatically — both compose
-files mount `db/access_control.sql` into
-`/docker-entrypoint-initdb.d/`, which MariaDB runs on first init of an
-empty volume.
+Fresh Docker stacks create `access_control` automatically — MariaDB
+runs `db/access_control.sql` via `/docker-entrypoint-initdb.d/` on
+first init of an empty volume. The local stack mounts the file
+directly; the server stack mounts `./db-preview/` as that dir, so
+copy the file there as `zz-access_control.sql` before the first `up`.
 
 Existing databases need a one-off import:
 
