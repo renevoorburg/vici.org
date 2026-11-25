@@ -1592,12 +1592,21 @@ a.hover:hover {
 /* vertical masonry: images flow down the columns; each anchor is one
    indivisible brick. Column count is width-dependent (see media queries) */
 #my-gallery {
-    column-gap: 0.5em;
+    /* rem, not em: the font-size below is 0, so em would collapse to 0 */
+    column-gap: 0.5rem;
+    /* collapse whitespace text nodes between inline-block bricks */
+    font-size: 0;
 }
 #my-gallery > a {
-    display: block;
+    /* inline-block bricks are atomic in multicol; plain blocks are
+       misbalanced by Safari even with break-inside: avoid */
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
     break-inside: avoid;
-    margin-bottom: 0.5em;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 0.5rem;
 }
 .refanchor {
     margin-left: 0.5em;
