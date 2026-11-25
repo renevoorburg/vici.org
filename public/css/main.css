@@ -1589,10 +1589,15 @@ a.hover:hover {
         margin-left: 0;
     }
 }
+/* vertical masonry: images flow down the columns; each anchor is one
+   indivisible brick. Column count is width-dependent (see media queries) */
 #my-gallery {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.5em;
+    column-gap: 0.5em;
+}
+#my-gallery > a {
+    display: block;
+    break-inside: avoid;
+    margin-bottom: 0.5em;
 }
 .refanchor {
     margin-left: 0.5em;
@@ -1623,7 +1628,7 @@ a.hover:hover {
         align-items: start;
     }
     .item--img3 #my-gallery {
-        grid-template-columns: 1fr 1fr;
+        columns: 2;
     }
 }
 @media (min-width: 1800px) {
@@ -1632,7 +1637,7 @@ a.hover:hover {
         align-items: start;
     }
     .item--img4 #my-gallery {
-        grid-template-columns: 1fr 1fr 1fr;
+        columns: 3;
     }
 }
 
