@@ -15,7 +15,7 @@ $dotenv->load();
 
 $session = new Session();
 
-$accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser());
+$accessControl = new AccessControl($session->getIP(), $session->getRequestedAction(), $session->hasUser(), $session->getDBConnector());
 
 $action = null; // Initialize to prevent undefined variable error
 
@@ -48,6 +48,7 @@ switch ($session->getRequestedAction()) {
             case 'default':
             case '':
                 $accessControl->setIsRateLimitedAnonymously(true);
+                $accessControl->setIsContentPage(true);
                 $action = fn() => (new Pages\ItemPage($session))->display();
                 break;
             default:
@@ -114,6 +115,7 @@ switch ($session->getRequestedAction()) {
         break;
     case 'geojson.php':
         $accessControl->setRequiresToken(true);
+        $accessControl->setIsGeoJsonRequest(true);
         $action = fn() => (new API\GeoJSON($session))->get();
         break;
     case 'highlight.php':
@@ -168,6 +170,10 @@ switch ($session->getRequestedAction()) {
     case 'statistics':
         $accessControl->setRequiresAuthenticatedUser(true);
         $action = fn() => (new Pages\StatisticsPage($session))->display();
+        break;
+    case 'accesscontrol':
+        $accessControl->setRequiresAuthenticatedUser(true);
+        $action = fn() => (new Pages\AccessControlPage($session))->display();
         break;
     case 'add':
         $accessControl->setRequiresAuthenticatedUser(true);

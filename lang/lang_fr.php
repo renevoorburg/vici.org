@@ -369,4 +369,16 @@ return [
     'Jan' => 'janv.', 'Feb' => 'févr.', 'Mar' => 'mars', 'Apr' => 'avr.',
     'May' => 'mai', 'Jun' => 'juin', 'Jul' => 'juil.', 'Aug' => 'août',
     'Sep' => 'sept.', 'Oct' => 'oct.', 'Nov' => 'nov.', 'Dec' => 'déc.',
+
+    // homepage meta description:
+    'Interactive archaeological atlas of antiquity: explore hundreds of thousands of archaeological sites, monuments and finds on an interactive map.' => 'Atlas archéologique interactif de l’Antiquité : explorez des centaines de milliers de sites archéologiques, monuments et découvertes sur une carte interactive.',
+
+    // access control page:
+    'Access control' => 'Gestion des accès',
+    'Blocked subnets' => 'Sous-réseaux bloqués',
+    'Subnets' => 'Sous-réseaux',
+    'Address' => 'Adresse',
+    'Expires in' => 'Expire dans',
+    'Triggered by' => 'Déclenché par',
+    'None' => 'Aucun',
 ];

@@ -31,6 +31,8 @@ class PageRenderer extends Smarty
         if (isset($_ENV['VICIBASE'])) {
             $this->assign('vicibase', $_ENV['VICIBASE']);
         }
+        $this->assign('is_admin',
+            $this->session->hasUser() && $this->session->getUser()->isAdmin());
         if ($this->session->hasUser()) {
             $this->assign('username', $this->session->getUser()->getName());
             $this->assign('user_id', $this->session->getUser()->getId());

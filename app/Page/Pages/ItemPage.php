@@ -67,6 +67,112 @@ class ItemPage extends PageRenderer
         $this->assign('classification_description', $this->session->translator->get("markerdef." . $site->type->id));  
         $this->assign('classification_title', $this->session->translator->get($site->type->title));
 
+        $locale = $site->locales[$preferredLocaleLanguage] ?? null;
+        $siteTitle = $locale?->title ?? $site->locales->getFirstTitle();
+
+        $sessionLanguage = $this->session->getLanguage();
+        $placeName = $site->toponym->placeName[$sessionLanguage] ?? '';
+        $countryName = $site->toponym->countryName[$sessionLanguage] ?? '';
+        $placeLabel = $placeName !== '' ? $placeName : $countryName;
+        $docTitle = $siteTitle . ($placeLabel !== '' ? ', ' . $placeLabel : '');
+
+        $metaDescription = $locale?->summary ?? '';
+        if ($metaDescription === '') {
+            $metaDescription = trim((string)preg_replace('/\s+/', ' ',
+                html_entity_decode(strip_tags($locale?->description ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        }
+        $metaDescription = mb_strimwidth($metaDescription, 0, 160, '');
+        if ($metaDescription === '') {
+            $metaDescription = $docTitle . ' — Vici.org';
+        }
+
+        $availableLangs = $this->session->getAvailableLanguages();
+
+        // Canonical reflects the language of the displayed description, not the UI language.
+        $contentLang = $preferredLocaleLanguage;
+        if ($contentLang === '' || !in_array($contentLang, $availableLangs, true)) {
+            // Fall back to the UI language, which always leads to the same displayed content.
+            $contentLang = in_array($sessionLanguage, $availableLangs, true)
+                ? $sessionLanguage
+                : ($availableLangs[0] ?? 'en');
+        }
+
+        $canonicalUrl = 'https://vici.org/vici/' . $site->id . '?lang=' . $contentLang;
+
+        $hreflangAlternates = [];
+        foreach ($availableLangs as $lang) {
+            $loc = $site->locales->getByLanguage($lang);
+            if ($loc !== null && !empty($loc->description)) {
+                $hreflangAlternates[] = [
+                    'lang' => $lang,
+                    'url'  => 'https://vici.org/vici/' . $site->id . '?lang=' . $lang,
+                ];
+            }
+        }
+
+        // x-default: English if present, otherwise first available content language.
+        $defaultLang = null;
+        foreach ($hreflangAlternates as $alt) {
+            if ($alt['lang'] === 'en') {
+                $defaultLang = 'en';
+                break;
+            }
+        }
+        if ($defaultLang === null && $hreflangAlternates !== []) {
+            $defaultLang = $hreflangAlternates[0]['lang'];
+        }
+        if ($defaultLang !== null) {
+            $hreflangAlternates[] = [
+                'lang' => 'x-default',
+                'url'  => 'https://vici.org/vici/' . $site->id . '?lang=' . $defaultLang,
+            ];
+        }
+
+        $ogImage = null;
+        if ($site->images->count() > 0) {
+            $ogImage = 'https://images.vici.org/auto' . $site->images[0]->filepath;
+        }
+
+        $sameAs = [];
+        foreach ($site->identifiers as $identifier) {
+            if (preg_match('#^https?://#', $identifier->uri)) {
+                $sameAs[] = $identifier->uri;
+            }
+        }
+
+        $jsonLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Place',
+            'name' => $siteTitle,
+            'url' => $canonicalUrl,
+        ];
+        if ($metaDescription !== '') {
+            $jsonLd['description'] = $metaDescription;
+        }
+        $jsonLd['geo'] = [
+            '@type' => 'GeoCoordinates',
+            'latitude' => $site->representativeLocation->latitude,
+            'longitude' => $site->representativeLocation->longitude,
+        ];
+        if ($ogImage !== null) {
+            $jsonLd['image'] = $ogImage;
+        }
+        if ($sameAs !== []) {
+            $jsonLd['sameAs'] = $sameAs;
+        }
+
+        $this->assign('title', $docTitle);
+        $this->assign('meta_description', $metaDescription);
+        $this->assign('canonical_url', $canonicalUrl);
+        $this->assign('hreflang_alternates', $hreflangAlternates);
+        $this->assign('og_image', $ogImage);
+        $jsonLdJson = json_encode($jsonLd,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE);
+        if ($jsonLdJson === false) {
+            $jsonLdJson = '{}';
+        }
+        $this->assign('jsonld', $jsonLdJson);
+
     }
 
     public static function link_urls($text) {

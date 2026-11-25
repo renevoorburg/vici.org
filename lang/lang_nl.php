@@ -376,4 +376,16 @@ return [
     'Jan' => 'jan', 'Feb' => 'feb', 'Mar' => 'mrt', 'Apr' => 'apr',
     'May' => 'mei', 'Jun' => 'jun', 'Jul' => 'jul', 'Aug' => 'aug',
     'Sep' => 'sep', 'Oct' => 'okt', 'Nov' => 'nov', 'Dec' => 'dec',
+
+    // homepage meta description:
+    'Interactive archaeological atlas of antiquity: explore hundreds of thousands of archaeological sites, monuments and finds on an interactive map.' => 'Interactieve archeologische atlas van de oudheid: verken honderdduizenden archeologische vindplaatsen, monumenten en vondsten op een interactieve kaart.',
+
+    // access control page:
+    'Access control' => 'Toegangsbeheer',
+    'Blocked subnets' => 'Geblokkeerde subnetten',
+    'Subnets' => 'Subnetten',
+    'Address' => 'Adres',
+    'Expires in' => 'Verloopt over',
+    'Triggered by' => 'Getriggerd door',
+    'None' => 'Geen',
 ];

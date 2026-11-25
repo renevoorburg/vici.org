@@ -563,10 +563,10 @@ function ViciWidget(element, options) {
         source: vectorSourceMarkers
     });
 
-    map.addOverlay(vectorLayerLines);
-    map.addOverlay(vectorLayerMarkers);
+    map.addLayer(vectorLayerLines);
+    map.addLayer(vectorLayerMarkers);
     if (options.showUserGeolocation && geotracking) {
-        map.addOverlay(geotracking);
+        map.addLayer(geotracking);
     }
 
     // change mouse cursor when over marker or line

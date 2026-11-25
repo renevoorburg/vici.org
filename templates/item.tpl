@@ -1,6 +1,28 @@
 {extends file="base.tpl"}
 
 {block name=metadata}
+    <meta name="description" content="{$meta_description|escape}">
+    <link rel="canonical" href="{$canonical_url|escape}">
+    {foreach $hreflang_alternates|default:[] as $alt}
+    <link rel="alternate" hreflang="{$alt.lang|escape}" href="{$alt.url|escape}">
+    {/foreach}
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Vici.org">
+    <meta property="og:title" content="{$title|escape}">
+    <meta property="og:description" content="{$meta_description|escape}">
+    <meta property="og:url" content="{$canonical_url|escape}">
+    {if $og_image}
+    <meta property="og:image" content="{$og_image|escape}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{$og_image|escape}">
+    {else}
+    <meta name="twitter:card" content="summary">
+    {/if}
+    <meta name="twitter:title" content="{$title|escape}">
+    <meta name="twitter:description" content="{$meta_description|escape}">
+    {if $jsonld}
+    <script type="application/ld+json">{$jsonld}</script>
+    {/if}
     <meta name="citation_title" content="{$mainSite->locales[$preferredLocaleLanguage]->title|escape}">
     <meta name="citation_author" content="{$mainSite->creator->getCitationName()|escape}">
     {if $mainSite->creator->getId() != $mainSite->updater->getId()}<meta name="citation_author" content="{$mainSite->updater->getCitationName()|escape}">{/if}
