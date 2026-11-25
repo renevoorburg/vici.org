@@ -5,6 +5,8 @@ target="_blank"
 title="{$image->title|escape:'html'}">
     <figure>
         <img src="//images.vici.org/{$imageSizeUrlPrefix}{$image->filepath|escape:'html'}"
+            width="{$image->width|default:1200}"
+            height="{$image->height|default:900}"
             alt="{$image->title|escape:'html'}"
             data-caption-link="/image/{$image->id}"
             data-caption-license="{if $image->license}{$image->license->shortName|escape:'html'}{/if}"

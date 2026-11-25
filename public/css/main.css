@@ -1593,11 +1593,17 @@ a.hover:hover {
    indivisible brick. Column count is width-dependent (see media queries) */
 #my-gallery {
     column-gap: 0.5em;
+    /* collapse whitespace text nodes between inline-block bricks */
+    font-size: 0;
 }
 #my-gallery > a {
-    display: block;
+    /* inline-block bricks are atomic in multicol; plain blocks are
+       misbalanced by Safari even with break-inside: avoid */
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
     break-inside: avoid;
-    -webkit-column-break-inside: avoid; /* legacy Safari multicol */
+    -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
     margin-bottom: 0.5em;
 }
