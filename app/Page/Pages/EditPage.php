@@ -248,6 +248,7 @@ class EditPage extends PageRenderer
         $this->assign('site_name', !$isNew ? $site->defaultTitle : '');
         $this->assign('siteTypes', $siteTypes);
         $this->assign('licenses', $licenses);
+        $this->assign('default_license', ImageUploader::DEFAULT_LICENSE);
 
         $this->assign('f_title', $posted ? ($_POST['kop_edit'] ?? '') : ($locale->title ?? (!$isNew ? $site->defaultTitle : '')));
         $this->assign('f_summary', $posted ? ($_POST['short_edit'] ?? '') : ($locale->summary ?? (!$isNew ? $site->defaultSummary : '')));
