@@ -1597,6 +1597,8 @@ a.hover:hover {
 #my-gallery > a {
     display: block;
     break-inside: avoid;
+    -webkit-column-break-inside: avoid; /* legacy Safari multicol */
+    page-break-inside: avoid;
     margin-bottom: 0.5em;
 }
 .refanchor {
