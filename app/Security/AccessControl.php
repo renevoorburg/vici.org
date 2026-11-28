@@ -41,6 +41,7 @@ class AccessControl
     private bool $is_rate_limited_anonymously = false;
     private bool $is_content_page = false;
     private bool $is_geojson_request = false;
+    private bool $is_sitemap_request = false;
 
 
 
@@ -96,6 +97,11 @@ class AccessControl
         $this->is_geojson_request = $value;
     }
 
+    public function setIsSitemapRequest(bool $value): void
+    {
+        $this->is_sitemap_request = $value;
+    }
+
 
     public function enforceAndRun(callable $requested_action): void
     {
@@ -137,12 +143,17 @@ class AccessControl
 
             // a bot declaring its UA can't dodge the cap by rotating IPs:
             // all IPs sending the same UA share one budget. In MariaDB —
-            // APCu is per worker, which would inflate the effective cap
-            $uaHits = $this->bumpCounter(
-                'bot_ua_rate_' . sha1(strtolower($_SERVER['HTTP_USER_AGENT'])),
-                self::RATE_LIMIT_SECONDS);
-            if ($uaHits > self::MAX_BOT_UA_REQUESTS) {
-                self::denyAccessTemporarily($key);
+            // APCu is per worker, which would inflate the effective cap.
+            // The sitemap is exempt: it is an index meant for crawlers, not
+            // content, and search-console fetches must not 429 when the
+            // shared budget is saturated. The per-IP cap above still holds.
+            if (!$this->is_sitemap_request) {
+                $uaHits = $this->bumpCounter(
+                    'bot_ua_rate_' . sha1(strtolower($_SERVER['HTTP_USER_AGENT'])),
+                    self::RATE_LIMIT_SECONDS);
+                if ($uaHits > self::MAX_BOT_UA_REQUESTS) {
+                    self::denyAccessTemporarily($key);
+                }
             }
         }
 

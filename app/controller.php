@@ -28,6 +28,7 @@ switch ($session->getRequestedAction()) {
         $action = fn() => null;
         break;
     case 'sitemap.xml':
+        $accessControl->setIsSitemapRequest(true);
         $action = fn() => (new Pages\SitemapPage($session))->display();
         break;
     case 'favicon.ico':
