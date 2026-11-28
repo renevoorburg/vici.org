@@ -72,6 +72,10 @@ header > div > a {
     margin-left: 1px;
 }
 
+/* h1 variant (homepage only) must not pick up UA heading margins */
+h1.subtitle {
+    margin: 0;
+}
 header .subtitle {
     font-size: 0.875rem;
     font-weight: 400;

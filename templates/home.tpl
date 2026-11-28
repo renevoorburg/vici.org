@@ -1,4 +1,5 @@
 {extends file="base.tpl"}
+{block name=sitesubtitle}<h1 class="subtitle">:: {$sitesubtitle|default:"archaeological atlas"}</h1>{/block}
 {block name=metadata}
     <meta name="description" content="{$meta_description|escape}">
     <link rel="canonical" href="https://vici.org/">
@@ -10,6 +11,9 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Vici.org — {$title|escape}">
     <meta name="twitter:description" content="{$meta_description|escape}">
+    {if $jsonld}
+    <script type="application/ld+json">{$jsonld}</script>
+    {/if}
 {/block}
 {block name=stylesheets}
     <link rel="stylesheet" href="/js/photoswipe/dist/photoswipe.css">
