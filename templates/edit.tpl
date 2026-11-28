@@ -188,7 +188,7 @@
             <label class="vici-label" for="frm_license">{$edit_img_license|default:"License"}</label>
             <select class="vici-select" id="frm_license" name="frm_license">
                 {foreach from=$licenses item=l}
-                    <option value="{$l.id}" {if $l.id == 4}selected{/if}>{$l.title|escape}</option>
+                    <option value="{$l.id}" {if $l.id == $default_license|default:18}selected{/if}>{$l.title|escape}</option>
                 {/foreach}
             </select>
         </div>
@@ -219,7 +219,7 @@
             <label class="vici-label" for="frm_license_l">{$edit_img_license|default:"License"}</label>
             <select class="vici-select" id="frm_license_l" name="frm_license">
                 {foreach from=$licenses item=l}
-                    <option value="{$l.id}" {if $l.id == 4}selected{/if}>{$l.title|escape}</option>
+                    <option value="{$l.id}" {if $l.id == $default_license|default:18}selected{/if}>{$l.title|escape}</option>
                 {/foreach}
             </select>
 

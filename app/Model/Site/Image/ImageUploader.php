@@ -10,7 +10,7 @@ use Vici\Storage\S3ImageStorage;
 class ImageUploader
 {
     public const UPLOAD_DIR = 'uploads';
-    public const DEFAULT_LICENSE = 4; // CC BY-SA 3.0
+    public const DEFAULT_LICENSE = 18; // CC BY-SA 4.0
 
     private string $errorMessage = '';
 
@@ -111,7 +111,7 @@ class ImageUploader
             }
         }
 
-        $license = $ownWork ? self::DEFAULT_LICENSE : (int)$license;
+        $license = (int)$license;
 
         $db->beginTransaction();
         try {
