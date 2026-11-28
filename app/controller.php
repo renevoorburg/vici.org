@@ -27,6 +27,9 @@ switch ($session->getRequestedAction()) {
         $accessControl->setIsBotTrapLink(true);
         $action = fn() => null;
         break;
+    case 'sitemap.xml':
+        $action = fn() => (new Pages\SitemapPage($session))->display();
+        break;
     case 'favicon.ico':
         $action = function () {
             $path = __DIR__ . '/assets/favicon.ico';
